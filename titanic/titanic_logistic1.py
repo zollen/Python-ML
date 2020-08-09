@@ -119,8 +119,15 @@ weights, cost = train(train_df[all_features_columns].values, train_df[label_colu
 print("Cost: ", cost)
 print(weights)
 
-preds = evals(test_df[all_features_columns].values, weights)
 
+#print("================= TRAINING DATA =====================")
+#preds = eval(train_df[all_features_columns].values, weights)
+#print("Accuracy: ", round(accuracy_score(train_df[label_column], preds), 2))
+#print("Precision: ", round(precision_score(train_df[label_column], preds), 2))
+#print("Recall: ", round(recall_score(train_df[label_column], preds), 2))
+
+print("================= TEST DATA =====================")
+preds = evals(test_df[all_features_columns].values, weights)
 print("Accuracy: ", accuracy_score(test_df[label_column].values, preds))
 print("Precision: ", precision_score(test_df[label_column].values, preds))
 print("Recall: ", recall_score(test_df[label_column].values, preds))
