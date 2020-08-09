@@ -110,7 +110,7 @@ def train(data, labels, weights, lr, iters):
             
     return best, best_cost
 
-def evals(data, weights):
+def decide(data, weights):
     predictions = predict(data, weights)
     predictions = Binarizer(threshold=0.54).fit_transform(predictions)
     return predictions
@@ -120,17 +120,17 @@ print("Cost: ", cost)
 print(weights)
 
 
-#print("================= TRAINING DATA =====================")
-#preds = eval(train_df[all_features_columns].values, weights)
-#print("Accuracy: ", round(accuracy_score(train_df[label_column], preds), 2))
-#print("Precision: ", round(precision_score(train_df[label_column], preds), 2))
-#print("Recall: ", round(recall_score(train_df[label_column], preds), 2))
+print("================= TRAINING DATA =====================")
+preds = decide(train_df[all_features_columns].values, weights)
+print("Accuracy: ", round(accuracy_score(train_df[label_column], preds), 2))
+print("Precision: ", round(precision_score(train_df[label_column], preds), 2))
+print("Recall: ", round(recall_score(train_df[label_column], preds), 2))
 
 print("================= TEST DATA =====================")
-preds = evals(test_df[all_features_columns].values, weights)
-print("Accuracy: ", accuracy_score(test_df[label_column].values, preds))
-print("Precision: ", precision_score(test_df[label_column].values, preds))
-print("Recall: ", recall_score(test_df[label_column].values, preds))
+preds = decide(test_df[all_features_columns].values, weights)
+print("Accuracy: ", round(accuracy_score(test_df[label_column].values, preds), 2))
+print("Precision: ", round(precision_score(test_df[label_column].values, preds), 2))
+print("Recall: ", round(recall_score(test_df[label_column].values, preds), 2))
 print(confusion_matrix(test_df[label_column], preds))
 print(classification_report(test_df[label_column], preds))
 
