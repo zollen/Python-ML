@@ -9,25 +9,17 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
+from sklearn.cluster import MeanShift
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
 from sklearn import preprocessing
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
-from scipy.stats import mode
 from sklearn.decomposition import PCA
 
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', 10)
-
-def predictions(df, clusters, num_of_classes):
-    preds = np.zeros_like(clusters)
-    for i in range(num_of_classes):
-        mask = (clusters == i)
-        preds[mask] = mode(df[mask])[0]
-
-    return preds
 
 
 label_column = 'survived'
@@ -43,6 +35,7 @@ test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
 
 
 labels = train_df[label_column]
+
 
 for name in categorical_columns:
     encoder = preprocessing.LabelEncoder()   
@@ -78,16 +71,20 @@ print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1)
 
 NUM_OF_CLUSTERS = 2
 
-model = KMeans(n_clusters = NUM_OF_CLUSTERS, random_state = 0)
-
+if False:
+    model = KMeans(n_clusters = NUM_OF_CLUSTERS, random_state = 0)
+else:
+    model = MeanShift()
+    
 print("================= TRAINING DATA =====================")
-df = PCA(n_components=2).fit_transform(train_df[all_features_columns])
+pca = PCA(n_components=2)
+df = pca.fit_transform(train_df[all_features_columns])
 preds = model.fit_predict(df, labels)
 print("Accuracy: ", round(accuracy_score(train_df[label_column], preds), 2))
 
 
 print("================= TEST DATA =====================")
-df = PCA(n_components=2).fit_transform(test_df[all_features_columns])
+df = pca.transform(test_df[all_features_columns])
 preds = model.predict(df)
 print("Accuracy: ", round(accuracy_score(test_df[label_column], preds), 2))
 

@@ -7,12 +7,11 @@ Created on Aug. 10, 2020
 import os
 from pathlib import Path
 import pandas as pd
-import numpy as np
 from sklearn import preprocessing
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.metrics import accuracy_score
-from scipy.stats import mode
+
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
