@@ -1,5 +1,5 @@
 '''
-Created on Aug. 4, 2020
+Created on Aug. 10, 2020
 
 @author: zollen
 '''
@@ -8,9 +8,7 @@ import os
 from pathlib import Path
 import pandas as pd
 import numpy as np
-from sklearn.cluster import KMeans
-from sklearn.cluster import MeanShift
-from sklearn.decomposition import PCA
+from xgboost import XGBClassifier
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
 from sklearn import preprocessing
@@ -20,7 +18,6 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
-
 
 
 
@@ -57,8 +54,6 @@ for name in categorical_columns:
 
 print(train_df.describe())
 
-
-
 print("=============== K Best Features Selection ==================")
 model = SelectKBest(score_func=chi2, k=5)
 kBest = model.fit(train_df[all_features_columns], labels)
@@ -70,35 +65,28 @@ model.fit(train_df[all_features_columns], labels)
 print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
 # alone are bigger than P0value 0.05, therefore we remove then
-#numeric_columns = [ 'fare' ]
-#categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
-#all_features_columns = numeric_columns + categorical_columns
+numeric_columns = [ 'fare' ]
+categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
+all_features_columns = numeric_columns + categorical_columns
 
+model = XGBClassifier()
+model.fit(train_df[all_features_columns], train_df[label_column])
+print("XGB Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 
-NUM_OF_CLUSTERS = 2
-
-if True:
-    model = KMeans(n_clusters = NUM_OF_CLUSTERS, random_state = 0)
-else:
-    ## Not suitable, it auto detectes the optimal number of clusters
-    model = MeanShift() 
-    
 print("================= TRAINING DATA =====================")
-pca = PCA(n_components=2)
-df = pca.fit_transform(train_df[all_features_columns])
-preds = model.fit_predict(df, labels)
+preds = model.predict(train_df[all_features_columns])
 print("Accuracy: ", round(accuracy_score(train_df[label_column], preds), 2))
 print("Precision: ", round(precision_score(train_df[label_column], preds), 2))
 print("Recall: ", round(recall_score(train_df[label_column], preds), 2))
 
 
-
 print("================= TEST DATA =====================")
-df = pca.transform(test_df[all_features_columns])
-preds = model.predict(df)
+preds = model.predict(test_df[all_features_columns])
 print("Accuracy: ", round(accuracy_score(test_df[label_column], preds), 2))
 print("Precision: ", round(precision_score(test_df[label_column], preds), 2))
 print("Recall: ", round(recall_score(test_df[label_column], preds), 2))
 print(confusion_matrix(test_df[label_column], preds))
 print(classification_report(test_df[label_column], preds))
+
+
 
