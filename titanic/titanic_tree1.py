@@ -32,6 +32,8 @@ numeric_columns = [ 'age', 'fare' ]
 categorical_columns = [ 'sex', 'n_siblings_spouses', 'parch', 'class', 'deck', 'embark_town', 'alone' ]
 all_features_columns = numeric_columns + categorical_columns
 
+func = lambda x : np.round(x, 2)
+
 PROJECT_DIR=str(Path(__file__).parent.parent)  
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
@@ -81,8 +83,12 @@ print(result.summary2())
 print("=============== K Best Features Selection ==================")
 model = SelectKBest(score_func=chi2, k=5)
 kBest = model.fit(train_df[all_features_columns], labels)
-func = lambda x : np.round(x, 2)
-print( np.stack((all_features_columns, func(kBest.scores_)), axis=1))
+print(np.stack((all_features_columns, func(kBest.scores_)), axis=1))
+
+print("================ Decision Tree Best Features Selection ============")
+model = DecisionTreeClassifier()
+model.fit(train_df[all_features_columns], labels)
+print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
 # alone are bigger than P0value 0.05, therefore we remove then
 numeric_columns = [ 'fare' ]
@@ -96,6 +102,7 @@ print(result.summary2())
 model = DecisionTreeClassifier(criterion='entropy')
 
 model.fit(train_df[all_features_columns], labels)
+
 
 
 print("================= TRAINING DATA =====================")
