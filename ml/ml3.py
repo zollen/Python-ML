@@ -4,6 +4,8 @@ Created on Jul. 19, 2020
 @author: zollen
 '''
 
+import os
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -25,8 +27,9 @@ def inflate(arr, size):
 
 features = ['x', 'y']
 
-dataTrain = pd.read_csv('C:\\Users\\zollen\\eclipse-workspace\\PythonExercise\\data\\data1.csv')
-dataEval = pd.read_csv('C:\\Users\\zollen\\eclipse-workspace\\PythonExercise\\data\\eval1.csv')
+PROJECT_DIR=str(Path(__file__).parent.parent)  
+dataTrain = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
+dataEval = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
 
 print(dataTrain.describe())
 

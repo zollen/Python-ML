@@ -7,6 +7,7 @@ import tensorflow as tf
 from tensorflow import keras
 
 import os
+from pathlib import Path
 import tempfile
 
 import matplotlib as mpl
@@ -15,7 +16,6 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-import sklearn
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import roc_curve
 from sklearn.model_selection import train_test_split
@@ -25,7 +25,8 @@ mpl.rcParams['figure.figsize'] = (12, 10)
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
 file = tf.keras.utils
-raw_df = pd.read_csv('C:\\Users\\zollen\\eclipse-workspace\\PythonExercise\\data\\creditcard.csv')
+PROJECT_DIR=str(Path(__file__).parent.parent) 
+raw_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/creditcard.csv'))
 cleaned_df = raw_df.copy()
 
 pd.set_option('max_columns', None)

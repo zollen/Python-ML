@@ -1,4 +1,6 @@
 
+import os
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -48,7 +50,8 @@ model.compile(
     metrics=['accuracy'])
 
 
-dataTrain, labelTrain = read_file('C:\\Users\\zollen\\eclipse-workspace\\PythonExercise\\data\\train.csv')
+PROJECT_DIR=str(Path(__file__).parent.parent)  
+dataTrain, labelTrain = read_file(os.path.join(PROJECT_DIR, 'data/train.csv'))
 train_data = tf.data.Dataset.from_tensor_slices(( dataTrain, 
 												 labelTrain ))
 
@@ -59,7 +62,7 @@ model.fit(train_data, epochs=35)
 model.summary()
 
 ## The test data should be normalized against the training data, not the test data itself!!!
-dataTest, labelTest = read_file('C:\\Users\\zollen\\eclipse-workspace\\PythonExercise\\data\\eval.csv')
+dataTest, labelTest = read_file(os.path.join(PROJECT_DIR, 'data/eval.csv'))
 test_data = tf.data.Dataset.from_tensor_slices(( dataTest, 
 												 labelTest ))
 test_data = test_data.batch(1)

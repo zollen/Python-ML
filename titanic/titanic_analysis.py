@@ -4,8 +4,9 @@ Created on Aug. 1, 2020
 @author: zollen
 '''
 
+import os
+from pathlib import Path
 import seaborn as sb
-import numpy as np
 import pandas as pd
 from sklearn import preprocessing
 import statsmodels.api as sm
@@ -20,7 +21,9 @@ numeric_columns = [ 'age', 'fare' ]
 categorical_columns = [ 'sex', 'class', 'deck', 'alone', 'n_siblings_spouses', 'parch', 'embark_town' ]
 all_features_columns = numeric_columns + categorical_columns
 
-df = pd.read_csv('C:\\Users\\zollen\\eclipse-workspace\\PythonExercise\\data\\train.csv')
+PROJECT_DIR=str(Path(__file__).parent.parent)
+df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
+
 
 print(df.head())
 print("=============== STATS ===================")

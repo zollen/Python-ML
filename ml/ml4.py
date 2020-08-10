@@ -3,6 +3,9 @@ Created on Jul. 20, 2020
 
 @author: zollen
 '''
+
+import os
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -25,7 +28,8 @@ def df_to_dataset(dataframe, shuffle=True, batch_size=32):
     ds = ds.batch(batch_size)
     return ds
 
-df = pd.read_csv('C:\\Users\\zollen\\eclipse-workspace\\PythonExercise\\data\\petfinder-mini.csv')
+PROJECT_DIR=str(Path(__file__).parent.parent)
+df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/petfinder-mini.csv'))
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)

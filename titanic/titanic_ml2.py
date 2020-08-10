@@ -3,6 +3,9 @@ Created on Aug. 1, 2020
 
 @author: zollen
 '''
+
+import os
+from pathlib import Path
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -104,9 +107,9 @@ pd.set_option('precision', 2)
 tf.random.set_seed(SEED)
 np.random.seed(SEED)
 
-    
-data = pd.read_csv('C:\\Users\\zollen\\eclipse-workspace\\PythonExercise\\data\\train.csv')
-eval_df = pd.read_csv('C:\\Users\\zollen\\eclipse-workspace\\PythonExercise\\data\\eval.csv')
+PROJECT_DIR=str(Path(__file__).parent.parent)  
+data = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
+eval_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
 train_df = data.copy()
 test_df, val_df = train_test_split(eval_df, test_size=0.2)
 

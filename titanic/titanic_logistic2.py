@@ -4,6 +4,8 @@ Created on Aug. 4, 2020
 @author: zollen
 '''
 
+import os
+from pathlib import Path
 import pandas as pd
 import numpy as np
 from imblearn.over_sampling import RandomOverSampler
@@ -60,8 +62,9 @@ numeric_columns = [ 'age', 'fare' ]
 categorical_columns = [ 'sex', 'n_siblings_spouses', 'parch', 'class', 'deck', 'embark_town', 'alone' ]
 all_features_columns = numeric_columns + categorical_columns
 
-train_df = pd.read_csv('C:\\Users\\zollen\\eclipse-workspace\\PythonExercise\\data\\train.csv')
-test_df = pd.read_csv('C:\\Users\\zollen\\eclipse-workspace\\PythonExercise\\data\\eval.csv')
+PROJECT_DIR=str(Path(__file__).parent.parent)
+train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
+test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
 
 labels = train_df[label_column]
 

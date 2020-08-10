@@ -3,6 +3,9 @@ Created on Aug. 3, 2020
 
 @author: zollen
 '''
+
+import os
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.feature_selection import SelectKBest
@@ -12,7 +15,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.decomposition import PCA
 from sklearn.ensemble import ExtraTreesClassifier
 
-df = pd.read_csv('C:\\Users\\zollen\\eclipse-workspace\\PythonExercise\\data\\iris.csv')
+PROJECT_DIR=str(Path(__file__).parent.parent) 
+df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/iris.csv'))
+
 
 LABEL = [ "variety" ]
 FEATURES = [ "sepal.length","sepal.width","petal.length","petal.width" ]

@@ -4,12 +4,13 @@ Created on Jul. 25, 2020
 @author: zollen
 '''
 
+import os
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.metrics import confusion_matrix
+
 
 colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 bucket_column_names = ['age' ]
@@ -52,7 +53,8 @@ pd.set_option('precision', 2)
 tf.random.set_seed(1)
 np.random.seed(1)
 
-dataTrain = read_file('C:\\Users\\zollen\\eclipse-workspace\\PythonExercise\\data\\train.csv')
+PROJECT_DIR=str(Path(__file__).parent.parent)  
+dataTrain = read_file(os.path.join(PROJECT_DIR, 'data/train.csv'))
 
 
 print(dataTrain.dtypes)
