@@ -67,8 +67,6 @@ for name in categorical_columns:
     train_df[name] = encoder.transform(train_df[name].values)
     test_df[name] = encoder.transform(test_df[name].values)
     
-    keys = np.union1d(train_df[name].unique(), test_df[name].unique())
-    
 
 
 print(train_df.describe())
