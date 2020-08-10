@@ -50,30 +50,30 @@ for name in categorical_columns:
     print("=============== Total: ", name, "================")
     print(df.groupby(name).size())
 
-sb.pairplot(df, hue = 'survived', diag_kind = "kde", kind = "scatter", palette = "bright")
+sb.pairplot(df, hue = 'survived', diag_kind = "kde", kind = "scatter", plot_kws=dict(s=30, edgecolor="b", linewidth=1.0), palette = "bright")
 
 fig, (a1, a2, a3, a4, a5) = plt.subplots(1, 5)
 
 fig.set_size_inches(14 , 10)
 
-sb.swarmplot(x = "survived", y = "age", hue = "sex", data = df, ax = a1)
+sb.swarmplot(x = "survived", y = "age", hue = "sex", alpha = 0.5, data = df, ax = a1)
 a1.set_title("survived - sex ")
 
-sb.barplot(x = "sex", y = "survived", hue = "embark_town", data = df, ax = a2)
+sb.barplot(x = "sex", y = "survived", hue = "embark_town", alpha = 0.9, data = df, ax = a2)
 a2.set_title("sex - embark_town")
 
 #sb.pointplot(x = "sex", y = "survived", hue = "class", data = df, ax = a3)
-sb.pointplot(x = "deck", y = "survived", hue = "deck", data = df, ax = a3)
+sb.pointplot(x = "deck", y = "survived", hue = "deck", alpha = 0.9, data = df, ax = a3)
 a3.set_title('deck - survived')
 
-sb.barplot(x = "survived", y = "fare", hue = "class", data = df, ax = a4)
+sb.barplot(x = "survived", y = "fare", hue = "class", alpha = 0.9, data = df, ax = a4)
 a4.set_title("survived - class")
 
 #sb.factorplot("survived", col = "parch", col_wrap = 3, data = df, kind = "count")
 
 #sb.factorplot("survived", col = "embark_town", col_wrap = 3, data = df, kind = "count")
 
-sb.countplot(x = "survived", data = df, palette = "Reds", ax = a5);
+sb.countplot(x = "survived", data = df, palette = "Reds", alpha = 1.0, ax = a5);
 
 a4.set_title("survived - class")
 a5.set_title("total")
