@@ -10,6 +10,8 @@ import pandas as pd
 import numpy as np
 from imblearn.over_sampling import RandomOverSampler
 import statsmodels.api as sm
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
 from sklearn.feature_selection import RFE
 from sklearn import preprocessing
 from sklearn.preprocessing import Binarizer
@@ -65,6 +67,7 @@ for name in categorical_columns:
 
 print(train_df.describe())
 
+print("============== Recursive Features Elmination (RFE) ===============")
 model = DecisionTreeClassifier()
 rfe = RFE(model, 7)
 rfe = rfe.fit(train_df[all_features_columns], labels)
@@ -75,6 +78,11 @@ model=sm.Logit(labels, train_df[all_features_columns])
 result=model.fit()
 print(result.summary2())
 
+print("=============== K Best Features Selection ==================")
+model = SelectKBest(score_func=chi2, k=5)
+kBest = model.fit(train_df[all_features_columns], labels)
+func = lambda x : np.round(x, 2)
+print( np.stack((all_features_columns, func(kBest.scores_)), axis=1))
 
 # alone are bigger than P0value 0.05, therefore we remove then
 numeric_columns = [ 'fare' ]
