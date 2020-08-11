@@ -6,7 +6,7 @@ Created on Aug. 10, 2020
 
 import matplotlib.pyplot as plt
 import seaborn as sb
-from sklearn.cluster import KMeans
+from sklearn.cluster import MeanShift
 from sklearn.datasets import make_blobs
 
 
@@ -15,6 +15,7 @@ from sklearn.datasets import make_blobs
 ## kernal_bandwidth directly influence how many clusters will be forms.
 ## Lower value of bandwidth encourages more peaks, more clustering
 ## higher value of bandwidth encourage less peaks, less clustering
+
 
 def shift(p, original_points): 
     shift_x = float(0) 
@@ -43,12 +44,12 @@ sb.set_style('whitegrid')
 
 X, y_true = make_blobs(n_samples = 400, centers = 4, cluster_std = 0.60, random_state = 0)
 
-kmeans = KMeans(n_clusters = 4)
-kmeans.fit(X)
-y_kmeans = kmeans.predict(X)
+model = MeanShift(bandwidth=0.8)
+model.fit(X)
+y_kmeans = model.predict(X)
 
 
 plt.scatter(X[:, 0], X[:, 1], c = y_kmeans, s = 20, cmap ='summer')
-centers = kmeans.cluster_centers_
+centers = model.cluster_centers_
 plt.scatter(centers[:, 0], centers[:, 1], c = 'red', s = 20, alpha = 0.8);
 plt.show()
