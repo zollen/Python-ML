@@ -71,15 +71,15 @@ model.fit(train_df[all_features_columns], labels)
 print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
 # alone are bigger than P0value 0.05, therefore we remove then
-#numeric_columns = [ 'fare' ]
-#categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
-#all_features_columns = numeric_columns + categorical_columns
+numeric_columns = [ 'fare' ]
+categorical_columns = [ 'sex', 'class', 'deck', 'alone']
+all_features_columns = numeric_columns + categorical_columns
 
 
 NUM_OF_CLUSTERS = 2
 
 model = KNeighborsClassifier(n_neighbors = 8)
-pca = PCA(n_components=4)
+pca = PCA(n_components=3)
 df = pca.fit_transform(train_df[all_features_columns])
     
 print("================= TRAINING DATA =====================")
