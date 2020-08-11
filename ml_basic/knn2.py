@@ -11,6 +11,8 @@ from sklearn import preprocessing
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
 
 
 pd.set_option('max_columns', None)
@@ -32,13 +34,12 @@ encoder = preprocessing.LabelEncoder()
 encoder.fit(train_df[label_column].unique())
 train_df[label_column] = encoder.transform(train_df[label_column].values)
 
-
-
 model = KMeans(n_clusters = CLUSTERS, random_state = 0)
 df = PCA(n_components=2).fit_transform(train_df[numeric_columns])
 preds = model.fit_predict(df)
 
-
-
 print("================= TRAINING DATA =====================")
 print("Accuracy: ", round(accuracy_score(train_df[label_column], preds), 2))
+print(confusion_matrix(train_df[label_column], preds))
+print(classification_report(train_df[label_column], preds))
+
