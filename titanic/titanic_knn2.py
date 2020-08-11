@@ -8,8 +8,7 @@ import os
 from pathlib import Path
 import pandas as pd
 import numpy as np
-from sklearn.cluster import KMeans
-from sklearn.cluster import MeanShift
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.decomposition import PCA
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
@@ -23,7 +22,7 @@ from sklearn.metrics import classification_report
 
 
 """
-## This is a Knn Clustering Example. Not Classification
+## This is a Knn Classification
 """
 
 pd.set_option('max_columns', None)
@@ -39,6 +38,7 @@ func = lambda x : np.round(x, 2)
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
+test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
 
 
 labels = train_df[label_column]
@@ -46,13 +46,14 @@ labels = train_df[label_column]
 
 for name in categorical_columns:
     encoder = preprocessing.LabelEncoder()   
-    keys = train_df[name].unique()
+    keys = np.union1d(train_df[name].unique(), test_df[name].unique())
    
     if len(keys) == 2:
         encoder = preprocessing.LabelBinarizer()
         
     encoder.fit(keys)
     train_df[name] = encoder.transform(train_df[name].values)
+    test_df[name] = encoder.transform(test_df[name].values)
     
 
 print(train_df.describe())
@@ -77,24 +78,25 @@ print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1)
 
 NUM_OF_CLUSTERS = 2
 
-if True:
-    model = KMeans(n_clusters = NUM_OF_CLUSTERS, random_state = 0)
-else:
-    """
-    ## MeanShift: Not suitable, it auto detectes the optimal number of clusters
-    ## for unsupervised learning only
-    """
-    model = MeanShift()  
+model = KNeighborsClassifier(n_neighbors = 8)
+pca = PCA(n_components=4)
+df = pca.fit_transform(train_df[all_features_columns])
     
 print("================= TRAINING DATA =====================")
-pca = PCA(n_components=2)
-df = pca.fit_transform(train_df[all_features_columns])
-preds = model.fit_predict(df, labels)
+model.fit(df, train_df[label_column])
+preds = model.predict(df)
 print("Accuracy: ", round(accuracy_score(train_df[label_column], preds), 2))
 print("Precision: ", round(precision_score(train_df[label_column], preds), 2))
 print("Recall: ", round(recall_score(train_df[label_column], preds), 2))
 print(confusion_matrix(train_df[label_column], preds))
-print(classification_report(train_df[label_column], preds))
 
 
+print("================= TEST DATA =====================")
+df = pca.transform(test_df[all_features_columns])
+preds = model.predict(df)
+print("Accuracy: ", round(accuracy_score(test_df[label_column], preds), 2))
+print("Precision: ", round(precision_score(test_df[label_column], preds), 2))
+print("Recall: ", round(recall_score(test_df[label_column], preds), 2))
+print(confusion_matrix(test_df[label_column], preds))
+print(classification_report(test_df[label_column], preds))
 
