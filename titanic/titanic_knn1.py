@@ -9,7 +9,6 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
-from sklearn.cluster import MeanShift
 from sklearn.decomposition import PCA
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
@@ -77,15 +76,9 @@ print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1)
 
 NUM_OF_CLUSTERS = 2
 
-if True:
-    model = KMeans(n_clusters = NUM_OF_CLUSTERS, random_state = 0)
-else:
-    """
-    ## MeanShift: Not suitable, it auto detectes the optimal number of clusters
-    ## for unsupervised learning only
-    """
-    model = MeanShift()  
-    
+
+model = KMeans(n_clusters = NUM_OF_CLUSTERS, random_state = 0)
+
 print("================= TRAINING DATA =====================")
 pca = PCA(n_components=2)
 df = pca.fit_transform(train_df[all_features_columns])
