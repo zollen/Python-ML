@@ -80,8 +80,11 @@ NUM_OF_CLUSTERS = 2
 if True:
     model = KMeans(n_clusters = NUM_OF_CLUSTERS, random_state = 0)
 else:
-    ## Not suitable, it auto detectes the optimal number of clusters
-    model = MeanShift() 
+    """
+    ## MeanShift: Not suitable, it auto detectes the optimal number of clusters
+    ## for unsupervised learning only
+    """
+    model = MeanShift()  
     
 print("================= TRAINING DATA =====================")
 pca = PCA(n_components=2)

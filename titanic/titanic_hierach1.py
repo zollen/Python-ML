@@ -21,7 +21,9 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 
-
+"""
+## AgglomerativeClustering - for unsupervised learning only
+"""
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', 10)
