@@ -52,7 +52,7 @@ for name in categorical_columns:
 
 sb.pairplot(df, hue = 'survived', diag_kind = "kde", kind = "scatter", plot_kws=dict(s=30, edgecolor="b", linewidth=1.0), palette = "bright")
 
-plt.figure()
+plt.figure(figsize=(10, 8))
 
 sb.heatmap(df.corr(), annot=True, linewidth=0.5, cmap="Oranges")
 
