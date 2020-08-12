@@ -16,8 +16,11 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import log_loss
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
+
 
 
 
@@ -64,7 +67,7 @@ model = DecisionTreeClassifier()
 model.fit(train_df[all_features_columns], labels)
 print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
-# alone are bigger than P0value 0.05, therefore we remove then
+# alone are bigger than P-value 0.05, therefore we remove then
 numeric_columns = [ 'fare' ]
 categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
 all_features_columns = numeric_columns + categorical_columns
@@ -78,6 +81,8 @@ preds = model.predict(train_df[all_features_columns])
 print("Accuracy: ", round(accuracy_score(train_df[label_column], preds), 2))
 print("Precision: ", round(precision_score(train_df[label_column], preds), 2))
 print("Recall: ", round(recall_score(train_df[label_column], preds), 2))
+print('AUC-ROC:', round(roc_auc_score(train_df[label_column], preds), 2))
+print("Log Loss: ", round(log_loss(train_df[label_column], preds), 2))
 print(confusion_matrix(train_df[label_column], preds))
 
 
@@ -86,6 +91,8 @@ preds = model.predict(test_df[all_features_columns])
 print("Accuracy: ", round(accuracy_score(test_df[label_column], preds), 2))
 print("Precision: ", round(precision_score(test_df[label_column], preds), 2))
 print("Recall: ", round(recall_score(test_df[label_column], preds), 2))
+print('AUC-ROC:', round(roc_auc_score(test_df[label_column], preds), 2))
+print("Log Loss: ", round(log_loss(test_df[label_column], preds), 2))
 print(confusion_matrix(test_df[label_column], preds))
 print(classification_report(test_df[label_column], preds))
 
