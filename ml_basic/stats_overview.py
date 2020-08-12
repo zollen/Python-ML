@@ -5,6 +5,22 @@ Created on Aug. 12, 2020
 '''
 """
 
+Pearson Correlation
+===================
+pandas.corr() 
+
+Finding the correlation between attribute x and attribute y
+
+Cxy = [ ∑ (xi - mean(x))(yi - mean(y) ] / [ sqrt( ∑ (xi - mean(x))^2 ) * sqrt( ∑ (yi - mean(y)^2 ) ]
+
+-1 >= Cxy <= 1
+
+if Cxy = -1, then x and y has a perfect negative linear correlation
+if Cxy < 0, then x and y has a linear negatively correlation
+if Cxy = 0, then x and y has no linear correlation, but they may have non-linear correlation
+if Cxy > 0, then x and y has a linear postively correlation
+if Cxy = 1, the x and y has a perfect positive linear correlation
+
 AUC-ROC
 ======= 
 Area under the curve - Receiver Operating Characteristic
