@@ -32,6 +32,14 @@ Log Loss (Logarithmic Loss)
 It is also called Logistic regression loss or cross-entropy loss.
 It shows the amount of uncertainty of our prediction based on how much it varies from 
     the actual labels
+
+# converting all predicted labels if exactly 0 or 1 = then => 0.000000000001 or 0.9999999999999
+# log(0) or log(1 - 1) is negative infinite!
+p = numpy.clip(predicted_labels, 1e-15, 1 - 1e-15) 
+If Actual label = 1:
+    LogLoss = -log(p)
+else:
+    LogLoss = -log(1 - p)
     
 Mean Absoulte Error (MAE)
 =========================
