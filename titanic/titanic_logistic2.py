@@ -70,6 +70,7 @@ test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
 labels = train_df[label_column]
 
 print(train_df.info())
+print(train_df.isnull().sum())
 print(train_df.describe())
 
 print("Original Sample Size: Total Number of Survived: ", len(train_df[train_df['survived'] == 1]), 

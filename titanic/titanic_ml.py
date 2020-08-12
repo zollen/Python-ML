@@ -97,7 +97,7 @@ test_df, val_df = train_test_split(eval_df, test_size=0.2)
 
 
 print(train_df.info())
-print(train_df.head())
+print(train_df.isnull().sum())
 print(train_df.describe())
 
 

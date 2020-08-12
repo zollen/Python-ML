@@ -40,6 +40,7 @@ train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
 
 print(train_df.info())
+print(train_df.isnull().sum())
 print(train_df.describe())
 
 labels = train_df[label_column]

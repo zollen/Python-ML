@@ -40,6 +40,7 @@ PROJECT_DIR=str(Path(__file__).parent.parent)
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 
 print(train_df.info())
+print(train_df.isnull().sum())
 print(train_df.describe())
 
 
