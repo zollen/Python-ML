@@ -78,6 +78,7 @@ preds = model.predict(train_df[all_features_columns])
 print("Accuracy: ", round(accuracy_score(train_df[label_column], preds), 2))
 print("Precision: ", round(precision_score(train_df[label_column], preds), 2))
 print("Recall: ", round(recall_score(train_df[label_column], preds), 2))
+print(confusion_matrix(train_df[label_column], preds))
 
 
 print("================= TEST DATA =====================")
