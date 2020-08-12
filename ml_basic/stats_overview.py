@@ -9,14 +9,16 @@ Pearson Correlation
 ===================
 pandas.corr() 
 
-Finding the correlation between attribute x and attribute y
+Finding the correlation between feature x and feature y
 
-Cxy = [ ∑ (xi - mean(x))(yi - mean(y) ] / [ sqrt( ∑ (xi - mean(x))^2 ) * sqrt( ∑ (yi - mean(y)^2 ) ]
+                  [ ∑ (xi - mean(x))(yi - mean(y) ] 
+Cxy = ----------------------------------------------------------
+       [ sqrt( ∑ (xi - mean(x))^2 ) * sqrt( ∑ (yi - mean(y)^2 ) ]
 
 -1 >= Cxy <= 1
 
-if Cxy = -1, then x and y has a perfect negative linear correlation
-if Cxy < 0, then x and y has a linear negatively correlation
+if Cxy = -1, then x and y has a perfect opposite linear correlation
+if Cxy < 0, then x and y has a linear opposite correlation
 if Cxy = 0, then x and y has no linear correlation, but they may have non-linear correlation
 if Cxy > 0, then x and y has a linear postively correlation
 if Cxy = 1, the x and y has a perfect positive linear correlation
@@ -37,7 +39,9 @@ F1 shows the overall performance of the predictibility of your estimator
 R2^2 or R2 square
 =================
 x = [ x1, x2, x3, .... xn ]
-R2^2 = ∑ [ ( (xi - mean(x))^2 - (xi - your_model_prediction(xi))^2 ) / (xi - mean(x))^2 ]
+            ( (xi - mean(x))^2 - (xi - your_model_prediction(xi))^2 ) 
+R2^2 =  ∑ ------------------------------------------------------------
+                           (xi - mean(x))^2
 R2^2 is a relative ratio between: the sum of all discrepancies between the mean,
                              and the sum of all discrepancies of your model predictions
 R2^2 shows how much variations your model has covered
