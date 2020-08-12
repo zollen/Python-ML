@@ -25,6 +25,7 @@ from sklearn.metrics import classification_report
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', 10)
+np.random.seed(87)
 
 
 label_column = [ 'survived' ]
@@ -91,7 +92,7 @@ model=sm.Logit(labels, train_df[all_features_columns])
 result=model.fit()
 print(result.summary2())
 
-model = RandomForestClassifier(n_estimators = 50)
+model = RandomForestClassifier(n_estimators = 50, max_depth=14)
 
 model.fit(train_df[all_features_columns], labels)
 
