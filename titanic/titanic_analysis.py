@@ -52,6 +52,13 @@ for name in categorical_columns:
 
 sb.pairplot(df, hue = 'survived', diag_kind = "kde", kind = "scatter", plot_kws=dict(s=30, edgecolor="b", linewidth=1.0), palette = "bright")
 
+plt.figure()
+
+sb.heatmap(df.corr(), annot=True, linewidth=0.5, cmap="Oranges")
+
+##  Saving the graph as image png.
+##    plt.savefig('kfold_heatmap')
+
 fig, (a1, a2, a3, a4, a5) = plt.subplots(1, 5)
 
 fig.set_size_inches(14 , 10)

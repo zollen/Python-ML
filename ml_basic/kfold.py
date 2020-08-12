@@ -7,22 +7,19 @@ Created on Aug. 12, 2020
 import os
 from pathlib import Path
 
-from matplotlib import pyplot as plt
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-
 import pandas as pd
-import seaborn as sb
+
 
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', 10)
 pd.set_option('max_colwidth', 15)
 pd.set_option('precision', 2)
-sb.set_style('whitegrid')
 
 label_column = [ 'class' ]
 all_features_columns = ['preg', 'plas', 'pres', 'skin', 'test', 'mass', 'pedi', 'age' ]
@@ -44,9 +41,3 @@ model = Pipeline(estimators)
 kfold = KFold(n_splits = 20, random_state = 7)
 results = cross_val_score(model, df[all_features_columns], df[label_column], cv = kfold)
 print(results.mean())
-
-sb.heatmap(df.corr(), annot=True, linewidth=0.5, cmap="Oranges")
-
-##  Saving the graph as image png.
-##    plt.savefig('kfold_heatmap')
-plt.show()
