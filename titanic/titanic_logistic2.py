@@ -36,7 +36,8 @@ def plot_roc(model, features, labels):
     plt.ylabel('True Positive Rate')
     plt.title('Receiver operating characteristic')
     plt.legend(loc="lower right")
-    plt.savefig('Log_ROC')
+##  Saving the graph as image png.
+##    plt.savefig('Log_ROC')
 
 tbl = {}
 
