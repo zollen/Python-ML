@@ -41,6 +41,6 @@ Mean Square Error (MSE)
 =======================
 MSE = 1 / n * ( ∑ ( actual labels - predicted labels )^2 )
 
-MSE would have a larger value if the discrepancies are large (because of the square effect)
+MSE would have a larger value than MAE if the discrepancies are large (because of the square effect)
 
 """
