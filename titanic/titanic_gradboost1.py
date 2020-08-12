@@ -8,10 +8,10 @@ import os
 from pathlib import Path
 import pandas as pd
 import numpy as np
-from xgboost import XGBClassifier
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
 from sklearn import preprocessing
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
@@ -68,14 +68,13 @@ model = DecisionTreeClassifier()
 model.fit(train_df[all_features_columns], labels)
 print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
-# alone are bigger than P-value 0.05, therefore we remove then
 numeric_columns = [ 'fare' ]
 categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
 all_features_columns = numeric_columns + categorical_columns
 
-model = XGBClassifier()
+model = GradientBoostingClassifier()
 model.fit(train_df[all_features_columns], train_df[label_column])
-print("XGB Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
+print("Gradient Boost Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 
 print("================= TRAINING DATA =====================")
 preds = model.predict(train_df[all_features_columns])
