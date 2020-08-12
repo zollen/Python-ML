@@ -27,6 +27,7 @@ from sklearn.metrics import classification_report
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', 10)
+np.random.seed(87)
 
 
 label_column = [ 'survived' ]
@@ -102,7 +103,7 @@ model=sm.Logit(labels, train_df[all_features_columns])
 result=model.fit()
 print(result.summary2())
 
-model = DecisionTreeClassifier(criterion='entropy')
+model = DecisionTreeClassifier(criterion='entropy', max_depth=15)
 
 model.fit(train_df[all_features_columns], labels)
 

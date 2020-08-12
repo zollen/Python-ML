@@ -26,7 +26,7 @@ from sklearn.metrics import classification_report
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', 10)
-
+np.random.seed(87)
 
 label_column = 'survived'
 numeric_columns = [ 'age', 'fare' ]
