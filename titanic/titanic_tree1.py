@@ -53,11 +53,8 @@ print("Original Sample Size: Total Number of Survived: ", len(train_df[train_df[
 
 ## Rebalance the dataset by oversmapling with replacement
 rebalancer = RandomOverSampler(random_state=0)
-#train_df, labels = rebalancer.fit_sample(train_df[all_features_columns], train_df[label_column])
-print("ReBalacned Data pays more attention to the less ocurrence result")
-print("This is not a good example for rebalance data. This technique is good for finding out who has the disease is more important")
-print("ReBalanced Size: Total Number of Survived: ", len(labels[labels['survived'] == 1]),
-      "Total Number of Dead: ", len(labels[labels['survived'] == 0]))
+train_df, labels = rebalancer.fit_sample(train_df[all_features_columns], train_df[label_column])
+
 
 for name in categorical_columns:
     encoder = preprocessing.LabelEncoder()    
@@ -111,12 +108,12 @@ model.fit(train_df[all_features_columns], labels)
 
 print("================= TRAINING DATA =====================")
 preds = model.predict(train_df[all_features_columns])
-print("Accuracy: ", round(accuracy_score(train_df[label_column], preds), 2))
-print("Precision: ", round(precision_score(train_df[label_column], preds), 2))
-print("Recall: ", round(recall_score(train_df[label_column], preds), 2))
-print('AUC-ROC:', round(roc_auc_score(train_df[label_column], preds), 2))
-print("Log Loss: ", round(log_loss(train_df[label_column], preds), 2))
-print(confusion_matrix(train_df[label_column], preds))
+print("Accuracy: ", round(accuracy_score(labels, preds), 2))
+print("Precision: ", round(precision_score(labels, preds), 2))
+print("Recall: ", round(recall_score(labels, preds), 2))
+print('AUC-ROC:', round(roc_auc_score(labels, preds), 2))
+print("Log Loss: ", round(log_loss(labels, preds), 2))
+print(confusion_matrix(labels, preds))
 
 
 print("================= TEST DATA =====================")
