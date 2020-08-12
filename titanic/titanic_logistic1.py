@@ -42,6 +42,8 @@ PROJECT_DIR=str(Path(__file__).parent.parent)
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
 
+print(train_df.info())
+print(train_df.describe())
 
 scaler = preprocessing.MinMaxScaler(feature_range=(0,1))
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns].values)
@@ -66,11 +68,7 @@ for name in categorical_columns:
     
     train_df[name] = normalizer(train_df[name], keys)
     test_df[name] = normalizer(test_df[name].values, keys)
-  
-#for ele in train_df.head(n=5).iterrows():
-#    print(ele)
 
-print(train_df.describe())
 
 weights = np.array([ [1.0], [1.0], [1.0], [1.0], [1.0], [1.0], [1.0], [1.0], [1.0] ])
 

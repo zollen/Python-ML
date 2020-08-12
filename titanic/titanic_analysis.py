@@ -25,7 +25,7 @@ PROJECT_DIR=str(Path(__file__).parent.parent)
 df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 
 
-print(df.head())
+print(df.info())
 print("=============== STATS ===================")
 print(df.describe())
 print("============== COLLERATION ==============")

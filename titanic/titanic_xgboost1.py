@@ -39,6 +39,8 @@ PROJECT_DIR=str(Path(__file__).parent.parent)
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
 
+print(train_df.info())
+print(train_df.describe())
 
 labels = train_df[label_column]
 
@@ -55,7 +57,6 @@ for name in categorical_columns:
     test_df[name] = encoder.transform(test_df[name].values)
     
 
-print(train_df.describe())
 
 print("=============== K Best Features Selection ==================")
 model = SelectKBest(score_func=chi2, k=5)

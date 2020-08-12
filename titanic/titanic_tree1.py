@@ -40,10 +40,10 @@ PROJECT_DIR=str(Path(__file__).parent.parent)
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
 
+print(train_df.info())
+print(train_df.describe())
 
 labels = train_df[label_column]
-
-print(train_df.describe())
 
 print("Original Sample Size: Total Number of Survived: ", len(train_df[train_df['survived'] == 1]), 
       "Total Number of Dead: ", len(train_df[train_df['survived'] == 0]))
