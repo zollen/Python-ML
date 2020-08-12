@@ -26,7 +26,7 @@ from sklearn.metrics import classification_report
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', 10)
-
+np.random.seed(87)
 
 label_column = 'survived'
 numeric_columns = [ 'age', 'fare' ]
@@ -72,7 +72,7 @@ numeric_columns = [ 'fare' ]
 categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
 all_features_columns = numeric_columns + categorical_columns
 
-model = GradientBoostingClassifier()
+model = GradientBoostingClassifier(max_depth=17)
 model.fit(train_df[all_features_columns], train_df[label_column])
 print("Gradient Boost Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 
