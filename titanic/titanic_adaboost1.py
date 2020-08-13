@@ -70,10 +70,10 @@ model.fit(train_df[all_features_columns], labels)
 print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
 numeric_columns = [ 'fare' ]
-categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
+categorical_columns = [ 'sex', 'n_siblings_spouses', 'parch', 'class', 'deck', 'alone' ]
 all_features_columns = numeric_columns + categorical_columns
 
-model = AdaBoostClassifier(n_estimators=1000, random_state=0)
+model = AdaBoostClassifier(n_estimators=2000, random_state=0)
 model.fit(train_df[all_features_columns], train_df[label_column])
 print("Ada Boost Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 
