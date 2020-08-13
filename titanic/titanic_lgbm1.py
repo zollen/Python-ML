@@ -74,7 +74,7 @@ numeric_columns = [ 'fare' ]
 categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
 all_features_columns = numeric_columns + categorical_columns
 
-model = LGBMClassifier(max_depth=15, min_data_in_leaf=8)
+model = LGBMClassifier(max_depth=16, min_data_in_leaf=8)
 model.fit(train_df[all_features_columns], train_df[label_column])
 print("XGB Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 
