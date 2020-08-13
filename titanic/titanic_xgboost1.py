@@ -69,10 +69,9 @@ model = DecisionTreeClassifier()
 model.fit(train_df[all_features_columns], labels)
 print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
-# alone are bigger than P-value 0.05, therefore we remove then
-numeric_columns = [ 'fare' ]
-categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
-all_features_columns = numeric_columns + categorical_columns
+train_df['family'] = train_df['n_siblings_spouses'] + train_df['parch']
+test_df['family'] = test_df['n_siblings_spouses'] + test_df['parch']
+
 
 model = XGBClassifier(n_estimators=150, max_depth=11, min_child_weight=3, gamma=0.2, subsample=0.6, nthread=16)
 model.fit(train_df[all_features_columns], train_df[label_column])
