@@ -74,7 +74,7 @@ numeric_columns = [ 'fare' ]
 categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
 all_features_columns = numeric_columns + categorical_columns
 
-model = XGBClassifier(max_depth=11)
+model = XGBClassifier(n_estimators=150, max_depth=11, min_child_weight=3, gamma=0.2, subsample=0.6, nthread=16)
 model.fit(train_df[all_features_columns], train_df[label_column])
 print("XGB Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 
