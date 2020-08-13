@@ -69,11 +69,11 @@ model = DecisionTreeClassifier()
 model.fit(train_df[all_features_columns], labels)
 print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
-numeric_columns = [ 'fare' ]
-categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
-all_features_columns = numeric_columns + categorical_columns
+#numeric_columns = [ 'fare' ]
+#categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
+#all_features_columns = numeric_columns + categorical_columns
 
-model = GradientBoostingClassifier(max_depth=17)
+model = GradientBoostingClassifier(min_samples_split= 10, max_depth=17)
 model.fit(train_df[all_features_columns], train_df[label_column])
 print("Gradient Boost Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 

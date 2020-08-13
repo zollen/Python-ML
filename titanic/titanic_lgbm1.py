@@ -69,12 +69,7 @@ model = DecisionTreeClassifier()
 model.fit(train_df[all_features_columns], labels)
 print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
-# alone are bigger than P-value 0.05, therefore we remove then
-numeric_columns = [ 'fare' ]
-categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
-all_features_columns = numeric_columns + categorical_columns
-
-model = LGBMClassifier(max_depth=16, min_data_in_leaf=8)
+model = LGBMClassifier(max_depth=16, min_data_in_leaf=10)
 model.fit(train_df[all_features_columns], train_df[label_column])
 print("LightGBM Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 
