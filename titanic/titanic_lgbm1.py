@@ -69,7 +69,7 @@ model = DecisionTreeClassifier()
 model.fit(train_df[all_features_columns], labels)
 print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
-model = LGBMClassifier(max_depth=16, min_data_in_leaf=10)
+model = LGBMClassifier(num_leaves=32, max_depth=16, min_data_in_leaf=10)
 model.fit(train_df[all_features_columns], train_df[label_column])
 print("LightGBM Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 
