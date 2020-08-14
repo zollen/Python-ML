@@ -62,6 +62,16 @@ XgBoost
 ========
 https://www.youtube.com/watch?v=8b1JEDvenQU&t=267s
 
+1. Gradient Boost-(ish) - similar as Graident Boost
+2. Regulaization
+3. A Unique Regression Tree
+4. Approximate Greedy Algorithm
+5. Parallel Learning
+6. Weighted Quantile Sketch
+7. Sparsity-Aware Split Finding
+8. Cache-Aware Access
+9. Blocks for Out-Of-Core Computation
+
 Training
 ---------
 Each tree limited by a max number of level
@@ -89,7 +99,31 @@ for i in 1.. N
             Gain = SimilarityScore(left leaf) + SimilarityScore(right leaf) - SimilarityScore(parent)
             If Gain(parent) - γ > 0, then parent stays, 
             If Gain(parent) - γ <= 0, then parent get pruned 
-        The highet Gain parent is chosen for level(l)
+            
+        The largest Gain splitting threshold parent is chosen for level(l) - Greedy Algorithm
+        Greedy Algorithm makes decision based on the current state without looking ahead, but 
+        it builds tree relatively quickly. It uses quantiles for s (all possible splitting
+        decisions at level(l)). XgBoost use 33 quantiles by default. 
+        
+        Using parallel learning to seperate the massive amount of data into segments so 
+        each segment can be processed by individual computer at the same time.  
+        Weighted Qunatile Sketch merges the data with similar confident level of predictions 
+        into an approximate histrogram. Each histogram is further divided into weigthed 
+        quantiles that put observations with low confidence predictions into quantiles with 
+        fewer observations.
+        
+        Sparsity-Aware split tells us how to build tree with missing data and how to handle
+        new observations where there is missing data.
+       
+        Cache-Aware access puts Gradients and Hessians into CPU cache so that it can quickly
+        calculates Similarity Scores and Output Values.
+        
+        locks for Out-Of-Core Computation compress the massive data for minimizing the time 
+        for accessing the slow hard drives.
+        
+        XgBoost can speed up building tree by only looking a random subset of features when
+        deciding how to split the data.
+        
     
     for l in leaf1.. leafN in tree(i)
                                                          ( ∑ Residuals )
