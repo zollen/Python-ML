@@ -76,6 +76,7 @@ Training
 ---------
 Each tree limited by a max number of level
 Residual = Observed(i) - Predict(i)
+MaxLevel: maximum limited of tree depth
 lambda λ: regularization, λ > 0 reduces the prediction's sensitivity to isolated observations
 gamma γ: for deciding node pruning
 Cover: The mimimum residual value in each node: (∑ (Probability(i - 1)) * ( 1- Probabilty(i - 1))) 
