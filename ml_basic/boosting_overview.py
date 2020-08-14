@@ -101,6 +101,14 @@ for i in 1.. N
             If Gain(parent) - γ <= 0, then parent get pruned 
             
         The largest Gain splitting threshold parent is chosen for level(l) - Greedy Algorithm
+        
+        for l in leaf1.. leafN in tree(i)
+                                                         ( ∑ Residuals )
+        OutputValue(leaf(l)) =  -------------------------------------------------------------  
+                                ( ( ∑ (Previous Probability) * ( 1- Previous Probabilty) ) + λ )  
+                    
+    
+    
         Greedy Algorithm makes decision based on the current state without looking ahead, but 
         it builds tree relatively quickly. It uses quantiles for s (all possible splitting
         decisions at level(l)). XgBoost use 33 quantiles by default. 
@@ -124,13 +132,6 @@ for i in 1.. N
         XgBoost can speed up building tree by only looking a random subset of features when
         deciding how to split the data.
         
-    
-    for l in leaf1.. leafN in tree(i)
-                                                         ( ∑ Residuals )
-        OutputValue(leaf(l)) =  -------------------------------------------------------------  
-                                ( ( ∑ (Previous Probability) * ( 1- Previous Probabilty) ) + λ )  
-                    
-    
 
 Classification
 --------------
