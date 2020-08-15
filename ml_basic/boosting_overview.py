@@ -127,7 +127,7 @@ for i in 1.. N
         Cache-Aware access puts Gradients and Hessians into CPU cache so that it can quickly
         calculates Similarity Scores and Output Values.
         
-        locks for Out-Of-Core Computation compress the massive data for minimizing the time 
+        Blocks for Out-Of-Core Computation compress the massive data for minimizing the time 
         for accessing the slow hard drives.
         
         XgBoost can speed up building tree by only looking a random subset of features when
