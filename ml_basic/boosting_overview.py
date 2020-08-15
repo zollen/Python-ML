@@ -147,12 +147,65 @@ AdaBoost
 ========
 https://www.youtube.com/watch?v=LsK-xG1cLYA
 
-1. AdaBoost combines a lot of weak leaners to make classifications. This weak learners are called   
-stumps (one parent and two leaves)    
+1. Using all features, AdaBoost combines a lot of weak leaners to make classifications. 
+This weak learners are called stumps (one parent <with one feature> and two leaves)    
 2. Some stumps get more say in classification than other stumps
 3. Each stump is made by taking the previous stump's mistakes into account.
+4. In each iteration, the training data get resampled based on the sample weights.
+
+Training
+---------
+Initial Sample Weight for all data
+Weight(0, ALL) = 1 / (number of training data)
+
+for i in 1.. N
+    for f in feature1.. featureF  (for building stump)
+        for d in splitting_decision for feature(f)
+            Calculating GiniIndex for each possible stump.         
+        Pick the smallest GiniIndex of the splitting_decision of feature(f)
+    Pick the smallest GiniIndex of feature amount all possible features
+    
+    Calculating the AmountOfSay of this stump by determing how well it classifies the data
+        The Total Error for a stump is the sum of the weights assoicated with the incorrectly
+        classified data. The Total error is always between 0 and 1. 0 means a perfect stump and
+        1 is a horrible stump. TotalError should never equal to exactly 0 or 1. A small term
+        1e-15 would be added into the Total Error before applying the following formula.
+                       1       1 - TotalError
+        AmountOfSay = --- log(----------------)
+                       2         TotalError
+                       
+        AmountOfSay is close to 1 if the total error is small (very good predictions)
+        AmountOfSay is close to 0 if the total error is 0.5 (no better than random). 
+        AmountOfSay is close to -1 is the total error is large (always predicts the opposite).
+    
+    The incorrect predicted data are going to have heavier weight and other correctly predicted
+    data are going to have less weight for the next stump.
+        for d in all incorrectly predicted data
+            Weight(i, d) = Weight(i - 1, d) x e^(AmountOfSay)
+        Weight(i) is large if the AmountOfSay is high (the stump does a good job)
+        Weight(i) is small if the AmountOfSay is small (the stump does a poor job)
+    
+        for d in all correctly predicted data
+            Weight(i, d) = Weight(i - 1, d) x e^(-1 * AmountOfSay)    
+        Weight(i) is large if the AmountOfSay is small
+        Weight(i) is small if the AmountOfSay is high
+        
+        Normalize all data to ensure all sample weights sum up to 1.0
+    
+    Creating a new training data by randomly picked the training data(resampling) based on the
+    sample weight. This new training data is going to be used for the next iteration. 
 
 
-     
-     
+Classification
+--------------
+Stump(1)(Yes) * AmountOfSay(1) + Stump(2)(Yes) * AmountOfSay(2) + Stump(3)(Yes) * AmountOfSay(3) 
+   + ... + Stump(N)(Yes) * AmountOfSay(N)
+   
+Stump(1)(No) * AmountOfSay(1) + Stump(2)(No) * AmountOfSay(2) + Stump(3)(No) * AmountOfSay(3)
+   + ... + Stump(N)(No) * AmountOfSay(N)
+   
+The label with the highest score win   
+
+
+
 """
