@@ -15,7 +15,7 @@ from sklearn.feature_selection import chi2
 from sklearn.feature_selection import RFE
 from sklearn import preprocessing
 from sklearn.preprocessing import Binarizer
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
@@ -71,7 +71,7 @@ for name in categorical_columns:
 print(train_df.describe())
 
 print("============== Recursive Features Elmination (RFE) ===============")
-model = DecisionTreeClassifier()
+model = ExtraTreesClassifier()
 rfe = RFE(model, 7)
 rfe = rfe.fit(train_df[all_features_columns], labels)
 print(rfe.support_)
@@ -87,15 +87,20 @@ kBest = model.fit(train_df[all_features_columns], labels)
 print(np.stack((all_features_columns, func(kBest.scores_)), axis=1))
 
 print("================ Decision Tree Best Features Selection ============")
-model = DecisionTreeClassifier()
+model = ExtraTreesClassifier()
 model.fit(train_df[all_features_columns], labels)
 print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
+
+# alone are bigger than P0value 0.05, therefore we remove then
+#numeric_columns = [ 'fare' ]
+#categorical_columns = [ 'sex', 'class', 'deck', 'alone' ]
+#all_features_columns = numeric_columns + categorical_columns
 
 model=sm.Logit(labels, train_df[all_features_columns])
 result=model.fit()
 print(result.summary2())
 
-model = DecisionTreeClassifier(criterion='entropy', max_depth=15)
+model = ExtraTreesClassifier(n_estimators = 150, max_depth=15)
 
 model.fit(train_df[all_features_columns], labels)
 
