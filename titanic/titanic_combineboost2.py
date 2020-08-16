@@ -70,9 +70,9 @@ model = VotingClassifier(estimators = [ ('cat',  model1),
                                         ('xgb',  model3) ], voting='soft')
 
 
-for cls, label in zip([model1, model2, model3, model ], 
+for classifier, label in zip([model1, model2, model3, model ], 
                       ['CatBoost', 'LightGBM', 'XGBoost', 'VotingClassifer']):
-    scores = cross_val_score(cls, df[all_features_columns], df[label_column], cv=5)
+    scores = cross_val_score(classifier, df[all_features_columns], df[label_column], cv=12)
     print("[%s] Accuracy: %0.2f (+/- %0.2f)" % (label, scores.mean(), scores.std()))
 
 
