@@ -28,7 +28,7 @@ pd.set_option('max_columns', None)
 pd.set_option('max_rows', 10)
 np.random.seed(87)
 
-label_column = 'survived'
+label_column = [ 'survived' ]
 numeric_columns = [ 'age', 'fare' ]
 categorical_columns = [ 'sex', 'n_siblings_spouses', 'parch', 'class', 'deck', 'embark_town', 'alone' ]
 all_features_columns = numeric_columns + categorical_columns
@@ -46,7 +46,7 @@ print(train_df.describe())
 labels = train_df[label_column]
 
 
-for name in categorical_columns:
+for name in categorical_columns + label_column:
     encoder = preprocessing.LabelEncoder()   
     keys = np.union1d(train_df[name].unique(), test_df[name].unique())
    
@@ -72,7 +72,6 @@ print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1)
 model = LGBMClassifier(num_leaves=32, max_depth=16, min_data_in_leaf=10)
 model.fit(train_df[all_features_columns], train_df[label_column])
 print("LightGBM Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
-
 print("================= TRAINING DATA =====================")
 preds = model.predict(train_df[all_features_columns])
 print("Accuracy: ", round(accuracy_score(train_df[label_column], preds), 2))
@@ -94,4 +93,4 @@ print(confusion_matrix(test_df[label_column], preds))
 print(classification_report(test_df[label_column], preds))
 
 
-
+model.booster_.save_model("models/lightgbm.model")
