@@ -9,7 +9,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
-from sklearn.preprocessing import Binarizer
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
