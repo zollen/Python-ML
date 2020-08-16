@@ -9,11 +9,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import precision_score
-from sklearn.metrics import recall_score
-from sklearn.metrics import roc_auc_score
-from sklearn.metrics import log_loss
 from sklearn.model_selection import cross_val_score
 from catboost import CatBoostClassifier, Pool
 from lightgbm import LGBMClassifier 
@@ -23,13 +18,6 @@ import warnings
 
 warnings.filterwarnings('ignore')
 np.random.seed(87)
-
-def result(observed, predicted):
-    print("Accuracy: ", round(accuracy_score(observed, predicted), 2), 
-          "Precision: ", round(precision_score(observed, predicted), 2),
-          "Recall: ", round(recall_score(observed, predicted), 2),
-          "AUC-ROC: ", round(roc_auc_score(observed, predicted), 2),
-          "Log Loss: ", round(log_loss(observed, predicted), 2))
     
     
 label_column = ['survived' ]
