@@ -24,6 +24,15 @@ from sklearn.metrics import log_loss
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 
+"""
+In extremely randomized trees (see ExtraTreesClassifier and ExtraTreesRegressor classes), 
+randomness goes one step further in the way splits are computed. As in random forests, a 
+random subset of candidate features is used, but instead of looking for the most 
+discriminative thresholds, thresholds are drawn at random for each candidate feature and 
+the best of these randomly-generated thresholds is picked as the splitting rule. This 
+usually allows to reduce the variance of the model a bit more, at the expense of a slightly 
+greater increase in bias:
+"""
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', 10)
