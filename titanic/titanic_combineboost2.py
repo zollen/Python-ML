@@ -15,10 +15,14 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import log_loss
+from sklearn.model_selection import cross_val_score
 from catboost import CatBoostClassifier, Pool
-import lightgbm as lgbm
+from lightgbm import LGBMClassifier 
 from xgboost import XGBClassifier
+from sklearn.ensemble import VotingClassifier
+import warnings
 
+warnings.filterwarnings('ignore')
 np.random.seed(87)
 
 def result(observed, predicted):
@@ -35,53 +39,40 @@ categorical_columns = [ 'sex', 'n_siblings_spouses', 'parch', 'class', 'deck', '
 all_features_columns = numeric_columns + categorical_columns 
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
-train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
-test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
+df = pd.concat([ pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv')) , 
+                 pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv')) ])
 
 for name in categorical_columns + label_column:
     encoder = preprocessing.LabelEncoder()   
-    keys = np.union1d(train_df[name].unique(), test_df[name].unique())
+    keys = df[name].unique()
    
     if len(keys) == 2:
         encoder = preprocessing.LabelBinarizer()
         
     encoder.fit(keys)
-    train_df[name] = encoder.transform(train_df[name].values)
-    test_df[name] = encoder.transform(test_df[name].values)
+    df[name] = encoder.transform(df[name].values)
 
+
+model1 = CatBoostClassifier(verbose=False)
+
+model2 = LGBMClassifier(num_leaves=32, max_depth=16, min_data_in_leaf=10)
+
+model3 = XGBClassifier(n_estimators=150, max_depth=11, min_child_weight=3, gamma=0.2, subsample=0.6, nthread=16)
+
+print("=========== Voting Classifier with 5 fold Cross Validation =============")
 """
-LightGBM can only load back to the basic booster (Not LGBMClassifier)
+If ‘hard’, uses predicted class labels for majority rule voting. 
+If ‘soft’, predicts the class label based on the argmax of the sums of the predicted 
+    probabilities, which is recommended for an ensemble of well-calibrated classifiers.
 """
+model = VotingClassifier(estimators = [ ('cat',  model1), 
+                                        ('lgbm', model2), 
+                                        ('xgb',  model3) ], voting='soft')
 
 
-model1 = CatBoostClassifier()
-model1.load_model("models/catboost.model")
-
-model2 = lgbm.Booster(model_file="models/lightgbm.model")
-
-model3 = XGBClassifier()
-model3.load_model("models/xgboost.model")
-
-print("================= CatBoost Predictions =====================")
-preds1 = model1.predict(test_df[all_features_columns])
-result(test_df[label_column], preds1)
-
-print("================= LightGBM Predictions =====================")
-preds2 = model2.predict(test_df[all_features_columns], raw_score=True)
-preds2 = np.squeeze(Binarizer(threshold=0.50).fit_transform(np.expand_dims(preds2, 1))).astype('int32')
-result(test_df[label_column], preds2)
-
-print("================= XGBoost Predictions =====================")
-preds3 = model3.predict(test_df[all_features_columns])
-result(test_df[label_column], preds3)
-
-print("=========== Aggregate all three predictions and vote majority =============")
-preds = np.stack((preds1, preds2, preds3), axis=1)
-preds = np.apply_along_axis(lambda x : np.argmax(np.bincount(x)), 1, preds)
-result(test_df[label_column], preds)
-
-
-
+for cls, label in zip([model1, model2, model3, model ], ['Cat', 'LGbm', 'XgB', 'Voting']):
+    scores = cross_val_score(cls, df[all_features_columns], df[label_column], cv=5)
+    print("[%s] Accuracy: %0.2f (+/- %0.2f)" % (label, scores.mean(), scores.std()))
 
 
 
