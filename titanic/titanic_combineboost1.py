@@ -15,7 +15,6 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import log_loss
-from sklearn.metrics import confusion_matrix
 from catboost import CatBoostClassifier, Pool
 import lightgbm as lgbm
 from xgboost import XGBClassifier
