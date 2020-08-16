@@ -92,5 +92,3 @@ print("Log Loss: ", round(log_loss(test_df[label_column], preds), 2))
 print(confusion_matrix(test_df[label_column], preds))
 print(classification_report(test_df[label_column], preds))
 
-
-model.booster_.save_model("models/lightgbm.model")
