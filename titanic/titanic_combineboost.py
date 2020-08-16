@@ -50,27 +50,39 @@ for name in categorical_columns + label_column:
     train_df[name] = encoder.transform(train_df[name].values)
     test_df[name] = encoder.transform(test_df[name].values)
 
+"""
+LightGBM can only load back to the basic booster (Not LGBMClassifier)
+"""
 
 
 model1 = CatBoostClassifier()
 model1.load_model("models/catboost.model")
 
 model2 = lgbm.Booster(model_file="models/lightgbm.model")
-print("LightGBM can only load back to the basic booster (Not LGBMClassifier): ", type(model2))
 
 model3 = XGBClassifier()
 model3.load_model("models/xgboost.model")
 
 print("================= CatBoost Predictions =====================")
-preds = model1.predict(test_df[all_features_columns])
-result(test_df[label_column], preds)
+preds1 = model1.predict(test_df[all_features_columns])
+result(test_df[label_column], preds1)
 
 print("================= LightGBM Predictions =====================")
-preds = model2.predict(test_df[all_features_columns])
-preds = Binarizer(threshold=0.50).fit_transform(np.expand_dims(preds, 1))
-result(test_df[label_column], preds)
+preds2 = model2.predict(test_df[all_features_columns], raw_score=True)
+preds2 = np.squeeze(Binarizer(threshold=0.50).fit_transform(np.expand_dims(preds2, 1))).astype('int32')
+result(test_df[label_column], preds2)
 
 print("================= XGBoost Predictions =====================")
-preds = model3.predict(test_df[all_features_columns])
+preds3 = model3.predict(test_df[all_features_columns])
+result(test_df[label_column], preds3)
+
+print("=========== Aggregate all three predictions and vote majority =============")
+preds = np.stack((preds1, preds2, preds3), axis=1)
+preds = np.apply_along_axis(lambda x : np.argmax(np.bincount(x)), 1, preds)
 result(test_df[label_column], preds)
+
+
+
+
+
 
