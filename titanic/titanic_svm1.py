@@ -13,7 +13,6 @@ import statsmodels.api as sm
 from sklearn.feature_selection import RFE
 from sklearn import svm
 from sklearn import preprocessing
-from sklearn.ensemble import BaggingClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
