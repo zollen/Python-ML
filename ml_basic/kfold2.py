@@ -46,6 +46,6 @@ estimators.append(('feature_union', feature_union))
 estimators.append(('logistic', LogisticRegression()))
 model = Pipeline(estimators)
 
-kfold = KFold(n_splits = 20, random_state = 7)
+kfold = KFold(n_splits = 20, shuffle = True, random_state = 7)
 results = cross_val_score(model, df[all_features_columns], df[label_column], cv = kfold)
-print(round(results.mean(), 2))
+print("20-Folds Cross Validation Accuracy: ", round(results.mean(), 2))
