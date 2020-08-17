@@ -40,4 +40,4 @@ model = Pipeline(estimators)
 
 kfold = KFold(n_splits = 20, random_state = 7)
 results = cross_val_score(model, df[all_features_columns], df[label_column], cv = kfold)
-print(results.mean())
+print(round(results.mean(), 2))
