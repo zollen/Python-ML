@@ -8,11 +8,13 @@ import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from sklearn import preprocessing
-from sklearn.model_selection import cross_val_score
-from catboost import CatBoostClassifier, Pool
-from lightgbm import LGBMClassifier 
 from xgboost import XGBClassifier
+from sklearn import preprocessing
+from sklearn import svm
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import cross_val_score
 from sklearn.ensemble import VotingClassifier
 import warnings
 
@@ -40,11 +42,16 @@ for name in categorical_columns + label_column:
     df[name] = encoder.transform(df[name].values)
 
 
-model1 = CatBoostClassifier(verbose=False)
+model1 = LogisticRegression()
 
-model2 = LGBMClassifier(num_leaves=32, max_depth=16, min_data_in_leaf=10)
+model2 = DecisionTreeClassifier()
 
-model3 = XGBClassifier(n_estimators=150, max_depth=11, min_child_weight=3, gamma=0.2, subsample=0.6, nthread=16)
+model3 = svm.SVC(kernel='rbf', gamma ='auto', C=1.0)
+
+
+model4 = QuadraticDiscriminantAnalysis()
+
+model5 = XGBClassifier(n_estimators=150, max_depth=11, min_child_weight=3, gamma=0.2, subsample=0.6, nthread=16)
 
 print("=========== Voting Classifier with 5 fold Cross Validation =============")
 """
@@ -52,13 +59,15 @@ If ‘hard’, uses predicted class labels for majority rule voting.
 If ‘soft’, predicts the class label based on the argmax of the sums of the predicted 
     probabilities, which is recommended for an ensemble of well-calibrated classifiers.
 """
-model = VotingClassifier(estimators = [ ('cat',  model1), 
-                                        ('lgbm', model2), 
-                                        ('xgb',  model3) ], voting='soft')
+model = VotingClassifier(estimators = [ ('logistic',  model1), 
+                                        ('tree',      model2), 
+                                        ('svm',       model3),
+                                        ('qda',       model4),
+                                        ('xgboost',   model5) ], voting='hard')
 
 
-for classifier, label in zip([model1, model2, model3, model ], 
-                      ['CatBoost', 'LightGBM', 'XGBoost', 'VotingClassifer']):
+for classifier, label in zip([model1, model2, model3, model4, model5, model ], 
+                      ['logistic', 'DecisionTree', 'SVM', 'QDA', 'XGBoost', 'Voting']):
     scores = cross_val_score(classifier, df[all_features_columns], df[label_column], cv=12)
     print("[%s] Accuracy: %0.2f (+/- %0.2f)" % (label, scores.mean(), scores.std()))
 
