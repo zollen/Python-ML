@@ -8,9 +8,9 @@ import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from xgboost import XGBClassifier
 from sklearn import preprocessing
 from sklearn import svm
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -51,7 +51,7 @@ model3 = svm.SVC(kernel='rbf', gamma ='auto', C=1.0)
 
 model4 = QuadraticDiscriminantAnalysis()
 
-model5 = XGBClassifier(n_estimators=150, max_depth=11, min_child_weight=3, gamma=0.2, subsample=0.6, nthread=16)
+model5 = KNeighborsClassifier(n_neighbors = 3, p=1)
 
 print("=========== Voting Classifier with 5 fold Cross Validation =============")
 """
@@ -63,11 +63,11 @@ model = VotingClassifier(estimators = [ ('logistic',  model1),
                                         ('tree',      model2), 
                                         ('svm',       model3),
                                         ('qda',       model4),
-                                        ('xgboost',   model5) ], voting='hard')
+                                        ('Knn',   model5) ], voting='hard')
 
 
 for classifier, label in zip([model1, model2, model3, model4, model5, model ], 
-                      ['logistic', 'DecisionTree', 'SVM', 'QDA', 'XGBoost', 'Voting']):
+                      ['logistic', 'DecisionTree', 'SVM', 'QDA', 'Knn', 'Voting']):
     scores = cross_val_score(classifier, df[all_features_columns], df[label_column], cv=12)
     print("[%s] Accuracy: %0.2f (+/- %0.2f)" % (label, scores.mean(), scores.std()))
 

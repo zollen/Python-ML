@@ -78,7 +78,7 @@ categorical_columns = [ 'sex', 'class', 'deck', 'alone']
 all_features_columns = numeric_columns + categorical_columns
 
 
-model = KNeighborsClassifier(n_neighbors = 3)
+model = KNeighborsClassifier(n_neighbors = 3, p=1)
 pca = PCA(n_components=3)
 df = pca.fit_transform(train_df[all_features_columns])
     
