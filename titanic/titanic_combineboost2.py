@@ -14,6 +14,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from sklearn.ensemble import VotingClassifier
 import warnings
@@ -53,7 +54,7 @@ model4 = QuadraticDiscriminantAnalysis()
 
 model5 = KNeighborsClassifier(n_neighbors = 3, p=1)
 
-print("=========== Voting Classifier with 5 fold Cross Validation =============")
+print("=========== Voting Classifier with 12 fold Cross Validation =============")
 """
 If ‘hard’, uses predicted class labels for majority rule voting. 
 If ‘soft’, predicts the class label based on the argmax of the sums of the predicted 
@@ -66,9 +67,10 @@ model = VotingClassifier(estimators = [ ('logistic',  model1),
                                         ('Knn',   model5) ], voting='hard')
 
 
+kfold = KFold(n_splits = 12, shuffle = True, random_state = 0)
 for classifier, label in zip([model1, model2, model3, model4, model5, model ], 
                       ['logistic', 'DecisionTree', 'SVM', 'QDA', 'Knn', 'Voting']):
-    scores = cross_val_score(classifier, df[all_features_columns], df[label_column], cv=12)
+    scores = cross_val_score(classifier, df[all_features_columns], df[label_column], cv=kfold)
     print("[%s] Accuracy: %0.2f (+/- %0.2f)" % (label, scores.mean(), scores.std()))
 
 
