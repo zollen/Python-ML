@@ -73,7 +73,8 @@ StratifiedKFold
 Takes group information into account to avoid building folds with imbalanced class distributions (for binary or multiclass classification tasks).
 
 GroupKFold
-K-fold iterator variant with non-overlapping groups.
+example: https://www.programcreek.com/python/example/91158/sklearn.model_selection.GroupKFold
+K-fold iterator variant with non-overlapping groups. User defines which data belongs to which fold
 
 RepeatedKFold
 Repeats K-Fold n times.
