@@ -64,10 +64,22 @@ model = VotingClassifier(estimators = [ ('logistic',  model1),
                                         ('tree',      model2), 
                                         ('svm',       model3),
                                         ('qda',       model4),
-                                        ('Knn',   model5) ], voting='hard')
+                                        ('Knn',       model5) ], voting='hard')
 
 
-kfold = KFold(n_splits = 12, shuffle = True, random_state = 0)
+"""
+See also
+StratifiedKFold
+Takes group information into account to avoid building folds with imbalanced class distributions (for binary or multiclass classification tasks).
+
+GroupKFold
+K-fold iterator variant with non-overlapping groups.
+
+RepeatedKFold
+Repeats K-Fold n times.
+"""
+
+kfold = KFold(n_splits = 12, shuffle=True, random_state=0)
 for classifier, label in zip([model1, model2, model3, model4, model5, model ], 
                       ['logistic', 'DecisionTree', 'SVM', 'QDA', 'Knn', 'Voting']):
     scores = cross_val_score(classifier, df[all_features_columns], df[label_column], cv=kfold)

@@ -38,6 +38,17 @@ estimators.append(('standardize', StandardScaler()))
 estimators.append(('lda', LinearDiscriminantAnalysis()))
 model = Pipeline(estimators)
 
+"""
+See also
+StratifiedKFold
+Takes group information into account to avoid building folds with imbalanced class distributions (for binary or multiclass classification tasks).
+
+GroupKFold
+K-fold iterator variant with non-overlapping groups.
+
+RepeatedKFold
+Repeats K-Fold n times.
+"""
 kfold = KFold(n_splits = 20, shuffle = True, random_state = 7)
 results = cross_val_score(model, df[all_features_columns], df[label_column], cv = kfold)
 print("20-Folds Cross Validation Accuracy: ", round(results.mean(), 2))
