@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from pandas import read_csv
 from sklearn.linear_model import Ridge
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -35,7 +35,7 @@ param_grid = dict({ "alpha": alphas, "max_iter": maxiters, "tol":  tols, "solver
 
 
 model = Ridge()
-grid = GridSearchCV(estimator = model, param_grid = param_grid, n_jobs=50)
+grid = RandomizedSearchCV(estimator = model, param_distributions  = param_grid, n_jobs=50, n_iter = 50, random_state=7)
 grid.fit(df[all_features_columns], df[label_column])
 
 print(grid.cv_results_)
