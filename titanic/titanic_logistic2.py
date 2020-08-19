@@ -12,6 +12,7 @@ from imblearn.over_sampling import RandomOverSampler
 import statsmodels.api as sm
 from sklearn.feature_selection import RFE
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import RandomizedSearchCV
 from sklearn import preprocessing
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
@@ -112,12 +113,28 @@ for name in categorical_columns:
     test_df[name] = normalizer(test_df[name].values, keys)
 
  
-#for ele in train_df.head(n=5).iterrows():
-#    print(ele)
+if True:
+    param_grid = dict({ "penalty": ['l2'],
+                       "C": [ 0.1, 0.01, 0.001, 0.5, 1 ],
+                       "class_weight": [ 'balanced' ],
+                       "solver": ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga' ],
+                       "max_iter": [50, 300, 500, 750 ] })
+    model = RandomizedSearchCV(estimator = LogisticRegression(), 
+                        param_distributions = param_grid, n_jobs=50, n_iter=100)
+
+    model.fit(train_df[all_features_columns], labels.squeeze())
+
+    print("====================================================================================")
+    print("Best Score: ", model.best_score_)
+    print("Best Penalty: ", model.best_estimator_.penalty)
+    print("Best MaxIter: ", model.best_estimator_.max_iter)
+    print("Best Class Weight: ", model.best_estimator_.class_weight)
+    print("Best l1 ratio: ", model.best_estimator_.l1_ratio)
+    print("Best Solver: ", model.best_estimator_.solver)
+
+    exit()
 
 
-
-print(train_df.describe())
 
 logreg = LogisticRegression()
 rfe = RFE(logreg, 7)
