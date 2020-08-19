@@ -12,6 +12,7 @@ from xgboost import XGBClassifier
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
 from sklearn import preprocessing
+from sklearn.model_selection import RandomizedSearchCV
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
@@ -69,11 +70,41 @@ model = DecisionTreeClassifier()
 model.fit(train_df[all_features_columns], labels)
 print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
-train_df['family'] = train_df['n_siblings_spouses'] + train_df['parch']
-test_df['family'] = test_df['n_siblings_spouses'] + test_df['parch']
 
+if False:
+    param_grid = dict({ "n_estimators": [ 50, 75, 100, 150 ],
+                       "max_depth": [ 2, 5, 10, 15, 20, 25, 30 ],
+                       "learning_rate": [ 0.001, 0.01, 0.1, 0.3, 0.5 ],
+                       "gamma": [ 0, 1, 2, 3, 4 ],
+                       "min_child_weight": [ 0, 1, 2, 3, 5, 7, 10 ],
+                       "subsample": [ 0.2, 0.4, 0.6, 0.8, 1.0 ],
+                       "reg_lambda": [ 0, 0.5, 1, 2, 3 ],
+                       "reg_alpha": [ 0, 0.5, 1 ],
+                       "max_leaves": [0, 1, 2, 5, 10 ],
+                       "max_bin": [ 128, 256, 512, 1024 ] })
+    model = RandomizedSearchCV(estimator = XGBClassifier(), 
+                        param_distributions = param_grid, n_jobs=50, n_iter=100)
 
-model = XGBClassifier(n_estimators=150, max_depth=11, min_child_weight=3, gamma=0.2, subsample=0.6, nthread=16)
+    model.fit(train_df[all_features_columns], labels.squeeze())
+
+    print("====================================================================================")
+    print("Best Score: ", model.best_score_)
+    print("Best n_estimators: ", model.best_estimator_.n_estimators)
+    print("Best max_depth: ", model.best_estimator_.max_depth)
+    print("Best eta: ", model.best_estimator_.learning_rate)
+    print("Best gamma: ", model.best_estimator_.gamma)
+    print("Best min_child_weight: ", model.best_estimator_.min_child_weight)
+    print("Best subsample: ", model.best_estimator_.subsample)
+    print("Best lambda: ", model.best_estimator_.reg_lambda)
+    print("Best alpha: ", model.best_estimator_.reg_alpha)
+
+    exit()
+    
+if False:    
+    model = XGBClassifier(n_estimators=150, max_depth=11, min_child_weight=3, gamma=0.2, subsample=0.6, nthread=16)
+else:
+    model = XGBClassifier(n_estimators=150, max_depth=10, min_child_weight=5, gamma=0.7, subsample=1.0, reg_lambda = 0.01, reg_alpha = 0.01, nthread=16)
+
 model.fit(train_df[all_features_columns], train_df[label_column])
 print("XGB Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 
