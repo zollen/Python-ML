@@ -40,33 +40,23 @@ def plot_roc(model, features, labels):
 ##  Saving the graph as image png.
 ##    plt.savefig('Log_ROC')
 
-tbl = {}
-
-def normalize(col, keys):
-    length = len(keys)
-    for key, i in zip(keys, range(length)):
-        tbl[name + "." + str(key)] =  float(i)
-    tbl[name + ".total"] = float(length)
-                
-    testme = lambda x : tbl[name + "." + str(x)] / tbl[name + ".total"] if x > 0.0 else 0.0
-    
-    return list(map(testme, col))
-
-def dummy(col, keys):
-    return col
-
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', 10)
+np.random.seed(87)
 
 label_column = [ 'survived' ]
 numeric_columns = [ 'age', 'fare' ]
-categorical_columns = [ 'sex', 'n_siblings_spouses', 'parch', 'class', 'deck', 'embark_town', 'alone' ]
+categorical_columns = [ 'sex', 'family', 'class', 'deck', 'embark_town', 'alone' ]
 all_features_columns = numeric_columns + categorical_columns
+
 
 PROJECT_DIR=str(Path(__file__).parent.parent)
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
+
+train_df['family'] = train_df['n_siblings_spouses'] + train_df['parch']
+test_df['family'] = test_df['n_siblings_spouses'] + test_df['parch']
 
 labels = train_df[label_column]
 
@@ -88,36 +78,31 @@ print("ReBalanced Size: Total Number of Survived: ", len(labels[labels['survived
 
 
 
-scaler = preprocessing.MinMaxScaler(feature_range=(0,1))
-train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns].values)
-test_df[numeric_columns] = scaler.transform(test_df[numeric_columns].values)
-
-
 for name in categorical_columns:
     encoder = preprocessing.LabelEncoder()
-    normalizer = normalize
         
     keys = np.union1d(train_df[name].unique(), test_df[name].unique())
    
     if len(keys) == 2:
-        normalizer = dummy
         encoder = preprocessing.LabelBinarizer()
         
     encoder.fit(keys)
     train_df[name] = encoder.transform(train_df[name].values)
     test_df[name] = encoder.transform(test_df[name].values)
-    
-    keys = np.union1d(train_df[name].unique(), test_df[name].unique())
-    
-    train_df[name] = normalizer(train_df[name], keys)
-    test_df[name] = normalizer(test_df[name].values, keys)
+
+scaler = preprocessing.MinMaxScaler(feature_range=(0,1))
+train_df[all_features_columns] = scaler.fit_transform(train_df[all_features_columns].values)
+test_df[all_features_columns] = scaler.transform(test_df[all_features_columns].values)
+
 
  
 if False:
-    param_grid = dict({ "penalty": ['l2'],
-                       "C": [ 0.1, 0.01, 0.001, 0.5, 1 ],
-                       "class_weight": [ 'balanced' ],
-                       "solver": ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga' ],
+    param_grid = dict({ "penalty": ['l2', 'none'],
+                       "C": [ 0.01, 1.0 ],
+                       "class_weight": [ None, 'balanced' ],
+                       "fit_intercept": [ True, False ],
+                       "intercept_scaling": [ 0.1, 0.5, 1.0 ],
+                       "solver": ['lbfgs', 'liblinear' , 'saga'],
                        "max_iter": [50, 300, 500, 750 ] })
     model = RandomizedSearchCV(estimator = LogisticRegression(), 
                         param_distributions = param_grid, n_jobs=50, n_iter=100)
@@ -130,6 +115,8 @@ if False:
     print("Best MaxIter: ", model.best_estimator_.max_iter)
     print("Best Class Weight: ", model.best_estimator_.class_weight)
     print("Best l1 ratio: ", model.best_estimator_.l1_ratio)
+    print("Best Fit Intecept: ", model.best_estimator_.fit_intercept)
+    print("Best Intercept Scaling: ", model.best_estimator_.intercept_scaling)
     print("Best Solver: ", model.best_estimator_.solver)
 
     exit()
@@ -146,18 +133,9 @@ model=sm.Logit(labels, train_df[all_features_columns])
 result=model.fit()
 print(result.summary2())
 
-train_df['family'] = train_df['n_siblings_spouses'] + train_df['parch']
-test_df['family'] = test_df['n_siblings_spouses'] + test_df['parch']
-# alone are bigger than P0value 0.05, therefore we remove then
-numeric_columns = [ 'age', 'fare' ]
-categorical_columns = [ 'sex', 'family', 'class', 'deck', 'embark_town', 'alone' ]
-all_features_columns = numeric_columns + categorical_columns
 
-model=sm.Logit(labels, train_df[all_features_columns])
-result=model.fit()
-print(result.summary2())
 
-model = LogisticRegression(max_iter=500)
+model = LogisticRegression(solver='saga', penalty='elasticnet', l1_ratio=0.001)
 model.fit(train_df[all_features_columns], labels)
 
 print("================= TRAINING DATA =====================")
@@ -176,4 +154,4 @@ print(confusion_matrix(test_df[label_column], preds))
 print(classification_report(test_df[label_column], preds))
 
 plot_roc(model, test_df[all_features_columns].values, test_df[label_column].values)
-plt.show()
+#plt.show()
