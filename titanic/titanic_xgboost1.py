@@ -103,7 +103,7 @@ if False:
 if False:    
     model = XGBClassifier(n_estimators=150, max_depth=11, min_child_weight=3, gamma=0.2, subsample=0.6, nthread=16)
 else:
-    model = XGBClassifier(n_estimators=150, max_depth=10, min_child_weight=5, gamma=0.7, subsample=1.0, reg_lambda = 0.01, reg_alpha = 0.01, nthread=16)
+    model = XGBClassifier(n_estimators=150, max_depth=10, min_child_weight=5, gamma=0.7, subsample=1.0, reg_lambda = 0.02, reg_alpha = 0.005, nthread=16)
 
 model.fit(train_df[all_features_columns], train_df[label_column])
 print("XGB Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
