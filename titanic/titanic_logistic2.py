@@ -97,13 +97,13 @@ test_df[all_features_columns] = scaler.transform(test_df[all_features_columns].v
 
  
 if False:
-    param_grid = dict({ "penalty": ['l2', 'none'],
+    param_grid = dict({ "penalty": [ 'l2' ],
                        "C": [ 0.01, 1.0 ],
                        "class_weight": [ None, 'balanced' ],
                        "fit_intercept": [ True, False ],
                        "intercept_scaling": [ 0.1, 0.5, 1.0 ],
                        "solver": ['lbfgs', 'liblinear' , 'saga'],
-                       "max_iter": [50, 300, 500, 750 ] })
+                       "max_iter": [ 50, 300, 500, 750 ] })
     model = RandomizedSearchCV(estimator = LogisticRegression(), 
                         param_distributions = param_grid, n_jobs=50, n_iter=100)
 
@@ -134,8 +134,11 @@ result=model.fit()
 print(result.summary2())
 
 
-
-model = LogisticRegression(solver='saga', penalty='elasticnet', l1_ratio=0.001)
+if True:
+    model = LogisticRegression(solver='saga', penalty='elasticnet', l1_ratio=0.001)
+else:
+    model = LogisticRegression(max_iter=500, solver='lbfgs')
+    
 model.fit(train_df[all_features_columns], labels)
 
 print("================= TRAINING DATA =====================")
