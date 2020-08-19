@@ -113,7 +113,7 @@ for name in categorical_columns:
     test_df[name] = normalizer(test_df[name].values, keys)
 
  
-if True:
+if False:
     param_grid = dict({ "penalty": ['l2'],
                        "C": [ 0.1, 0.01, 0.001, 0.5, 1 ],
                        "class_weight": [ 'balanced' ],
@@ -165,6 +165,7 @@ preds = model.predict(train_df[all_features_columns])
 print("Accuracy: ", round(accuracy_score(train_df[label_column], preds), 2))
 print("Precision: ", round(precision_score(train_df[label_column], preds), 2))
 print("Recall: ", round(recall_score(train_df[label_column], preds), 2))
+print(confusion_matrix(train_df[label_column], preds))
 
 print("================= TEST DATA =====================")
 preds = model.predict(test_df[all_features_columns])
