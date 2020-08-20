@@ -95,8 +95,12 @@ if False:
    
     exit()
 
-model = LGBMClassifier(n_estimators=50, max_depth=16, 
+if False:
+    model = LGBMClassifier(num_leaves=32, max_depth=16, min_data_in_leaf=10)
+else:
+    model = LGBMClassifier(n_estimators=50, max_depth=16, 
                         max_leaves=32, min_data_in_leaf=25)
+    
 model.fit(train_df[all_features_columns], train_df[label_column])
 print("LightGBM Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 print("================= TRAINING DATA =====================")
