@@ -47,28 +47,38 @@ print(train_df.describe())
 labels = train_df[label_column]
 
 
-for name in categorical_columns + label_column:
-    encoder = preprocessing.LabelEncoder()   
-    keys = np.union1d(train_df[name].unique(), test_df[name].unique())
+if False:
+### OneHotEncoder
+    cat_columns = []
+
+    for name in categorical_columns: 
+        keys = np.union1d(train_df[name].unique(), test_df[name].unique())
+    
+        for key in keys:
+            func = lambda x : 1 if x == key else 0
+            train_df[name + "." + str(key)] = train_df[name].apply(func)
+            test_df[name + "." + str(key)] = test_df[name].apply(func)
+            cat_columns.append(name + "." + str(key))
    
-    if len(keys) == 2:
-        encoder = preprocessing.LabelBinarizer()
+    all_features_columns = numeric_columns + cat_columns
+
+    encoder = preprocessing.LabelBinarizer()
+    train_df[label_column] = encoder.fit_transform(train_df[label_column].values)
+    test_df[label_column] = encoder.transform(test_df[label_column].values)
+else:
+### LabelEncoder
+    for name in categorical_columns + label_column:
+        encoder = preprocessing.LabelEncoder()   
+        keys = np.union1d(train_df[name].unique(), test_df[name].unique())
+   
+        if len(keys) == 2:
+            encoder = preprocessing.LabelBinarizer()
         
-    encoder.fit(keys)
-    train_df[name] = encoder.transform(train_df[name].values)
-    test_df[name] = encoder.transform(test_df[name].values)
+        encoder.fit(keys)
+        train_df[name] = encoder.transform(train_df[name].values)
+        test_df[name] = encoder.transform(test_df[name].values)
    
 
-
-print("=============== K Best Features Selection ==================")
-model = SelectKBest(score_func=chi2, k=5)
-kBest = model.fit(train_df[all_features_columns], labels)
-print(np.stack((all_features_columns, func(kBest.scores_)), axis=1))
-
-print("================ Decision Tree Best Features Selection ============")
-model = DecisionTreeClassifier()
-model.fit(train_df[all_features_columns], labels)
-print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
 if False:
     param_grid = dict({ "n_estimators": [ 75, 100, 150, 200 ],
