@@ -84,7 +84,7 @@ kfold = KFold(n_splits = 12, shuffle=True, random_state=0)
 for classifier, label in zip([model1, model2, model3, model4, model5, model ], 
                       ['logistic', 'DecisionTree', 'SVM', 'QDA', 'Knn', 'Voting']):
     scores = cross_val_score(classifier, df[all_features_columns], df[label_column], cv=kfold)
-    print("[%s] Accuracy: %0.2f (+/- %0.2f)" % (label, scores.mean(), scores.std()))
+    print("[%-15s] Accuracy: %0.2f (+/- %0.2f)" % (label, scores.mean(), scores.std()))
 
 
 
