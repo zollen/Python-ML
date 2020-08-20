@@ -11,6 +11,7 @@ import numpy as np
 from lightgbm import LGBMClassifier 
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
+from sklearn.model_selection import RandomizedSearchCV
 from sklearn import preprocessing
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
@@ -68,6 +69,29 @@ print("================ Decision Tree Best Features Selection ============")
 model = DecisionTreeClassifier()
 model.fit(train_df[all_features_columns], labels)
 print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
+
+if False:
+    param_grid = dict({ "n_estimators": [ 75, 100, 150, 200 ],
+                       "boosting_type": [ 'gbdt', 'dart', 'goss', 'rf' ],
+                       "max_leaves": [ 4, 6, 8, 16  ],
+                       "max_depth": [ -1, 6, 12, 24 ],
+                       "learning_rate": [ 0.0001, 0.001, 0.01, 1 ],
+                       "subsample_for_bin": [ 150000, 200000, 250000, 300000 ],
+                       "max_bin": [ 60, 100, 255, 500 ]  })
+    model = RandomizedSearchCV(estimator = LGBMClassifier(), 
+                        param_distributions = param_grid, n_jobs=50, n_iter=100)
+
+    model.fit(train_df[all_features_columns], labels.squeeze())
+    print("====================================================================================")
+    print("Best Score: ", model.best_score_)
+    print("Best n_estimators: ", model.best_estimator_.n_estimators)
+    print("Best max_depth: ", model.best_estimator_.max_depth)
+    print("Best LearningRate: ", model.best_estimator_.learning_rate)
+    print("Best MaxLeaves: ", model.best_estimator_.max_leaves)
+    print("Best SubSampleForBin: ", model.best_estimator_.subsample_for_bin)
+    print("Best MaxBin: ", model.best_estimator_.max_bin)
+   
+    exit()
 
 model = LGBMClassifier(num_leaves=32, max_depth=16, min_data_in_leaf=10)
 model.fit(train_df[all_features_columns], train_df[label_column])
