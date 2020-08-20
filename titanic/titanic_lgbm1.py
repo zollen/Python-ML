@@ -96,7 +96,7 @@ if False:
     exit()
 
 model = LGBMClassifier(n_estimators=50, max_depth=16, 
-                max_leaves=32, min_data_in_leaf=10)
+                        max_leaves=32, min_data_in_leaf=25)
 model.fit(train_df[all_features_columns], train_df[label_column])
 print("LightGBM Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 print("================= TRAINING DATA =====================")
@@ -111,7 +111,7 @@ print(confusion_matrix(train_df[label_column], preds))
 
 print("================= TEST DATA =====================")
 preds = model.predict(test_df[all_features_columns])
-print("Accuracy: %02.f" % accuracy_score(test_df[label_column], preds))
+print("Accuracy: %0.2f" % accuracy_score(test_df[label_column], preds))
 print("Precision: %0.2f" % precision_score(test_df[label_column], preds))
 print("Recall: %0.2f" % recall_score(test_df[label_column], preds))
 print("AUC-ROC: %0.2f" % roc_auc_score(test_df[label_column], preds))
