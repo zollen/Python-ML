@@ -57,7 +57,7 @@ for name in categorical_columns + label_column:
     encoder.fit(keys)
     train_df[name] = encoder.transform(train_df[name].values)
     test_df[name] = encoder.transform(test_df[name].values)
-    
+   
 
 
 print("=============== K Best Features Selection ==================")
@@ -108,8 +108,8 @@ preds = model.predict(train_df[all_features_columns])
 print("Accuracy: %0.2f" % accuracy_score(train_df[label_column], preds))
 print("Precision: %0.2f" % precision_score(train_df[label_column], preds))
 print("Recall: %0.2f" % recall_score(train_df[label_column], preds))
-print("AUC-ROC: 0.2f" % roc_auc_score(train_df[label_column], preds))
-print("Log Loss: 0.2f" % log_loss(train_df[label_column], preds))
+print("AUC-ROC: %0.2f" % roc_auc_score(train_df[label_column], preds))
+print("Log Loss: %0.2f" % log_loss(train_df[label_column], preds))
 print(confusion_matrix(train_df[label_column], preds))
 
 
