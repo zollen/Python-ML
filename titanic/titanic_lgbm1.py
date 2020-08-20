@@ -77,6 +77,7 @@ if False:
                        "max_depth": [ -1, 6, 12, 24 ],
                        "learning_rate": [ 0.0001, 0.001, 0.01, 1 ],
                        "subsample_for_bin": [ 150000, 200000, 250000, 300000 ],
+                       "min_data_in_leaf": [ 15, 20, 25, 30 ],
                        "max_bin": [ 60, 100, 255, 500 ]  })
     model = RandomizedSearchCV(estimator = LGBMClassifier(), 
                         param_distributions = param_grid, n_jobs=50, n_iter=100)
@@ -89,6 +90,7 @@ if False:
     print("Best LearningRate: ", model.best_estimator_.learning_rate)
     print("Best MaxLeaves: ", model.best_estimator_.max_leaves)
     print("Best SubSampleForBin: ", model.best_estimator_.subsample_for_bin)
+    print("Best MinDataInLeaf: ", model.best_estimator_.min_data_in_leaf)
     print("Best MaxBin: ", model.best_estimator_.max_bin)
    
     exit()
