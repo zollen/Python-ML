@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 from lightgbm import LGBMClassifier 
-from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import GridSearchCV
 from sklearn import preprocessing
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
@@ -78,27 +78,57 @@ else:
 
 
 if False:
-    param_grid = dict({ "n_estimators": [ 75, 100, 150, 200 ],
-                       "boosting_type": [ 'gbdt', 'dart', 'goss', 'rf' ],
-                       "max_leaves": [ 4, 6, 8, 16  ],
-                       "max_depth": [ -1, 6, 12, 24 ],
-                       "learning_rate": [ 0.0001, 0.001, 0.01, 1 ],
-                       "subsample_for_bin": [ 150000, 200000, 250000, 300000 ],
+    param_grid = [ 
+                    {  
+                       "n_estimators": [ 75, 100, 125, 150 ],
+                       
+                       "boosting_type": [ 'gbdt', 'rf' ],
+                       "max_leaves": [ 4, 10, 12, 16  ],
+                       "max_depth": [ -1, 2, 6, 12, 22 ],
                        "min_data_in_leaf": [ 15, 20, 25, 30 ],
-                       "max_bin": [ 60, 100, 255, 500 ]  })
-    model = RandomizedSearchCV(estimator = LGBMClassifier(), 
-                        param_distributions = param_grid, n_jobs=50, n_iter=100)
+                       "max_bin": [ 150, 200, 255, 275, 300 ]  
+                    },
+                    {
+                       "boosting_type": [ 'dart' ],
+                       "max_drop": [ 45, 50, 55, 60, 65, 70 ],
+                       "drop_rate": [ 0.1, 0.2, 0.3, 0.4, 0.5 ],
+                       "xgboost_dart_mode": [ False, True ],
+                       "n_estimators": [ 75, 100, 125, 150 ],
+                       "max_leaves": [ 4, 6, 8, 10, 12, 14, 16  ],
+                       "max_depth": [ -1, 2, 4, 6, 8, 10, 12, 18, 20, 22 ],
+                       "min_data_in_leaf": [ 15, 20, 25, 30 ],
+                       "max_bin": [ 100, 150, 200, 255, 275, 300, 325 ]  
+                    },
+                    {
+                       "boosting_type": [ 'gross' ],
+                       "top_rate": [ 0.1, 0.15, 0.2, 0.25, 0.30 ],
+                       "other_rate": [ 0.05, 0.1, 0.15, 0.20 ],
+                       "n_estimators": [ 75, 100, 125, 150 ],
+                       "max_leaves": [ 4, 6, 8, 10, 12, 14, 16  ],
+                       "max_depth": [ -1, 2, 4, 6, 8, 10, 12, 18, 20, 22 ],
+                       "min_data_in_leaf": [ 15, 20, 25, 30 ],
+                       "max_bin": [ 100, 150, 200, 255, 275, 300, 325 ]  
+                    }
+                ]
+    model = GridSearchCV(estimator = LGBMClassifier(), 
+                        param_grid = param_grid, n_jobs=50)
 
     model.fit(train_df[all_features_columns], labels.squeeze())
     print("====================================================================================")
     print("Best Score: ", model.best_score_)
+    print("Best Boost: ", model.boosting_type)
     print("Best n_estimators: ", model.best_estimator_.n_estimators)
     print("Best max_depth: ", model.best_estimator_.max_depth)
-    print("Best LearningRate: ", model.best_estimator_.learning_rate)
     print("Best MaxLeaves: ", model.best_estimator_.max_leaves)
-    print("Best SubSampleForBin: ", model.best_estimator_.subsample_for_bin)
     print("Best MinDataInLeaf: ", model.best_estimator_.min_data_in_leaf)
     print("Best MaxBin: ", model.best_estimator_.max_bin)
+    if model.boosting_type == 'dart':
+        print("Best MaxDrop: ", model.best_estimator_.max_drop)
+        print("Best DropRate: ", model.best_estimator_.drop_rate)
+        print("Best XGBoost: ", model.best_estimator_.xgboost_dart_mode)
+    if model.boosting_type == 'gross':
+        print("Best TopRate: ", model.best_estimator_.top_rate)
+        print("Best OtherRate: ", model.best_estimator_.other_rate)
    
     exit()
 
