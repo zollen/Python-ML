@@ -80,34 +80,33 @@ else:
 if False:
     param_grid = [ 
                     {  
-                       "n_estimators": [ 75, 100, 125, 150 ],
-                       
-                       "boosting_type": [ 'gbdt', 'rf' ],
+                       "n_estimators": [ 75, 100, 125, 150 ],   
+                       "boosting": [ 'gbdt', 'rf' ],
                        "max_leaves": [ 4, 10, 12, 16  ],
                        "max_depth": [ -1, 2, 6, 12, 22 ],
                        "min_data_in_leaf": [ 15, 20, 25, 30 ],
                        "max_bin": [ 150, 200, 255, 275, 300 ]  
                     },
                     {
-                       "boosting_type": [ 'dart' ],
+                       "boosting": [ 'dart' ],
                        "max_drop": [ 45, 50, 55, 60, 65, 70 ],
                        "drop_rate": [ 0.1, 0.2, 0.3, 0.4, 0.5 ],
                        "xgboost_dart_mode": [ False, True ],
                        "n_estimators": [ 75, 100, 125, 150 ],
-                       "max_leaves": [ 4, 6, 8, 10, 12, 14, 16  ],
-                       "max_depth": [ -1, 2, 4, 6, 8, 10, 12, 18, 20, 22 ],
+                       "max_leaves": [ 4, 10, 12, 16  ],
+                       "max_depth": [ -1, 2, 6, 12, 22 ],
                        "min_data_in_leaf": [ 15, 20, 25, 30 ],
-                       "max_bin": [ 100, 150, 200, 255, 275, 300, 325 ]  
+                       "max_bin": [ 150, 200, 255, 275, 300 ]  
                     },
                     {
-                       "boosting_type": [ 'gross' ],
+                       "boosting": [ 'gross' ],
                        "top_rate": [ 0.1, 0.15, 0.2, 0.25, 0.30 ],
                        "other_rate": [ 0.05, 0.1, 0.15, 0.20 ],
                        "n_estimators": [ 75, 100, 125, 150 ],
-                       "max_leaves": [ 4, 6, 8, 10, 12, 14, 16  ],
-                       "max_depth": [ -1, 2, 4, 6, 8, 10, 12, 18, 20, 22 ],
+                       "max_leaves": [ 4, 10, 12, 16  ],
+                       "max_depth": [ -1, 2, 6, 12, 22 ],
                        "min_data_in_leaf": [ 15, 20, 25, 30 ],
-                       "max_bin": [ 100, 150, 200, 255, 275, 300, 325 ]  
+                       "max_bin": [ 150, 200, 255, 275, 300 ]  
                     }
                 ]
     model = GridSearchCV(estimator = LGBMClassifier(), 
