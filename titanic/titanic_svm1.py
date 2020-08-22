@@ -64,8 +64,23 @@ for name in categorical_columns:
     encoder.fit(keys)
     train_df[name] = encoder.transform(train_df[name].values)
     test_df[name] = encoder.transform(test_df[name].values)
-    
 
+# OneHot Encoding    
+if False:
+    cat_columns = []
+
+    for name in categorical_columns: 
+        keys = np.union1d(train_df[name].unique(), test_df[name].unique())
+    
+        for key in keys:
+            func = lambda x : 1 if x == key else 0
+            train_df[name + "." + str(key)] = train_df[name].apply(func)
+            test_df[name + "." + str(key)] = test_df[name].apply(func)
+            cat_columns.append(name + "." + str(key))
+ 
+    all_features_columns = numeric_columns + cat_columns
+
+    print(train_df[all_features_columns].describe())
 
 print(train_df.describe())
 
