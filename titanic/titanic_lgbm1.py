@@ -110,7 +110,7 @@ if False:
                     }
                 ]
     model = GridSearchCV(estimator = LGBMClassifier(), 
-                        param_grid = param_grid, n_jobs=50)
+                        param_grid = param_grid, n_jobs=-1)
 
     model.fit(train_df[all_features_columns], labels.squeeze())
     print("====================================================================================")
