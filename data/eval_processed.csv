@@ -52,7 +52,7 @@
 225,1,female,36.0,1,2,120.0,First,B,Southampton,n
 232,1,female,43.0,0,1,211.3375,First,B,Southampton,n
 243,1,female,27.0,0,1,12.475,Third,E,Southampton,n
-245,1,female,62.0,0,0,80.0,First,B,unknown,y
+245,1,female,62.0,0,0,80.0,First,B,Cherbourg,y
 255,1,female,48.0,0,0,25.9292,First,D,Southampton,y
 258,1,female,56.0,0,1,83.1583,First,C,Cherbourg,n
 263,1,male,26.0,0,0,30.0,First,C,Cherbourg,y

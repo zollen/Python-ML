@@ -101,9 +101,6 @@ if False:
     plt.show()
 
 
-"""
-Let's seperate the valid samples from the unknown deck samples
-"""
 
 label_pred_column = 'deck' 
 numeric_pred_columns = [ 'age', 'fare', 'survived' ]
@@ -113,6 +110,9 @@ all_pred_columns = numeric_pred_columns + categorical_pred_columns
 model = ExtraTreesClassifier()
 
 def process(model, fit, df, fileName):
+    """
+    Let's seperate the valid samples from the unknown deck samples
+    """
     good_df = df[df[label_pred_column] != 'unknown']
     bad_df = df[df[label_pred_column] == 'unknown']
 
