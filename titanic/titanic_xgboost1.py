@@ -100,8 +100,8 @@ if False:
 
     exit()
     
-if False:    
-    model = XGBClassifier(n_estimators=150, max_depth=11, min_child_weight=3, gamma=0.2, subsample=0.6, nthread=16)
+if True:    
+    model = XGBClassifier(n_estimators=150, max_depth=11, min_child_weight=3, gamma=0.2, subsample=0.6, nthread=16, reg_lambda = 0.02, reg_alpha = 0.005)
 else:
     model = XGBClassifier(n_estimators=150, max_depth=10, min_child_weight=5, gamma=0.7, subsample=1.0, reg_lambda = 0.02, reg_alpha = 0.005, nthread=16)
 
