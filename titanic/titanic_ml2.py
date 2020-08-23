@@ -109,7 +109,7 @@ pd.set_option('precision', 2)
 tf.random.set_seed(SEED)
 np.random.seed(SEED)
 
-PROJECT_DIR=str(Path(__file__).parent.parent)  
+PROJECT_DIR=str(Path(__file__).parent)  
 data = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'))
 eval_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval_processed.csv'))
 train_df = data.copy()

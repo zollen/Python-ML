@@ -42,7 +42,7 @@ def score_board(res):
 
 
 
-PROJECT_DIR=str(Path(__file__).parent.parent)  
+PROJECT_DIR=str(Path(__file__).parent)  
 df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 
 for name in categorical_columns:
