@@ -35,8 +35,8 @@ categorical_columns = [ 'sex', 'n_siblings_spouses', 'parch', 'class', 'deck', '
 all_features_columns = numeric_columns + categorical_columns 
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
-train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
-test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
+train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'))
+test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval_processed.csv'))
 
 for name in categorical_columns + label_column:
     encoder = preprocessing.LabelEncoder()   

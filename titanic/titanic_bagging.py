@@ -22,6 +22,7 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import log_loss
 from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report
 
 
 """
@@ -43,8 +44,8 @@ all_features_columns = numeric_columns + categorical_columns
 
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
-train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
-test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
+train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'))
+test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval_processed.csv'))
 
 for name in categorical_columns + label_column:
     encoder = preprocessing.LabelEncoder()
@@ -63,21 +64,24 @@ model1 = QuadraticDiscriminantAnalysis()
 model1.fit(train_df[all_features_columns], train_df[label_column])
 preds = model1.predict(test_df[all_features_columns])
 print("============ LQA  =============")
-print("Accuracy: ", round(accuracy_score(test_df[label_column], preds), 2))
-print("Precision: ", round(precision_score(test_df[label_column], preds), 2))
-print("Recall: ", round(recall_score(test_df[label_column], preds), 2))
-print('AUC-ROC:', round(roc_auc_score(test_df[label_column], preds), 2))
-print("Log Loss: ", round(log_loss(test_df[label_column], preds), 2))
+print("Accuracy: %0.2f" % accuracy_score(test_df[label_column], preds))
+print("Precision: %0.2f" % precision_score(test_df[label_column], preds))
+print("Recall: %0.2f" % recall_score(test_df[label_column], preds))
+print("AUC-ROC: %0.2f" % roc_auc_score(test_df[label_column], preds))
+print("Log Loss: %0.2f" % log_loss(test_df[label_column], preds))
 print(confusion_matrix(test_df[label_column], preds))
+print(classification_report(test_df[label_column], preds))
+
 
 model2 = BaggingClassifier(base_estimator=QuadraticDiscriminantAnalysis(), 
                         n_estimators=38)
 model2.fit(train_df[all_features_columns], train_df[label_column])
 preds = model2.predict(test_df[all_features_columns])
 print("============ Bagging with LQA  =============")
-print("Accuracy: ", round(accuracy_score(test_df[label_column], preds), 2))
-print("Precision: ", round(precision_score(test_df[label_column], preds), 2))
-print("Recall: ", round(recall_score(test_df[label_column], preds), 2))
-print('AUC-ROC:', round(roc_auc_score(test_df[label_column], preds), 2))
-print("Log Loss: ", round(log_loss(test_df[label_column], preds), 2))
+print("Accuracy: %0.2f" % accuracy_score(test_df[label_column], preds))
+print("Precision: %0.2f" % precision_score(test_df[label_column], preds))
+print("Recall: %0.2f" % recall_score(test_df[label_column], preds))
+print("AUC-ROC: %0.2f" % roc_auc_score(test_df[label_column], preds))
+print("Log Loss: %0.2f" % log_loss(test_df[label_column], preds))
 print(confusion_matrix(test_df[label_column], preds))
+print(classification_report(test_df[label_column], preds))

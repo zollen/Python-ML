@@ -90,8 +90,8 @@ np.random.seed(SEED)
 
 
 PROJECT_DIR=str(Path(__file__).parent.parent)
-data = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
-eval_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))    
+data = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'))
+eval_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval_processed.csv'))    
 train_df = data.copy()
 test_df, val_df = train_test_split(eval_df, test_size=0.2)
 

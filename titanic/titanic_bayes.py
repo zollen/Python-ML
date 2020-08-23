@@ -14,6 +14,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import log_loss
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 
@@ -29,8 +31,8 @@ categorical_columns = [ 'sex', 'n_siblings_spouses', 'parch', 'class', 'deck', '
 all_features_columns = numeric_columns + categorical_columns
 
 PROJECT_DIR=str(Path(__file__).parent.parent)
-train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
-test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval.csv'))
+train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'))
+test_df = pd.read_csv(os.path.join(PROJECT_DIR , 'data/eval_processed.csv'))
 
 print(train_df.info())
 print(train_df.isnull().sum())
@@ -56,9 +58,12 @@ model = gnb.fit(train_df[all_features_columns].values, train_df[label_column].va
 
 print("================= TRAINING DATA =====================")
 preds = model.predict(train_df[all_features_columns])
-print("Accuracy: ", round(accuracy_score(train_df[label_column], preds), 2))
-print("Precision: ", round(precision_score(train_df[label_column], preds), 2))
-print("Recall: ", round(recall_score(train_df[label_column], preds), 2))
+print("Accuracy: %0.2f" % accuracy_score(train_df[label_column], preds))
+print("Precision: %0.2f" % precision_score(train_df[label_column], preds))
+print("Recall: %0.2f" % recall_score(train_df[label_column], preds))
+print("AUC-ROC: %0.2f" % roc_auc_score(train_df[label_column], preds))
+print("Log Loss: %0.2f" % log_loss(train_df[label_column], preds))
+print(confusion_matrix(train_df[label_column], preds))
 
 
 print("================= TEST DATA =====================")
@@ -71,8 +76,10 @@ else:
     preds = np.argmax(preds, axis=1)
 
 
-print("Accuracy: ", round(accuracy_score(test_df[label_column].values, preds), 2))
-print("Precision: ", round(precision_score(test_df[label_column].values, preds), 2))
-print("Recall: ", round(recall_score(test_df[label_column].values, preds), 2))
+print("Accuracy: %0.2f" % accuracy_score(test_df[label_column], preds))
+print("Precision: %0.2f" % precision_score(test_df[label_column], preds))
+print("Recall: %0.2f" % recall_score(test_df[label_column], preds))
+print("AUC-ROC: %0.2f" % roc_auc_score(test_df[label_column], preds))
+print("Log Loss: %0.2f" % log_loss(test_df[label_column], preds))
 print(confusion_matrix(test_df[label_column], preds))
 print(classification_report(test_df[label_column], preds))
