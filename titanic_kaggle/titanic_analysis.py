@@ -7,25 +7,42 @@ Created on Aug. 1, 2020
 import numpy as np
 import pandas as pd
 from sklearn.feature_selection import SelectKBest, chi2
-from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.ensemble import ExtraTreesClassifier, ExtraTreesRegressor
 import statsmodels.api as sm
 from sklearn import preprocessing
 import seaborn as sb
 from matplotlib import pyplot as plt
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 sb.set_style('whitegrid')
 
 label_column = [ 'Survived']
+identity_columns = [ 'PassengerId', 'Ticket', 'Cabin' ]
 numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare' ]
-string_columns = [ 'Ticket', 'Cabin' ]
 categorical_columns = [ 'Sex', 'Embarked', 'Pclass' ]
 all_features_columns = numeric_columns + categorical_columns 
 
 
-train_df = pd.read_csv('data/train.csv')
+def normalize(df, columns):
+    pdf = df.copy()
+        
+    for name in columns:
+        encoder = preprocessing.LabelEncoder()   
+        keys = pdf[name].unique()
 
+        if len(keys) == 2:
+            encoder = preprocessing.LabelBinarizer()
+        
+        encoder.fit(keys)
+        pdf[name] = encoder.transform(pdf[name].values)
+            
+    return pdf
+
+
+train_df = pd.read_csv('data/train.csv')
 
 print(train_df.info())
 print("=============== STATS ===================")
@@ -41,18 +58,8 @@ print("DEAD: ", len(train_df[train_df['Survived'] == 0]))
 
 subsetdf = train_df[(train_df['Age'].isna() == False) & (train_df['Embarked'].isna() == False)]
 
-df = subsetdf.copy()
+df = normalize(subsetdf, all_features_columns + label_column)
 
-
-for name in categorical_columns:
-    encoder = preprocessing.LabelEncoder()   
-    keys = df[name].unique()
-
-    if len(keys) == 2:
-        encoder = preprocessing.LabelBinarizer()
-        
-    encoder.fit(keys)
-    df[name] = encoder.transform(df[name].values)
 
 print("======= SelectKBest =======")
 model = SelectKBest(score_func=chi2, k=5)
@@ -81,12 +88,158 @@ Logit: Fare, Sex has the highest confident of not seeing invalid variants
 
 if False:
     sb.catplot(x = "Survived", y = "Age", hue = "Sex", kind = "swarm", data = subsetdf)
-    sb.catplot(x = "Survived", y = "Age", hue = "Pclass", kind = "swarm", data = subsetdf)
-    sb.catplot(x = "Survived", y = "Age", hue = "Embarked", kind = "swarm", data = subsetdf)
     plt.show()
     
 """
     The above plot shows that Age does play a role of the outcome of survivaility.
+    Children who are below 10 years old have a decent higher chance to surivive (specially you 
+    are a female).
+    People between sixteen and thirty-five have much lower chance to surive (unless you are a 
+    female)
+    People who are above thirty five (both alive and dead group appears to converge to a similar
+    points distribution with the dead group slightly bigger than the alive group)
+    
     The number of dots between each column at each Age group appears to be vary enough
     to warrent a consideration
 """
+
+if False:
+    fig, (a1, a2, a3, a4) = plt.subplots(1, 4)
+    fig.set_size_inches(14 , 10)
+    sb.countplot(x = "Embarked", hue = "Survived", data = subsetdf, ax = a1);
+    a1.set_title('Embarked - Survived')
+    sb.countplot(x = "Pclass", hue = "Survived", data = subsetdf, ax = a2);
+    a2.set_title('Pclass - Survived')
+    sb.countplot(x = "SibSp", hue = "Survived", data = subsetdf, ax = a3);
+    a3.set_title('SibSp - Survived')
+    sb.countplot(x = "Parch", hue = "Survived", data = subsetdf, ax = a4);
+    a4.set_title('Parch - Survived')
+    plt.show()
+    
+"""
+Both Sibsp, Parch, Embarked and Pclass do show uneven distribution in term of survivability.
+"""
+
+
+""" 
+Let's process the Cabin column to maximize the information available to us
+"""
+import re
+def reformat(val):
+    if str(val) == 'nan':
+        return np.nan
+    else:
+        x = re.findall("[a-zA-Z]+[0-9]{1}", val)
+        if len(x) == 0:
+            x = re.findall("[a-zA-Z]{1}", val)
+        
+        return x[0][0]
+    
+train_df['Cabin'] = train_df['Cabin'].apply(reformat)
+
+
+
+"""
+let analysis the two samples with missing Embarked value
+"""
+df = train_df.copy()
+df.loc[train_df['Embarked'].isna() == True, 'Embarked'] = "A"
+
+if False:
+    plt.figure(figsize = (28, 10))
+    sb.swarmplot(x = "Age", y = "Fare", hue = "Embarked", alpha = 0.7, data = df)
+    plt.show()
+
+"""
+At 32 yrs, there are 2 Pclass(S) dots and 2 Pclass(C) dots neighbours
+At 80 yrs, there are 1 Pclass(S) dots and 0 Pclass(C) dots neighbour
+-- inconclusive
+"""
+
+"""
+Let's 'guess' the two missing Embarked samples
+      Age  SibSp  Parch  Fare     Sex Embarked  Pclass  Survived  Ticket Cabin
+61   38.0      0      0  80.0  female      NaN       1         1  113572   B28
+829  62.0      0      0  80.0  female      NaN       1         1  113572   B28
+"""
+withoutEmbarked = train_df[train_df['Embarked'].isna() == True]
+print("The two samples with missing Embarked value")
+print(withoutEmbarked[identity_columns + all_features_columns + label_column])
+
+withEmbarked = train_df[(train_df['Embarked'].isna() == False) & (train_df['Age'].isna() == False)]
+
+input1_columns = [ 'Survived', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass' ]
+predicted1_columns = [ 'Embarked' ]
+
+df1 = normalize(withEmbarked, input1_columns)
+df2 = normalize(withoutEmbarked, input1_columns)
+
+
+model = ExtraTreesClassifier()
+model.fit(df1[input1_columns], df1[predicted1_columns])
+preds = model.predict(df1[input1_columns])
+print("Accuracy: %0.2f" % accuracy_score(df1[predicted1_columns], preds))
+print(confusion_matrix(df1[predicted1_columns], preds))
+        
+preds1 = model.predict(df2[input1_columns])
+print("Predicted Embarked values: ", preds1)
+
+"""
+The classifier has determined both missing Embarked samples should be 'S'
+"""
+train_df.loc[train_df['Embarked'].isna() == True, 'Embarked'] = 'S'
+
+
+"""
+Let's 'guess' the samples with missing 'Age' values
+"""
+
+input2_columns = [ 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked', 'Pclass' ]
+predicted2_columns = [ 'Age' ]
+
+
+withAge = train_df[train_df['Age'].isna() == False]
+withoutAge = train_df[train_df['Age'].isna() == True]
+
+df4 = normalize(withAge, input2_columns)
+df5 = normalize(withoutAge, input2_columns)
+
+model1 = ExtraTreesRegressor()
+model1.fit(df4[input2_columns], df4[predicted2_columns])
+
+preds2 = model1.predict(df5[input2_columns])
+preds22 = [ round(i, 2) for i in preds2 ]
+print("Predicted Age values: ")
+print(np.stack((withoutAge['PassengerId'], preds22), axis=1))
+
+train_df.loc[train_df['Age'].isna() == True, 'Age'] = preds22
+
+
+"""
+Let's 'guess' the samples with missing 'Cabin' values
+"""
+
+input3_columns = [ 'Survived', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked', 'Pclass' ]
+predicted3_columns = [ 'Cabin' ]
+
+
+withCabin = train_df[train_df['Cabin'].isna() == False]
+withoutCabin = train_df[train_df['Cabin'].isna() == True]
+
+df6 = normalize(withCabin, input3_columns)
+df7 = normalize(withoutCabin, input3_columns)
+
+model2 = ExtraTreesClassifier()
+model2.fit(df6[input3_columns], df6[predicted3_columns])
+preds = model2.predict(df6[input3_columns])
+print("Accuracy: %0.2f" % accuracy_score(df6[predicted3_columns], preds))
+print(confusion_matrix(df6[predicted3_columns], preds))
+
+preds3 = model2.predict(df7[input3_columns])
+
+print("Predicted Cabin values: ")
+print(np.stack((withoutCabin['PassengerId'], preds3), axis=1))
+
+train_df.loc[train_df['Cabin'].isna() == True, 'Cabin'] = preds3
+
+
