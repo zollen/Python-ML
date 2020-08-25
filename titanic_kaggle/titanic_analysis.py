@@ -49,7 +49,7 @@ test_df = pd.read_csv('data/test.csv')
 print(train_df.info())
 print("=============== STATS ===================")
 print(train_df.describe())
-print("============== Total NULL ==============")
+print("============== Training Total NULL ==============")
 print(train_df.isnull().sum())
 print("============== SKEW =====================")
 print(train_df.skew())
@@ -140,13 +140,16 @@ def reformat(val):
 train_df['Cabin'] = train_df['Cabin'].apply(reformat)
 test_df['Cabin'] = test_df['Cabin'].apply(reformat)
 
-def fillinFile(df, fileName):
+def fillinFile(df, with_target, fileName):
     
     """
     Let's 'guess' the samples with missing 'Age' values
     """
-
-    input1_columns = [ 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked', 'Pclass' ]
+    if with_target == True:
+        input1_columns = [ 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked', 'Pclass' ]
+    else:
+        input1_columns = [ 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked', 'Pclass' ]
+        
     predicted1_columns = [ 'Age' ]
 
     withAge = df[df['Age'].isna() == False]
@@ -159,7 +162,7 @@ def fillinFile(df, fileName):
     model1.fit(df1[input1_columns], df1[predicted1_columns])
 
     preds1 = model1.predict(df2[input1_columns])
-    preds1 = [ round(i, 2) for i in preds1 ]
+    preds1 = [ round(i, 0) for i in preds1 ]
     print("Predicted Age values: ")
     print(np.stack((withoutAge['PassengerId'], preds1), axis=1))
 
@@ -170,7 +173,11 @@ def fillinFile(df, fileName):
     Let's 'guess' the samples with missing 'Cabin' values
     """
 
-    input2_columns = [ 'Survived', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked', 'Pclass' ]
+    if with_target == True:
+        input2_columns = [ 'Survived', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked', 'Pclass' ]
+    else:
+        input2_columns = [ 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked', 'Pclass' ]
+        
     predicted2_columns = [ 'Cabin' ]
 
 
@@ -194,16 +201,16 @@ def fillinFile(df, fileName):
     df.loc[df['Cabin'].isna() == True, 'Cabin'] = preds2
     
     df.to_csv(fileName)
+    
 
 
 
 """
 let analysis the two samples with missing Embarked value
 """
-df = train_df.copy()
-df.loc[train_df['Embarked'].isna() == True, 'Embarked'] = "A"
-
 if False:
+    df = train_df.copy()
+    df.loc[train_df['Embarked'].isna() == True, 'Embarked'] = "A"
     plt.figure(figsize = (28, 10))
     sb.swarmplot(x = "Age", y = "Fare", hue = "Embarked", alpha = 0.7, data = df)
     plt.show()
@@ -226,21 +233,21 @@ print(withoutEmbarked[identity_columns + all_features_columns + label_column])
 
 withEmbarked = train_df[(train_df['Embarked'].isna() == False) & (train_df['Age'].isna() == False)]
 
-input1_columns = [ 'Survived', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass' ]
-predicted1_columns = [ 'Embarked' ]
+input_columns_for_embarked = [ 'Survived', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass' ]
+predicted_embarked_columns = [ 'Embarked' ]
 
-df1 = normalize(withEmbarked, input1_columns)
-df2 = normalize(withoutEmbarked, input1_columns)
+df1 = normalize(withEmbarked, input_columns_for_embarked)
+df2 = normalize(withoutEmbarked, input_columns_for_embarked)
 
 
 model = ExtraTreesClassifier()
-model.fit(df1[input1_columns], df1[predicted1_columns])
-preds = model.predict(df1[input1_columns])
-print("Accuracy: %0.2f" % accuracy_score(df1[predicted1_columns], preds))
-print(confusion_matrix(df1[predicted1_columns], preds))
+model.fit(df1[input_columns_for_embarked], df1[predicted_embarked_columns])
+preds = model.predict(df1[input_columns_for_embarked])
+print("Accuracy: %0.2f" % accuracy_score(df1[predicted_embarked_columns], preds))
+print(confusion_matrix(df1[predicted_embarked_columns], preds))
         
-preds1 = model.predict(df2[input1_columns])
-print("Predicted Embarked values: ", preds1)
+preds = model.predict(df2[input_columns_for_embarked])
+print("Predicted Embarked values: ", preds)
 
 """
 The classifier has determined both missing Embarked samples should be 'S'
@@ -255,12 +262,27 @@ let analysis the one *test* sample with missing Fare value
 152        1044       3  Storey, Mr. Thomas  male  60.5      0      0   3701    NaN     NaN         S
 """
 
-print(test_df[test_df['Fare'].isna() == True])
-
 if False:
     plt.figure(figsize = (28, 10))
     sb.swarmplot(x = "Age", y = "Fare", hue = "Pclass", alpha = 0.7, data = train_df)
     plt.show()
+    
+fillinFile(train_df, True, "data/train_processed.csv")
 
-#fillinFile(train_df, "data/train_processed.csv")
-#fillinFile(test_df, "data/test_processed.csv")
+input_columns_for_fare = [ 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Pclass' ]
+predicted_fare_columns = [ 'Fare' ]
+
+df3 = normalize(train_df, input_columns_for_fare)
+df4 = normalize(test_df[test_df['Fare'].isna() == True], input_columns_for_fare)
+
+model = ExtraTreesRegressor()
+model.fit(df3[input_columns_for_fare], df3[predicted_fare_columns])
+        
+preds = model.predict(df4[input_columns_for_fare])
+test_df.loc[test_df['Fare'].isna() == True, 'Fare'] = round(preds[0], 2)
+
+fillinFile(test_df, False, "data/test_processed.csv")
+
+print("Missing Fare Value: %0.2f" % preds[0])
+print("============== Test Total NULL ==============")
+print(test_df[test_df['PassengerId'] == 1000])
