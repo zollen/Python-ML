@@ -18,6 +18,7 @@ from sklearn.metrics import confusion_matrix
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
+np.random.seed(0)
 sb.set_style('whitegrid')
 
 label_column = [ 'Survived']
@@ -70,7 +71,7 @@ func = lambda x : np.round(x, 2)
 print(np.stack((all_features_columns, func(kBest.scores_)), axis=1))
 
 print("======= ExtermeDecisionTree =======")
-model = ExtraTreesClassifier()
+model = ExtraTreesClassifier(random_state = 0)
 model.fit(df[all_features_columns], df[label_column])
 print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
@@ -158,7 +159,7 @@ def fillinFile(df, with_target, fileName):
     df1 = normalize(withAge, input1_columns)
     df2 = normalize(withoutAge, input1_columns)
 
-    model1 = ExtraTreesRegressor()
+    model1 = ExtraTreesRegressor(random_state = 0)
     model1.fit(df1[input1_columns], df1[predicted1_columns])
 
     preds1 = model1.predict(df2[input1_columns])
@@ -187,7 +188,7 @@ def fillinFile(df, with_target, fileName):
     df3 = normalize(withCabin, input2_columns)
     df4 = normalize(withoutCabin, input2_columns)
 
-    model2 = ExtraTreesClassifier()
+    model2 = ExtraTreesClassifier(random_state = 0)
     model2.fit(df3[input2_columns], df3[predicted2_columns])
     preds = model2.predict(df3[input2_columns])
     print("Accuracy: %0.2f" % accuracy_score(df3[predicted2_columns], preds))
@@ -240,7 +241,7 @@ df1 = normalize(withEmbarked, input_columns_for_embarked)
 df2 = normalize(withoutEmbarked, input_columns_for_embarked)
 
 
-model = ExtraTreesClassifier()
+model = ExtraTreesClassifier(random_state = 0)
 model.fit(df1[input_columns_for_embarked], df1[predicted_embarked_columns])
 preds = model.predict(df1[input_columns_for_embarked])
 print("Accuracy: %0.2f" % accuracy_score(df1[predicted_embarked_columns], preds))
@@ -275,7 +276,7 @@ predicted_fare_columns = [ 'Fare' ]
 df3 = normalize(train_df, input_columns_for_fare)
 df4 = normalize(test_df[test_df['Fare'].isna() == True], input_columns_for_fare)
 
-model = ExtraTreesRegressor()
+model = ExtraTreesRegressor(random_state = 0)
 model.fit(df3[input_columns_for_fare], df3[predicted_fare_columns])
         
 preds = model.predict(df4[input_columns_for_fare])
@@ -284,5 +285,3 @@ test_df.loc[test_df['Fare'].isna() == True, 'Fare'] = round(preds[0], 2)
 fillinFile(test_df, False, "data/test_processed.csv")
 
 print("Missing Fare Value: %0.2f" % preds[0])
-print("============== Test Total NULL ==============")
-print(test_df[test_df['PassengerId'] == 1000])
