@@ -34,11 +34,6 @@ all_features_columns = numeric_columns + categorical_columns
 train_df = pd.read_csv('data/train_processed.csv')
 test_df = pd.read_csv('data/test_processed.csv')
 
-print(train_df.info())
-print(train_df.isnull().sum())
-print(train_df.describe())
-
-
 for name in categorical_columns:
     encoder = preprocessing.LabelEncoder()   
     keys = train_df[name].unique()
