@@ -6,11 +6,8 @@ Created on Aug. 26, 2020
 import pandas as pd
 import numpy as np
 from xgboost import XGBClassifier
-from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import chi2
 from sklearn import preprocessing
 from sklearn.model_selection import RandomizedSearchCV
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
@@ -67,9 +64,9 @@ if False:
                        "max_leaves": [0, 1, 2, 5, 10 ],
                        "max_bin": [ 128, 256, 512, 1024 ] })
     model = RandomizedSearchCV(estimator = XGBClassifier(), 
-                        param_distributions = param_grid, n_jobs=50, n_iter=100)
+                        param_distributions = param_grid, n_jobs=-1, n_iter=100)
 
-    model.fit(train_df[all_features_columns], train_df[label_column])
+    model.fit(train_df[all_features_columns], train_df[label_column].squeeze())
 
     print("====================================================================================")
     print("Best Score: ", model.best_score_)
