@@ -41,8 +41,6 @@ print(train_df.info())
 print(train_df.isnull().sum())
 print(train_df.describe())
 
-labels = train_df[label_column]
-
 
 for name in categorical_columns:
     encoder = preprocessing.LabelEncoder()   
@@ -54,18 +52,7 @@ for name in categorical_columns:
     encoder.fit(keys)
     train_df[name] = encoder.transform(train_df[name].values)
     test_df[name] = encoder.transform(test_df[name].values)
-    
-
-
-print("=============== K Best Features Selection ==================")
-model = SelectKBest(score_func=chi2, k=5)
-kBest = model.fit(train_df[all_features_columns], labels)
-print(np.stack((all_features_columns, func(kBest.scores_)), axis=1))
-
-print("================ Decision Tree Best Features Selection ============")
-model = DecisionTreeClassifier()
-model.fit(train_df[all_features_columns], labels)
-print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
+   
 
 
 if False:
@@ -82,7 +69,7 @@ if False:
     model = RandomizedSearchCV(estimator = XGBClassifier(), 
                         param_distributions = param_grid, n_jobs=50, n_iter=100)
 
-    model.fit(train_df[all_features_columns], labels.squeeze())
+    model.fit(train_df[all_features_columns], train_df[label_column])
 
     print("====================================================================================")
     print("Best Score: ", model.best_score_)
