@@ -30,7 +30,6 @@ numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare' ]
 categorical_columns = [ 'Sex', 'Embarked',  'Pclass', 'Cabin' ]
 all_features_columns = numeric_columns + categorical_columns 
 
-func = lambda x : np.round(x, 2)
 
 train_df = pd.read_csv('data/train_processed.csv')
 test_df = pd.read_csv('data/test_processed.csv')
