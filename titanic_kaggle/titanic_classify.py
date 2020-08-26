@@ -100,9 +100,14 @@ print(classification_report(train_df[label_column], preds))
 kfold = StratifiedKFold(n_splits = 9, shuffle = True, random_state = 87)
 results = cross_val_score(XGBClassifier(), train_df[all_features_columns], train_df[label_column], cv = kfold)
 print("9-Folds Cross Validation Accuracy: %0.2f" % results.mean())
+print()
+print()
 
-#print("================= TEST DATA =====================")
-#preds = model.predict(test_df[all_features_columns])
-#print(preds)
 
+preds = model.predict(test_df[all_features_columns])
+
+result_df = pd.DataFrame({ "PassengerId": test_df['PassengerId'], "Survived" : preds })
+
+print("========== TEST DATA ============")
+print(result_df.head())
 
