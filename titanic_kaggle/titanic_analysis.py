@@ -250,14 +250,12 @@ fill_by_regression(train_df, train_df, 'Age', [ 'Survived', 'SibSp', 'Parch', 'F
 fill_by_classification(train_df, train_df, 'Cabin', [ 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Age', 'Pclass', 'Embarked' ])
 
 
-all = pd.concat([ train_df, test_df ])
-fill_by_regression(all[all['Age'].isna() == False], test_df, 'Fare', [ 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Pclass' ])
+allsamples = pd.concat([ train_df, test_df ])
+fill_by_regression(allsamples[allsamples['Age'].isna() == False], test_df, 'Fare', [ 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Pclass' ])
 
-all = pd.concat([ train_df, test_df ])
-fill_by_regression(all, test_df, 'Age', [ 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
+fill_by_regression(pd.concat([ train_df, test_df ]), test_df, 'Age', [ 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
 
-all = pd.concat([ train_df, test_df ])
-fill_by_classification(all, test_df, 'Cabin', [ 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Fare', 'Pclass' ])
+fill_by_classification(pd.concat([ train_df, test_df ]), test_df, 'Cabin', [ 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Fare', 'Pclass' ])
 
 train_df.to_csv('data/train_processed.csv')
 test_df.to_csv('data/test_processed.csv')
