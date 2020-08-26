@@ -18,10 +18,11 @@ from sklearn.metrics import classification_report
 from sklearn.model_selection import StratifiedKFold
 from sklearn.model_selection import cross_val_score
 
+SEED = 87
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', 10)
-np.random.seed(87)
+np.random.seed(SEED)
 
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Name', 'Ticket' ]
@@ -97,7 +98,7 @@ print("Log Loss: %0.2f" % log_loss(train_df[label_column], preds))
 print(confusion_matrix(train_df[label_column], preds))
 print(classification_report(train_df[label_column], preds))
 
-kfold = StratifiedKFold(n_splits = 9, shuffle = True, random_state = 87)
+kfold = StratifiedKFold(n_splits = 9, shuffle = True, random_state = SEED)
 results = cross_val_score(XGBClassifier(), train_df[all_features_columns], train_df[label_column], cv = kfold)
 print("9-Folds Cross Validation Accuracy: %0.2f" % results.mean())
 print()
