@@ -261,8 +261,3 @@ train_df.to_csv('data/train_processed.csv')
 test_df.to_csv('data/test_processed.csv')
 
 print("Done")
-
-"""
-ReGenerate(Cabin,Age) training data should use all features including Survived
-Regenerate(Cabin,Age) test data should skip Survived, but train with both training data and test data
-"""
