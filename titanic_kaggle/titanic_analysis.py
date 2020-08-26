@@ -58,27 +58,26 @@ print(train_df.skew())
 print("ALIVE: ", len(train_df[train_df['Survived'] == 1]))
 print("DEAD: ", len(train_df[train_df['Survived'] == 0]))
 
+if True:
+    subsetdf = train_df[(train_df['Age'].isna() == False) & (train_df['Embarked'].isna() == False)]
+    df = normalize(subsetdf, all_features_columns + label_column)
 
-subsetdf = train_df[(train_df['Age'].isna() == False) & (train_df['Embarked'].isna() == False)]
+    print("======= SelectKBest =======")
+    model = SelectKBest(score_func=chi2, k=5)
+    kBest = model.fit(df[all_features_columns], df[label_column])
+    func = lambda x : np.round(x, 2)
+    print(np.stack((all_features_columns, func(kBest.scores_)), axis=1))
 
-df = normalize(subsetdf, all_features_columns + label_column)
+    print("======= ExtermeDecisionTree =======")
+    model = ExtraTreesClassifier(random_state = 0)
+    model.fit(df[all_features_columns], df[label_column])
+    print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
+    print("======= Logit Maximum Likelihood Analysis ===========")
+    model=sm.Logit(df[label_column], df[all_features_columns])
+    result=model.fit()
+    print(result.summary2())
 
-print("======= SelectKBest =======")
-model = SelectKBest(score_func=chi2, k=5)
-kBest = model.fit(df[all_features_columns], df[label_column])
-func = lambda x : np.round(x, 2)
-print(np.stack((all_features_columns, func(kBest.scores_)), axis=1))
-
-print("======= ExtermeDecisionTree =======")
-model = ExtraTreesClassifier(random_state = 0)
-model.fit(df[all_features_columns], df[label_column])
-print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
-
-print("======= Logit Maximum Likelihood Analysis ===========")
-model=sm.Logit(df[label_column], df[all_features_columns])
-result=model.fit()
-print(result.summary2())
 
 """
 Importants of each feature
@@ -141,67 +140,69 @@ def reformat(val):
 train_df['Cabin'] = train_df['Cabin'].apply(reformat)
 test_df['Cabin'] = test_df['Cabin'].apply(reformat)
 
-def fillinFile(df, with_target, fileName):
+
+
+
+"""
+Let's fill the missing values in both training and testing samples
+"""
+
+def fill_by_regression(df_src, df_dest, name, columns):
+ 
+    input_columns = columns
+    predicted_columns = [ name ]
+
+    withVal = df_src[df_src[name].isna() == False]
+    withoutVal = df_src[df_src[name].isna() == True]
     
-    """
-    Let's 'guess' the samples with missing 'Age' values
-    """
-    if with_target == True:
-        input1_columns = [ 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked', 'Pclass' ]
-    else:
-        input1_columns = [ 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked', 'Pclass' ]
-        
-    predicted1_columns = [ 'Age' ]
+    cat_columns = set(input_columns).intersection(categorical_columns)
 
-    withAge = df[df['Age'].isna() == False]
-    withoutAge = df[df['Age'].isna() == True]
-
-    df1 = normalize(withAge, input1_columns)
-    df2 = normalize(withoutAge, input1_columns)
-
-    model1 = ExtraTreesRegressor(random_state = 0)
-    model1.fit(df1[input1_columns], df1[predicted1_columns])
-
-    preds1 = model1.predict(df2[input1_columns])
-    preds1 = [ round(i, 0) for i in preds1 ]
-    print("Predicted Age values: ")
-    print(np.stack((withoutAge['PassengerId'], preds1), axis=1))
-
-    df.loc[df['Age'].isna() == True, 'Age'] = preds1
-
-
-    """
-    Let's 'guess' the samples with missing 'Cabin' values
-    """
-
-    if with_target == True:
-        input2_columns = [ 'Survived', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked', 'Pclass' ]
-    else:
-        input2_columns = [ 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked', 'Pclass' ]
-        
-    predicted2_columns = [ 'Cabin' ]
-
-
-    withCabin = df[df['Cabin'].isna() == False]
-    withoutCabin = df[df['Cabin'].isna() == True]
-
-    df3 = normalize(withCabin, input2_columns)
-    df4 = normalize(withoutCabin, input2_columns)
-
-    model2 = ExtraTreesClassifier(random_state = 0)
-    model2.fit(df3[input2_columns], df3[predicted2_columns])
-    preds = model2.predict(df3[input2_columns])
-    print("Accuracy: %0.2f" % accuracy_score(df3[predicted2_columns], preds))
-    print(confusion_matrix(df3[predicted2_columns], preds))
-
-    preds2 = model2.predict(df4[input2_columns])
-
-    print("Predicted Cabin values: ")
-    print(np.stack((withoutCabin['PassengerId'], preds2), axis=1))
-
-    df.loc[df['Cabin'].isna() == True, 'Cabin'] = preds2
+    df1 = normalize(withVal, cat_columns)
+    df2 = normalize(withoutVal, cat_columns)
     
-    df.to_csv(fileName)
+    print(df1[input_columns].isnull().sum())
+
+    model = ExtraTreesRegressor(random_state = 0)
+    model.fit(df1[input_columns], withVal[predicted_columns])
+
+    preds = model.predict(df2[input_columns])
+    preds = [ round(i, 0) for i in preds ]
+    print("Predicted %s values: " % name)
+    print(np.stack((withoutVal['PassengerId'], preds), axis=1))
+
+    df_dest.loc[df_dest[name].isna() == True, name] = preds
+
+
+
+def fill_by_classification(df_src, df_dest, name, columns):
+
+    input_columns = columns
+    predicted_columns = [ name ]
+
+    withVal = df_src[df_src[name].isna() == False]
+    withoutVal = df_src[df_src[name].isna() == True]
+    
+    cat_columns = set(input_columns).intersection(categorical_columns)
+    
+    df1 = normalize(withVal, cat_columns)
+    df2 = normalize(withoutVal, cat_columns)
+    
+    model = ExtraTreesClassifier(random_state = 0)
+    model.fit(df1[input_columns], withVal[predicted_columns])
+    preds = model.predict(df1[input_columns])
+    print("Accuracy: %0.2f" % accuracy_score(withVal[predicted_columns], preds))
+    print(confusion_matrix(withVal[predicted_columns], preds))
+    
+
+    preds = model.predict(df2[input_columns])
+
+    print("Predicted %s values: " % name)
+    print(np.stack((withoutVal['PassengerId'], preds), axis=1))
+
+    df_dest.loc[df_dest[name].isna() == True, name] = preds
+
+    
+
     
 
 
@@ -222,38 +223,11 @@ At 80 yrs, there are 1 Pclass(S) dots and 0 Pclass(C) dots neighbour
 -- inconclusive
 """
 
-"""
-Let's 'guess' the two missing Embarked samples
-      Age  SibSp  Parch  Fare     Sex Embarked  Pclass  Survived  Ticket Cabin
-61   38.0      0      0  80.0  female      NaN       1         1  113572   B28
-829  62.0      0      0  80.0  female      NaN       1         1  113572   B28
-"""
-withoutEmbarked = train_df[train_df['Embarked'].isna() == True]
-print("The two samples with missing Embarked value")
-print(withoutEmbarked[identity_columns + all_features_columns + label_column])
-
-withEmbarked = train_df[(train_df['Embarked'].isna() == False) & (train_df['Age'].isna() == False)]
-
-input_columns_for_embarked = [ 'Survived', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass' ]
-predicted_embarked_columns = [ 'Embarked' ]
-
-df1 = normalize(withEmbarked, input_columns_for_embarked)
-df2 = normalize(withoutEmbarked, input_columns_for_embarked)
-
-
-model = ExtraTreesClassifier(random_state = 0)
-model.fit(df1[input_columns_for_embarked], df1[predicted_embarked_columns])
-preds = model.predict(df1[input_columns_for_embarked])
-print("Accuracy: %0.2f" % accuracy_score(df1[predicted_embarked_columns], preds))
-print(confusion_matrix(df1[predicted_embarked_columns], preds))
-        
-preds = model.predict(df2[input_columns_for_embarked])
-print("Predicted Embarked values: ", preds)
 
 """
 The classifier has determined both missing Embarked samples should be 'S'
 """
-train_df.loc[train_df['Embarked'].isna() == True, 'Embarked'] = 'S'
+#train_df.loc[train_df['Embarked'].isna() == True, 'Embarked'] = 'S'
 
 
 
@@ -267,21 +241,30 @@ if False:
     plt.figure(figsize = (28, 10))
     sb.swarmplot(x = "Age", y = "Fare", hue = "Pclass", alpha = 0.7, data = train_df)
     plt.show()
-    
-fillinFile(train_df, True, "data/train_processed.csv")
 
-input_columns_for_fare = [ 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Pclass' ]
-predicted_fare_columns = [ 'Fare' ]
 
-df3 = normalize(train_df, input_columns_for_fare)
-df4 = normalize(test_df[test_df['Fare'].isna() == True], input_columns_for_fare)
+ 
 
-model = ExtraTreesRegressor(random_state = 0)
-model.fit(df3[input_columns_for_fare], df3[predicted_fare_columns])
-        
-preds = model.predict(df4[input_columns_for_fare])
-test_df.loc[test_df['Fare'].isna() == True, 'Fare'] = round(preds[0], 2)
+fill_by_classification(train_df, train_df, 'Embarked', [ 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass' ])    
+fill_by_regression(train_df, train_df, 'Age', [ 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
+fill_by_classification(train_df, train_df, 'Cabin', [ 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Age', 'Pclass', 'Embarked' ])
 
-fillinFile(test_df, False, "data/test_processed.csv")
 
-print("Missing Fare Value: %0.2f" % preds[0])
+all = pd.concat([ train_df, test_df ])
+fill_by_regression(all[all['Age'].isna() == False], test_df, 'Fare', [ 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Pclass' ])
+
+all = pd.concat([ train_df, test_df ])
+fill_by_regression(all, test_df, 'Age', [ 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
+
+all = pd.concat([ train_df, test_df ])
+fill_by_classification(all, test_df, 'Cabin', [ 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Fare', 'Pclass' ])
+
+train_df.to_csv('data/train_processed.csv')
+test_df.to_csv('data/test_processed.csv')
+
+print("Done")
+
+"""
+ReGenerate(Cabin,Age) training data should use all features including Survived
+Regenerate(Cabin,Age) test data should skip Survived, but train with both training data and test data
+"""
