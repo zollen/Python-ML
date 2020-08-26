@@ -160,8 +160,6 @@ def fill_by_regression(df_src, df_dest, name, columns):
     df1 = normalize(withVal, cat_columns)
     df2 = normalize(withoutVal, cat_columns)
     
-    print(df1[input_columns].isnull().sum())
-
     model = ExtraTreesRegressor(random_state = 0)
     model.fit(df1[input_columns], withVal[predicted_columns])
 
@@ -202,7 +200,11 @@ def fill_by_classification(df_src, df_dest, name, columns):
     df_dest.loc[df_dest[name].isna() == True, name] = preds
 
     
-
+"""
+         PassengerId  Survived  Pclass                                      Name      Sex   Age  SibSp  Parch  Ticket  Fare Cabin Embarked  
+61                62        1       1                        Icard, Miss. Amelie   female  38.0      0      0  113572  80.0     B      NaN  
+829              830        1       1  Stone, Mrs. George Nelson (Martha Evelyn)   female  62.0      0      0  113572  80.0     B      NaN 
+"""
     
 
 
@@ -224,12 +226,6 @@ At 80 yrs, there are 1 Pclass(S) dots and 0 Pclass(C) dots neighbour
 """
 
 
-"""
-The classifier has determined both missing Embarked samples should be 'S'
-"""
-#train_df.loc[train_df['Embarked'].isna() == True, 'Embarked'] = 'S'
-
-
 
 """
 let analysis the one *test* sample with missing Fare value
@@ -242,8 +238,7 @@ if False:
     sb.swarmplot(x = "Age", y = "Fare", hue = "Pclass", alpha = 0.7, data = train_df)
     plt.show()
 
-
- 
+print(train_df[train_df['Embarked'].isna() == True])
 
 fill_by_classification(train_df, train_df, 'Embarked', [ 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass' ])    
 fill_by_regression(train_df, train_df, 'Age', [ 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
@@ -252,9 +247,7 @@ fill_by_classification(train_df, train_df, 'Cabin', [ 'Survived', 'SibSp', 'Parc
 
 allsamples = pd.concat([ train_df, test_df ])
 fill_by_regression(allsamples[allsamples['Age'].isna() == False], test_df, 'Fare', [ 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Pclass' ])
-
 fill_by_regression(pd.concat([ train_df, test_df ]), test_df, 'Age', [ 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
-
 fill_by_classification(pd.concat([ train_df, test_df ]), test_df, 'Cabin', [ 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Fare', 'Pclass' ])
 
 train_df.to_csv('data/train_processed.csv')
