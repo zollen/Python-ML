@@ -55,6 +55,13 @@ print(train_df.isnull().sum())
 print("============== SKEW =====================")
 print(train_df.skew())
 
+if False:
+    df = normalize(train_df[train_df['Age'].isna() == False], numeric_columns + label_column)
+    corr = train_df.corr()
+    sb.heatmap(corr[((corr >= 0.3) | (corr <= -0.3)) & (corr != 1)], annot=True, linewidths=0.5, fmt='0.2f')
+    plt.show()
+
+
 print("ALIVE: ", len(train_df[train_df['Survived'] == 1]))
 print("DEAD: ", len(train_df[train_df['Survived'] == 0]))
 
