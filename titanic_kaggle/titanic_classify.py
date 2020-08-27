@@ -34,6 +34,9 @@ all_features_columns = numeric_columns + categorical_columns
 train_df = pd.read_csv('data/train_processed.csv')
 test_df = pd.read_csv('data/test_processed.csv')
 
+
+cat_columns = []
+
 for name in categorical_columns:
     encoder = preprocessing.LabelEncoder()   
     keys = train_df[name].unique()
@@ -44,7 +47,15 @@ for name in categorical_columns:
     encoder.fit(keys)
     train_df[name] = encoder.transform(train_df[name].values)
     test_df[name] = encoder.transform(test_df[name].values)
-   
+    
+    for key in keys:
+        func = lambda x : np.nan if str(x) == 'nan' else 1 if x == key else 0
+        train_df[name + '.' + str(key)] = train_df[name].apply(func)
+        test_df[name + '.' + str(key)] = train_df[name].apply(func)
+        cat_columns.append(name + '.' + str(key))
+        
+
+categorical_columns = cat_columns
 
 
 if False:
