@@ -49,7 +49,7 @@ for name in categorical_columns:
     test_df[name] = encoder.transform(test_df[name].values)
     
     for key in keys:
-        func = lambda x : np.nan if str(x) == 'nan' else 1 if x == key else 0
+        func = lambda x : 1 if x == key else 0
         train_df[name + '.' + str(key)] = train_df[name].apply(func)
         test_df[name + '.' + str(key)] = train_df[name].apply(func)
         cat_columns.append(name + '.' + str(key))
