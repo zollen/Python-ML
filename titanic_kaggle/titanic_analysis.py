@@ -57,8 +57,12 @@ print(train_df.skew())
 
 if False:
     df = normalize(train_df[train_df['Age'].isna() == False], numeric_columns + label_column)
-    corr = train_df.corr()
-    sb.heatmap(corr[((corr >= 0.3) | (corr <= -0.3)) & (corr != 1)], annot=True, linewidths=0.5, fmt='0.2f')
+    corr = train_df.corr() 
+    surv = corr.copy()
+    surv.loc[:,:] = False
+    surv['Survived'] = True
+  
+    sb.heatmap(corr[((corr >= 0.3) | (corr <= -0.3)) & (corr != 1) | surv], annot=True, linewidths=0.5, fmt='0.2f')
     plt.show()
     exit()
 
