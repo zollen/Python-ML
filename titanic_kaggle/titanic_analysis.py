@@ -60,6 +60,7 @@ if False:
     corr = train_df.corr()
     sb.heatmap(corr[((corr >= 0.3) | (corr <= -0.3)) & (corr != 1)], annot=True, linewidths=0.5, fmt='0.2f')
     plt.show()
+    exit()
 
 
 print("ALIVE: ", len(train_df[train_df['Survived'] == 1]))
@@ -99,6 +100,7 @@ if False:
     sb.catplot(x = "Survived", y = "Age", hue = "Sex", kind = "swarm", data = subsetdf)
     sb.catplot(x = "Survived", y = "Age", hue = "Pclass", kind = "swarm", data = subsetdf)
     plt.show()
+    exit()
     
 """
     The above plot shows that Age does play a role of the outcome of survivaility.
@@ -125,6 +127,7 @@ if False:
     sb.countplot(x = "Parch", hue = "Survived", data = subsetdf, ax = a4);
     a4.set_title('Parch - Survived')
     plt.show()
+    exit()
     
 """
 Both Sibsp, Parch, Embarked and Pclass do show uneven distribution in term of survivability.
@@ -225,6 +228,7 @@ if False:
     plt.figure(figsize = (28, 10))
     sb.swarmplot(x = "Age", y = "Fare", hue = "Embarked", alpha = 0.7, data = df)
     plt.show()
+    exit()
 
 """
 At 32 yrs, there are 2 Pclass(S) dots and 2 Pclass(C) dots neighbours
