@@ -24,7 +24,7 @@ sb.set_style('whitegrid')
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Ticket', 'Cabin' ]
 numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare' ]
-categorical_columns = [ 'Sex', 'Embarked', 'Pclass' ]
+categorical_columns = [ 'Title', 'Sex', 'Embarked', 'Pclass' ]
 all_features_columns = numeric_columns + categorical_columns 
 
 
@@ -46,6 +46,11 @@ def normalize(df, columns):
 
 train_df = pd.read_csv('data/train.csv')
 test_df = pd.read_csv('data/test.csv')
+
+titles = lambda x : re.search('[a-zA-Z]+\\.', x).group(0)
+train_df['Title'] = train_df['Name'].apply(titles)
+test_df['Title'] = test_df['Name'].apply(titles)
+
 
 print(train_df.info())
 print("=============== STATS ===================")
@@ -255,17 +260,20 @@ if False:
 
 print(train_df[train_df['Embarked'].isna() == True])
 
-fill_by_classification(train_df, train_df, 'Embarked', [ 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass' ])    
-fill_by_regression(train_df, train_df, 'Age', [ 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
-fill_by_classification(train_df, train_df, 'Cabin', [ 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Age', 'Pclass', 'Embarked' ])
+fill_by_classification(train_df, train_df, 'Embarked', [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass' ])    
+fill_by_regression(train_df, train_df, 'Age', [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
+fill_by_classification(train_df, train_df, 'Cabin', [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Age', 'Pclass', 'Embarked' ])
 
 
 allsamples = pd.concat([ train_df, test_df ])
-fill_by_regression(allsamples[allsamples['Age'].isna() == False], test_df, 'Fare', [ 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Pclass' ])
-fill_by_regression(pd.concat([ train_df, test_df ]), test_df, 'Age', [ 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
-fill_by_classification(pd.concat([ train_df, test_df ]), test_df, 'Cabin', [ 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Fare', 'Pclass' ])
+fill_by_regression(allsamples[allsamples['Age'].isna() == False], test_df, 'Fare', [ 'Title', 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Pclass' ])
+fill_by_regression(pd.concat([ train_df, test_df ]), test_df, 'Age', [ 'Title', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
+fill_by_classification(pd.concat([ train_df, test_df ]), test_df, 'Cabin', [ 'Title', 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Fare', 'Pclass' ])
 
-train_df.to_csv('data/train_processed.csv')
-test_df.to_csv('data/test_processed.csv')
+
+outputs = ['PassengerId', 'Name', 'Ticket', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked',  'Pclass', 'Cabin', 'Survived' ]
+train_df[outputs].to_csv('data/train_processed.csv')
+outputs = ['PassengerId', 'Name', 'Ticket', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked',  'Pclass', 'Cabin' ]
+test_df[outputs].to_csv('data/test_processed.csv')
 
 print("Done")
