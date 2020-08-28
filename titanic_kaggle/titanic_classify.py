@@ -86,11 +86,10 @@ if False:
     print("Best alpha: ", model.best_estimator_.reg_alpha)
 
     exit()
-    
-   
+
 
 model = XGBClassifier()
-model.fit(train_df[all_features_columns], train_df[label_column])
+model.fit(train_df[all_features_columns], train_df[label_column].squeeze())
 print("XGB Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 
 print("================= TRAINING DATA =====================")
