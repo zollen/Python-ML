@@ -23,8 +23,8 @@ sb.set_style('whitegrid')
 
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Ticket', 'Room' ]
-numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare', 'Room' ]
-categorical_columns = [ 'Title', 'Sex', 'Embarked', 'Pclass' , 'Cabin' ]
+numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare' ]
+categorical_columns = [ 'Title', 'Sex', 'Embarked', 'Pclass'  ]
 all_features_columns = numeric_columns + categorical_columns 
 
 
@@ -273,14 +273,14 @@ print(train_df[train_df['Embarked'].isna() == True])
 fill_by_classification(train_df, train_df, 'Embarked', [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass' ])    
 fill_by_regression(train_df, train_df, 'Age', [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
 fill_by_classification(train_df, train_df, 'Cabin', [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Age', 'Pclass', 'Embarked' ])
-fill_by_classification(train_df, train_df, 'Room', [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Age', 'Pclass', 'Embarked', 'Cabin' ])
+fill_by_classification(train_df, train_df, 'Room', [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Age', 'Pclass', 'Embarked' ])
 
 
 allsamples = pd.concat([ train_df, test_df ])
 fill_by_regression(allsamples[allsamples['Age'].isna() == False], test_df, 'Fare', [ 'Title', 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Pclass' ])
 fill_by_regression(pd.concat([ train_df, test_df ]), test_df, 'Age', [ 'Title', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
 fill_by_classification(pd.concat([ train_df, test_df ]), test_df, 'Cabin', [ 'Title', 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Fare', 'Pclass' ])
-fill_by_classification(pd.concat([ train_df, test_df ]), test_df, 'Room', [ 'Title', 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Fare', 'Pclass', 'Cabin' ])
+fill_by_classification(pd.concat([ train_df, test_df ]), test_df, 'Room', [ 'Title', 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Fare', 'Pclass' ])
 
 train_df['Room'] = train_df['Room'].astype('int32')
 test_df['Room'] = test_df['Room'].astype('int32')

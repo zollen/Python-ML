@@ -5,7 +5,7 @@ Created on Aug. 26, 2020
 '''
 import pandas as pd
 import numpy as np
-from xgboost import XGBClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn import preprocessing
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import accuracy_score
@@ -26,8 +26,8 @@ np.random.seed(SEED)
 
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Name', 'Ticket' ]
-numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare', 'Room' ]
-categorical_columns = [ 'Sex', 'Embarked',  'Pclass', 'Cabin' ]
+numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare' ]
+categorical_columns = [ 'Sex', 'Embarked',  'Pclass' ]
 all_features_columns = numeric_columns + categorical_columns 
 
 
@@ -69,7 +69,7 @@ if False:
                        "reg_alpha": [ 0, 0.5, 1 ],
                        "max_leaves": [0, 1, 2, 5, 10 ],
                        "max_bin": [ 128, 256, 512, 1024 ] })
-    model = RandomizedSearchCV(estimator = XGBClassifier(), 
+    model = RandomizedSearchCV(estimator = LogisticRegression(), 
                         param_distributions = param_grid, n_jobs=-1, n_iter=100)
 
     model.fit(train_df[all_features_columns], train_df[label_column].squeeze())
@@ -88,7 +88,7 @@ if False:
     exit()
 
 
-model = XGBClassifier()
+model = LogisticRegression(max_iter=500, solver='lbfgs')
 model.fit(train_df[all_features_columns], train_df[label_column].squeeze())
 print("XGB Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 
@@ -103,7 +103,7 @@ print(confusion_matrix(train_df[label_column], preds))
 print(classification_report(train_df[label_column], preds))
 
 kfold = StratifiedKFold(n_splits = 9, shuffle = True, random_state = SEED)
-results = cross_val_score(XGBClassifier(), train_df[all_features_columns], train_df[label_column].squeeze(), cv = kfold)
+results = cross_val_score(LogisticRegression(max_iter=500, solver='lbfgs'), train_df[all_features_columns], train_df[label_column].squeeze(), cv = kfold)
 print("9-Folds Cross Validation Accuracy: %0.2f" % results.mean())
 print()
 print()
@@ -114,5 +114,6 @@ preds = model.predict(test_df[all_features_columns])
 result_df = pd.DataFrame({ "PassengerId": test_df['PassengerId'], "Survived" : preds })
 
 print("========== TEST DATA ============")
-print(result_df.head())
+
+result_df.to_csv('data/myresult.csv', index=False)
 
