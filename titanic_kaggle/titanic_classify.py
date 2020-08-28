@@ -26,7 +26,7 @@ np.random.seed(SEED)
 
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Name', 'Ticket' ]
-numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare' ]
+numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare', 'Room' ]
 categorical_columns = [ 'Sex', 'Embarked',  'Pclass', 'Cabin' ]
 all_features_columns = numeric_columns + categorical_columns 
 

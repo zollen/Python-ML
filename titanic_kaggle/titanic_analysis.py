@@ -22,9 +22,9 @@ np.random.seed(0)
 sb.set_style('whitegrid')
 
 label_column = [ 'Survived']
-identity_columns = [ 'PassengerId', 'Ticket', 'Cabin' ]
-numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare' ]
-categorical_columns = [ 'Title', 'Sex', 'Embarked', 'Pclass' ]
+identity_columns = [ 'PassengerId', 'Ticket', 'Room' ]
+numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare', 'Room' ]
+categorical_columns = [ 'Title', 'Sex', 'Embarked', 'Pclass' , 'Cabin' ]
 all_features_columns = numeric_columns + categorical_columns 
 
 
@@ -51,6 +51,30 @@ titles = lambda x : re.search('[a-zA-Z]+\\.', x).group(0)
 train_df['Title'] = train_df['Name'].apply(titles)
 test_df['Title'] = test_df['Name'].apply(titles)
 
+""" 
+Let's process the Cabin column to maximize the information available to us
+"""
+def reformat(rec):
+    
+    if str(rec['Cabin']) != 'nan':
+        x = re.findall("[a-zA-Z]+[0-9]{1}", rec['Cabin'])
+        if len(x) == 0:
+            x = re.findall("[a-zA-Z]{1}", rec['Cabin'])
+        y = re.findall("[0-9]+", rec['Cabin'])
+        if len(y) == 0:
+            y = [ 0 ]
+
+        rec['Cabin'] = x[0][0]
+        rec['Room'] = int(str(y[0]))
+        
+    return rec
+        
+    
+train_df  = train_df.apply(reformat, axis=1)
+test_df = test_df.apply(reformat, axis=1)
+
+
+
 
 print(train_df.info())
 print("=============== STATS ===================")
@@ -76,8 +100,11 @@ print("ALIVE: ", len(train_df[train_df['Survived'] == 1]))
 print("DEAD: ", len(train_df[train_df['Survived'] == 0]))
 
 if True:
-    subsetdf = train_df[(train_df['Age'].isna() == False) & (train_df['Embarked'].isna() == False)]
-    df = normalize(subsetdf, all_features_columns + label_column)
+    subsetdf = train_df[(train_df['Age'].isna() == False) & 
+                        (train_df['Embarked'].isna() == False) &
+                        (train_df['Cabin'].isna() == False) &
+                        (train_df['Room'].isna() == False)]
+    df = normalize(subsetdf, categorical_columns + label_column)
 
     print("======= SelectKBest =======")
     model = SelectKBest(score_func=chi2, k=5)
@@ -91,6 +118,7 @@ if True:
     print(np.stack((all_features_columns, func(model.feature_importances_)), axis=1))
 
     print("======= Logit Maximum Likelihood Analysis ===========")
+    print(df[all_features_columns].info())
     model=sm.Logit(df[label_column], df[all_features_columns])
     result=model.fit()
     print(result.summary2())
@@ -143,24 +171,6 @@ Both Sibsp, Parch, Embarked and Pclass do show uneven distribution in term of su
 """
 
 
-""" 
-Let's process the Cabin column to maximize the information available to us
-"""
-def reformat(val):
-    if str(val) == 'nan':
-        return np.nan
-    else:
-        x = re.findall("[a-zA-Z]+[0-9]{1}", val)
-        if len(x) == 0:
-            x = re.findall("[a-zA-Z]{1}", val)
-        
-        return x[0][0]
-    
-train_df['Cabin'] = train_df['Cabin'].apply(reformat)
-test_df['Cabin'] = test_df['Cabin'].apply(reformat)
-
-
-
 
 """
 Let's fill the missing values in both training and testing samples
@@ -200,10 +210,10 @@ def fill_by_classification(df_src, df_dest, name, columns):
     withoutVal = df_src[df_src[name].isna() == True]
     
     cat_columns = set(input_columns).intersection(categorical_columns)
-    
+
     df1 = normalize(withVal, cat_columns)
     df2 = normalize(withoutVal, cat_columns)
-    
+        
     model = ExtraTreesClassifier(random_state = 0)
     model.fit(df1[input_columns], withVal[predicted_columns])
     preds = model.predict(df1[input_columns])
@@ -263,17 +273,21 @@ print(train_df[train_df['Embarked'].isna() == True])
 fill_by_classification(train_df, train_df, 'Embarked', [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass' ])    
 fill_by_regression(train_df, train_df, 'Age', [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
 fill_by_classification(train_df, train_df, 'Cabin', [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Age', 'Pclass', 'Embarked' ])
+fill_by_classification(train_df, train_df, 'Room', [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Age', 'Pclass', 'Embarked', 'Cabin' ])
 
 
 allsamples = pd.concat([ train_df, test_df ])
 fill_by_regression(allsamples[allsamples['Age'].isna() == False], test_df, 'Fare', [ 'Title', 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Pclass' ])
 fill_by_regression(pd.concat([ train_df, test_df ]), test_df, 'Age', [ 'Title', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
 fill_by_classification(pd.concat([ train_df, test_df ]), test_df, 'Cabin', [ 'Title', 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Fare', 'Pclass' ])
+fill_by_classification(pd.concat([ train_df, test_df ]), test_df, 'Room', [ 'Title', 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Fare', 'Pclass', 'Cabin' ])
 
+train_df['Room'] = train_df['Room'].astype('int32')
+test_df['Room'] = test_df['Room'].astype('int32')
 
-outputs = ['PassengerId', 'Name', 'Ticket', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked',  'Pclass', 'Cabin', 'Survived' ]
+outputs = ['PassengerId', 'Name', 'Ticket', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked',  'Pclass', 'Cabin', 'Room', 'Survived' ]
 train_df[outputs].to_csv('data/train_processed.csv', index=False)
-outputs = ['PassengerId', 'Name', 'Ticket', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked',  'Pclass', 'Cabin' ]
+outputs = ['PassengerId', 'Name', 'Ticket', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked',  'Pclass', 'Cabin', 'Room' ]
 test_df[outputs].to_csv('data/test_processed.csv', index=False)
 
 print("Done")
