@@ -104,7 +104,7 @@ print(confusion_matrix(train_df[label_column], preds))
 print(classification_report(train_df[label_column], preds))
 
 kfold = StratifiedKFold(n_splits = 9, shuffle = True, random_state = SEED)
-results = cross_val_score(XGBClassifier(), train_df[all_features_columns], train_df[label_column], cv = kfold)
+results = cross_val_score(XGBClassifier(), train_df[all_features_columns], train_df[label_column].squeeze(), cv = kfold)
 print("9-Folds Cross Validation Accuracy: %0.2f" % results.mean())
 print()
 print()
