@@ -4,6 +4,8 @@ Created on Aug. 1, 2020
 @author: zollen
 '''
 
+import os
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import re
@@ -43,9 +45,9 @@ def normalize(df, columns):
             
     return pdf
 
-
-train_df = pd.read_csv('data/train.csv')
-test_df = pd.read_csv('data/test.csv')
+PROJECT_DIR=str(Path(__file__).parent.parent)  
+train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
+test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
 
 titles = lambda x : re.search('[a-zA-Z]+\\.', x).group(0)
 train_df['Title'] = train_df['Name'].apply(titles)
@@ -90,8 +92,15 @@ if False:
     surv = corr.copy()
     surv.loc[:,:] = False
     surv['Survived'] = True
+    
+    corr.drop('PassengerId', inplace=True)
   
-    sb.heatmap(corr[((corr >= 0.3) | (corr <= -0.3)) & (corr != 1) | surv], annot=True, linewidths=0.5, fmt='0.2f')
+    mask = np.triu(np.ones_like(corr, dtype=np.bool))
+    
+    if True:
+        sb.heatmap(corr[((corr >= 0.3) | (corr <= -0.3)) & (corr != 1) | surv], annot=True, linewidths=0.5, fmt='0.2f')
+    else:
+        sb.heatmap(corr, mask=mask, cmap='RdBu_r', annot=True, linewidths=0.5, fmt='0.2f')
     plt.show()
     exit()
 
