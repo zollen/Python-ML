@@ -3,6 +3,9 @@ Created on Aug. 26, 2020
 
 @author: zollen
 '''
+
+import os
+from pathlib import Path
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LogisticRegression
@@ -31,8 +34,9 @@ categorical_columns = [ 'Sex', 'Embarked',  'Pclass' ]
 all_features_columns = numeric_columns + categorical_columns 
 
 
-train_df = pd.read_csv('data/train_processed.csv')
-test_df = pd.read_csv('data/test_processed.csv')
+PROJECT_DIR=str(Path(__file__).parent.parent)  
+train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'))
+test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test_processed.csv'))
 
 
 cat_columns = []
@@ -40,6 +44,7 @@ cat_columns = []
 for name in categorical_columns:
     encoder = preprocessing.LabelEncoder()   
     keys = train_df[name].unique()
+
    
     if len(keys) == 2:
         encoder = preprocessing.LabelBinarizer()
@@ -90,7 +95,7 @@ if False:
 
 model = LogisticRegression(max_iter=500, solver='lbfgs')
 model.fit(train_df[all_features_columns], train_df[label_column].squeeze())
-print("XGB Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
+print("LogisticRegression Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 
 print("================= TRAINING DATA =====================")
 preds = model.predict(train_df[all_features_columns])
@@ -115,5 +120,5 @@ result_df = pd.DataFrame({ "PassengerId": test_df['PassengerId'], "Survived" : p
 
 print("========== TEST DATA ============")
 
-result_df.to_csv('data/myresult.csv', index=False)
+print(result_df.head())
 
