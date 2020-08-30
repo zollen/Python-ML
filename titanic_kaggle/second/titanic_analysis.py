@@ -14,7 +14,7 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn import preprocessing
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import KFold, StratifiedKFold
+from sklearn.model_selection import KFold, RepeatedStratifiedKFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
@@ -204,7 +204,7 @@ print(confusion_matrix(tlabels, preds))
 print(classification_report(tlabels, preds))
 
 print("================== CROSS VALIDATION ==================")
-kfold = StratifiedKFold(n_splits = 9, shuffle = True, random_state = 87)
+kfold = RepeatedStratifiedKFold(n_splits = 9, random_state = 87)
 results = cross_val_score(QuadraticDiscriminantAnalysis(reg_param = 0.1, tol = 0.0003), train_df, tlabels, cv = kfold)
 print("9-Folds Cross Validation Accuracy: %0.2f" % results.mean())
 
