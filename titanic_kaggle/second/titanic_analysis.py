@@ -12,6 +12,7 @@ import pandas as pd
 import re
 import seaborn as sb
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn import preprocessing
 from sklearn.preprocessing import MinMaxScaler
@@ -142,24 +143,70 @@ def map_title(rec):
         return 'Girl'
     
     return title
+
+def reformat(rec):
+    
+    if str(rec['Cabin']) != 'nan':
+        x = re.findall("[a-zA-Z]+[0-9]{1}", rec['Cabin'])
+        if len(x) == 0:
+            x = re.findall("[a-zA-Z]{1}", rec['Cabin'])
+        y = re.findall("[0-9]+", rec['Cabin'])
+        if len(y) == 0:
+            y = [ 0 ]
+
+        rec['Cabin'] = x[0][0]
+#        rec['Room'] = int(str(y[0]))
+        
+    return rec
+
+def normalize(df, columns):
+    pdf = df.copy()
+        
+    for name in columns:
+        encoder = preprocessing.LabelEncoder()   
+        keys = pdf[name].unique()
+
+        if len(keys) == 2:
+            encoder = preprocessing.LabelBinarizer()
+        
+        encoder.fit(keys)
+        pdf[name] = encoder.transform(pdf[name].values)
+            
+    return pdf
+
+def fill_by_classification(df_src, df_dest, name, columns):
+
+    input_columns = columns
+    predicted_columns = [ name ]
+
+    withVal = df_src[df_src[name].isna() == False]
+    withoutVal = df_src[df_src[name].isna() == True]
+    
+    cat_columns = set(input_columns).intersection(categorical_columns)
+
+    df1 = normalize(withVal, cat_columns)
+    df2 = normalize(withoutVal, cat_columns)
+        
+    model = DecisionTreeClassifier()
+    model.fit(df1[input_columns], withVal[predicted_columns])
+    preds = model.predict(df2[input_columns])
+    df_dest.loc[df_dest[name].isna() == True, name] = preds
     
 def process(df):
     
     df['Title'] = df['Name'].apply(lambda x : re.search('[a-zA-Z]+\\.', x).group(0))
     df['Title'] = df.apply(map_title, axis = 1)
 
-    df.drop(columns=[ 'Name', 'Cabin', 'Ticket'], inplace=True)
+    df.drop(columns=[ 'Name', 'Ticket', 'Cabin' ], inplace=True)
 
     df.loc[df['Embarked'].isna() == True, 'Embarked'] = 'C'
     df.loc[df['Fare'].isna() == True, 'Fare'] = 7.25
-
+    
     for title in set(title_category.values()):
         df.loc[((df['Age'].isna() == True) & (df['Title'] == title)), 'Age'] = df.loc[((df['Age'].isna() == False) & (df['Title'] == title)), 'Age'].median()
-
     df['Age'] = df['Age'].astype('int32')
-
-    print(df.groupby(['Title'])['Age'].median())
-
+    
+    
     for name in categorical_columns:
         encoder = preprocessing.LabelEncoder()   
         keys = df[name].unique()
@@ -172,13 +219,13 @@ def process(df):
     
  
     labels = df[label_column]
-
+    
+    
     ## Drop Age and Sex but Keep Title improve score
     df.drop(columns=label_column, inplace=True)    
-    df.drop(columns=[ 'Title' ], inplace=True)
+    df.drop(columns=[ 'Age', 'Sex' ], inplace=True)
 
-    df = pd.get_dummies(train_df, columns=[ 'Pclass', 'Embarked' ])
-
+    df = pd.get_dummies(df, columns=[ 'Title', 'Pclass', 'Embarked' ])
 
 
     scaler = MinMaxScaler()   
