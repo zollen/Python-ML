@@ -6,6 +6,7 @@ Created on Aug. 1, 2020
 
 import os
 from pathlib import Path
+import random
 import numpy as np
 import pandas as pd
 import re
@@ -14,7 +15,7 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn import preprocessing
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import KFold, RepeatedStratifiedKFold
+from sklearn.model_selection import GroupKFold, RepeatedStratifiedKFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
@@ -62,14 +63,32 @@ title_category = {
         "Nurse.": "Nurse"
     }
 
+def groups_generator(total, k, seed):
+    
+    groups = []
+    
+    done = False
+    while done == False:
+        for item in range(0, k):
+            groups.append(item)
+            if len(groups) == total:
+                done = True
+                break
+            
+    random.seed(seed)
+    random.shuffle(groups)
+    
+    return groups
+    
 def cross_validation(df, labels, k, repeats, seeds):
     
     tbl = {}
     tbl['accuracy'], tbl['precision'], tbl['recall'], tbl['auc'],tbl['loss'] = [], [], [], [], []
         
     for i in range(0, repeats):
-        kfold = KFold(n_splits = k, shuffle = True, random_state = seeds[i])
-        for train_index, test_index in kfold.split(df):
+        kfold = GroupKFold(n_splits = k)
+        groups = groups_generator(len(df), k, seeds[i])
+        for train_index, test_index in kfold.split(df, groups = groups):
             x_train, y_train = df.iloc[train_index], labels.iloc[train_index]
             x_test, y_test = df.iloc[test_index], labels.iloc[test_index]
             classifier = QuadraticDiscriminantAnalysis(reg_param = 0.1, tol = 0.0003)
@@ -204,7 +223,7 @@ print(confusion_matrix(tlabels, preds))
 print(classification_report(tlabels, preds))
 
 print("================== CROSS VALIDATION ==================")
-kfold = RepeatedStratifiedKFold(n_splits = 9, random_state = 87)
+kfold = RepeatedStratifiedKFold(n_splits = 9, n_repeats = 5, random_state = 87)
 results = cross_val_score(QuadraticDiscriminantAnalysis(reg_param = 0.1, tol = 0.0003), train_df, tlabels, cv = kfold)
 print("9-Folds Cross Validation Accuracy: %0.2f" % results.mean())
 
