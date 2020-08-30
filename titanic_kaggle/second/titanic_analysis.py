@@ -223,14 +223,13 @@ def process(df):
     
     ## Drop Age and Sex but Keep Title improve score
     df.drop(columns=label_column, inplace=True)    
-    df.drop(columns=[ 'Age', 'Sex' ], inplace=True)
+    df.drop(columns=[ 'PassengerId', 'Age', 'Sex' ], inplace=True)
 
     df = pd.get_dummies(df, columns=[ 'Title', 'Pclass', 'Embarked' ])
 
 
     scaler = MinMaxScaler()   
     cols = list(df.columns)
-    cols.remove('PassengerId')
     df[cols] = scaler.fit_transform(df[cols]) 
     
     return df, labels
