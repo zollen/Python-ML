@@ -14,7 +14,7 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn import preprocessing
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
@@ -62,6 +62,33 @@ title_category = {
         "Nurse.": "Nurse"
     }
 
+def cross_validation(df, labels, k, repeats, seeds):
+    
+    tbl = {}
+    tbl['accuracy'], tbl['precision'], tbl['recall'], tbl['auc'],tbl['loss'] = [], [], [], [], []
+        
+    for i in range(0, repeats):
+        kfold = KFold(n_splits = k, shuffle = True, random_state = seeds[i])
+        for train_index, test_index in kfold.split(df):
+            x_train, y_train = df.iloc[train_index], labels.iloc[train_index]
+            x_test, y_test = df.iloc[test_index], labels.iloc[test_index]
+            classifier = QuadraticDiscriminantAnalysis(reg_param = 0.1, tol = 0.0003)
+            classifier.fit(x_train, y_train)
+            preds = classifier.predict(x_test)
+            a1, a2, a3, a4, a5 = score_model(y_test, preds)
+            tbl['accuracy'].append(a1)
+            tbl['precision'].append(a2)
+            tbl['recall'].append(a3)
+            tbl['auc'].append(a4)
+            tbl['loss'].append(a5)
+            
+    a1, a2, a3, a4, a5 = np.mean(tbl['accuracy']), np.mean(tbl['precision']), np.mean(tbl['recall']), np.mean(tbl['auc']), np.mean(tbl['loss'])
+    
+    display_score(a1, a2, a3, a4, a5)
+    
+    return a1, a2, a3, a4, a5
+            
+    
 def score_model(observed, predicted):
     accuracy = accuracy_score(observed, predicted)
     precision = precision_score(observed, predicted)
@@ -71,6 +98,10 @@ def score_model(observed, predicted):
     
     return accuracy, precision, recall, auc, loss
 
+def display_score(accur, prec, recal, auc, loss):
+    print("Accuracy: %0.2f    Precision: %0.2f    Recall: %0.2f    AUC: %0.2f    Loss: %0.2f" %
+          (accur, prec, recal, auc, loss))
+    
 def show_score (observed, predicted):
     print("Accuracy: %0.2f    Precision: %0.2f    Recall: %0.2f    AUC: %0.2f    Loss: %0.2f" %
            (score_model(observed, predicted)))
@@ -123,6 +154,7 @@ def process(df):
  
     labels = df[label_column]
 
+    ## Drop Age and Sex but Keep Title improve score
     df.drop(columns=label_column, inplace=True)    
     df.drop(columns=[ 'Title' ], inplace=True)
 
@@ -169,10 +201,23 @@ print("================= TRAINING DATA =====================")
 preds = model.predict(train_df)
 show_score(tlabels, preds)
 print(confusion_matrix(tlabels, preds))
+print(classification_report(tlabels, preds))
 
 print("================== CROSS VALIDATION ==================")
 kfold = StratifiedKFold(n_splits = 9, shuffle = True, random_state = 87)
 results = cross_val_score(QuadraticDiscriminantAnalysis(reg_param = 0.1, tol = 0.0003), train_df, tlabels, cv = kfold)
 print("9-Folds Cross Validation Accuracy: %0.2f" % results.mean())
 
-
+tbl = {}
+tbl['accuracy'], tbl['precision'], tbl['recall'], tbl['auc'],tbl['loss'] = [], [], [], [], []
+        
+for k in range(4, 10):
+    a1, a2, a3, a4, a5 = cross_validation(train_df, tlabels, k, 3, [0, 23, 87])
+    tbl['accuracy'].append(a1)
+    tbl['precision'].append(a2)
+    tbl['recall'].append(a3)
+    tbl['auc'].append(a4)
+    tbl['loss'].append(a5)
+print("============================= AVERAGE ===========================")
+display_score(np.mean(tbl['accuracy']), np.mean(tbl['precision']), np.mean(tbl['recall']), 
+              np.mean(tbl['auc']), np.mean(tbl['loss']))
