@@ -126,9 +126,11 @@ for name in categorical_columns:
 
 
 train_df = pd.get_dummies(train_df, columns=categorical_columns)
+test_df = pd.get_dummies(test_df, columns=categorical_columns)
 
 scaler = MinMaxScaler()
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
+test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
 
 
 if False:
