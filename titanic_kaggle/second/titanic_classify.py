@@ -35,7 +35,7 @@ sb.set_style('whitegrid')
 
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Ticket' ]
-numeric_columns = [ 'SibSp', 'Parch', 'Fare' ]
+numeric_columns = [ 'Age', 'Fare', 'Parch', 'SibSp' ]
 categorical_columns = [ 'Title', 'Pclass', 'Embarked' ]
 all_features_columns = numeric_columns + categorical_columns 
 
