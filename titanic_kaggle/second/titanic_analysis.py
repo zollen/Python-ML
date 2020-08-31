@@ -49,7 +49,10 @@ title_category = {
         "Master.": "Master",
         "Lady.": "Baronness",
         "Girl.": "Girl",
-        "Nurse.": "Nurse"
+        "Boy.": "Boy",
+        "Nurse.": "Nurse",
+        'GramPa.':'GramPa',
+        'GramMa.': 'GramMa'
     }
     
 def map_title(rec):
@@ -62,11 +65,30 @@ def map_title(rec):
         if title == 'Doctor' and sex == 'female':
             return 'Nurse'
 
-    if str(rec['Age']) != 'nan' and title == 'Miss' and rec['Age'] < 16:
+    if str(rec['Age']) != 'nan' and (title == 'Miss' or title == 'Mrs' or title == 'Ms') and rec['Age'] < 16:
         return 'Girl'
     
-    if str(rec['Age']) == 'nan' and title == 'Miss' and rec['Parch'] > 0:
+    if str(rec['Age']) == 'nan' and (title == 'Miss' or title == 'Mrs' or title == 'Ms') and rec['Parch'] > 0:
         return 'Girl'
+    
+    if str(rec['Age']) == 'nan' and (title == 'Miss' or title == 'Mrs' or title == 'Ms') and rec['Age'] < 16:
+        return 'Girl'
+    
+    if str(rec['Age']) != 'nan' and title == 'Mr' and rec['Age'] < 16:
+        return 'Boy'
+    
+    if str(rec['Age']) == 'nan' and title == 'Mr' and rec['Parch'] > 0:
+        return 'Boy'
+    
+    if str(rec['Age']) == 'nan' and title == 'Mr' and rec['Age'] < 16:
+        return 'Boy'
+        
+    if str(rec['Age']) != 'nan' and title == 'Mr' and rec['Age'] >= 50:
+        return 'GramPa'
+    
+    if str(rec['Age']) != 'nan' and (title == 'Miss' or title == 'Mrs' or title == 'Ms') and rec['Age'] >= 50:
+        return 'GramMa' 
+    
     
     return title
 
@@ -154,6 +176,8 @@ def enginneering(df):
     for title in set(title_category.values()):
         df.loc[((df['Age'].isna() == True) & (df['Title'] == title)), 'Age'] = df.loc[((df['Age'].isna() == False) & (df['Title'] == title)), 'Age'].median()
     df['Age'] = df['Age'].astype('int32')
+    
+    df.drop(columns = ['Age', 'Sex'], inplace = True)
      
     return df
 
@@ -164,6 +188,7 @@ test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
 
 train_df = enginneering(train_df)
 test_df = enginneering(test_df)
+
 
 print(train_df.head())
 

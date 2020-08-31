@@ -35,8 +35,8 @@ sb.set_style('whitegrid')
 
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Ticket' ]
-numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare' ]
-categorical_columns = [ 'Title', 'Sex', 'Pclass', 'Embarked' ]
+numeric_columns = [ 'SibSp', 'Parch', 'Fare' ]
+categorical_columns = [ 'Title', 'Pclass', 'Embarked' ]
 all_features_columns = numeric_columns + categorical_columns 
 
 
@@ -107,6 +107,8 @@ def show_score (observed, predicted):
 PROJECT_DIR=str(Path(__file__).parent.parent)  
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test_processed.csv'))
+
+
 
 print(train_df.head())
 target = train_df[label_column]
