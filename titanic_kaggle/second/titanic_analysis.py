@@ -99,12 +99,8 @@ def captureCabin(val):
         x = re.findall("[a-zA-Z]+[0-9]{1}", val)
         if len(x) == 0:
             x = re.findall("[a-zA-Z]{1}", val)
-        y = re.findall("[0-9]+", val)
-        if len(y) == 0:
-            y = [ 0 ]
-
+            
         return x[0][0]
-#        rec['Room'] = int(str(y[0]))
         
     return val
 
@@ -164,39 +160,47 @@ def fill_by_classification(df_src, df_dest, name, columns):
     preds = model.predict(df2[input_columns])
     df_dest.loc[df_dest[name].isna() == True, name] = preds
     
-def enginneering(df):
+def enginneering(src_df, dest_df):
     
-    df['Title'] = df['Name'].apply(lambda x : re.search('[a-zA-Z]+\\.', x).group(0))
-    df['Title'] = df.apply(map_title, axis = 1)
+    src_df['Title'] = src_df['Name'].apply(lambda x : re.search('[a-zA-Z]+\\.', x).group(0))
+    src_df['Title'] = src_df.apply(map_title, axis = 1)
+    dest_df['Title'] = dest_df['Name'].apply(lambda x : re.search('[a-zA-Z]+\\.', x).group(0))
+    dest_df['Title'] = dest_df.apply(map_title, axis = 1)
 
-    df.drop(columns=[ 'Name', 'Ticket' ], inplace=True)
 
-    df.loc[df['Embarked'].isna() == True, 'Embarked'] = 'C'
-    df.loc[df['Fare'].isna() == True, 'Fare'] = 7.25
+    dest_df.loc[dest_df['Embarked'].isna() == True, 'Embarked'] = 'S'
+    dest_df.loc[dest_df['Fare'].isna() == True, 'Fare'] = 7.25
     
+    ## the medum should be calculated based on Sex, Pclass and Title
+    ## All three features have the highest correlation in the heatmap
+    medians = src_df.groupby(['Title', 'Pclass', 'Sex'])['Age'].median()
+       
+    for index, value in medians.items():
+        dest_df.loc[(dest_df['Age'].isna() == True) & (dest_df['Title'] == index[0]) & 
+               (dest_df['Pclass'] == index[1]) & (dest_df['Sex'] == index[2]), 'Age'] = value
+               
+    dest_df.loc[dest_df['Age'] < 1, 'Age'] = 1
     
-    for title in set(title_category.values()):
-        df.loc[((df['Age'].isna() == True) & (df['Title'] == title) & (df['Pclass'] == 1)), 'Age'] = df.loc[((df['Age'].isna() == False) & (df['Title'] == title) & (df['Pclass'] == 1)), 'Age'].median()
-        df.loc[((df['Age'].isna() == True) & (df['Title'] == title) & (df['Pclass'] == 2)), 'Age'] = df.loc[((df['Age'].isna() == False) & (df['Title'] == title) & (df['Pclass'] == 2)), 'Age'].median()
-        df.loc[((df['Age'].isna() == True) & (df['Title'] == title) & (df['Pclass'] == 3)), 'Age'] = df.loc[((df['Age'].isna() == False) & (df['Title'] == title) & (df['Pclass'] == 3)), 'Age'].median()
-    df['Age'] = df['Age'].astype('int32')
+    dest_df['Age'] = dest_df['Age'].astype('int32')
+      
     
-    df['Cabin'] = df['Cabin'].apply(captureCabin) 
-    
+    dest_df['Cabin'] = dest_df['Cabin'].apply(captureCabin) 
      
     
-#    df.drop(columns = [ 'Sex' ], inplace = True)
+    dest_df.drop(columns = [ 'Name', 'Ticket', 'Sex' ], inplace = True)
 
      
-    return df
+    return dest_df
 
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
 
-train_df = enginneering(train_df)
-test_df = enginneering(test_df)
+all_df = pd.concat([ train_df, test_df ])
+train_df = enginneering(all_df, train_df)
+test_df = enginneering(test_df, test_df)
+
 
 
 if False:
@@ -213,18 +217,13 @@ if False:
     
 if False:
     for name in categorical_columns:
-        encoder = preprocessing.LabelEncoder()
-        keys = np.union1d(train_df[name].unique(), test_df[name].unique())
-    
-        if len(keys) == 2:
-            encoder = preprocessing.LabelBinarizer()
+        keys = np.union1d(train_df[name].unique(), test_df[name].unique())               
+        for key in keys:
+            train_df[name + "." + str(key)] = train_df[name].apply(lambda x : 1 if x == key else 0)
+            test_df[name + "." + str(key)] = test_df[name].apply(lambda x : 1 if x == key else 0)
         
-        encoder.fit(keys)
-        train_df[name] = encoder.transform(train_df[name].values)
-        test_df[name] = encoder.transform(test_df[name].values)
-
-    train_df = pd.get_dummies(train_df, columns=categorical_columns)
-    test_df = pd.get_dummies(test_df, columns=categorical_columns)
+    train_df.drop(columns = categorical_columns, inplace = True)
+    test_df.drop(columns = categorical_columns, inplace = True)
     
     dd = train_df.copy()
     dd.drop(columns=['PassengerId'], inplace=True)
@@ -235,7 +234,9 @@ if False:
     sb.heatmap(corr, mask=mask, cmap='RdBu_r', annot=True, linewidths=0.5, fmt='0.2f')
     plt.show()
     exit()
-
+    
+    
+    
 
 print(train_df.head())
 

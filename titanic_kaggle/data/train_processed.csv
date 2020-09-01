@@ -16,7 +16,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 15,0,3,14,0,0,7.8542,,S,Girl
 16,1,2,55,0,0,16.0,,S,GramMa
 17,0,3,2,4,1,29.125,,Q,Master
-18,1,2,30,0,0,13.0,,S,Mr
+18,1,2,29,0,0,13.0,,S,Mr
 19,0,3,31,1,0,18.0,,S,Mrs
 20,1,3,31,0,0,7.225,,C,Mrs
 21,0,2,35,0,0,26.0,,S,Mr
@@ -60,11 +60,11 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 59,1,2,5,1,2,27.75,,S,Girl
 60,0,3,11,5,2,46.9,,S,Master
 61,0,3,22,0,0,7.2292,,C,Mr
-62,1,1,38,0,0,80.0,B,C,Miss
+62,1,1,38,0,0,80.0,B,S,Miss
 63,0,1,45,1,0,83.475,C,S,Mr
 64,0,3,4,3,2,27.9,,S,Master
 65,0,1,36,0,0,27.7208,,C,Mr
-66,1,3,4,1,1,15.2458,,C,Master
+66,1,3,6,1,1,15.2458,,C,Master
 67,1,2,29,0,0,10.5,F,S,Mrs
 68,0,3,19,0,0,8.1583,,S,Mr
 69,1,3,17,4,2,7.925,,S,Miss
@@ -77,7 +77,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 76,0,3,25,0,0,7.65,G,S,Mr
 77,0,3,26,0,0,7.8958,,S,Mr
 78,0,3,26,0,0,8.05,,S,Mr
-79,1,2,0,0,2,29.0,,S,Master
+79,1,2,1,0,2,29.0,,S,Master
 80,1,3,30,0,0,12.475,,S,Miss
 81,0,3,22,0,0,9.0,,S,Mr
 82,1,3,29,0,0,9.5,,S,Mr
@@ -158,7 +158,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 157,1,3,16,0,0,7.7333,,Q,Miss
 158,0,3,30,0,0,8.05,,S,Mr
 159,0,3,26,0,0,8.6625,,S,Mr
-160,0,3,4,8,2,69.55,,S,Master
+160,0,3,6,8,2,69.55,,S,Master
 161,0,3,44,0,1,16.1,,S,Mr
 162,1,2,40,0,0,15.75,,S,Mrs
 163,0,3,26,0,0,7.775,,S,Mr
@@ -175,12 +175,12 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 174,0,3,21,0,0,7.925,,S,Mr
 175,0,1,56,0,0,30.6958,A,C,GramPa
 176,0,3,18,1,1,7.8542,,S,Mr
-177,0,3,4,3,1,25.4667,,S,Master
+177,0,3,6,3,1,25.4667,,S,Master
 178,0,1,50,0,0,28.7125,C,C,GramMa
 179,0,2,30,0,0,13.0,,S,Mr
 180,0,3,36,0,0,0.0,,S,Mr
 181,0,3,5,8,2,69.55,,S,Girl
-182,0,2,30,0,0,15.05,,C,Mr
+182,0,2,29,0,0,15.05,,C,Mr
 183,0,3,9,4,2,31.3875,,S,Master
 184,1,2,1,2,1,39.0,F,S,Master
 185,1,3,4,0,2,22.025,,S,Girl
@@ -276,7 +276,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 275,1,3,22,0,0,7.75,,Q,Miss
 276,1,1,63,1,0,77.9583,D,S,GramMa
 277,0,3,45,0,0,7.75,,S,Miss
-278,0,2,30,0,0,0.0,,S,Mr
+278,0,2,29,0,0,0.0,,S,Mr
 279,0,3,7,4,1,29.125,,Q,Master
 280,1,3,35,1,1,20.25,,S,Mrs
 281,0,3,65,0,0,7.75,,Q,GramPa
@@ -302,10 +302,10 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 301,1,3,22,0,0,7.75,,Q,Miss
 302,1,3,26,2,0,23.25,,Q,Mr
 303,0,3,19,0,0,0.0,,S,Mr
-304,1,2,27,0,0,12.35,E,Q,Miss
+304,1,2,24,0,0,12.35,E,Q,Miss
 305,0,3,26,0,0,8.05,,S,Mr
-306,1,1,0,1,2,151.55,C,S,Master
-307,1,1,29,0,0,110.8833,,C,Miss
+306,1,1,1,1,2,151.55,C,S,Master
+307,1,1,30,0,0,110.8833,,C,Miss
 308,1,1,17,1,0,108.9,C,C,Mrs
 309,0,2,30,1,0,24.0,,C,Mr
 310,1,1,30,0,0,56.9292,E,C,Miss
@@ -412,7 +412,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 411,0,3,26,0,0,7.8958,,S,Mr
 412,0,3,26,0,0,6.8583,,Q,Mr
 413,1,1,33,1,0,90.0,C,Q,Miss
-414,0,2,30,0,0,0.0,,S,Mr
+414,0,2,29,0,0,0.0,,S,Mr
 415,1,3,44,0,0,7.925,,S,Mr
 416,0,3,31,0,0,8.05,,S,Mrs
 417,1,2,34,1,1,32.5,,S,Mrs
@@ -465,10 +465,10 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 464,0,2,48,0,0,13.0,,S,Mr
 465,0,3,26,0,0,8.05,,S,Mr
 466,0,3,38,0,0,7.05,,S,Mr
-467,0,2,30,0,0,0.0,,S,Mr
+467,0,2,29,0,0,0.0,,S,Mr
 468,0,1,56,0,0,26.55,,S,GramPa
 469,0,3,26,0,0,7.725,,Q,Mr
-470,1,3,0,2,1,19.2583,,C,Girl
+470,1,3,1,2,1,19.2583,,C,Girl
 471,0,3,26,0,0,7.25,,S,Mr
 472,0,3,38,0,0,8.6625,,S,Mr
 473,1,2,33,1,2,27.75,,S,Mrs
@@ -480,7 +480,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 479,0,3,22,0,0,7.5208,,S,Mr
 480,1,3,2,0,1,12.2875,,S,Girl
 481,0,3,9,5,2,46.9,,S,Master
-482,0,2,30,0,0,0.0,,S,Mr
+482,0,2,29,0,0,0.0,,S,Mr
 483,0,3,50,0,0,8.05,,S,GramPa
 484,1,3,63,0,0,9.5875,,S,GramMa
 485,1,1,25,1,0,91.0792,B,C,Mr
@@ -546,7 +546,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 545,0,1,50,1,0,106.425,C,C,GramPa
 546,0,1,64,0,0,26.0,,S,GramPa
 547,1,2,19,1,0,26.0,,S,Mrs
-548,1,2,30,0,0,13.8625,,C,Mr
+548,1,2,29,0,0,13.8625,,C,Mr
 549,0,3,33,1,1,20.525,,S,Mr
 550,1,2,8,1,1,36.75,,S,Master
 551,1,1,17,0,2,110.8833,C,C,Mr
@@ -595,7 +595,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 594,0,3,5,0,2,7.75,,Q,Girl
 595,0,2,37,1,0,26.0,,S,Mr
 596,0,3,36,1,1,24.15,,S,Mr
-597,1,2,27,0,0,33.0,,S,Miss
+597,1,2,24,0,0,33.0,,S,Miss
 598,0,3,49,0,0,0.0,,S,Mr
 599,0,3,26,0,0,7.225,,C,Mr
 600,1,1,49,1,0,56.9292,A,C,Baron
@@ -643,7 +643,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 642,1,1,24,0,0,69.3,B,C,Miss
 643,0,3,2,3,2,27.9,,S,Girl
 644,1,3,26,0,0,56.4958,,S,Mr
-645,1,3,0,2,1,19.2583,,C,Girl
+645,1,3,1,2,1,19.2583,,C,Girl
 646,1,1,48,1,0,76.7292,D,C,Mr
 647,0,3,19,0,0,7.8958,,S,Mr
 648,1,1,56,0,0,35.5,A,C,Army
@@ -673,7 +673,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 672,0,1,31,1,0,52.0,B,S,Mr
 673,0,2,70,0,0,10.5,,S,GramPa
 674,1,2,31,0,0,13.0,,S,Mr
-675,0,2,30,0,0,0.0,,S,Mr
+675,0,2,29,0,0,0.0,,S,Mr
 676,0,3,18,0,0,7.775,,S,Mr
 677,0,3,24,0,0,8.05,,S,Mr
 678,1,3,18,0,0,9.8417,,S,Miss
@@ -708,7 +708,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 707,1,2,45,0,0,13.5,,S,Mrs
 708,1,1,42,0,0,26.2875,E,S,Mr
 709,1,1,22,0,0,151.55,,S,Miss
-710,1,3,4,1,1,15.2458,,C,Master
+710,1,3,6,1,1,15.2458,,C,Master
 711,1,1,24,0,0,49.5042,C,C,Miss
 712,0,1,36,0,0,26.55,C,S,Mr
 713,1,1,48,1,0,52.0,C,S,Mr
@@ -731,7 +731,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 730,0,3,25,1,0,7.925,,S,Miss
 731,1,1,29,0,0,211.3375,B,S,Miss
 732,0,3,11,0,0,18.7875,,C,Boy
-733,0,2,30,0,0,0.0,,S,Mr
+733,0,2,29,0,0,0.0,,S,Mr
 734,0,2,23,0,0,13.0,,S,Mr
 735,0,2,23,0,0,13.0,,S,Mr
 736,0,3,28,0,0,16.1,,S,Mr
@@ -754,7 +754,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 753,0,3,33,0,0,9.5,,S,Mr
 754,0,3,23,0,0,7.8958,,S,Mr
 755,1,2,48,1,2,65.0,,S,Mrs
-756,1,2,0,1,1,14.5,,S,Master
+756,1,2,1,1,1,14.5,,S,Master
 757,0,3,28,0,0,7.7958,,S,Mr
 758,0,2,18,0,0,11.5,,S,Mr
 759,0,3,34,0,0,8.05,,S,Mr
@@ -765,7 +765,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 764,1,1,36,1,2,120.0,B,S,Mrs
 765,0,3,16,0,0,7.775,,S,Mr
 766,1,1,51,1,0,77.9583,D,S,GramMa
-767,0,1,44,0,0,39.6,,C,Doctor
+767,0,1,47,0,0,39.6,,C,Doctor
 768,0,3,30,0,0,7.75,,Q,Miss
 769,0,3,26,1,0,24.15,,Q,Mr
 770,0,3,32,0,0,8.3625,,S,Mr
@@ -802,7 +802,7 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 801,0,2,34,0,0,13.0,,S,Mr
 802,1,2,31,1,1,26.25,,S,Mrs
 803,1,1,11,1,2,120.0,B,S,Master
-804,1,3,0,0,1,8.5167,,C,Master
+804,1,3,1,0,1,8.5167,,C,Master
 805,1,3,27,0,0,6.975,,S,Mr
 806,0,3,31,0,0,7.775,,S,Mr
 807,0,1,39,0,0,0.0,A,S,Mr
@@ -828,9 +828,9 @@ PassengerId,Survived,Pclass,Age,SibSp,Parch,Fare,Cabin,Embarked,Title
 827,0,3,26,0,0,56.4958,,S,Mr
 828,1,2,1,0,2,37.0042,,C,Master
 829,1,3,26,0,0,7.75,,Q,Mr
-830,1,1,62,0,0,80.0,B,C,GramMa
+830,1,1,62,0,0,80.0,B,S,GramMa
 831,1,3,15,1,0,14.4542,,C,Girl
-832,1,2,0,1,1,18.75,,S,Master
+832,1,2,1,1,1,18.75,,S,Master
 833,0,3,26,0,0,7.2292,,C,Mr
 834,0,3,23,0,0,7.8542,,S,Mr
 835,0,3,18,0,0,8.3,,S,Mr
