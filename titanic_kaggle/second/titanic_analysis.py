@@ -172,7 +172,7 @@ def enginneering(src_df, dest_df):
     dest_df.loc[dest_df['Fare'].isna() == True, 'Fare'] = 7.25
     
     ## the medum should be calculated based on Sex, Pclass and Title
-    ## All three features have the highest correlation in the heatmap
+    ## All three features have the highest correlation with Age in the heatmap
     medians = src_df.groupby(['Title', 'Pclass', 'Sex'])['Age'].median()
        
     for index, value in medians.items():
