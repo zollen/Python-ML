@@ -27,7 +27,7 @@ sb.set_style('whitegrid')
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Ticket' ]
 numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare' ]
-categorical_columns = [ 'Title', 'Pclass', 'Embarked' ]
+categorical_columns = [ 'Sex', 'Title', 'Pclass', 'Embarked', 'Cabin' ]
 all_features_columns = numeric_columns + categorical_columns 
 
 title_category = {
@@ -113,7 +113,7 @@ def normalize(df, columns):
 
         if len(keys) == 2:
             encoder = preprocessing.LabelBinarizer()
-        
+
         encoder.fit(keys)
         pdf[name] = encoder.transform(pdf[name].values)
             
@@ -128,7 +128,7 @@ def fill_by_regression(df_src, df_dest, name, columns):
     withoutVal = df_src[df_src[name].isna() == True]
     
     cat_columns = set(input_columns).intersection(categorical_columns)
-
+    
     df1 = normalize(withVal, cat_columns)
     df2 = normalize(withoutVal, cat_columns)
     
@@ -148,16 +148,17 @@ def fill_by_classification(df_src, df_dest, name, columns):
     predicted_columns = [ name ]
 
     withVal = df_src[df_src[name].isna() == False]
-    withoutVal = df_src[df_src[name].isna() == True]
+    withoutVal = df_dest[df_dest[name].isna() == True]
     
     cat_columns = set(input_columns).intersection(categorical_columns)
 
     df1 = normalize(withVal, cat_columns)
     df2 = normalize(withoutVal, cat_columns)
-        
+     
     model = LogisticRegression()
     model.fit(df1[input_columns], withVal[predicted_columns])
     preds = model.predict(df2[input_columns])
+    
     df_dest.loc[df_dest[name].isna() == True, name] = preds
     
 def enginneering(src_df, dest_df):
@@ -167,7 +168,8 @@ def enginneering(src_df, dest_df):
     dest_df['Title'] = dest_df['Name'].apply(lambda x : re.search('[a-zA-Z]+\\.', x).group(0))
     dest_df['Title'] = dest_df.apply(map_title, axis = 1)
 
-
+    src_df.loc[src_df['Embarked'].isna() == True, 'Embarked'] = 'S'
+    src_df.loc[src_df['Fare'].isna() == True, 'Fare'] = 7.25
     dest_df.loc[dest_df['Embarked'].isna() == True, 'Embarked'] = 'S'
     dest_df.loc[dest_df['Fare'].isna() == True, 'Fare'] = 7.25
     
@@ -176,18 +178,23 @@ def enginneering(src_df, dest_df):
     medians = src_df.groupby(['Title', 'Pclass', 'Sex'])['Age'].median()
        
     for index, value in medians.items():
-        dest_df.loc[(dest_df['Age'].isna() == True) & (dest_df['Title'] == index[0]) & 
-               (dest_df['Pclass'] == index[1]) & (dest_df['Sex'] == index[2]), 'Age'] = value
+        for df in [src_df, dest_df]:
+            df.loc[(df['Age'].isna() == True) & (df['Title'] == index[0]) & 
+               (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Age'] = value  
                
-    dest_df.loc[dest_df['Age'] < 1, 'Age'] = 1
-    
+    src_df.loc[src_df['Age'] < 1, 'Age'] = 1
+    src_df['Age'] = src_df['Age'].astype('int32')              
+    dest_df.loc[dest_df['Age'] < 1, 'Age'] = 1    
     dest_df['Age'] = dest_df['Age'].astype('int32')
       
-    
+    src_df['Cabin'] = src_df['Cabin'].apply(captureCabin) 
     dest_df['Cabin'] = dest_df['Cabin'].apply(captureCabin) 
-     
     
-    dest_df.drop(columns = [ 'Name', 'Ticket', 'Sex' ], inplace = True)
+    ## Try medians with Pclass for calculating Cabin
+    
+    
+    
+    dest_df.drop(columns = [ 'Name', 'Ticket'  ], inplace = True)
 
      
     return dest_df
@@ -198,10 +205,13 @@ train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
 
 all_df = pd.concat([ train_df, test_df ])
-train_df = enginneering(all_df, train_df)
-test_df = enginneering(test_df, test_df)
+all_df1 = all_df.copy()
+all_df2 = all_df.copy()
 
+train_df = enginneering(all_df1, train_df)
+test_df = enginneering(all_df2, test_df)
 
+print(train_df.head())
 
 if False:
     dd = train_df[train_df['Cabin'].isna() == False]  
@@ -217,14 +227,14 @@ if False:
     
 if False:
     for name in categorical_columns:
-        keys = np.union1d(train_df[name].unique(), test_df[name].unique())               
+        if name == 'Cabin':
+            continue
+        keys = np.union1d(train_df[name].unique(), test_df[name].unique())            
         for key in keys:
             train_df[name + "." + str(key)] = train_df[name].apply(lambda x : 1 if x == key else 0)
-            test_df[name + "." + str(key)] = test_df[name].apply(lambda x : 1 if x == key else 0)
-        
+          
     train_df.drop(columns = categorical_columns, inplace = True)
-    test_df.drop(columns = categorical_columns, inplace = True)
-    
+  
     dd = train_df.copy()
     dd.drop(columns=['PassengerId'], inplace=True)
     corr = dd.corr() 
@@ -235,6 +245,21 @@ if False:
     plt.show()
     exit()
     
+if True:
+    dd = train_df[train_df['Cabin'].isna() == False]
+    for name in categorical_columns:
+        keys = dd[name].unique()
+        for key in keys:
+            dd[name + "." + str(key)] = dd[name].apply(lambda x : 1 if x == key else 0)
+    dd.drop(columns = categorical_columns, inplace = True)
+    dd.drop(columns=['PassengerId'], inplace=True)
+    corr = dd.corr()
+     
+    mask = np.triu(np.ones_like(corr, dtype=np.bool))    
+    plt.figure(figsize=(16, 12))   
+    sb.heatmap(corr, mask=mask, cmap='RdBu_r', annot=True, linewidths=0.5, fmt='0.2f')
+    plt.show()
+    exit()
     
     
 

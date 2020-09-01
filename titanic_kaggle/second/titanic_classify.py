@@ -135,6 +135,7 @@ train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
 
 
+
 if False:
     param_grid = dict({ "reg_param": np.arange(0.0, 1.0, 0.1),
                        "tol": [ 3.0e-4, 2.0e-4, 1.0e-4, 3.0e-3, 2.0e-3, 1.0e-3, 3.0e-2, 2.0e-2, 1.0e-2   ]
