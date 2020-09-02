@@ -187,7 +187,7 @@ def enginneering(src_df, dest_df):
     dest_df.loc[dest_df['Embarked'].isna() == True, 'Embarked'] = 'S'
     dest_df.loc[dest_df['Fare'].isna() == True, 'Fare'] = 7.25
     
-    ## the medum should be calculated based on Sex, Pclass and Title
+    ## 1. the medum should be calculated based on Sex, Pclass and Title
     ## All three features have the highest correlation with Age in the heatmap
     medians = src_df.groupby(['Title', 'Pclass', 'Sex'])['Age'].median()
      
@@ -202,21 +202,24 @@ def enginneering(src_df, dest_df):
                        
     src_df.loc[src_df['Age'] < 1, 'Age'] = 1
     src_df['Age'] = src_df['Age'].astype('int32')              
-    dest_df.loc[dest_df['Age'] < 1, 'Age'] = 1    
+    dest_df.loc[dest_df['Age'] < 1, 'Age'] = 1
+    
+    ## 2. Binning the Age
+    dest_df['Age'] = pd.qcut(dest_df['Age'], q = 9,
+                             labels = [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ])  
     dest_df['Age'] = dest_df['Age'].astype('int32')
+    
       
     src_df['Cabin'] = src_df['Cabin'].apply(captureCabin) 
     dest_df['Cabin'] = dest_df['Cabin'].apply(captureCabin) 
     
-    ## 1. Try maximun counts with Pclass for calculating Cabin
+    ## 3. Try maximun counts with Pclass for calculating Cabin
     counts = src_df.groupby(['Title', 'Pclass', 'Sex', 'Cabin'])['Cabin'].count()
     
     for index, value in counts.items():
         for df in [ src_df, dest_df ]:
             df.loc[(df['Cabin'].isna() == True) & (df['Title'] == index[0]) & 
-                       (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Cabin'] = counts[index[0], index[1], index[2]].idxmax()  
-    
-   
+                       (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Cabin'] = counts[index[0], index[1], index[2]].idxmax()      
     
     
     dest_df.loc[(dest_df['Cabin'].isna() == True) & (dest_df['Sex'] == 'female'), 'Cabin'] = 'B'
@@ -227,18 +230,22 @@ def enginneering(src_df, dest_df):
     dest_df.loc[(dest_df['Cabin'] == 'D') | (dest_df['Cabin'] == 'E'), 'Cabin'] = 'D'
     dest_df.loc[(dest_df['Cabin'] == 'F') | (dest_df['Cabin'] == 'G'), 'Cabin'] = 'G'
       
-    ## 2. Family Size (SibSp + Parch + 1)column 'Alone', 'Small', 'Medium', 'Big'
+    ## 3. Family Size (SibSp + Parch + 1)column 'Alone', 'Small', 'Medium', 'Big'
     
     dest_df['Size'] = dest_df['SibSp'] + dest_df['Parch'] + 1
     dest_df['Size'] = dest_df['Size'].apply(captureSize)
     
-
-    ## 3. Binning the Age
-    dest_df['Age'] = pd.qcut(dest_df['Age'], q = 9,
-                             labels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'I', 'J' ])
-                              
     
-    ## 4. Try add a survivibility percentage column
+    ## 4. Binning the Fare
+#    dest_df.loc[dest_df['Fare'] < 7.854, 'Fare'] = 0
+#    dest_df.loc[(dest_df['Fare'] >= 7.854) & (dest_df['Fare'] < 10.5), 'Fare'] = 7.854 
+#    dest_df.loc[(dest_df['Fare'] >= 10.5) & (dest_df['Fare'] < 21.679), 'Fare'] = 10.5
+#    dest_df.loc[(dest_df['Fare'] >= 21.679) & (dest_df['Fare'] < 39.688), 'Fare'] = 21.679
+#    dest_df.loc[(dest_df['Fare'] >= 39.688) & (dest_df['Fare'] < 200.00), 'Fare'] = 39.688
+#    dest_df.loc[(dest_df['Fare'] >= 200.00), 'Fare'] = 50
+
+    
+    ## 5. Try add a survivibility percentage column
    
     
     
