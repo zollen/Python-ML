@@ -104,6 +104,20 @@ def captureCabin(val):
         
     return val
 
+def captureSize(val):
+    
+    if str(val) != 'nan':
+        if val == 1:
+            return "A"
+
+        if val == 2:
+            return "C"
+
+        if val == 3 or val == 4:
+            return "F"
+        else:
+            return "L"
+    
 def normalize(df, columns):
     pdf = df.copy()
         
@@ -176,12 +190,16 @@ def enginneering(src_df, dest_df):
     ## the medum should be calculated based on Sex, Pclass and Title
     ## All three features have the highest correlation with Age in the heatmap
     medians = src_df.groupby(['Title', 'Pclass', 'Sex'])['Age'].median()
-       
-    for index, value in medians.items():
-        for df in [src_df, dest_df]:
-            df.loc[(df['Age'].isna() == True) & (df['Title'] == index[0]) & 
-               (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Age'] = value  
-               
+     
+    if True:  
+        for index, value in medians.items():
+            for df in [src_df, dest_df]:
+                df.loc[(df['Age'].isna() == True) & (df['Title'] == index[0]) & 
+                       (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Age'] = value  
+    else:  
+        src_df['Age'] = src_df.groupby(['Title', 'Sex', 'Pclass'])['Age'].apply(lambda x : x.fillna(x.median()))        
+        dest_df['Age'] = dest_df.groupby(['Title', 'Sex', 'Pclass'])['Age'].apply(lambda x : x.fillna(x.median()))
+                       
     src_df.loc[src_df['Age'] < 1, 'Age'] = 1
     src_df['Age'] = src_df['Age'].astype('int32')              
     dest_df.loc[dest_df['Age'] < 1, 'Age'] = 1    
@@ -190,11 +208,41 @@ def enginneering(src_df, dest_df):
     src_df['Cabin'] = src_df['Cabin'].apply(captureCabin) 
     dest_df['Cabin'] = dest_df['Cabin'].apply(captureCabin) 
     
-    ## Try medians with Pclass for calculating Cabin
+    ## 1. Try maximun counts with Pclass for calculating Cabin
+    counts = src_df.groupby(['Title', 'Pclass', 'Sex', 'Cabin'])['Cabin'].count()
+    
+    for index, value in counts.items():
+        for df in [ src_df, dest_df ]:
+            df.loc[(df['Cabin'].isna() == True) & (df['Title'] == index[0]) & 
+                       (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Cabin'] = counts[index[0], index[1], index[2]].idxmax()  
+    
+   
     
     
+    dest_df.loc[(dest_df['Cabin'].isna() == True) & (dest_df['Sex'] == 'female'), 'Cabin'] = 'B'
+    dest_df.loc[(dest_df['Cabin'].isna() == True) & (dest_df['Sex'] == 'male'), 'Cabin'] = 'E'
     
-    dest_df.drop(columns = [ 'Name', 'Ticket'  ], inplace = True)
+    dest_df.loc[dest_df['Cabin'] == 'T', 'Cabin'] = 'C'
+    dest_df.loc[(dest_df['Cabin'] == 'B') | (dest_df['Cabin'] == 'C'), 'Cabin'] = 'A'
+    dest_df.loc[(dest_df['Cabin'] == 'D') | (dest_df['Cabin'] == 'E'), 'Cabin'] = 'D'
+    dest_df.loc[(dest_df['Cabin'] == 'F') | (dest_df['Cabin'] == 'G'), 'Cabin'] = 'G'
+      
+    ## 2. Family Size (SibSp + Parch + 1)column 'Alone', 'Small', 'Medium', 'Big'
+    
+    dest_df['Size'] = dest_df['SibSp'] + dest_df['Parch'] + 1
+    dest_df['Size'] = dest_df['Size'].apply(captureSize)
+    
+
+    ## 3. Binning the Age
+    dest_df['Age'] = pd.qcut(dest_df['Age'], q = 9,
+                             labels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'I', 'J' ])
+                              
+    
+    ## 4. Try add a survivibility percentage column
+   
+    
+    
+    dest_df.drop(columns = [ 'Name', 'Ticket', 'Sex', 'SibSp', 'Parch' ], inplace = True)
 
      
     return dest_df
@@ -208,10 +256,13 @@ all_df = pd.concat([ train_df, test_df ])
 all_df1 = all_df.copy()
 all_df2 = all_df.copy()
 
+all_df1.set_index('PassengerId', inplace=True)
+all_df2.set_index('PassengerId', inplace=True)
+
+
 train_df = enginneering(all_df1, train_df)
 test_df = enginneering(all_df2, test_df)
 
-print(train_df.head())
 
 if False:
     dd = train_df[train_df['Cabin'].isna() == False]  
@@ -245,7 +296,7 @@ if False:
     plt.show()
     exit()
     
-if True:
+if False:
     dd = train_df[train_df['Cabin'].isna() == False]
     for name in categorical_columns:
         keys = dd[name].unique()
@@ -262,8 +313,11 @@ if True:
     exit()
     
     
-
-print(train_df.head())
+if False:
+    dd = train_df[train_df['Cabin'].isna() == True]
+    sb.catplot(x = "Pclass", y = "Sex", hue = "Survived", kind = "swarm", data = dd)
+    plt.show()
+    exit()
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)
 test_df.to_csv(os.path.join(PROJECT_DIR, 'data/test_processed.csv'), index=False)
