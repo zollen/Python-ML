@@ -108,15 +108,15 @@ def captureSize(val):
     
     if str(val) != 'nan':
         if val == 1:
-            return "A"
+            return 1
 
         if val == 2:
-            return "C"
+            return 2
 
         if val == 3 or val == 4:
-            return "F"
+            return 3
         else:
-            return "L"
+            return 5
     
 def normalize(df, columns):
     pdf = df.copy()
@@ -221,9 +221,7 @@ def enginneering(src_df, dest_df):
             df.loc[(df['Cabin'].isna() == True) & (df['Title'] == index[0]) & 
                        (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Cabin'] = counts[index[0], index[1], index[2]].idxmax()      
     
-    
-    dest_df.loc[(dest_df['Cabin'].isna() == True) & (dest_df['Sex'] == 'female'), 'Cabin'] = 'B'
-    dest_df.loc[(dest_df['Cabin'].isna() == True) & (dest_df['Sex'] == 'male'), 'Cabin'] = 'E'
+    fill_by_classification(dest_df, dest_df, 'Cabin', [ 'Title', 'Pclass', 'Sex', 'Embarked', 'Age', 'Fare' ])
     
     dest_df.loc[dest_df['Cabin'] == 'T', 'Cabin'] = 'C'
     dest_df.loc[(dest_df['Cabin'] == 'B') | (dest_df['Cabin'] == 'C'), 'Cabin'] = 'A'
