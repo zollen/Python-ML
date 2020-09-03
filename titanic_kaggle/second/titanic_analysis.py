@@ -223,7 +223,7 @@ def enginneering(src_df, dest_df):
     
     fill_by_classification(dest_df, dest_df, 'Cabin', [ 'Title', 'Pclass', 'Sex', 'Embarked', 'Age', 'Fare' ])
     
-    dest_df.loc[dest_df['Cabin'] == 'T', 'Cabin'] = 'C'
+    dest_df.loc[dest_df['Cabin'] == 'T', 'Cabin'] = 'A'
     dest_df.loc[(dest_df['Cabin'] == 'B') | (dest_df['Cabin'] == 'C'), 'Cabin'] = 'A'
     dest_df.loc[(dest_df['Cabin'] == 'D') | (dest_df['Cabin'] == 'E'), 'Cabin'] = 'D'
     dest_df.loc[(dest_df['Cabin'] == 'F') | (dest_df['Cabin'] == 'G'), 'Cabin'] = 'G'
@@ -235,12 +235,7 @@ def enginneering(src_df, dest_df):
     
     
     ## 4. Binning the Fare
-#    dest_df.loc[dest_df['Fare'] < 7.854, 'Fare'] = 0
-#    dest_df.loc[(dest_df['Fare'] >= 7.854) & (dest_df['Fare'] < 10.5), 'Fare'] = 7.854 
-#    dest_df.loc[(dest_df['Fare'] >= 10.5) & (dest_df['Fare'] < 21.679), 'Fare'] = 10.5
-#    dest_df.loc[(dest_df['Fare'] >= 21.679) & (dest_df['Fare'] < 39.688), 'Fare'] = 21.679
-#    dest_df.loc[(dest_df['Fare'] >= 39.688) & (dest_df['Fare'] < 200.00), 'Fare'] = 39.688
-#    dest_df.loc[(dest_df['Fare'] >= 200.00), 'Fare'] = 50
+    dest_df['Fare'] = pd.qcut(dest_df['Fare'], 6, labels=[1, 3, 5, 10, 15, 30])
 
     
     ## 5. Try add a survivibility percentage column
