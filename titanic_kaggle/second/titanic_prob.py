@@ -155,7 +155,7 @@ train_df['Title'] = train_df['Name'].apply(lambda x : re.search('[a-zA-Z]+\\.', 
 train_df['Title'] = train_df.apply(map_title, axis = 1)
 train_df['Age'] = train_df.groupby(['Title', 'Sex', 'Pclass'])['Age'].apply(lambda x : x.fillna(x.median()))
 train_df.loc[train_df['Age'] < 1, 'Age'] = 1
-train_df['Age'] = pd.qcut(train_df['Age'], q = 9, labels = [ 0, 15, 20, 24, 26, 28.5, 32, 36, 46 ])    
+train_df['Age'] = pd.qcut(train_df['Age'], q = 9, labels = [ 0, 15, 20, 24, 26, 28, 32, 36, 46 ])    
 train_df['Age'] = train_df['Age'].astype('int32')              
 train_df['Embarked'] = train_df['Embarked'].fillna('S')
 train_df['Fare'] = train_df['Fare'].fillna(7.25)
@@ -220,8 +220,21 @@ titleDoctor = len(train_df[train_df['Title'] == 'Doctor'])
 titleArmy = len(train_df[train_df['Title'] == 'Army'])
 titleBaronness = len(train_df[train_df['Title'] == 'Baronness'])
 titleNurse = len(train_df[train_df['Title'] == 'Nurse'])
-
-
+age0 = len(train_df[train_df['Age'] == 0])
+age15 = len(train_df[train_df['Age'] == 15])
+age20 = len(train_df[train_df['Age'] == 20])
+age24 = len(train_df[train_df['Age'] == 24])
+age26 = len(train_df[train_df['Age'] == 26])
+age28 = len(train_df[train_df['Age'] == 28])
+age32 = len(train_df[train_df['Age'] == 32])
+age36 = len(train_df[train_df['Age'] == 36])
+age46 = len(train_df[train_df['Age'] == 46])
+fare0 = len(train_df[train_df['Fare'] == 0])
+fare5 = len(train_df[train_df['Fare'] == 5])
+fare10 = len(train_df[train_df['Fare'] == 10])
+fare20 = len(train_df[train_df['Fare'] == 20])
+fare40 = len(train_df[train_df['Fare'] == 40])
+fare80 = len(train_df[train_df['Fare'] == 80])
 
 
 ## Prior(ALIVE) = Total(ALIVE) / TOTAL(ALL)
@@ -282,6 +295,37 @@ ptitleArmy = titleArmy / total
 ptitleBaronness = titleBaronness / total
 ## Prior(Title=Nurse) = Total(Title=Nurse) / Total(All)
 ptitleNurse = titleNurse / total
+## Prior(Age=0) = Total(age9) / total
+page0 = age0 / total
+## Prior(Age=15) = Total(age15) / total
+page15 = age15 / total
+## Prior(Age=20) = Total(age20) / total
+page20 = age20 / total
+## Prior(Age=24) = Total(age24) / total
+page24 = age24 / total
+## Prior(Age=26) = Total(age26) / total
+page26 = age26 / total
+## Prior(Age=28.5) = Total(age28.5) / total
+page28 = age28 / total
+## Prior(Age=32) = Total(age32) / total
+page32 = age32 / total
+## Prior(Age=36) = Total(age36) / total
+page36 = age36 / total
+## Prior(Age=46) = Total(age46) / total
+page46 = age46 / total
+## Prior(Fare=0) = Total(Fare=0) / total
+pfare0 = fare0 / total
+## Prior(Fare=5) = Total(Fare=5) / total
+pfare5 = fare5 / total
+## Prior(Fare=10) = Total(Fare=10) / total
+pfare10 = fare10 / total
+## Prior(Fare=20) = Total(Fare=20) / total
+pfare20 = fare20 / total
+## Prior(Fare=40) = Total(Fare=40) /total
+pfare40 = fare40 / total
+## Prior(Fare=80) = Total(Fare=80) / total
+pfare80 = fare80 / total
+
 
 print("Prob(ALIVE): %0.4f" % palives)
 print("Prob(DEAD): %0.4f" % pdead)
@@ -312,6 +356,20 @@ print("Prob(Title=Doctor): %0.4f" % ptitleDoctor)
 print("Prob(Title=Army): %0.4f" % ptitleArmy)
 print("Prob(Title=Baronness): %0.4f" % ptitleBaronness)
 print("Prob(Title=Nurse): %0.4f" % ptitleNurse)
+print("Prob(Age=0): %0.4f" % page0)
+print("Prob(Age=15): %0.4f" % page15)
+print("Prob(Age=20): %0.4f" % page20)
+print("Prob(Age=24): %0.4f" % page24)
+print("Prob(Age=28): %0.4f" % page28)
+print("Prob(Age=32): %0.4f" % page32)
+print("Prob(Age=36): %0.4f" % page36)
+print("Prob(Age=46): %0.4f" % page46)
+print("Prob(Fare=0): %0.4f" % pfare0)
+print("Prob(Fare=5): %0.4f" % pfare5)
+print("Prob(Fare=10): %0.4f" % pfare10)
+print("Prob(Fare=20): %0.4f" % pfare20)
+print("Prob(Fare=40): %0.4f" % pfare40)
+print("Prob(Fare=80): %0.4f" % pfare80)
 
 
 print("=================================================")
@@ -499,201 +557,415 @@ psize5Dead = len(train_df[(train_df['Size'] == 5) & (train_df['Survived'] == 0)]
 pdeadSize5 = psize5Dead * pdead / psize5 + ADJUSTMENT
 print("Prob(Dead|Size=5): %0.4f" % pdeadSize5)
 
-## P(Title=Mr|Alive) = Total(Tital=Mr & Alive) / Total(Alive)
+## P(Title=Mr|Alive) = Total(Title=Mr & Alive) / Total(Alive)
 ## P(Title=Mr|Alive) = P(Alive|Title=Mr) * P(Title=Mr) / P(Alive)
 ## P(Alive|Title=Mr) = P(Title=Mr|Alive) * P(Alive) / P(Title=Mr)
 ptitleMrAlive = len(train_df[(train_df['Title'] == 'Mr') & (train_df['Survived'] == 1)]) / alives
 paliveTitleMr = ptitleMrAlive * palives / ptitleMr + ADJUSTMENT
 print("Prob(Alive|Title=Mr): %0.4f" % paliveTitleMr)
 
-## P(Title=Mrs|Alive) = Total(Tital=Mrs & Alive) / Total(Alive)
+## P(Title=Mrs|Alive) = Total(Title=Mrs & Alive) / Total(Alive)
 ## P(Title=Mrs|Alive) = P(Alive|Title=Mrs) * P(Title=Mrs) / P(Alive)
 ## P(Alive|Title=Mrs) = P(Title=Mrs|Alive) * P(Alive) / P(Title=Mrs)
 ptitleMrsAlive = len(train_df[(train_df['Title'] == 'Mrs') & (train_df['Survived'] == 1)]) / alives
 paliveTitleMrs = ptitleMrsAlive * palives / ptitleMrs + ADJUSTMENT
 print("Prob(Alive|Title=Mrs): %0.4f" % paliveTitleMrs)
 
-## P(Title=Miss|Alive) = Total(Tital=Miss & Alive) / Total(Alive)
+## P(Title=Miss|Alive) = Total(Title=Miss & Alive) / Total(Alive)
 ## P(Title=Miss|Alive) = P(Alive|Title=Miss) * P(Title=Miss) / P(Alive)
 ## P(Alive|Title=Miss) = P(Title=Miss|Alive) * P(Alive) / P(Title=Miss)
 ptitleMissAlive = len(train_df[(train_df['Title'] == 'Miss') & (train_df['Survived'] == 1)]) / alives
 paliveTitleMiss = ptitleMissAlive * palives / ptitleMiss + ADJUSTMENT
 print("Prob(Alive|Title=Miss): %0.4f" % paliveTitleMiss)
 
-## P(Title=GramPa|Alive) = Total(Tital=GramPa & Alive) / Total(Alive)
+## P(Title=GramPa|Alive) = Total(Title=GramPa & Alive) / Total(Alive)
 ## P(Title=GramPa|Alive) = P(Alive|Title=GramPa) * P(Title=GramPa) / P(Alive)
 ## P(Alive|Title=GramPa) = P(Title=GramPa|Alive) * P(Alive) / P(Title=Mrs)
 ptitleGramPaAlive = len(train_df[(train_df['Title'] == 'GramPa') & (train_df['Survived'] == 1)]) / alives
 paliveTitleGramPa = ptitleGramPaAlive * palives / ptitleGramPa + ADJUSTMENT
 print("Prob(Alive|Title=GramPa): %0.4f" % paliveTitleGramPa)
 
-## P(Title=Master|Alive) = Total(Tital=Master & Alive) / Total(Alive)
+## P(Title=Master|Alive) = Total(Title=Master & Alive) / Total(Alive)
 ## P(Title=Master|Alive) = P(Alive|Title=Master) * P(Title=Master) / P(Alive)
 ## P(Alive|Title=Master) = P(Title=Master|Alive) * P(Alive) / P(Title=Master)
 ptitleMasterAlive = len(train_df[(train_df['Title'] == 'Master') & (train_df['Survived'] == 1)]) / alives
 paliveTitleMaster = ptitleMasterAlive * palives / ptitleMaster + ADJUSTMENT
 print("Prob(Alive|Title=Master): %0.4f" % paliveTitleMaster)
 
-## P(Title=Girl|Alive) = Total(Tital=Girl & Alive) / Total(Alive)
+## P(Title=Girl|Alive) = Total(Title=Girl & Alive) / Total(Alive)
 ## P(Title=Girl|Alive) = P(Alive|Title=Girl) * P(Title=Mrs) / P(Alive)
 ## P(Alive|Title=Girl) = P(Title=Girl|Alive) * P(Alive) / P(Title=Girl)
 ptitleGirlAlive = len(train_df[(train_df['Title'] == 'Girl') & (train_df['Survived'] == 1)]) / alives
 paliveTitleGirl = ptitleGirlAlive * palives / ptitleGirl + ADJUSTMENT
 print("Prob(Alive|Title=Girl): %0.4f" % paliveTitleGirl)
 
-## P(Title=GramMa|Alive) = Total(Tital=GramMa & Alive) / Total(Alive)
+## P(Title=GramMa|Alive) = Total(Title=GramMa & Alive) / Total(Alive)
 ## P(Title=GramMa|Alive) = P(Alive|Title=GramMa) * P(Title=GramMa) / P(Alive)
 ## P(Alive|Title=GramMa) = P(Title=GramMa|Alive) * P(Alive) / P(Title=GramMa)
 ptitleGramMaAlive = len(train_df[(train_df['Title'] == 'GramMa') & (train_df['Survived'] == 1)]) / alives
 paliveTitleGramMa = ptitleGramMaAlive * palives / ptitleGramMa + ADJUSTMENT
 print("Prob(Alive|Title=GramMa): %0.4f" % paliveTitleGramMa)
 
-## P(Title=Baron|Alive) = Total(Tital=Baron & Alive) / Total(Alive)
+## P(Title=Baron|Alive) = Total(Title=Baron & Alive) / Total(Alive)
 ## P(Title=Baron|Alive) = P(Alive|Title=Baron) * P(Title=Baron) / P(Alive)
 ## P(Alive|Title=Baron) = P(Title=Baron|Alive) * P(Alive) / P(Title=Baron)
 ptitleBaronAlive = len(train_df[(train_df['Title'] == 'Baron') & (train_df['Survived'] == 1)]) / alives
 paliveTitleBaron = ptitleBaronAlive * palives / ptitleBaron + ADJUSTMENT
 print("Prob(Alive|Title=Baron): %0.4f" % paliveTitleBaron)
 
-## P(Title=Clergy|Alive) = Total(Tital=Clergy & Alive) / Total(Alive)
+## P(Title=Clergy|Alive) = Total(Title=Clergy & Alive) / Total(Alive)
 ## P(Title=Clergy|Alive) = P(Alive|Title=Clergy) * P(Title=Clergy) / P(Alive)
 ## P(Alive|Title=Clergy) = P(Title=Clergy|Alive) * P(Alive) / P(Title=Clergy)
 ptitleClergyAlive = len(train_df[(train_df['Title'] == 'Clergy') & (train_df['Survived'] == 1)]) / alives
 paliveTitleClergy = ptitleClergyAlive * palives / ptitleClergy + ADJUSTMENT
 print("Prob(Alive|Title=Clergy): %0.4f" % paliveTitleClergy)
 
-## P(Title=Boy|Alive) = Total(Tital=Boy & Alive) / Total(Alive)
+## P(Title=Boy|Alive) = Total(Title=Boy & Alive) / Total(Alive)
 ## P(Title=Boy|Alive) = P(Alive|Title=Boy) * P(Title=Boy) / P(Alive)
 ## P(Alive|Title=Boy) = P(Title=Boy|Alive) * P(Alive) / P(Title=Boy)
 ptitleBoyAlive = len(train_df[(train_df['Title'] == 'Boy') & (train_df['Survived'] == 1)]) / alives
 paliveTitleBoy = ptitleBoyAlive * palives / ptitleBoy + ADJUSTMENT
 print("Prob(Alive|Title=Boy): %0.4f" % paliveTitleBoy)
 
-## P(Title=Doctor|Alive) = Total(Tital=Doctor & Alive) / Total(Alive)
+## P(Title=Doctor|Alive) = Total(Title=Doctor & Alive) / Total(Alive)
 ## P(Title=Doctor|Alive) = P(Alive|Title=Doctor) * P(Title=Doctor) / P(Alive)
 ## P(Alive|Title=Doctor) = P(Title=Doctor|Alive) * P(Alive) / P(Title=Doctor)
 ptitleDoctorAlive = len(train_df[(train_df['Title'] == 'Doctor') & (train_df['Survived'] == 1)]) / alives
 paliveTitleDoctor = ptitleDoctorAlive * palives / ptitleDoctor + ADJUSTMENT
 print("Prob(Alive|Title=Doctor): %0.4f" % paliveTitleDoctor)
 
-## P(Title=Army|Alive) = Total(Tital=Army & Alive) / Total(Alive)
+## P(Title=Army|Alive) = Total(Title=Army & Alive) / Total(Alive)
 ## P(Title=Army|Alive) = P(Alive|Title=Army) * P(Title=Army) / P(Alive)
 ## P(Alive|Title=Army) = P(Title=Army|Alive) * P(Alive) / P(Title=Army)
 ptitleArmyAlive = len(train_df[(train_df['Title'] == 'Army') & (train_df['Survived'] == 1)]) / alives
 paliveTitleArmy = ptitleArmyAlive * palives / ptitleArmy + ADJUSTMENT
 print("Prob(Alive|Title=Army): %0.4f" % paliveTitleArmy)
 
-## P(Title=Baronness|Alive) = Total(Tital=Baronness & Alive) / Total(Alive)
+## P(Title=Baronness|Alive) = Total(Title=Baronness & Alive) / Total(Alive)
 ## P(Title=Baronness|Alive) = P(Alive|Title=Baronness) * P(Title=Baronness) / P(Alive)
 ## P(Alive|Title=Baronness) = P(Title=ArmyBaronness|Alive) * P(Alive) / P(Title=Baronness)
 ptitleBaronnessAlive = len(train_df[(train_df['Title'] == 'Baronness') & (train_df['Survived'] == 1)]) / alives
 paliveTitleBaronness = ptitleBaronnessAlive * palives / ptitleBaronness + ADJUSTMENT
 print("Prob(Alive|Title=Baronness): %0.4f" % paliveTitleBaronness)
 
-## P(Title=Nurse|Alive) = Total(Tital=Nurse & Alive) / Total(Alive)
+## P(Title=Nurse|Alive) = Total(Title=Nurse & Alive) / Total(Alive)
 ## P(Title=Nurse|Alive) = P(Alive|Title=Nurse) * P(Title=Nurse) / P(Alive)
 ## P(Alive|Title=Nurse) = P(Title=Nurse|Alive) * P(Alive) / P(Title=Nurse)
 ptitleNurseAlive = len(train_df[(train_df['Title'] == 'Nurse') & (train_df['Survived'] == 1)]) / alives
 paliveTitleNurse = ptitleNurseAlive * palives / ptitleNurse + ADJUSTMENT
 print("Prob(Alive|Title=Nurse): %0.4f" % paliveTitleNurse)
 
-## P(Title=Mr|Dead) = Total(Tital=Mr & Dead) / Total(Dead)
+## P(Title=Mr|Dead) = Total(Title=Mr & Dead) / Total(Dead)
 ## P(Title=Mr|Dead) = P(Alive|Title=Mr) * P(Title=Mr) / P(Dead)
 ## P(Dead|Title=Mr) = P(Title=Mr|Dead) * P(Dead) / P(Title=Mr)
 ptitleMrDead = len(train_df[(train_df['Title'] == 'Mr') & (train_df['Survived'] == 0)]) / dead
 pdeadTitleMr = ptitleMrDead * pdead / ptitleMr + ADJUSTMENT
 print("Prob(Dead|Title=Mr): %0.4f" % pdeadTitleMr)
 
-## P(Title=Mrs|Dead) = Total(Tital=Mrs & Dead) / Total(Dead)
+## P(Title=Mrs|Dead) = Total(Title=Mrs & Dead) / Total(Dead)
 ## P(Title=Mrs|Dead) = P(Dead|Title=Mrs) * P(Title=Mrs) / P(Dead)
 ## P(Dead|Title=Mrs) = P(Title=Mrs|Dead) * P(Dead) / P(Title=Mrs)
 ptitleMrsDead = len(train_df[(train_df['Title'] == 'Mrs') & (train_df['Survived'] == 0)]) / dead
 pdeadTitleMrs = ptitleMrsDead * pdead / ptitleMrs + ADJUSTMENT
 print("Prob(Dead|Title=Mrs): %0.4f" % pdeadTitleMrs)
 
-## P(Title=Miss|Dead) = Total(Tital=Miss & Dead) / Total(Dead)
+## P(Title=Miss|Dead) = Total(Title=Miss & Dead) / Total(Dead)
 ## P(Title=Miss|Dead) = P(Dead|Title=Miss) * P(Title=Miss) / P(Dead)
 ## P(Dead|Title=Miss) = P(Title=Miss|Dead) * P(Dead) / P(Title=Miss)
 ptitleMissDead = len(train_df[(train_df['Title'] == 'Miss') & (train_df['Survived'] == 0)]) / dead
 pdeadTitleMiss = ptitleMissDead * pdead / ptitleMiss + ADJUSTMENT
 print("Prob(Dead|Title=Miss): %0.4f" % pdeadTitleMiss)
 
-## P(Title=GramPa|Dead) = Total(Tital=GramPa & Dead) / Total(Dead)
+## P(Title=GramPa|Dead) = Total(Title=GramPa & Dead) / Total(Dead)
 ## P(Title=GramPa|Dead) = P(Dead|Title=GramPa) * P(Title=GramPa) / P(Dead)
 ## P(Dead|Title=GramPa) = P(Title=GramPa|Dead) * P(Dead) / P(Title=Mrs)
 ptitleGramPaDead = len(train_df[(train_df['Title'] == 'GramPa') & (train_df['Survived'] == 0)]) / dead
 pdeadTitleGramPa = ptitleGramPaDead * pdead / ptitleGramPa + ADJUSTMENT
 print("Prob(Dead|Title=GramPa): %0.4f" % pdeadTitleGramPa)
 
-## P(Title=Master|Dead) = Total(Tital=Master & Dead) / Total(Dead)
+## P(Title=Master|Dead) = Total(Title=Master & Dead) / Total(Dead)
 ## P(Title=Master|Dead) = P(Dead|Title=Master) * P(Title=Master) / P(Dead)
 ## P(Dead|Title=Master) = P(Title=Master|Dead) * P(Dead) / P(Title=Master)
 ptitleMasterDead = len(train_df[(train_df['Title'] == 'Master') & (train_df['Survived'] == 0)]) / dead
 pdeadTitleMaster = ptitleMasterDead * pdead / ptitleMaster + ADJUSTMENT
 print("Prob(Dead|Title=Master): %0.4f" % pdeadTitleMaster)
 
-## P(Title=Girl|Dead) = Total(Tital=Girl & Dead) / Total(Dead)
+## P(Title=Girl|Dead) = Total(Title=Girl & Dead) / Total(Dead)
 ## P(Title=Girl|Dead) = P(Dead|Title=Girl) * P(Title=Mrs) / P(Dead)
 ## P(Dead|Title=Girl) = P(Title=Girl|Dead) * P(Dead) / P(Title=Girl)
 ptitleGirlDead = len(train_df[(train_df['Title'] == 'Girl') & (train_df['Survived'] == 0)]) / dead
 pdeadTitleGirl = ptitleGirlDead * pdead / ptitleGirl + ADJUSTMENT
 print("Prob(Dead|Title=Girl): %0.4f" % pdeadTitleGirl)
 
-## P(Title=GramMa|Dead) = Total(Tital=GramMa & Dead) / Total(Dead)
+## P(Title=GramMa|Dead) = Total(Title=GramMa & Dead) / Total(Dead)
 ## P(Title=GramMa|Dead) = P(Dead|Title=GramMa) * P(Title=GramMa) / P(Dead)
 ## P(Dead|Title=GramMa) = P(Title=GramMa|Dead) * P(Dead) / P(Title=GramMa)
 ptitleGramMaDead = len(train_df[(train_df['Title'] == 'GramMa') & (train_df['Survived'] == 0)]) / dead
 pdeadTitleGramMa = ptitleGramMaDead * pdead / ptitleGramMa + ADJUSTMENT
 print("Prob(Dead|Title=GramMa): %0.4f" % pdeadTitleGramMa)
 
-## P(Title=Baron|Dead) = Total(Tital=Baron & Dead) / Total(Dead)
+## P(Title=Baron|Dead) = Total(Title=Baron & Dead) / Total(Dead)
 ## P(Title=Baron|Dead) = P(Dead|Title=Baron) * P(Title=Baron) / P(Dead)
 ## P(Dead|Title=Baron) = P(Title=Baron|Dead) * P(Dead) / P(Title=Baron)
 ptitleBaronDead = len(train_df[(train_df['Title'] == 'Baron') & (train_df['Survived'] == 0)]) / dead
 pdeadTitleBaron = ptitleBaronDead * pdead / ptitleBaron + ADJUSTMENT
 print("Prob(Dead|Title=Baron): %0.4f" % pdeadTitleBaron)
 
-## P(Title=Clergy|Dead) = Total(Tital=Clergy & Dead) / Total(Dead)
+## P(Title=Clergy|Dead) = Total(Title=Clergy & Dead) / Total(Dead)
 ## P(Title=Clergy|Dead) = P(Dead|Title=Clergy) * P(Title=Clergy) / P(Dead)
 ## P(Dead|Title=Clergy) = P(Title=Clergy|Dead) * P(Dead) / P(Title=Clergy)
 ptitleClergyDead = len(train_df[(train_df['Title'] == 'Clergy') & (train_df['Survived'] == 0)]) / dead
 pdeadTitleClergy = ptitleClergyDead * pdead / ptitleClergy + ADJUSTMENT
 print("Prob(Dead|Title=Clergy): %0.4f" % pdeadTitleClergy)
 
-## P(Title=Boy|Dead) = Total(Tital=Boy & Dead) / Total(Dead)
+## P(Title=Boy|Dead) = Total(Title=Boy & Dead) / Total(Dead)
 ## P(Title=Boy|Dead) = P(Dead|Title=Boy) * P(Title=Boy) / P(Dead)
 ## P(Dead|Title=Boy) = P(Title=Boy|Dead) * P(Dead) / P(Title=Boy)
 ptitleBoyDead = len(train_df[(train_df['Title'] == 'Boy') & (train_df['Survived'] == 0)]) / dead
 pdeadTitleBoy = ptitleBoyDead * pdead / ptitleBoy + ADJUSTMENT
 print("Prob(Dead|Title=Boy): %0.4f" % pdeadTitleBoy)
 
-## P(Title=Doctor|Dead) = Total(Tital=Doctor & Dead) / Total(Dead)
+## P(Title=Doctor|Dead) = Total(Title=Doctor & Dead) / Total(Dead)
 ## P(Title=Doctor|Dead) = P(Dead|Title=Doctor) * P(Title=Doctor) / P(Dead)
 ## P(Dead|Title=Doctor) = P(Title=Doctor|Dead) * P(Dead) / P(Title=Doctor)
 ptitleDoctorDead = len(train_df[(train_df['Title'] == 'Doctor') & (train_df['Survived'] == 0)]) / dead
 pDeadTitleDoctor = ptitleDoctorDead * pdead / ptitleDoctor + ADJUSTMENT
 print("Prob(Dead|Title=Doctor): %0.4f" % pDeadTitleDoctor)
 
-## P(Title=Army|Dead) = Total(Tital=Army & Dead) / Total(Dead)
+## P(Title=Army|Dead) = Total(Title=Army & Dead) / Total(Dead)
 ## P(Title=Army|Dead) = P(Dead|Title=Army) * P(Title=Army) / P(Dead)
 ## P(Dead|Title=Army) = P(Title=Army|Dead) * P(Dead) / P(Title=Army)
 ptitleArmyDead = len(train_df[(train_df['Title'] == 'Army') & (train_df['Survived'] == 0)]) / dead
 pdeadTitleArmy = ptitleArmyDead * pdead / ptitleArmy + ADJUSTMENT
 print("Prob(Dead|Title=Army): %0.4f" % pdeadTitleArmy) 
 
-## P(Title=Baronness|Dead) = Total(Tital=Baronness & Dead) / Total(Dead)
+## P(Title=Baronness|Dead) = Total(Title=Baronness & Dead) / Total(Dead)
 ## P(Title=Baronness|Dead) = P(Dead|Title=Baronness) * P(Title=Baronness) / P(Dead)
 ## P(Dead|Title=Baronness) = P(Title=ArmyBaronness|Dead) * P(Dead) / P(Title=Baronness)
 ptitleBaronnessDead = len(train_df[(train_df['Title'] == 'Baronness') & (train_df['Survived'] == 0)]) / dead
 pdeadTitleBaronness = ptitleBaronnessDead * pdead / ptitleBaronness + ADJUSTMENT
 print("Prob(Dead|Title=Baronness): %0.4f" % pdeadTitleBaronness)
 
-## P(Title=Nurse|Dead) = Total(Tital=Nurse & Dead) / Total(Dead)
+## P(Title=Nurse|Dead) = Total(Title=Nurse & Dead) / Total(Dead)
 ## P(Title=Nurse|Dead) = P(Dead|Title=Nurse) * P(Title=Nurse) / P(Dead)
 ## P(Dead|Title=Nurse) = P(Title=Nurse|Dead) * P(Dead) / P(Title=Nurse)
 ptitleNurseDead = len(train_df[(train_df['Title'] == 'Nurse') & (train_df['Survived'] == 0)]) / dead
-pdeadTitleNurse = ptitleNurseDead* pdead / ptitleNurse + ADJUSTMENT
+pdeadTitleNurse = ptitleNurseDead * pdead / ptitleNurse + ADJUSTMENT
 print("Prob(Dead|Title=Nurse): %0.4f" % pdeadTitleNurse)
+
+## P(Age=0|Alive) = Total(Age=0 & Alive) / Total(Alive)
+## P(Age=0|Alive) = P(Alive|Age=0) * P(Age=0) / P(Alive)
+## P(Alive|Age=0) = P(Age=0|Alive) * P(Alive) / P(Age=0)
+page0Alive = len(train_df[(train_df['Age'] == 0) & (train_df['Survived'] == 1)]) / alives
+paliveAge0 = page0Alive * palives / page0 + ADJUSTMENT
+print("Prob(Alive|Age=0): %0.4f" % paliveAge0)
+
+## P(Age=15|Alive) = Total(Age=15 & Alive) / Total(Alive)
+## P(Age=15|Alive) = P(Alive|Age=15) * P(Age=15) / P(Alive)
+## P(Alive|Age=15) = P(Age=15|Alive) * P(Alive) / P(Age=15)
+page15Alive = len(train_df[(train_df['Age'] == 15) & (train_df['Survived'] == 1)]) / alives
+paliveAge15 = page15Alive * palives / page15 + ADJUSTMENT
+print("Prob(Alive|Age=15): %0.4f" % paliveAge15)
+
+## P(Age=20|Alive) = Total(Age=20 & Alive) / Total(Alive)
+## P(Age=20|Alive) = P(Alive|Age=20) * P(Age=20) / P(Alive)
+## P(Alive|Age=20) = P(Age=20|Alive) * P(Alive) / P(Age=20)
+page20Alive = len(train_df[(train_df['Age'] == 20) & (train_df['Survived'] == 1)]) / alives
+paliveAge20 = page20Alive * palives / page20 + ADJUSTMENT
+print("Prob(Alive|Age=20): %0.4f" % paliveAge20)
+
+## P(Age=24|Alive) = Total(Age=24 & Alive) / Total(Alive)
+## P(Age=24|Alive) = P(Alive|Age=24) * P(Age=24) / P(Alive)
+## P(Alive|Age=24) = P(Age=24|Alive) * P(Alive) / P(Age=24)
+page24Alive = len(train_df[(train_df['Age'] == 24) & (train_df['Survived'] == 1)]) / alives
+paliveAge24 = page24Alive * palives / page24 + ADJUSTMENT
+print("Prob(Alive|Age=24): %0.4f" % paliveAge24)
+
+## P(Age=26|Alive) = Total(Age=26 & Alive) / Total(Alive)
+## P(Age=26|Alive) = P(Alive|Age=26) * P(Age=26) / P(Alive)
+## P(Alive|Age=26) = P(Age=26|Alive) * P(Alive) / P(Age=26)
+page26Alive = len(train_df[(train_df['Age'] == 26) & (train_df['Survived'] == 1)]) / alives
+paliveAge26 = page26Alive * palives / page26 + ADJUSTMENT
+print("Prob(Alive|Age=26): %0.4f" % paliveAge26)
+
+## P(Age=28|Alive) = Total(Age=28 & Alive) / Total(Alive)
+## P(Age=28|Alive) = P(Alive|Age=28) * P(Age=28) / P(Alive)
+## P(Alive|Age=28) = P(Age=28|Alive) * P(Alive) / P(Age=28)
+page28Alive = len(train_df[(train_df['Age'] == 28) & (train_df['Survived'] == 1)]) / alives
+paliveAge28 = page28Alive * palives / page28 + ADJUSTMENT
+print("Prob(Alive|Age=28): %0.4f" % paliveAge28)
+
+## P(Age=32|Alive) = Total(Age=32 & Alive) / Total(Alive)
+## P(Age=32|Alive) = P(Alive|Age=32) * P(Age=32) / P(Alive)
+## P(Alive|Age=32) = P(Age=32|Alive) * P(Alive) / P(Age=32)
+page32Alive = len(train_df[(train_df['Age'] == 32) & (train_df['Survived'] == 1)]) / alives
+paliveAge32 = page32Alive * palives / page32 + ADJUSTMENT
+print("Prob(Alive|Age=32): %0.4f" % paliveAge32)
+
+## P(Age=36|Alive) = Total(Age=36 & Alive) / Total(Alive)
+## P(Age=36|Alive) = P(Alive|Age=36) * P(Age=36) / P(Alive)
+## P(Alive|Age=36) = P(Age=36|Alive) * P(Alive) / P(Age=36)
+page36Alive = len(train_df[(train_df['Age'] == 36) & (train_df['Survived'] == 1)]) / alives
+paliveAge36 = page36Alive * palives / page36 + ADJUSTMENT
+print("Prob(Alive|Age=36): %0.4f" % paliveAge36)
+
+## P(Age=46|Alive) = Total(Age=46 & Alive) / Total(Alive)
+## P(Age=46|Alive) = P(Alive|Age=46) * P(Age=46) / P(Alive)
+## P(Alive|Age=46) = P(Age=46|Alive) * P(Alive) / P(Age=46)
+page46Alive = len(train_df[(train_df['Age'] == 46) & (train_df['Survived'] == 1)]) / alives
+paliveAge46 = page46Alive * palives / page46 + ADJUSTMENT
+print("Prob(Alive|Age=46): %0.4f" % paliveAge46)
+
+## P(Age=0|Dead) = Total(Age=0 & Dead) / Total(Dead)
+## P(Age=0|Dead) = P(Dead|Age=0) * P(Age=0) / P(Dead)
+## P(Dead|Age=0) = P(Age=0|Dead) * P(Dead) / P(Age=0)
+page0Dead = len(train_df[(train_df['Age'] == 0) & (train_df['Survived'] == 0)]) / dead
+pdeadAge0 = page0Dead * pdead / page0 + ADJUSTMENT
+print("Prob(Dead|Age=0): %0.4f" % pdeadAge0)
+
+## P(Age=15|Dead) = Total(Age=15 & Dead) / Total(Dead)
+## P(Age=15|Dead) = P(Dead|Age=15) * P(Age=15) / P(Dead)
+## P(Dead|Age=15) = P(Age=15|Dead) * P(Dead) / P(Age=15)
+page15Dead = len(train_df[(train_df['Age'] == 15) & (train_df['Survived'] == 0)]) / dead
+pdeadAge15 = page15Dead * pdead / page15 + ADJUSTMENT
+print("Prob(Dead|Age=15): %0.4f" % pdeadAge15)
+
+## P(Age=20|Dead) = Total(Age=20 & Dead) / Total(Dead)
+## P(Age=20|Dead) = P(Dead|Age=20) * P(Age=20) / P(Dead)
+## P(Dead|Age=20) = P(Age=20|Dead) * P(Dead) / P(Age=20)
+page20Dead = len(train_df[(train_df['Age'] == 20) & (train_df['Survived'] == 0)]) / dead
+pdeadAge20 = page20Dead * pdead / page20 + ADJUSTMENT
+print("Prob(Dead|Age=20): %0.4f" % pdeadAge20)
+
+## P(Age=24|Dead) = Total(Age=24 & Dead) / Total(Dead)
+## P(Age=24|Dead) = P(Dead|Age=24) * P(Age=24) / P(Dead)
+## P(Dead|Age=24) = P(Age=24|Dead) * P(Dead) / P(Age=24)
+page24Dead = len(train_df[(train_df['Age'] == 24) & (train_df['Survived'] == 0)]) / dead
+pdeadAge24 = page24Dead * pdead / page24 + ADJUSTMENT
+print("Prob(Dead|Age=24): %0.4f" % pdeadAge24)
+
+## P(Age=26|Dead) = Total(Age=26 & Dead) / Total(Dead)
+## P(Age=26|Dead) = P(Dead|Age=26) * P(Age=26) / P(Dead)
+## P(Dead|Age=26) = P(Age=26|Dead) * P(Dead) / P(Age=26)
+page26Dead = len(train_df[(train_df['Age'] == 26) & (train_df['Survived'] == 0)]) / dead
+pdeadAge26 = page26Dead * pdead / page26 + ADJUSTMENT
+print("Prob(Dead|Age=26): %0.4f" % pdeadAge26)
+
+## P(Age=28|Dead) = Total(Age=28 & Dead) / Total(Dead)
+## P(Age=28|Dead) = P(Dead|Age=28) * P(Age=28) / P(Dead)
+## P(Dead|Age=28) = P(Age=28|Dead) * P(Dead) / P(Age=28)
+page28Dead = len(train_df[(train_df['Age'] == 28) & (train_df['Survived'] == 0)]) / dead
+pdeadAge28 = page28Dead * pdead / page28 + ADJUSTMENT
+print("Prob(Dead|Age=28): %0.4f" % pdeadAge28)
+
+## P(Age=32|Dead) = Total(Age=32 & Dead) / Total(Dead)
+## P(Age=32|Dead) = P(Dead|Age=32) * P(Age=32) / P(Dead)
+## P(Dead|Age=32) = P(Age=32|Dead) * P(Dead) / P(Age=32)
+page32Dead = len(train_df[(train_df['Age'] == 32) & (train_df['Survived'] == 0)]) / dead
+pdeadAge32 = page32Dead * pdead / page32 + ADJUSTMENT
+print("Prob(Dead|Age=32): %0.4f" % pdeadAge32)
+
+## P(Age=36|Dead) = Total(Age=36 & Dead) / Total(Dead)
+## P(Age=36|Dead) = P(Dead|Age=36) * P(Age=36) / P(Dead)
+## P(Dead|Age=36) = P(Age=36|Dead) * P(Dead) / P(Age=36)
+page36Dead = len(train_df[(train_df['Age'] == 36) & (train_df['Survived'] == 0)]) / dead
+pdeadAge36 = page36Dead * pdead / page36 + ADJUSTMENT
+print("Prob(Dead|Age=36): %0.4f" % pdeadAge36)
+
+## P(Age=46|Dead) = Total(Age=46 & Dead) / Total(Dead)
+## P(Age=46|Dead) = P(Dead|Age=46) * P(Age=46) / P(Dead)
+## P(Dead|Age=46) = P(Age=46|Dead) * P(Dead) / P(Age=46)
+page46Dead = len(train_df[(train_df['Age'] == 46) & (train_df['Survived'] == 0)]) / dead
+pdeadAge46 = page46Dead * pdead / page46 + ADJUSTMENT
+print("Prob(Dead|Age=46): %0.4f" % pdeadAge46)
+
+## P(Fare=0|Alive) = Total(Fare=0 & Alive) / Total(Alive)
+## P(Fare=0|Alive) = P(Alive|Fare=0) * P(Fare=0) / P(Alive)
+## P(Alive|Fare=0) = P(Fare=0|Alive) * P(Alive) / P(Fare=0)
+pfare0Alive = len(train_df[(train_df['Fare'] == 0) & (train_df['Survived'] == 1)]) / alives
+paliveFare0 = pfare0Alive * palives / pfare0 + ADJUSTMENT
+print("Prob(Alive|Fare=0): %0.4f" % paliveFare0)
+
+## P(Fare=5|Alive) = Total(Fare=5 & Alive) / Total(Alive)
+## P(Fare=5|Alive) = P(Alive|Fare=5) * P(Fare=5) / P(Alive)
+## P(Alive|Fare=5) = P(Fare=5|Alive) * P(Alive) / P(Fare=5)
+pfare5Alive = len(train_df[(train_df['Fare'] == 5) & (train_df['Survived'] == 1)]) / alives
+paliveFare5 = pfare5Alive * palives / pfare5 + ADJUSTMENT
+print("Prob(Alive|Fare=5): %0.4f" % paliveFare5)
+
+## P(Fare=10|Alive) = Total(Fare=10 & Alive) / Total(Alive)
+## P(Fare=10|Alive) = P(Alive|Fare=10) * P(Fare=10) / P(Alive)
+## P(Alive|Fare=10) = P(Fare=10|Alive) * P(Alive) / P(Fare=10)
+pfare10Alive = len(train_df[(train_df['Fare'] == 10) & (train_df['Survived'] == 1)]) / alives
+paliveFare10 = pfare10Alive * palives / pfare10 + ADJUSTMENT
+print("Prob(Alive|Fare=10): %0.4f" % paliveFare10)
+
+## P(Fare=20|Alive) = Total(Fare=20 & Alive) / Total(Alive)
+## P(Fare=20|Alive) = P(Alive|Fare=20) * P(Fare=20) / P(Alive)
+## P(Alive|Fare=20) = P(Fare=20|Alive) * P(Alive) / P(Fare=20)
+pfare20Alive = len(train_df[(train_df['Fare'] == 20) & (train_df['Survived'] == 1)]) / alives
+paliveFare20 = pfare20Alive * palives / pfare20 + ADJUSTMENT
+print("Prob(Alive|Fare=20): %0.4f" % paliveFare20)
+
+## P(Fare=40|Alive) = Total(Fare=40 & Alive) / Total(Alive)
+## P(Fare=40|Alive) = P(Alive|Fare=40) * P(Fare=40) / P(Alive)
+## P(Alive|Fare=40) = P(Fare=40|Alive) * P(Alive) / P(Fare=40)
+pfare40Alive = len(train_df[(train_df['Fare'] == 40) & (train_df['Survived'] == 1)]) / alives
+paliveFare40 = pfare40Alive * palives / pfare40 + ADJUSTMENT
+print("Prob(Alive|Fare=40): %0.4f" % paliveFare40)
+
+## P(Fare=80|Alive) = Total(Fare=80 & Alive) / Total(Alive)
+## P(Fare=80|Alive) = P(Alive|Fare=80) * P(Fare=80) / P(Alive)
+## P(Alive|Fare=80) = P(Fare=80|Alive) * P(Alive) / P(Fare=80)
+pfare80Alive = len(train_df[(train_df['Fare'] == 80) & (train_df['Survived'] == 1)]) / alives
+paliveFare80 = pfare80Alive * palives / pfare80 + ADJUSTMENT
+print("Prob(Alive|Fare=80): %0.4f" % paliveFare80)
+
+## P(Fare=0|Dead) = Total(Fare=0 & Dead) / Total(Dead)
+## P(Fare=0|Dead) = P(Dead|Fare=0) * P(Fare=0) / P(Dead)
+## P(Dead|Fare=0) = P(Fare=0|Dead) * P(Dead) / P(Fare=0)
+pfare0Dead = len(train_df[(train_df['Fare'] == 0) & (train_df['Survived'] == 0)]) / dead
+pdeadFare0 = pfare0Dead * pdead / pfare0 + ADJUSTMENT
+print("Prob(Dead|Fare=0): %0.4f" % pdeadFare0)
+
+## P(Fare=5|Dead) = Total(Fare=5 & Dead) / Total(Dead)
+## P(Fare=5|Dead) = P(Dead|Fare=5) * P(Fare=5) / P(Dead)
+## P(Dead|Fare=5) = P(Fare=5|Dead) * P(Dead) / P(Fare=5)
+pfare5Dead = len(train_df[(train_df['Fare'] == 5) & (train_df['Survived'] == 0)]) / dead
+pdeadFare5 = pfare5Dead * pdead / pfare5 + ADJUSTMENT
+print("Prob(Dead|Fare=5): %0.4f" % pdeadFare5)
+
+## P(Fare=10|Dead) = Total(Fare=10 & Dead) / Total(Dead)
+## P(Fare=10|Dead) = P(Dead|Fare=10) * P(Fare=10) / P(Dead)
+## P(Dead|Fare=10) = P(Fare=10|Dead) * P(Dead) / P(Fare=10)
+pfare10Dead = len(train_df[(train_df['Fare'] == 10) & (train_df['Survived'] == 0)]) / dead
+pdeadFare10 = pfare10Dead * pdead / pfare10 + ADJUSTMENT
+print("Prob(Dead|Fare=10): %0.4f" % pdeadFare10)
+
+## P(Fare=20|Dead) = Total(Fare=20 & Dead) / Total(Dead)
+## P(Fare=20|Dead) = P(Dead|Fare=20) * P(Fare=20) / P(Dead)
+## P(Dead|Fare=20) = P(Fare=20|Dead) * P(Dead) / P(Fare=20)
+pfare20Dead= len(train_df[(train_df['Fare'] == 20) & (train_df['Survived'] == 0)]) / dead
+pdeadFare20 = pfare20Dead * pdead / pfare20 + ADJUSTMENT
+print("Prob(Dead|Fare=0): %0.4f" % pdeadFare0)
+
+## P(Fare=40|Alive) = Total(Fare=40 & Alive) / Total(Alive)
+## P(Fare=40|Alive) = P(Alive|Fare=40) * P(Fare=40) / P(Alive)
+## P(Alive|Fare=40) = P(Fare=40|Alive) * P(Alive) / P(Fare=40)
+pfare40Dead = len(train_df[(train_df['Fare'] == 40) & (train_df['Survived'] == 0)]) / dead
+pdeadFare40 = pfare40Dead * pdead / pfare40 + ADJUSTMENT
+print("Prob(Dead|Fare=40): %0.4f" % pdeadFare40)
+
+## P(Fare=80|Dead) = Total(Fare=80 & Dead) / Total(Dead)
+## P(Fare=80|Dead) = P(Dead|Fare=80) * P(Fare=80) / P(Dead)
+## P(Dead|Fare=80) = P(Fare=80|Dead) * P(Dead) / P(Fare=80)
+pfare80Dead = len(train_df[(train_df['Fare'] == 80) & (train_df['Survived'] == 0)]) / dead
+pdeadFare80 = pfare80Dead * pdead / pfare80 + ADJUSTMENT
+print("Prob(Dead|Fare=80): %0.4f" % pdeadFare80)
+
+
+
+
 
 
 bayes = {}
@@ -759,3 +1031,34 @@ bayes['D|Title=Doctor'] = 0.6668
 bayes['D|Title=Army'] = 0.6001
 bayes['D|Title=Baronness'] = 0.3334
 bayes['D|Title=Nurse'] = 0.0001
+
+bayes['A|Age=0'] = 0.5244
+bayes['A|Age=15'] = 0.3438
+bayes['A|Age=20'] = 0.4427
+bayes['A|Age=24'] = 0.1485
+bayes['A|Age=26'] = 0.4256
+bayes['A|Age=28'] = 0.4344
+bayes['A|Age=32'] = 0.4701
+bayes['A|Age=36'] = 0.3470
+bayes['A|Age=46'] = 0.3879
+bayes['D|Age=0'] = 0.4758
+bayes['D|Age=15'] = 0.6563
+bayes['D|Age=20'] = 0.5575
+bayes['D|Age=24'] = 0.8517
+bayes['D|Age=26'] = 0.5746
+bayes['D|Age=32'] = 0.5301
+bayes['D|Age=36'] = 0.6532
+bayes['D|Age=46'] = 0.6123
+
+bayes['A|Fare=0'] = 0.2052
+bayes['A|Fare=5'] = 0.1909
+bayes['A|Fare=10'] = 0.3670
+bayes['A|Fare=20'] = 0.4363
+bayes['A|Fare=40'] = 0.4179
+bayes['A|Fare=80'] = 0.6981
+bayes['D|Fare=0'] = 0.7950
+bayes['D|Fare=5'] = 0.8093
+bayes['D|Fare=10'] = 0.6332
+bayes['D|Fare=20'] = 0.7950
+bayes['D|Fare=40'] = 0.5823
+bayes['D|Fare=80'] = 0.3021
