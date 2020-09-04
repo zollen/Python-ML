@@ -206,7 +206,7 @@ def enginneering(src_df, dest_df):
     
     ## 2. Binning the Age
     dest_df['Age'] = pd.qcut(dest_df['Age'], q = 9,
-                             labels = [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ])  
+                             labels = [ 0, 15, 20, 24, 26, 28.5, 32, 36, 46 ])  
     dest_df['Age'] = dest_df['Age'].astype('int32')
     
       

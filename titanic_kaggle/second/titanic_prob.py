@@ -155,7 +155,7 @@ train_df['Title'] = train_df['Name'].apply(lambda x : re.search('[a-zA-Z]+\\.', 
 train_df['Title'] = train_df.apply(map_title, axis = 1)
 train_df['Age'] = train_df.groupby(['Title', 'Sex', 'Pclass'])['Age'].apply(lambda x : x.fillna(x.median()))
 train_df.loc[train_df['Age'] < 1, 'Age'] = 1
-train_df['Age'] = pd.qcut(train_df['Age'], q = 9, labels = [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ])  
+train_df['Age'] = pd.qcut(train_df['Age'], q = 9, labels = [ 0, 15, 20, 24, 26, 28.5, 32, 36, 46 ])    
 train_df['Age'] = train_df['Age'].astype('int32')              
 train_df['Embarked'] = train_df['Embarked'].fillna('S')
 train_df['Fare'] = train_df['Fare'].fillna(7.25)
