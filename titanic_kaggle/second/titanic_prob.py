@@ -6,7 +6,6 @@ Created on Sep. 2, 2020
 
 import os
 from pathlib import Path
-import random
 import numpy as np
 import re
 from sklearn.linear_model import LogisticRegression
@@ -180,7 +179,7 @@ train_df.loc[(train_df['Cabin'] == 'F') | (train_df['Cabin'] == 'G'), 'Cabin'] =
 train_df['Size'] = train_df['SibSp'] + train_df['Parch'] + 1
 train_df['Size'] = train_df['Size'].apply(captureSize)
 
-train_df['Fare'] = pd.qcut(train_df['Fare'], 6, labels=[1, 3, 5, 10, 15, 30])
+train_df['Fare'] = pd.qcut(train_df['Fare'], 6, labels=[0, 5, 10, 20, 40, 80 ])
 
 train_df.drop(columns=['Name', 'Ticket', 'SibSp', 'Parch' ], inplace = True)
 

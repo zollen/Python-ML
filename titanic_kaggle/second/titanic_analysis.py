@@ -235,7 +235,7 @@ def enginneering(src_df, dest_df):
     
     
     ## 4. Binning the Fare
-    dest_df['Fare'] = pd.qcut(dest_df['Fare'], 6, labels=[1, 3, 5, 10, 15, 30])
+    dest_df['Fare'] = pd.qcut(dest_df['Fare'], 6, labels=[0, 5, 10, 20, 40, 80 ])
 
     
     ## 5. Try add a survivibility percentage column
@@ -271,8 +271,8 @@ if False:
     exit()
     
 if False:    
-    dd = train_df[train_df['Cabin'].isna() == True]    
-    sb.catplot(x = "Pclass", y = "Fare", hue = "Cabin", kind = "swarm", data = dd)
+    dd = train_df[train_df['Cabin'].isna() == False]    
+    sb.catplot(x = "Cabin", y = "Fare", hue = "Survived", kind = "swarm", data = dd)
     plt.show()
     exit()
     
