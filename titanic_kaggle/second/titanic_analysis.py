@@ -285,7 +285,7 @@ def survivability(rec):
         live += np.log(bayes['A|' + name + '=' + str(rec[name])])
         die += np.log(bayes['D|' + name + '=' + str(rec[name])])
         
-    ratio = np.abs((live - die) / (live + die)) * 0.5
+    ratio = np.abs((live - die) / (live + die)) * 0.8
         
     if live < die:
         ratio *= -1
