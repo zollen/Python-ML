@@ -26,9 +26,11 @@ sb.set_style('whitegrid')
 
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Ticket' ]
-numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare' ]
+numeric_columns = [ 'Age', 'Fare' ]
 categorical_columns = [ 'Sex', 'Title', 'Pclass', 'Embarked', 'Cabin' ]
 all_features_columns = numeric_columns + categorical_columns 
+
+bayes = {}
 
 title_category = {
         "Capt.": "Army",
@@ -93,6 +95,107 @@ def map_title(rec):
     
     return title
 
+def navieBayes():
+    bayes['A'] = 0.6162
+    bayes['D'] = 0.3838
+    
+    bayes['A|Sex=male'] = 0.1890
+    bayes['A|Sex=female'] = 0.7421
+    bayes['D|Sex=male'] = 0.8112
+    bayes['D|Sex=female'] = 0.2581
+
+    bayes['A|Pclass=1'] = 0.6297
+    bayes['A|Pclass=2'] = 0.4729
+    bayes['A|Pclass=3'] = 0.2425
+    bayes['D|Pclass=1'] = 0.6297
+    bayes['D|Pclass=2'] = 0.5273
+    bayes['D|Pclass=3'] = 0.7577
+
+    bayes['A|Embarked=S'] = 0.3391
+    bayes['A|Embarked=C'] = 0.5537
+    bayes['A|Embarked=Q'] = 0.3897
+    bayes['D|Embarked=S'] = 0.6611
+    bayes['D|Embarked=C'] = 0.4465
+    bayes['D|Embarked=Q'] = 0.6105
+
+    bayes['A|Cabin=A'] = 0.6116
+    bayes['A|Cabin=D'] = 0.4959
+    bayes['A|Cabin=G'] = 0.2582
+    bayes['D|Cabin=A'] = 0.3886
+    bayes['D|Cabin=D'] = 0.5043
+    bayes['D|Cabin=G'] = 0.7420
+
+    bayes['A|Size=1'] = 0.3036
+    bayes['A|Size=2'] = 0.5529
+    bayes['A|Size=3'] = 0.6108
+    bayes['A|Size=5'] = 0.1614
+    bayes['D|Size=1'] = 0.6966
+    bayes['D|Size=2'] = 0.4473
+    bayes['D|Size=3'] = 0.3805
+    bayes['D|Size=5'] = 0.8388
+
+    bayes['A|Title=Mr'] = 0.1653
+    bayes['A|Title=Mrs'] = 0.7758
+    bayes['A|Title=Miss'] = 0.7560
+    bayes['A|Title=GramPa'] = 0.0931
+    bayes['A|Title=Master'] = 0.5751
+    bayes['A|Title=Girl'] = 0.5637
+    bayes['A|Title=GramMa'] = 0.9092
+    bayes['A|Title=Baron'] = 0.5001
+    bayes['A|Title=Clergy'] = 0.0001
+    bayes['A|Title=Boy'] = 0.0001
+    bayes['A|Title=Doctor'] = 0.3334
+    bayes['A|Title=Army'] = 0.4001
+    bayes['A|Title=Baronness'] = 0.6668
+    bayes['A|Title=Nurse'] = 1.0000
+
+    bayes['D|Title=Mr'] = 0.8349
+    bayes['D|Title=Mrs'] = 0.2244
+    bayes['D|Title=Miss'] = 0.2442
+    bayes['D|Title=GramPa'] = 0.9071
+    bayes['D|Title=Master'] = 0.4251
+    bayes['D|Title=Girl'] = 0.4365
+    bayes['D|Title=GramMa'] = 0.0910
+    bayes['D|Title=Baron'] = 0.5001
+    bayes['D|Title=Clergy'] = 1.0000
+    bayes['D|Title=Boy'] = 1.0000
+    bayes['D|Title=Doctor'] = 0.6668  
+    bayes['D|Title=Army'] = 0.6001
+    bayes['D|Title=Baronness'] = 0.3334
+    bayes['D|Title=Nurse'] = 0.0001
+
+    bayes['A|Age=0'] = 0.5244
+    bayes['A|Age=15'] = 0.3438
+    bayes['A|Age=20'] = 0.4427
+    bayes['A|Age=24'] = 0.1485
+    bayes['A|Age=26'] = 0.4256
+    bayes['A|Age=28'] = 0.4344
+    bayes['A|Age=32'] = 0.4701
+    bayes['A|Age=36'] = 0.3470
+    bayes['A|Age=46'] = 0.3879
+    bayes['D|Age=0'] = 0.4758
+    bayes['D|Age=15'] = 0.6563
+    bayes['D|Age=20'] = 0.5575
+    bayes['D|Age=24'] = 0.8517
+    bayes['D|Age=26'] = 0.5746
+    bayes['D|Age=28'] = 0.5658
+    bayes['D|Age=32'] = 0.5301
+    bayes['D|Age=36'] = 0.6532
+    bayes['D|Age=46'] = 0.6123
+
+    bayes['A|Fare=0'] = 0.2052
+    bayes['A|Fare=5'] = 0.1909
+    bayes['A|Fare=10'] = 0.3670
+    bayes['A|Fare=20'] = 0.4363
+    bayes['A|Fare=40'] = 0.4179
+    bayes['A|Fare=80'] = 0.6981
+    bayes['D|Fare=0'] = 0.7950
+    bayes['D|Fare=5'] = 0.8093
+    bayes['D|Fare=10'] = 0.6332
+    bayes['D|Fare=20'] = 0.7950
+    bayes['D|Fare=40'] = 0.5823
+    bayes['D|Fare=80'] = 0.3021
+    
 def captureCabin(val):
     
     if str(val) != 'nan':
@@ -174,6 +277,21 @@ def fill_by_classification(df_src, df_dest, name, columns):
     preds = model.predict(df2[input_columns])
     
     df_dest.loc[df_dest[name].isna() == True, name] = preds
+
+def survivability(rec):
+    live = np.log(bayes['A'])
+    die = np.log(bayes['D'])
+    for name in  [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size' ]:
+        live += np.log(bayes['A|' + name + '=' + str(rec[name])])
+        die += np.log(bayes['D|' + name + '=' + str(rec[name])])
+        
+    ratio = np.abs((live - die) / (live + die)) * 0.5
+        
+    if live < die:
+        ratio *= -1
+    
+    
+    return np.round(0.5 + ratio, 4)
     
 def enginneering(src_df, dest_df):
     
@@ -187,24 +305,31 @@ def enginneering(src_df, dest_df):
     dest_df.loc[dest_df['Embarked'].isna() == True, 'Embarked'] = 'S'
     dest_df.loc[dest_df['Fare'].isna() == True, 'Fare'] = 7.25
     
-    ## 1. the medum should be calculated based on Sex, Pclass and Title
+    ## 1. Binning the Fare
+    dest_df['Fare'] = pd.qcut(dest_df['Fare'], 6, labels=[0, 5, 10, 20, 40, 80 ])
+    
+    ## 2. the medum should be calculated based on Sex, Pclass and Title
     ## All three features have the highest correlation with Age in the heatmap
-    medians = src_df.groupby(['Title', 'Pclass', 'Sex'])['Age'].median()
-     
+    medians = src_df[src_df['Age'].isna() == False].groupby(['Title', 'Pclass', 'Sex', 'Embarked'])['Age'].median()
+
     if True:  
         for index, value in medians.items():
             for df in [src_df, dest_df]:
                 df.loc[(df['Age'].isna() == True) & (df['Title'] == index[0]) & 
-                       (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Age'] = value  
+                       (df['Pclass'] == index[1]) & (df['Sex'] == index[2]) &
+                       (df['Embarked'] == index[3]), 'Age'] = value  
     else:  
-        src_df['Age'] = src_df.groupby(['Title', 'Sex', 'Pclass'])['Age'].apply(lambda x : x.fillna(x.median()))        
-        dest_df['Age'] = dest_df.groupby(['Title', 'Sex', 'Pclass'])['Age'].apply(lambda x : x.fillna(x.median()))
-                       
+        src_df['Age'] = src_df.groupby(['Title', 'Sex', 'Pclass', 'Embarked'])['Age'].apply(lambda x : x.fillna(x.median()))        
+        dest_df['Age'] = dest_df.groupby(['Title', 'Sex', 'Pclass', 'Embarked'])['Age'].apply(lambda x : x.fillna(x.median()))
+
+
+                           
     src_df.loc[src_df['Age'] < 1, 'Age'] = 1
     src_df['Age'] = src_df['Age'].astype('int32')              
     dest_df.loc[dest_df['Age'] < 1, 'Age'] = 1
+
     
-    ## 2. Binning the Age
+    ## 3. Binning the Age
     dest_df['Age'] = pd.qcut(dest_df['Age'], q = 9,
                              labels = [ 0, 15, 20, 24, 26, 28, 32, 36, 46 ])  
     dest_df['Age'] = dest_df['Age'].astype('int32')
@@ -213,7 +338,7 @@ def enginneering(src_df, dest_df):
     src_df['Cabin'] = src_df['Cabin'].apply(captureCabin) 
     dest_df['Cabin'] = dest_df['Cabin'].apply(captureCabin) 
     
-    ## 3. Try maximun counts with Pclass for calculating Cabin
+    ## 4. Try maximun counts with Pclass for calculating Cabin
     counts = src_df.groupby(['Title', 'Pclass', 'Sex', 'Cabin'])['Cabin'].count()
     
     for index, value in counts.items():
@@ -228,18 +353,24 @@ def enginneering(src_df, dest_df):
     dest_df.loc[(dest_df['Cabin'] == 'D') | (dest_df['Cabin'] == 'E'), 'Cabin'] = 'D'
     dest_df.loc[(dest_df['Cabin'] == 'F') | (dest_df['Cabin'] == 'G'), 'Cabin'] = 'G'
       
-    ## 3. Family Size (SibSp + Parch + 1)column 'Alone', 'Small', 'Medium', 'Big'
+    ## 5. Family Size (SibSp + Parch + 1)column 'Alone', 'Small', 'Medium', 'Big'
     
     dest_df['Size'] = dest_df['SibSp'] + dest_df['Parch'] + 1
     dest_df['Size'] = dest_df['Size'].apply(captureSize)
     
     
-    ## 4. Binning the Fare
-    dest_df['Fare'] = pd.qcut(dest_df['Fare'], 6, labels=[0, 5, 10, 20, 40, 80 ])
-
     
-    ## 5. Try add a survivibility percentage column
-   
+    ## 6. Try add a survivibility percentage column
+    dest_df['Chance'] = dest_df.apply(survivability, axis = 1)
+    
+    
+#   Testing the accuracy of features
+
+#    alls = len(dest_df)
+#    correct = dest_df[((dest_df['Survived'] == 0) & (dest_df['Chance'] == 0)) | 
+#            ((dest_df['Survived'] == 1) & (dest_df['Chance'] == 1))]['PassengerId'].count()
+               
+#    print("Accuracy %0.2f" % (correct / alls))
     
     
     dest_df.drop(columns = [ 'Name', 'Ticket', 'Sex', 'SibSp', 'Parch' ], inplace = True)
@@ -259,7 +390,7 @@ all_df2 = all_df.copy()
 all_df1.set_index('PassengerId', inplace=True)
 all_df2.set_index('PassengerId', inplace=True)
 
-
+navieBayes()
 train_df = enginneering(all_df1, train_df)
 test_df = enginneering(all_df2, test_df)
 

@@ -241,6 +241,10 @@ fare80 = len(train_df[train_df['Fare'] == 80])
 palives = alives / total
 ## Prior(DEAD) = Total(DEAD) / TOTAL(ALL)
 pdead = dead / total
+## Prior(Sex=male) = Total(mail) / Total(all)
+pmales = males / total
+## Prior(Sex=female) = Total(female) / Total(all)
+pfemales = females / total
 ## Prior(Pclass=1) = Total(Pclass=1) / Total(Pclass=1,2,3)
 ppclass1 = pclass1 / total
 ## Prior(Pclass=2) = Total(Pclass=2) / Total(Pclass=1,2,3)
@@ -329,6 +333,8 @@ pfare80 = fare80 / total
 
 print("Prob(ALIVE): %0.4f" % palives)
 print("Prob(DEAD): %0.4f" % pdead)
+print("Prob(Male): %0.4f" % pmales)
+print("Prob(Female): %0.4f" % pfemales)
 print("Prob(Pclass=1): %0.4f" % ppclass1)
 print("Prob(Pclass=2): %0.4f" % ppclass2)
 print("Prob(Pclass=3): %0.4f" % ppclass3)
@@ -373,6 +379,34 @@ print("Prob(Fare=80): %0.4f" % pfare80)
 
 
 print("=================================================")
+
+## P(Sex=male|Alive) = Total(Sex=male & Alive) / Total(Alive)
+## P(Sex=male|Alive) = P(Alive|Sex=male) * P(Sex=male) / P(Alive)
+## P(Alive|Sex=male) = P(Sex=male|Alive) * P(Alive) / P(Sex=male)
+pmaleAlive = len(train_df[(train_df['Sex'] == 'male') & (train_df['Survived'] == 1)]) / alives
+paliveMale = pmaleAlive * palives / pmales + ADJUSTMENT
+print("Prob(Alive|Sex=male): %0.4f" % paliveMale)
+
+## P(Sex=female|Alive) = Total(Sex=female & Alive) / Total(Alive)
+## P(Sex=female|Alive) = P(Alive|Sex=female) * P(Sex=female) / P(Alive)
+## P(Alive|Sex=female) = P(Sex=female|Alive) * P(Alive) / P(Sex=female)
+pfemaleAlive = len(train_df[(train_df['Sex'] == 'female') & (train_df['Survived'] == 1)]) / alives
+paliveFemale = pfemaleAlive * palives / pfemales + ADJUSTMENT
+print("Prob(Alive|Sex=female): %0.4f" % paliveFemale)
+
+## P(Sex=male|Dead) = Total(Sex=male & Dead) / Total(Dead)
+## P(Sex=male|Dead) = P(Dead|Sex=male) * P(Sex=male) / P(Dead)
+## P(Dead|Sex=male) = P(Sex=male|Dead) * P(Dead) / P(Sex=male)
+pmaleDead = len(train_df[(train_df['Sex'] == 'male') & (train_df['Survived'] == 0)]) / dead
+pdeadMale = pmaleDead * pdead / pmales + ADJUSTMENT
+print("Prob(Dead|Sex=male): %0.4f" % pdeadMale)
+
+## P(Sex=female|Dead) = Total(Sex=female & Dead) / Total(Dead)
+## P(Sex=female|Dead) = P(Dead|Sex=female) * P(Sex=female) / P(Dead)
+## P(Dead|Sex=female) = P(Sex=female|Dead) * P(Dead) / P(Sex=female)
+pfemaleDead = len(train_df[(train_df['Sex'] == 'female') & (train_df['Survived'] == 0)]) / dead
+pdeadFemale = pfemaleDead * pdead / pfemales + ADJUSTMENT
+print("Prob(Dead|Sex=female): %0.4f" % pdeadFemale)
 
 ## P(Pclass=1|Alive) = Total(Pclass=1 & Alive)/Total(Alive) 
 ## P(Pclass=1|Alive) = P(Alive|Pclass=1)*P(Pclass=1) / P(Alive)
@@ -972,6 +1006,11 @@ bayes = {}
 bayes['A'] = 0.6162
 bayes['D'] = 0.3838
 
+bayes['A|Sex=male'] = 0.1890
+bayes['A|Sex=female'] = 0.7421
+bayes['D|Sex=male'] = 0.8112
+bayes['D|Sex=female'] = 0.2581
+
 bayes['A|Pclass=1'] = 0.6297
 bayes['A|Pclass=2'] = 0.4729
 bayes['A|Pclass=3'] = 0.2425
@@ -1046,6 +1085,7 @@ bayes['D|Age=15'] = 0.6563
 bayes['D|Age=20'] = 0.5575
 bayes['D|Age=24'] = 0.8517
 bayes['D|Age=26'] = 0.5746
+bayes['D|Age=28'] = 0.5658
 bayes['D|Age=32'] = 0.5301
 bayes['D|Age=36'] = 0.6532
 bayes['D|Age=46'] = 0.6123
