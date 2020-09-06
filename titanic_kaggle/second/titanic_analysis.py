@@ -220,19 +220,21 @@ def captureSize(val):
             return 3
         else:
             return 5
+    return val
     
-def normalize(df, columns):
+def normalize(encoders, df, columns):
     pdf = df.copy()
-        
+           
     for name in columns:
-        encoder = preprocessing.LabelEncoder()   
+        encoders[name] = preprocessing.LabelEncoder()   
+        
         keys = pdf.loc[pdf[name].isna() == False, name].unique()
 
         if len(keys) == 2:
-            encoder = preprocessing.LabelBinarizer()
+            encoders[name] = preprocessing.LabelBinarizer()
 
-        encoder.fit(keys)
-        pdf.loc[pdf[name].isna() == False, name] = encoder.transform(
+        encoders[name].fit(keys)
+        pdf.loc[pdf[name].isna() == False, name] = encoders[name].transform(
             pdf.loc[pdf[name].isna() == False, name].values)
             
     return pdf
@@ -247,8 +249,9 @@ def fill_by_regression(df_src, df_dest, name, columns):
     
     cat_columns = set(input_columns).intersection(categorical_columns)
     
-    df1 = normalize(withVal, cat_columns)
-    df2 = normalize(withoutVal, cat_columns)
+    encoders = {}
+    df1 = normalize(encoders, withVal, cat_columns)
+    df2 = normalize(encoders, withoutVal, cat_columns)
     
     model = LogisticRegression()
     model.fit(df1[input_columns], withVal[predicted_columns])
@@ -270,8 +273,9 @@ def fill_by_classification(df_src, df_dest, name, columns):
     
     cat_columns = set(input_columns).intersection(categorical_columns)
 
-    df1 = normalize(withVal, cat_columns)
-    df2 = normalize(withoutVal, cat_columns)
+    encoders = {}
+    df1 = normalize(encoders, withVal, cat_columns)
+    df2 = normalize(encoders, withoutVal, cat_columns)
      
     model = LogisticRegression()
     model.fit(df1[input_columns], withVal[predicted_columns])
@@ -313,13 +317,15 @@ def enginneering(src_df, dest_df, columns):
     dest_df['Fare'] = pd.qcut(dest_df['Fare'], 6, labels=[0, 5, 10, 20, 40, 80 ])
     
 
-    ddff = normalize(dest_df, ['Title', 'Sex', 'Embarked', 'Pclass' ])
+    ## 2. Impute the missing Age
+    encoders = {}
+    ddff = normalize(encoders, dest_df, ['Title', 'Sex', 'Embarked', 'Pclass' ])
     
     imputer = KNNImputer(n_neighbors=13)
         
-    vals = imputer.fit_transform(ddff[columns])
+    ages = imputer.fit_transform(ddff[columns])
          
-    dest_df['Age'] = vals[:, 0]
+    dest_df['Age'] = ages[:, 0]
  
     src_df.loc[src_df['Age'] < 1, 'Age'] = 1           
     dest_df.loc[dest_df['Age'] < 1, 'Age'] = 1
@@ -332,16 +338,26 @@ def enginneering(src_df, dest_df, columns):
     
       
     
-    ## 4. Try maximun counts with Pclass for calculating Cabin
-    counts = src_df.groupby(['Title', 'Pclass', 'Sex', 'Cabin'])['Cabin'].count()
-    
-    for index, value in counts.items():
-        for df in [ src_df, dest_df ]:
-            df.loc[(df['Cabin'].isna() == True) & (df['Title'] == index[0]) & 
-            (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Cabin'] = counts[index[0], index[1], index[2]].idxmax()      
-    
+    ## 4. Try approximating Cabin
+    if False:
+        encoders = {}
+        
+        ddff = normalize(encoders, dest_df, ['Title', 'Sex', 'Embarked', 'Pclass', 'Cabin' ])
 
-    fill_by_classification(dest_df, dest_df, 'Cabin', columns)
+        cabins = KNNImputer(n_neighbors=13).fit_transform(ddff[['Cabin'] + columns])
+      
+        dest_df['Cabin'] = encoders['Cabin'].inverse_transform(
+                        [ np.round(x, 0).astype('int32') for x in cabins[:, 0] ])
+    else:  
+
+        counts = src_df.groupby(['Title', 'Pclass', 'Sex', 'Cabin'])['Cabin'].count()
+    
+        for index, value in counts.items():
+            for df in [ src_df, dest_df ]:
+                df.loc[(df['Cabin'].isna() == True) & (df['Title'] == index[0]) & 
+                       (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Cabin'] = counts[index[0], index[1], index[2]].idxmax()      
+    
+        fill_by_classification(dest_df, dest_df, 'Cabin', columns)
     
     dest_df.loc[dest_df['Cabin'] == 'T', 'Cabin'] = 'A'
     dest_df.loc[(dest_df['Cabin'] == 'B') | (dest_df['Cabin'] == 'C'), 'Cabin'] = 'A'
