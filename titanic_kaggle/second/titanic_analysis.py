@@ -316,7 +316,7 @@ def enginneering(src_df, dest_df, columns):
     dest_df['Cabin'] = dest_df['Cabin'].apply(captureCabin) 
     
     ## 1. Binning the Fare
-    dest_df['Fare'] = pd.qcut(dest_df['Fare'], 6, labels=[0, 5, 10, 20, 40, 80 ])
+    dest_df['Fare'] = pd.qcut(dest_df['Fare'], 6, labels=[0, 10, 20, 30, 40, 80 ])
     
 
     ## 2. Impute the missing Age
