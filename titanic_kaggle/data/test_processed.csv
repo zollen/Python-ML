@@ -1,7 +1,7 @@
 PassengerId,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 892,3,32,10,G,Q,Mr,1,0.0975
 893,3,36,0,G,S,Mrs,2,0.5997
-894,2,46,20,A,Q,GramPa,1,0.1343
+894,2,46,20,D,Q,GramPa,1,0.1343
 895,3,26,10,G,S,Mr,1,0.0825
 896,3,15,20,G,S,Mrs,3,0.6211
 897,3,0,20,G,S,Boy,1,-0.0944
@@ -12,7 +12,7 @@ PassengerId,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 902,3,24,10,G,S,Mr,1,0.0825
 903,1,36,30,A,S,Mr,1,0.1461
 904,1,20,80,A,S,Mrs,2,0.7138
-905,2,46,30,A,S,GramPa,2,0.1962
+905,2,46,30,D,S,GramPa,2,0.1962
 906,1,36,80,D,S,Mrs,2,0.7138
 907,2,20,40,G,C,Mrs,2,0.7737
 908,2,32,20,D,Q,Mr,1,0.17
@@ -24,12 +24,12 @@ PassengerId,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 914,1,32,40,A,S,Mrs,1,0.6154
 915,1,15,80,A,C,Mr,2,0.307
 916,1,46,80,A,C,Mrs,5,0.6167
-917,3,46,30,A,S,GramPa,2,0.1257
+917,3,46,30,G,S,GramPa,2,0.1257
 918,1,15,80,A,C,Miss,2,0.7904
 919,3,20,0,G,C,Mr,1,0.1494
 920,1,36,40,A,S,Mr,1,0.1461
 921,3,26,30,G,C,Mr,3,0.2519
-922,2,46,30,A,S,GramPa,2,0.1962
+922,2,46,30,D,S,GramPa,2,0.1962
 923,2,20,40,D,S,Mr,3,0.2589
 924,3,32,30,G,S,Mrs,3,0.6211
 925,3,26,30,G,S,Girl,3,0.5395
@@ -148,7 +148,7 @@ PassengerId,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 1038,1,32,40,D,S,Mr,1,0.1461
 1039,3,15,10,G,S,Mr,1,0.0825
 1040,1,32,40,A,S,Mr,1,0.1461
-1041,2,28,30,G,S,Clergy,3,0.0022
+1041,2,28,30,D,S,Clergy,3,0.0022
 1042,1,20,80,A,C,Mrs,2,0.7987
 1043,3,24,10,G,C,Mr,1,0.1494
 1044,3,46,0,G,S,GramPa,1,0.052
@@ -163,7 +163,7 @@ PassengerId,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 1053,3,0,30,D,C,Master,3,0.4024
 1054,2,26,20,D,S,Miss,1,0.5913
 1055,3,26,0,G,S,Mr,1,0.0825
-1056,2,36,20,G,S,Clergy,1,-0.0565
+1056,2,36,20,D,S,Clergy,1,-0.0565
 1057,3,26,30,G,S,Mrs,3,0.6211
 1058,1,46,40,A,C,Mr,1,0.2194
 1059,3,0,40,G,S,Mr,5,0.0379
@@ -192,7 +192,7 @@ PassengerId,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 1082,2,32,30,D,S,Mr,2,0.2355
 1083,1,32,30,A,S,Mr,1,0.1461
 1084,3,0,30,D,S,Master,3,0.3281
-1085,2,46,20,A,Q,GramPa,1,0.1343
+1085,2,46,20,D,Q,GramPa,1,0.1343
 1086,2,0,40,G,S,Master,3,0.4132
 1087,3,32,10,G,S,Mr,1,0.0825
 1088,1,0,80,D,C,Master,3,0.5007
@@ -212,7 +212,7 @@ PassengerId,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 1102,3,32,30,G,S,Mr,1,0.0825
 1103,3,26,0,G,S,Mr,1,0.0825
 1104,2,0,80,D,S,Mr,1,0.1541
-1105,2,46,30,A,S,GramMa,2,0.7648
+1105,2,46,30,G,S,GramMa,2,0.7648
 1106,3,32,10,G,S,Miss,5,0.4362
 1107,1,36,40,A,S,Mr,1,0.1461
 1108,3,20,10,G,Q,Miss,1,0.5204
@@ -386,7 +386,7 @@ PassengerId,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 1276,2,24,20,D,S,Mr,1,0.1541
 1277,2,20,80,D,S,Miss,3,0.7065
 1278,3,20,10,G,S,Mr,1,0.0825
-1279,2,46,20,A,S,GramPa,1,0.1193
+1279,2,46,20,D,S,GramPa,1,0.1193
 1280,3,15,0,G,Q,Mr,1,0.0975
 1281,3,0,30,D,S,Master,5,0.1663
 1282,1,20,80,A,S,Mr,1,0.1461

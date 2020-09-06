@@ -32,7 +32,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 31,0,1,36,40,A,C,Baron,1,0.3509
 32,1,1,32,80,A,C,Mrs,2,0.7987
 33,1,3,20,0,G,Q,Miss,1,0.5204
-34,0,2,46,20,G,S,GramPa,1,0.1193
+34,0,2,46,20,D,S,GramPa,1,0.1193
 35,0,1,26,80,A,C,Mr,2,0.307
 36,0,1,36,40,A,S,Mr,2,0.2316
 37,1,3,26,0,G,C,Mr,1,0.1494
@@ -148,8 +148,8 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 147,1,3,26,10,G,S,Mr,1,0.0825
 148,0,3,0,40,G,S,Girl,5,0.3621
 149,0,2,32,30,G,S,Mr,3,0.2589
-150,0,2,36,20,G,S,Clergy,1,-0.0565
-151,0,2,46,20,G,S,Clergy,1,-0.0565
+150,0,2,36,20,D,S,Clergy,1,-0.0565
+151,0,2,46,20,D,S,Clergy,1,-0.0565
 152,1,1,20,80,A,S,Mrs,2,0.7138
 153,0,3,46,10,G,S,GramPa,1,0.052
 154,0,3,36,30,G,S,Mr,3,0.1834
@@ -231,7 +231,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 230,0,3,0,30,G,S,Girl,5,0.3621
 231,1,1,32,80,A,S,Mrs,2,0.7138
 232,0,3,26,0,G,S,Mr,1,0.0825
-233,0,2,46,20,G,S,GramPa,1,0.1193
+233,0,2,46,20,D,S,GramPa,1,0.1193
 234,1,3,0,40,G,S,Girl,5,0.3621
 235,0,2,20,20,D,S,Mr,1,0.1541
 236,0,3,20,0,G,S,Miss,1,0.5019
@@ -248,7 +248,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 247,0,3,24,0,G,S,Miss,1,0.5019
 248,1,2,20,30,G,S,Mrs,3,0.7148
 249,1,1,32,80,D,S,Mr,3,0.2562
-250,0,2,46,30,G,S,Clergy,2,-0.012
+250,0,2,46,30,D,S,Clergy,2,-0.012
 251,0,3,24,0,G,S,Mr,1,0.0825
 252,0,3,26,20,G,S,Mrs,3,0.6211
 253,0,1,46,40,A,S,GramPa,1,0.1101
@@ -316,7 +316,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 315,0,2,36,40,D,S,Mr,3,0.2589
 316,1,3,24,10,G,S,Miss,1,0.5019
 317,1,2,20,30,G,S,Mrs,2,0.6934
-318,0,2,46,20,G,S,Doctor,1,0.2163
+318,0,2,46,20,D,S,Doctor,1,0.2163
 319,1,1,28,80,A,S,Miss,3,0.7276
 320,1,1,36,80,D,C,Mrs,3,0.8208
 321,0,3,20,0,G,S,Mr,1,0.0825
@@ -397,7 +397,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 396,0,3,20,10,G,S,Mr,1,0.0825
 397,0,3,28,10,G,S,Miss,1,0.5019
 398,0,2,36,30,D,S,Mr,1,0.1541
-399,0,2,20,20,G,S,Doctor,1,0.2163
+399,0,2,20,20,D,S,Doctor,1,0.2163
 400,1,2,26,20,G,S,Mrs,1,0.6003
 401,1,3,36,10,G,S,Mr,1,0.0825
 402,0,3,24,10,G,S,Mr,1,0.0825
@@ -569,7 +569,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 568,0,3,26,30,G,S,Mrs,5,0.4454
 569,0,3,28,0,G,C,Mr,1,0.1494
 570,1,3,28,10,G,S,Mr,1,0.0825
-571,1,2,46,20,G,S,GramPa,1,0.1193
+571,1,2,46,20,D,S,GramPa,1,0.1193
 572,1,1,46,40,A,S,GramMa,3,0.8074
 573,1,1,32,40,D,S,Mr,1,0.1461
 574,1,3,20,0,G,Q,Miss,1,0.5204
@@ -581,7 +581,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 580,1,3,28,10,G,S,Mr,1,0.0825
 581,1,2,24,40,D,S,Miss,3,0.7065
 582,1,1,36,80,A,C,Mrs,3,0.8208
-583,0,2,46,30,G,S,GramPa,1,0.1193
+583,0,2,46,30,D,S,GramPa,1,0.1193
 584,0,1,32,40,A,C,Mr,1,0.2194
 585,0,3,26,20,G,C,Mr,1,0.1494
 586,1,1,15,80,D,S,Miss,3,0.7276
@@ -625,7 +625,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 624,0,3,15,10,G,S,Mr,1,0.0825
 625,0,3,15,30,G,S,Mr,1,0.0825
 626,0,1,46,40,D,S,GramPa,1,0.1101
-627,0,2,46,20,G,Q,Clergy,1,-0.0481
+627,0,2,46,20,D,Q,Clergy,1,-0.0481
 628,1,1,15,80,D,S,Miss,1,0.6061
 629,0,3,24,10,G,S,Mr,1,0.0825
 630,0,3,24,0,G,Q,Mr,1,0.0975
@@ -671,7 +671,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 670,1,1,32,40,A,S,Mrs,2,0.7138
 671,1,2,36,40,G,S,Mrs,3,0.7148
 672,0,1,28,40,A,S,Mr,2,0.2316
-673,0,2,46,20,G,S,GramPa,1,0.1193
+673,0,2,46,20,D,S,GramPa,1,0.1193
 674,1,2,28,20,D,S,Mr,1,0.1541
 675,0,2,24,0,D,S,Mr,1,0.1541
 676,0,3,15,0,G,S,Mr,1,0.0825
@@ -683,7 +683,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 682,1,1,26,80,D,C,Mr,1,0.2194
 683,0,3,15,20,G,S,Mr,1,0.0825
 684,0,3,0,40,G,S,Boy,5,-0.1163
-685,0,2,46,40,G,S,GramPa,3,0.2187
+685,0,2,46,40,D,S,GramPa,3,0.2187
 686,0,2,24,40,D,C,Mr,3,0.3304
 687,0,3,0,40,G,S,Boy,5,-0.1163
 688,0,3,15,20,G,S,Mr,1,0.0825
@@ -694,7 +694,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 693,1,3,28,80,G,S,Mr,1,0.0825
 694,0,3,24,0,G,C,Mr,1,0.1494
 695,0,1,46,40,A,S,Army,1,0.2351
-696,0,2,46,20,G,S,GramPa,1,0.1193
+696,0,2,46,20,D,S,GramPa,1,0.1193
 697,0,3,36,10,G,S,Mr,1,0.0825
 698,1,3,20,0,G,Q,Miss,1,0.5204
 699,0,1,46,80,A,C,Mr,3,0.3313
@@ -713,7 +713,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 712,0,1,32,40,A,S,Mr,1,0.1461
 713,1,1,46,40,A,S,Mr,2,0.2316
 714,0,3,26,20,G,S,Mr,1,0.0825
-715,0,2,46,20,G,S,GramPa,1,0.1193
+715,0,2,46,20,D,S,GramPa,1,0.1193
 716,0,3,15,0,G,S,Mr,1,0.0825
 717,1,1,36,80,A,C,Miss,1,0.6889
 718,1,2,26,20,D,S,Miss,1,0.5913
@@ -722,7 +722,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 721,1,2,0,40,G,S,Girl,2,0.6113
 722,0,3,15,0,G,S,Mr,2,0.1602
 723,0,2,32,20,D,S,Mr,1,0.1541
-724,0,2,46,20,G,S,GramPa,1,0.1193
+724,0,2,46,20,D,S,GramPa,1,0.1193
 725,1,1,26,80,D,S,Mr,2,0.2316
 726,0,3,15,10,G,S,Mr,1,0.0825
 727,1,2,28,30,G,S,Mrs,3,0.7148
@@ -821,7 +821,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 820,0,3,0,40,D,S,Master,5,0.1663
 821,1,1,46,80,A,S,GramMa,3,0.8074
 822,1,3,26,10,G,S,Mr,1,0.0825
-823,0,1,36,0,G,S,Baronness,1,0.3373
+823,0,1,36,0,A,S,Baronness,1,0.3373
 824,1,3,26,20,D,S,Mrs,2,0.5997
 825,0,3,0,40,D,S,Master,5,0.1663
 826,0,3,24,0,G,Q,Mr,1,0.0975
@@ -847,7 +847,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 846,0,3,36,0,G,S,Mr,1,0.0825
 847,0,3,36,80,G,S,Boy,5,-0.1163
 848,0,3,32,10,G,C,Mr,1,0.1494
-849,0,2,26,40,G,S,Clergy,2,-0.012
+849,0,2,26,40,D,S,Clergy,2,-0.012
 850,1,1,32,80,A,C,Mrs,2,0.7987
 851,0,3,0,40,D,S,Master,5,0.1663
 852,0,3,46,0,G,S,GramPa,1,0.052
@@ -885,7 +885,7 @@ PassengerId,Survived,Pclass,Age,Fare,Cabin,Embarked,Title,Size,Chance
 884,0,2,26,20,D,S,Mr,1,0.1541
 885,0,3,24,0,G,S,Mr,1,0.0825
 886,0,3,36,40,G,Q,Mrs,5,0.4626
-887,0,2,26,20,G,S,Clergy,1,-0.0565
+887,0,2,26,20,D,S,Clergy,1,-0.0565
 888,1,1,15,40,A,S,Miss,1,0.6061
 889,0,3,0,30,G,S,Girl,3,0.5395
 890,1,1,24,40,A,C,Mr,1,0.2194

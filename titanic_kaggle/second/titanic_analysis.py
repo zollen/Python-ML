@@ -359,7 +359,12 @@ def enginneering(src_df, dest_df, columns):
                 df.loc[(df['Cabin'].isna() == True) & (df['Title'] == index[0]) & 
                        (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Cabin'] = counts[index[0], index[1], index[2]].idxmax()      
     
-        fill_by_classification(dest_df, dest_df, 'Cabin', columns)
+        counts = src_df.groupby(['Pclass', 'Sex', 'Cabin'])['Cabin'].count()
+    
+        for index, value in counts.items():
+            for df in [ src_df, dest_df ]:
+                df.loc[(df['Cabin'].isna() == True) & (df['Pclass'] == index[0]) & 
+                       (df['Sex'] == index[1]), 'Cabin'] = counts[index[0], index[1]].idxmax()      
     
     dest_df.loc[dest_df['Cabin'] == 'T', 'Cabin'] = 'A'
     dest_df.loc[(dest_df['Cabin'] == 'B') | (dest_df['Cabin'] == 'C'), 'Cabin'] = 'A'
