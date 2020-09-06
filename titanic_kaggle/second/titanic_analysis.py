@@ -341,30 +341,19 @@ def enginneering(src_df, dest_df, columns):
       
     
     ## 4. Try approximating Cabin
-    if False:
-        encoders = {}
-        
-        ddff = normalize(encoders, dest_df, ['Title', 'Sex', 'Embarked', 'Pclass', 'Cabin' ])
-
-        cabins = KNNImputer(n_neighbors=13).fit_transform(ddff[['Cabin'] + columns])
-      
-        dest_df['Cabin'] = encoders['Cabin'].inverse_transform(
-                        [ np.round(x, 0).astype('int32') for x in cabins[:, 0] ])
-    else:  
-
-        counts = src_df.groupby(['Title', 'Pclass', 'Sex', 'Cabin'])['Cabin'].count()
+    counts = src_df.groupby(['Title', 'Pclass', 'Sex', 'Cabin'])['Cabin'].count()
     
-        for index, value in counts.items():
-            for df in [ src_df, dest_df ]:
-                df.loc[(df['Cabin'].isna() == True) & (df['Title'] == index[0]) & 
-                       (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Cabin'] = counts[index[0], index[1], index[2]].idxmax()      
+    for index, value in counts.items():
+        for df in [ src_df, dest_df ]:
+            df.loc[(df['Cabin'].isna() == True) & (df['Title'] == index[0]) & 
+                    (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Cabin'] = counts[index[0], index[1], index[2]].idxmax()      
     
-        counts = src_df.groupby(['Pclass', 'Sex', 'Cabin'])['Cabin'].count()
+    counts = src_df.groupby(['Pclass', 'Sex', 'Cabin'])['Cabin'].count()
     
-        for index, value in counts.items():
-            for df in [ src_df, dest_df ]:
-                df.loc[(df['Cabin'].isna() == True) & (df['Pclass'] == index[0]) & 
-                       (df['Sex'] == index[1]), 'Cabin'] = counts[index[0], index[1]].idxmax()      
+    for index, value in counts.items():
+        for df in [ src_df, dest_df ]:
+            df.loc[(df['Cabin'].isna() == True) & (df['Pclass'] == index[0]) & 
+                    (df['Sex'] == index[1]), 'Cabin'] = counts[index[0], index[1]].idxmax()      
     
     dest_df.loc[dest_df['Cabin'] == 'T', 'Cabin'] = 'A'
     dest_df.loc[(dest_df['Cabin'] == 'B') | (dest_df['Cabin'] == 'C'), 'Cabin'] = 'A'
