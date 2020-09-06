@@ -368,7 +368,7 @@ def enginneering(src_df, dest_df, columns):
 #    print("Accuracy %0.2f" % (correct / alls))
     
     
-    dest_df.drop(columns = [ 'Name', 'Ticket', 'Sex', 'SibSp', 'Parch'], inplace = True)
+#    dest_df.drop(columns = [ 'Name', 'Ticket', 'Sex', 'SibSp', 'Parch'], inplace = True)
 
      
     return dest_df
@@ -379,17 +379,26 @@ train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
 
 all_df = pd.concat([ train_df, test_df ])
-all_df1 = all_df.copy()
-all_df2 = all_df.copy()
+all_df.set_index('PassengerId', inplace=True)
 
-all_df1.set_index('PassengerId', inplace=True)
-all_df2.set_index('PassengerId', inplace=True)
 
 navieBayes()
-train_df = enginneering(all_df1, train_df, 
+
+
+train_df = enginneering(all_df, train_df, 
                         ['Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ])
-test_df = enginneering(all_df2, test_df,
+
+all_df = pd.concat([ train_df, test_df ])
+all_df.set_index('PassengerId', inplace=True)
+
+test_df = enginneering(all_df, test_df,
                         ['Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass' ])
+
+
+
+train_df.drop(columns = [ 'Name', 'Ticket', 'Sex', 'SibSp', 'Parch'], inplace = True)
+test_df.drop(columns = [ 'Name', 'Ticket', 'Sex', 'SibSp', 'Parch'], inplace = True)
+
 
 if False:
     g = sb.FacetGrid(train_df, col = "Survived", row = "Pclass", size = 2)
