@@ -294,9 +294,11 @@ def survivability(rec):
         
     if live < die:
         ratio *= -1
+        
+    return  np.round(0.5 + ratio, 4)
     
     
-    return np.round(0.5 + ratio, 4)
+#    return 1 if live > die else 0
     
 def enginneering(src_df, dest_df, columns):
     
@@ -372,20 +374,19 @@ def enginneering(src_df, dest_df, columns):
     
     
     ## 6. Try add a survivibility percentage column
-#    dest_df['Chance'] = dest_df.apply(survivability, axis = 1)
+    dest_df['Chance'] = dest_df.apply(survivability, axis = 1)
     
     
 #   Testing the accuracy of features
 
-#    alls = len(dest_df)
-#    correct = dest_df[((dest_df['Survived'] == 0) & (dest_df['Chance'] == 0)) | 
+#    if 'Survived' in columns:
+#        alls = len(dest_df)
+#        correct = dest_df[((dest_df['Survived'] == 0) & (dest_df['Chance'] == 0)) | 
 #            ((dest_df['Survived'] == 1) & (dest_df['Chance'] == 1))]['PassengerId'].count()
                
-#    print("Accuracy %0.2f" % (correct / alls))
+#        print("Accuracy %0.2f" % (correct / alls))
     
     
-#    dest_df.drop(columns = [ 'Name', 'Ticket', 'Sex', 'SibSp', 'Parch'], inplace = True)
-
      
     return dest_df
 
