@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import numpy as np
 import re
+from sklearn.impute import KNNImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn import preprocessing
 import pandas as pd
@@ -71,13 +72,14 @@ def normalize(df, columns):
         
     for name in columns:
         encoder = preprocessing.LabelEncoder()   
-        keys = pdf[name].unique()
+        keys = pdf.loc[pdf[name].isna() == False, name].unique()
 
         if len(keys) == 2:
             encoder = preprocessing.LabelBinarizer()
 
         encoder.fit(keys)
-        pdf[name] = encoder.transform(pdf[name].values)
+        pdf.loc[pdf[name].isna() == False, name] = encoder.transform(
+            pdf.loc[pdf[name].isna() == False, name].values)
             
     return pdf
 
@@ -153,7 +155,9 @@ train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 
 train_df['Title'] = train_df['Name'].apply(lambda x : re.search('[a-zA-Z]+\\.', x).group(0))
 train_df['Title'] = train_df.apply(map_title, axis = 1)
-train_df['Age'] = train_df.groupby(['Title', 'Sex', 'Pclass'])['Age'].apply(lambda x : x.fillna(x.median()))
+ddff = normalize(train_df, ['Title', 'Sex', 'Embarked', 'Pclass' ])  
+vals = KNNImputer(n_neighbors=13).fit_transform(ddff[['Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ]])  
+train_df['Age'] = vals[:, 0]
 train_df.loc[train_df['Age'] < 1, 'Age'] = 1
 train_df['Age'] = pd.qcut(train_df['Age'], q = 9, labels = [ 0, 15, 20, 24, 26, 28, 32, 36, 46 ])    
 train_df['Age'] = train_df['Age'].astype('int32')              
@@ -167,7 +171,8 @@ for index, value in counts.items():
     train_df.loc[(train_df['Cabin'].isna() == True) & (train_df['Title'] == index[0]) & 
                    (train_df['Pclass'] == index[1]) & (train_df['Sex'] == index[2]), 'Cabin'] = counts[index[0], index[1], index[2]].idxmax()      
 
-fill_by_classification(train_df, train_df, 'Cabin', [ 'Title', 'Pclass', 'Sex', 'Embarked', 'Age', 'Fare' ])
+fill_by_classification(train_df, train_df, 'Cabin', 
+                       ['Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ])
 
 train_df.loc[train_df['Cabin'] == 'T', 'Cabin'] = 'A'
 train_df.loc[(train_df['Cabin'] == 'B') | (train_df['Cabin'] == 'C'), 'Cabin'] = 'A'

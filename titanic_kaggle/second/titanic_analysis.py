@@ -9,11 +9,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import re
+from sklearn.impute import KNNImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn import preprocessing
 import seaborn as sb
 from matplotlib import pyplot as plt
-
 import warnings
 
 
@@ -226,13 +226,14 @@ def normalize(df, columns):
         
     for name in columns:
         encoder = preprocessing.LabelEncoder()   
-        keys = pdf[name].unique()
+        keys = pdf.loc[pdf[name].isna() == False, name].unique()
 
         if len(keys) == 2:
             encoder = preprocessing.LabelBinarizer()
 
         encoder.fit(keys)
-        pdf[name] = encoder.transform(pdf[name].values)
+        pdf.loc[pdf[name].isna() == False, name] = encoder.transform(
+            pdf.loc[pdf[name].isna() == False, name].values)
             
     return pdf
 
@@ -293,7 +294,7 @@ def survivability(rec):
     
     return np.round(0.5 + ratio, 4)
     
-def enginneering(src_df, dest_df):
+def enginneering(src_df, dest_df, columns):
     
     src_df['Title'] = src_df['Name'].apply(lambda x : re.search('[a-zA-Z]+\\.', x).group(0))
     src_df['Title'] = src_df.apply(map_title, axis = 1)
@@ -305,38 +306,31 @@ def enginneering(src_df, dest_df):
     dest_df.loc[dest_df['Embarked'].isna() == True, 'Embarked'] = 'S'
     dest_df.loc[dest_df['Fare'].isna() == True, 'Fare'] = 7.25
     
+    src_df['Cabin'] = src_df['Cabin'].apply(captureCabin) 
+    dest_df['Cabin'] = dest_df['Cabin'].apply(captureCabin) 
+    
     ## 1. Binning the Fare
     dest_df['Fare'] = pd.qcut(dest_df['Fare'], 6, labels=[0, 5, 10, 20, 40, 80 ])
     
-    ## 2. the medum should be calculated based on Sex, Pclass and Title
-    ## All three features have the highest correlation with Age in the heatmap
-    medians = src_df[src_df['Age'].isna() == False].groupby(['Title', 'Pclass', 'Sex', 'Embarked'])['Age'].median()
 
-    if True:  
-        for index, value in medians.items():
-            for df in [src_df, dest_df]:
-                df.loc[(df['Age'].isna() == True) & (df['Title'] == index[0]) & 
-                       (df['Pclass'] == index[1]) & (df['Sex'] == index[2]) &
-                       (df['Embarked'] == index[3]), 'Age'] = value  
-    else:  
-        src_df['Age'] = src_df.groupby(['Title', 'Sex', 'Pclass', 'Embarked'])['Age'].apply(lambda x : x.fillna(x.median()))        
-        dest_df['Age'] = dest_df.groupby(['Title', 'Sex', 'Pclass', 'Embarked'])['Age'].apply(lambda x : x.fillna(x.median()))
-
-
-                           
-    src_df.loc[src_df['Age'] < 1, 'Age'] = 1
-    src_df['Age'] = src_df['Age'].astype('int32')              
+    ddff = normalize(dest_df, ['Title', 'Sex', 'Embarked', 'Pclass' ])
+    
+    imputer = KNNImputer(n_neighbors=13)
+        
+    vals = imputer.fit_transform(ddff[columns])
+         
+    dest_df['Age'] = vals[:, 0]
+ 
+    src_df.loc[src_df['Age'] < 1, 'Age'] = 1           
     dest_df.loc[dest_df['Age'] < 1, 'Age'] = 1
 
     
     ## 3. Binning the Age
     dest_df['Age'] = pd.qcut(dest_df['Age'], q = 9,
-                             labels = [ 0, 15, 20, 24, 26, 28, 32, 36, 46 ])  
+                            labels = [ 0, 15, 20, 24, 26, 28, 32, 36, 46 ])  
     dest_df['Age'] = dest_df['Age'].astype('int32')
     
       
-    src_df['Cabin'] = src_df['Cabin'].apply(captureCabin) 
-    dest_df['Cabin'] = dest_df['Cabin'].apply(captureCabin) 
     
     ## 4. Try maximun counts with Pclass for calculating Cabin
     counts = src_df.groupby(['Title', 'Pclass', 'Sex', 'Cabin'])['Cabin'].count()
@@ -344,9 +338,10 @@ def enginneering(src_df, dest_df):
     for index, value in counts.items():
         for df in [ src_df, dest_df ]:
             df.loc[(df['Cabin'].isna() == True) & (df['Title'] == index[0]) & 
-                       (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Cabin'] = counts[index[0], index[1], index[2]].idxmax()      
+            (df['Pclass'] == index[1]) & (df['Sex'] == index[2]), 'Cabin'] = counts[index[0], index[1], index[2]].idxmax()      
     
-    fill_by_classification(dest_df, dest_df, 'Cabin', [ 'Title', 'Pclass', 'Sex', 'Embarked', 'Age', 'Fare' ])
+
+    fill_by_classification(dest_df, dest_df, 'Cabin', columns)
     
     dest_df.loc[dest_df['Cabin'] == 'T', 'Cabin'] = 'A'
     dest_df.loc[(dest_df['Cabin'] == 'B') | (dest_df['Cabin'] == 'C'), 'Cabin'] = 'A'
@@ -361,7 +356,7 @@ def enginneering(src_df, dest_df):
     
     
     ## 6. Try add a survivibility percentage column
-    dest_df['Chance'] = dest_df.apply(survivability, axis = 1)
+#    dest_df['Chance'] = dest_df.apply(survivability, axis = 1)
     
     
 #   Testing the accuracy of features
@@ -373,7 +368,7 @@ def enginneering(src_df, dest_df):
 #    print("Accuracy %0.2f" % (correct / alls))
     
     
-    dest_df.drop(columns = [ 'Name', 'Ticket', 'Sex', 'SibSp', 'Parch' ], inplace = True)
+    dest_df.drop(columns = [ 'Name', 'Ticket', 'Sex', 'SibSp', 'Parch'], inplace = True)
 
      
     return dest_df
@@ -391,10 +386,17 @@ all_df1.set_index('PassengerId', inplace=True)
 all_df2.set_index('PassengerId', inplace=True)
 
 navieBayes()
-train_df = enginneering(all_df1, train_df)
-test_df = enginneering(all_df2, test_df)
+train_df = enginneering(all_df1, train_df, 
+                        ['Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ])
+test_df = enginneering(all_df2, test_df,
+                        ['Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass' ])
 
-
+if False:
+    g = sb.FacetGrid(train_df, col = "Survived", row = "Pclass", size = 2)
+    g.map(sb.distplot, "Age", bins = 25)
+    plt.show()
+    exit()
+    
 if False:
     dd = train_df[train_df['Cabin'].isna() == False]  
     sb.catplot(x = "Pclass", y = "Title", hue = "Cabin", kind = "swarm", data = dd)
@@ -402,8 +404,8 @@ if False:
     exit()
     
 if False:    
-    dd = train_df[train_df['Cabin'].isna() == False]    
-    sb.catplot(x = "Cabin", y = "Fare", hue = "Survived", kind = "swarm", data = dd)
+#    dd = train_df[train_df['Cabin'].isna() == False]    
+    sb.factorplot(x = 'Pclass' ,y = 'Fare', hue = 'Survived', kind = 'violin', data = train_df)
     plt.show()
     exit()
     
