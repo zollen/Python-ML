@@ -14,12 +14,6 @@ import titanic_kaggle.second.titanic_lib as tb
 
 warnings.filterwarnings('ignore')
 
-
-def combine(df1, df2):
-    df = pd.concat([ df1, df2 ])
-    df.set_index('PassengerId', inplace=True)
-    return df
-
 def accuracy(df, columns):
     func = tb.survivability(True, columns)
     df['Prediction'] = df.apply(func, axis = 1)
@@ -60,7 +54,7 @@ tb.reeigneeringTitle(test_df)
 
 tb.reeigneeringAge(train_df, train_df, 
         [ 'Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ])
-tb.reeigneeringAge(combine(train_df, test_df), test_df, 
+tb.reeigneeringAge(tb.combine(train_df, test_df), test_df, 
         [ 'Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass' ])
 
 tb.reeigneeringFamilySize(train_df)
@@ -69,8 +63,8 @@ tb.reeigneeringFamilySize(test_df)
 tb.reeigneeringFare(train_df)
 tb.reeigneeringFare(test_df)
 
-tb.reeigneeringCabin(combine(train_df, test_df), train_df)
-tb.reeigneeringCabin(combine(train_df, test_df), test_df)
+tb.reeigneeringCabin(tb.combine(train_df, test_df), train_df)
+tb.reeigneeringCabin(tb.combine(train_df, test_df), test_df)
 
            
 tbl = {

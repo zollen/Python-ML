@@ -265,3 +265,8 @@ def survivability(classification, columns):
         return  np.round(0.5 + ratio, 4)    
 
     return func
+
+def combine(df1, df2):
+    df = pd.concat([ df1, df2 ])
+    df.set_index('PassengerId', inplace=True)
+    return df

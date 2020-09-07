@@ -43,8 +43,8 @@ test_df.loc[test_df['Fare'].isna() == True, 'Fare'] = 7.25
 tb.reeigneeringTitle(train_df)
 tb.reeigneeringTitle(test_df)
 
-tb.reeigneeringAge(train_df, [ 'Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ])
-tb.reeigneeringAge(test_df, [ 'Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass' ])
+tb.reeigneeringAge(train_df, train_df, [ 'Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ])
+tb.reeigneeringAge(test_df, test_df, [ 'Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass' ])
 
 tb.reeigneeringFare(train_df)
 tb.reeigneeringFare(test_df)
@@ -59,7 +59,19 @@ all_df = pd.concat([ train_df, test_df ])
 all_df.set_index('PassengerId', inplace=True)
 tb.reeigneeringCabin(all_df, test_df)
 
-tb.navieBayes(train_df)
+tbl = {
+    "Title": np.union1d(train_df['Title'].unique(), test_df['Title'].unique()),
+    "Age": np.union1d(train_df['Age'].unique(), test_df['Age'].unique()),
+    "Sex": train_df['Sex'].unique(),
+    "Pclass": train_df['Pclass'].unique(),
+    "Cabin": np.union1d(train_df['Cabin'].unique(), test_df['Cabin'].unique()),
+    "Size": np.union1d(train_df['Size'].unique(), test_df['Size'].unique()),
+    "Fare": np.union1d(train_df['Fare'].unique(), test_df['Fare'].unique()),
+    "Embarked": train_df['Embarked'].unique()    
+    }
+
+
+tb.navieBayes(train_df, tbl)
 
 tb.reeigneeringSurvProb(train_df, [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare' ])
 tb.reeigneeringSurvProb(test_df, [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare' ])
