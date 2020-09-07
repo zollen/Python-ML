@@ -37,11 +37,6 @@ train_df.loc[train_df['Fare'].isna() == True, 'Fare'] = 7.25
 
 plt.figure(figsize=(12, 10))
 
-df = train_df[['PassengerId', 'Age', 'Fare', 'Survived']]
-df.set_index('PassengerId', inplace=True)
-
-
-
-sb.scatterplot(x = 'Age', y = 'Fare', hue=df['Survived'].tolist(), data = df)
+sb.scatterplot(x = 'Age', y = 'Fare', hue=train_df['Survived'].tolist(), data = train_df)
 
 plt.show()
