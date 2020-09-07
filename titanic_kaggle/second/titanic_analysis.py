@@ -32,12 +32,7 @@ numeric_columns = [ 'Age', 'Fare' ]
 categorical_columns = [ 'Sex', 'Title', 'Pclass', 'Embarked', 'Cabin' ]
 all_features_columns = numeric_columns + categorical_columns 
 
-## TO DO LIST
-## 1. Refactoring
-## 2. PCA and MeanShift analysis for Age and Fare
-## 3. Mutli-steps group based medians approximation for Cabin
-## 4. Rich women and Alive girl
-    
+   
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
@@ -75,8 +70,8 @@ tb.reeigneeringSurvProb(test_df, [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size',
 
 
 
-train_df.drop(columns = [ 'Name', 'Ticket', 'Sex', 'SibSp', 'Parch'], inplace = True)
-test_df.drop(columns = [ 'Name', 'Ticket', 'Sex', 'SibSp', 'Parch'], inplace = True)
+train_df.drop(columns = [ 'Name', 'Ticket', 'PassengerId' ], inplace = True)
+test_df.drop(columns = [ 'Name', 'Ticket', 'PassengerId'], inplace = True)
 
 
 if False:
@@ -140,5 +135,4 @@ if False:
     plt.show()
     exit()
 
-train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)
-test_df.to_csv(os.path.join(PROJECT_DIR, 'data/test_processed.csv'), index=False)
+
