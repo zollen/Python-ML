@@ -40,10 +40,9 @@ categorical_columns = [ 'Sex', 'Title', 'Pclass', 'Embarked', 'Cabin' ]
 all_features_columns = numeric_columns + categorical_columns 
 
 ## TO DO LIST
-## 1. improve naviesBayes implementation
-## 2. PCA and MeanShift analysis for Age and Fare
-## 3. Mutli-steps group based medians approximation for Cabin
-## 4. Rich women and Alive girl
+## 1. PCA and MeanShift analysis for Age and Fare
+## 2. Mutli-steps group based medians approximation for Cabin
+## 3. Rich women and Alive girl
     
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
@@ -60,9 +59,9 @@ tb.reeigneeringTitle(train_df)
 tb.reeigneeringTitle(test_df)
 
 tb.reeigneeringAge(train_df, train_df, 
-                   [ 'Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ])
+        [ 'Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ])
 tb.reeigneeringAge(combine(train_df, test_df), test_df, 
-                   [ 'Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass' ])
+        [ 'Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass' ])
 
 tb.reeigneeringFamilySize(train_df)
 tb.reeigneeringFamilySize(test_df)
@@ -73,7 +72,19 @@ tb.reeigneeringFare(test_df)
 tb.reeigneeringCabin(combine(train_df, test_df), train_df)
 tb.reeigneeringCabin(combine(train_df, test_df), test_df)
 
-tb.navieBayes(train_df)
+           
+tbl = {
+    "Title": np.union1d(train_df['Title'].unique(), test_df['Title'].unique()),
+    "Age": np.union1d(train_df['Age'].unique(), test_df['Age'].unique()),
+    "Sex": train_df['Sex'].unique(),
+    "Pclass": train_df['Pclass'].unique(),
+    "Cabin": np.union1d(train_df['Cabin'].unique(), test_df['Cabin'].unique()),
+    "Size": np.union1d(train_df['Size'].unique(), test_df['Size'].unique()),
+    "Fare": np.union1d(train_df['Fare'].unique(), test_df['Fare'].unique()),
+    "Embarked": train_df['Embarked'].unique()    
+    }
+
+tb.navieBayes(train_df, tbl)
 
 tb.reeigneeringSurvProb(train_df, [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare' ])
 tb.reeigneeringSurvProb(test_df, [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare' ])
