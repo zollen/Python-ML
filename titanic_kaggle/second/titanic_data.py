@@ -8,12 +8,7 @@ import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import re
-from sklearn.impute import KNNImputer
-from sklearn.linear_model import LogisticRegression
-from sklearn import preprocessing
 import seaborn as sb
-from matplotlib import pyplot as plt
 import warnings
 import titanic_kaggle.second.titanic_lib as tb
 
