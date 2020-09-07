@@ -69,11 +69,16 @@ tb.reeigneeringSurvProb(train_df, [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size'
 tb.reeigneeringSurvProb(test_df, [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare' ])
 
 
+dd = train_df.copy()
+func = tb.survivability2([ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare' ])
+dd['Prediction'] = dd.apply(func, axis = 1)
+total = len(dd)
+good = len(dd[((dd['Prediction'] == 0) & (dd['Survived'] == 0)) | 
+              ((dd['Prediction'] == 1) & (dd['Survived'] == 1))])
+print("Accuracy(Chance): %0.4f" % (good / total))
 
 train_df.drop(columns = [ 'Name', 'Ticket', 'Sex', 'SibSp', 'Parch'], inplace = True)
 test_df.drop(columns = [ 'Name', 'Ticket', 'Sex', 'SibSp', 'Parch'], inplace = True)
-
-
 
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)

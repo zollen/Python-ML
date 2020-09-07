@@ -998,7 +998,7 @@ def survivability(columns):
     def func(rec):
         live = np.log(bayes['A'])
         die = np.log(bayes['D'])
-        for name in  columns:
+        for name in columns:
             live += np.log(bayes['A|' + name + '=' + str(rec[name])])
             die += np.log(bayes['D|' + name + '=' + str(rec[name])])
     
@@ -1010,4 +1010,17 @@ def survivability(columns):
         
         return  np.round(0.5 + ratio, 4)    
 #        return 1 if live > die else 0
+    return func
+
+def survivability2(columns):
+    
+    def func(rec):
+        live = np.log(bayes['A'])
+        die = np.log(bayes['D'])
+        for name in columns:
+            live += np.log(bayes['A|' + name + '=' + str(rec[name])])
+            die += np.log(bayes['D|' + name + '=' + str(rec[name])])
+    
+        
+        return 1 if live > die else 0
     return func
