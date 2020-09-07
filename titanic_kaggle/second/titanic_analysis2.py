@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.impute import KNNImputer
+from sklearn.cluster import MeanShift
 import titanic_kaggle.second.titanic_lib as tb
 import seaborn as sb
 from matplotlib import pyplot as plt
@@ -35,8 +36,22 @@ train_df['Age'] = train_df['Age'].astype('int32')
 train_df.loc[train_df['Embarked'].isna() == True, 'Embarked'] = 'S'
 train_df.loc[train_df['Fare'].isna() == True, 'Fare'] = 7.25
 
-plt.figure(figsize=(12, 10))
 
-sb.scatterplot(x = 'Age', y = 'Fare', hue=train_df['Survived'].tolist(), data = train_df)
+if False:
+    plt.figure(figsize=(12, 10))
+    sb.scatterplot(x = 'Age', y = 'Fare', hue=train_df['Survived'].tolist(), data = train_df)
+    plt.show()
+    
 
-plt.show()
+if True:
+    columns = [ 'Age', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ]
+    df = train_df[columns]
+    df = tb.normalize({}, df, columns)
+    model = MeanShift(bandwidth=0.8)
+    model.fit(df)
+    y_kmeans = model.predict(df)
+
+    plt.scatter(df[:, 0], df[:, 1], c = y_kmeans, s = 20, cmap ='summer')
+    centers = model.cluster_centers_
+    plt.scatter(centers[:, 0], centers[:, 1], c = 'red', s = 20, alpha = 0.8);
+    plt.show()

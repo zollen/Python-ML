@@ -131,10 +131,9 @@ def reeigneeringTitle(dest_df):
     dest_df['Title'] = dest_df.apply(map_title, axis = 1)
 
 def reeigneeringAge(src_df, dest_df, columns):
-    encoders = {}
     
-    ddff = normalize(encoders, src_df, ['Title', 'Sex', 'Embarked', 'Pclass' ])
-    tdff = normalize(encoders, dest_df, ['Title', 'Sex', 'Embarked', 'Pclass' ])
+    ddff = normalize({}, src_df, ['Title', 'Sex', 'Embarked', 'Pclass' ])
+    tdff = normalize({}, dest_df, ['Title', 'Sex', 'Embarked', 'Pclass' ])
     
     imputer = KNNImputer(n_neighbors=13)
         
@@ -211,9 +210,8 @@ def fill_by_regression(df_src, df_dest, name, columns):
     
     cat_columns = input_columns
     
-    encoders = {}
-    df1 = normalize(encoders, withVal, cat_columns)
-    df2 = normalize(encoders, withoutVal, cat_columns)
+    df1 = normalize({}, withVal, cat_columns)
+    df2 = normalize({}, withoutVal, cat_columns)
     
     model = LogisticRegression()
     model.fit(df1[input_columns], withVal[predicted_columns])
@@ -235,9 +233,8 @@ def fill_by_classification(df_src, df_dest, name, columns):
     
     cat_columns = input_columns
 
-    encoders = {}
-    df1 = normalize(encoders, withVal, cat_columns)
-    df2 = normalize(encoders, withoutVal, cat_columns)
+    df1 = normalize({}, withVal, cat_columns)
+    df2 = normalize({}, withoutVal, cat_columns)
      
     model = LogisticRegression()
     model.fit(df1[input_columns], withVal[predicted_columns])
