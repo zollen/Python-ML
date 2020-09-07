@@ -910,7 +910,9 @@ def reeigneeringSurvProb(dest_df, columns):
     dest_df['Chance'] = dest_df.apply(func, axis = 1)
                     
 def reeigneeringCabin(src_df, dest_df):
+    src_df['Cabin'] = src_df['Cabin'].apply(captureCabin) 
     dest_df['Cabin'] = dest_df['Cabin'].apply(captureCabin) 
+
     counts = src_df.groupby(['Title', 'Pclass', 'Sex', 'Cabin'])['Cabin'].count()
     
     for index, value in counts.items():
