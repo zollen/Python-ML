@@ -40,6 +40,6 @@ plt.figure()
 
 df = pd.DataFrame(dict({'x': X[:, 0], 'y': X[:, 1], 'member': cluster.labels_}))
 
-sb.scatterplot(x = "x", y = "y", hue="member", data=df)
+sb.scatterplot(x = "x", y = "y", hue=df["member"].tolist(), data=df)
 
 plt.show()
