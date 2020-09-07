@@ -9,7 +9,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.impute import KNNImputer
-from sklearn.cluster import MeanShift
 import titanic_kaggle.second.titanic_lib as tb
 import seaborn as sb
 from matplotlib import pyplot as plt
@@ -28,7 +27,8 @@ tb.reeigneeringTitle(train_df)
 
 ddff = tb.normalize({}, train_df, ['Title', 'Sex', 'Embarked', 'Pclass' ])
        
-ages = KNNImputer(n_neighbors=13).fit_transform(ddff[[ 'Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ]])
+ages = KNNImputer(n_neighbors=13).fit_transform(
+    ddff[[ 'Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ]])
            
 train_df['Age'] = ages[:, 0]
 train_df.loc[train_df['Age'] < 1, 'Age'] = 1
@@ -43,15 +43,3 @@ if False:
     plt.show()
     
 
-if True:
-    columns = [ 'Age', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ]
-    df = train_df[columns]
-    df = tb.normalize({}, df, columns)
-    model = MeanShift(bandwidth=0.8)
-    model.fit(df)
-    y_kmeans = model.predict(df)
-
-    plt.scatter(df[:, 0], df[:, 1], c = y_kmeans, s = 20, cmap ='summer')
-    centers = model.cluster_centers_
-    plt.scatter(centers[:, 0], centers[:, 1], c = 'red', s = 20, alpha = 0.8);
-    plt.show()
