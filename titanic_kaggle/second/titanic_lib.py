@@ -882,13 +882,17 @@ def reeigneeringTitle(dest_df):
     dest_df['Title'] = dest_df['Name'].apply(lambda x : re.search('[a-zA-Z]+\\.', x).group(0))
     dest_df['Title'] = dest_df.apply(map_title, axis = 1)
 
-def reeigneeringAge(dest_df, columns):
+def reeigneeringAge(src_df, dest_df, columns):
     encoders = {}
-    ddff = normalize(encoders, dest_df, ['Title', 'Sex', 'Embarked', 'Pclass' ])
+    
+    ddff = normalize(encoders, src_df, ['Title', 'Sex', 'Embarked', 'Pclass' ])
+    tdff = normalize(encoders, dest_df, ['Title', 'Sex', 'Embarked', 'Pclass' ])
     
     imputer = KNNImputer(n_neighbors=13)
         
-    ages = imputer.fit_transform(ddff[columns])
+    imputer.fit(ddff[columns])
+    
+    ages = imputer.transform(tdff[columns])
          
     dest_df['Age'] = ages[:, 0]
     dest_df.loc[dest_df['Age'] < 1, 'Age'] = 1
