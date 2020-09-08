@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
+from pandas_profiling import ProfileReport
 import seaborn as sb
 import warnings
 import titanic_kaggle.second.titanic_lib as tb
@@ -42,6 +43,10 @@ all_features_columns = numeric_columns + categorical_columns
 PROJECT_DIR=str(Path(__file__).parent.parent)  
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
+
+if False:
+    report = ProfileReport(train_df)
+    report.to_file("hello.html")
 
 
 train_df.loc[train_df['Embarked'].isna() == True, 'Embarked'] = 'S'
