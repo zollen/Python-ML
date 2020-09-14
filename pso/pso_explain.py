@@ -9,7 +9,7 @@ Created on Sep. 14, 2020
 Initalize the hyper params (N, c1, c2, Wmin, Wmax, Vmax, and MaxIter)
 
 Initialize the population of N particles
-initial values of position and velocity of each particle is randomized
+initial values of position and velocity of each particle is randomized with (r1, r2_
 
 PBest - personal best
 GBest - Team best
