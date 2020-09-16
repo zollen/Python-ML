@@ -8,9 +8,10 @@ import numpy as np
 from deap import benchmarks as bm
 import pprint
 
-# f(a, b, c) = 3 * cos(a)^4 + 4 * cos(b)^3 + 2 sin(c)^2 * cos(c)^2 + 5
-# constraint1: a + b + c = 1
-# constraint2: c <= 0.8 
+# Simple two-dimensional function containing several local maxima. From: The Merits of a 
+# Parallel Genetic Algorithm in Solving Hard Optimization Problems.
+# https://deap.readthedocs.io/en/master/api/benchmarks.html
+# many different sample formula for optimization exercises
 def formula(x1, x2):
     return bm.h1( [x1, x2] )[0]
 
