@@ -36,10 +36,25 @@ train_df['Age'] = train_df['Age'].astype('int32')
 train_df.loc[train_df['Embarked'].isna() == True, 'Embarked'] = 'S'
 train_df.loc[train_df['Fare'].isna() == True, 'Fare'] = 7.25
 
+tb.reeigneeringTitle(train_df)
+columns = [ 'Age', 'Title', 'Sex', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass', 'Survived' ]
+ddff = tb.normalize({}, train_df, ['Title', 'Sex', 'Embarked', 'Pclass' ])
+imputer = KNNImputer(n_neighbors=13)   
+ages = imputer.fit_transform(ddff[columns])   
+train_df['Age'] = ages[:, 0]
+train_df.loc[train_df['Age'] < 1, 'Age'] = 1
 
-if False:
-    plt.figure(figsize=(12, 10))
-    sb.scatterplot(x = 'Age', y = 'Fare', hue=train_df['Survived'].tolist(), data = train_df)
+train_df['Cabin'] = train_df['Cabin'].apply(tb.captureCabin) 
+
+
+if True:
+    da = train_df[(train_df['Cabin'].isna() == False) & (train_df['Survived'] == 1)]
+    sb.factorplot('Cabin', col = 'Pclass', data = da, kind="count")
+    dd = train_df[(train_df['Cabin'].isna() == False) & (train_df['Survived'] == 0)]
+    sb.factorplot('Cabin', col = 'Pclass', data = dd,  kind="count")
     plt.show()
     
+print(train_df.loc[(train_df['Cabin'].isna() == False) & 
+               (train_df['Pclass'] == 3) &
+               (train_df['Title'] == 'Mr'), ['Age', 'Fare', 'SibSp', 'Parch', 'Embarked', 'Cabin', 'Survived']])
 

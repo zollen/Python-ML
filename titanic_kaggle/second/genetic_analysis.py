@@ -18,10 +18,10 @@ import titanic_kaggle.second.titanic_lib as tb
 POPLUATION_SIZE = 1000
 TOURNAMENT_SIZE = 400
 GUESTS_RATIO = 0.50
-NGEN=200
+NGEN=100
 TEST_MIN_VALUE = 2
 TEST_MAX_VALUE = 79
-total_boundaries = 5
+total_boundaries = 8
 SEED = 87
 
 
@@ -101,16 +101,23 @@ def evaluateIndividual(individual):
            
         vals = itable.loc[(itable['Age'] >= start) & (itable['Age'] < end), 'Survived']
         if len(vals) > 0:
-            score = np.min(np.bincount(vals)) 
+            minority = np.min(np.bincount(vals))
+            majority = np.max(np.bincount(vals))
+            if minority == 0:
+                minority = 1
+            if majority == 0:
+                majority = 1
+                
+            score = minority / (majority ** 2)
             individual.scores.append(score)           
             score_sum += score
         else:
-            individual.scores.append(100.0)
-            score_sum += 100.0
+            individual.scores.append(2.0)
+            score_sum += 2.0
                 
         start = end
   
-    return score_sum,
+    return score_sum, 
 
 def mateTwoIndividuals(child1, child2):
                
@@ -252,8 +259,7 @@ toolbox.register("gen_boundaries", populateBoundaries)
 toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.gen_boundaries, n=1)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-
-   
+  
 def varAnd(gen, population, cxpb, mutpb):
     offsprings = [toolbox.clone(ind) for ind in population]
 
@@ -272,11 +278,12 @@ def varAnd(gen, population, cxpb, mutpb):
     return offsprings
 
 def proceed():
+    GUESTS_RATIO = 0.50
     population = toolbox.population(n=POPLUATION_SIZE)
     avgfit = POPLUATION_SIZE
-
+  
     for gen in range(NGEN):
-#        print("Generation: %d Fitness: %0.2f" % (gen, avgfit / POPLUATION_SIZE))
+        print("Generation: %d Fitness: %0.2f" % (gen, avgfit / POPLUATION_SIZE))
         offspring = varAnd(gen, population, cxpb=0.8, mutpb=0.05)
         
         avgfit = 0
@@ -295,6 +302,9 @@ toolbox.register("mate", mateTwoIndividuals)
 toolbox.register("mutate", mutateIndividual, indpb=0.05)
 toolbox.register("select", selectIndividuals, tournsize=POPLUATION_SIZE)
 
-for i in [ 6, 7, 8, 9, 10, 12, 13 ]:
-    total_boundaries = i
-    print("<", i, ">", scoreIndividual(proceed()[0]))
+
+print(scoreIndividual(proceed()[0]))
+
+#for i in [ 6, 7, 8, 9, 10, 12, 13 ]:
+#    total_boundaries = i
+#    print("<", i, ">", scoreIndividual(proceed()[0]))
