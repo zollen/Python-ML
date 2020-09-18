@@ -35,8 +35,8 @@ sb.set_style('whitegrid')
 
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Ticket' ]
-numeric_columns = [ 'Fare', 'Age' ]
-categorical_columns = [ 'Title', 'Size', 'Pclass', 'Embarked', 'Cabin' ]
+numeric_columns = [ 'Fare', 'Age', 'Size' ]
+categorical_columns = [ 'Title', 'Pclass', 'Embarked', 'Cabin' ]
 all_features_columns = numeric_columns + categorical_columns 
 
 
@@ -114,7 +114,7 @@ print(train_df.head())
 target = train_df[label_column]
 train_df.drop(columns = label_column, inplace = True)
 
-
+cat_columns = []
 for name in categorical_columns:
     encoder = preprocessing.LabelEncoder()
     keys = np.union1d(train_df[name].unique(), test_df[name].unique())
@@ -125,16 +125,23 @@ for name in categorical_columns:
     encoder.fit(keys)
     train_df[name] = encoder.transform(train_df[name].values)
     test_df[name] = encoder.transform(test_df[name].values)
+    
+    for key in keys:
+        func = lambda x : 1 if x == key else 0
+        train_df[name + '.' + str(key)] = train_df[name].apply(func)
+        test_df[name + '.' + str(key)] = train_df[name].apply(func)
+        cat_columns.append(name + '.' + str(key))
+    
+    train_df.drop(columns=[name], inplace=True)
+    test_df.drop(columns=[name], inplace=True)
 
+categorical_columns = cat_columns
 
-train_df = pd.get_dummies(train_df, columns=categorical_columns)
-test_df = pd.get_dummies(test_df, columns=categorical_columns)
 
 if len(numeric_columns) > 0:
     scaler = MinMaxScaler()
     train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
     test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
-
 
 
 if False:
@@ -180,3 +187,7 @@ for k in range(4, 10):
 print("============================= AVERAGE ===========================")
 display_score(np.mean(tbl['accuracy']), np.mean(tbl['precision']), np.mean(tbl['recall']), 
               np.mean(tbl['auc']), np.mean(tbl['loss']))
+
+preds = model.predict(test_df)
+results = pd.DataFrame({'PassengerId': test_df['PassengerId'], 'Survived': preds })
+results.to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
