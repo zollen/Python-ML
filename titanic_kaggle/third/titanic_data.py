@@ -235,7 +235,7 @@ tbl = {
     }
 
 tb.navieBayes(train_df, tbl)
-columns = [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare' ]
+columns = [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare', 'Cabin' ]
 tb.reeigneeringSurvProb(train_df, columns)
 tb.reeigneeringSurvProb(test_df, columns )
 
