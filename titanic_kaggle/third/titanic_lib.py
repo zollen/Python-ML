@@ -77,7 +77,7 @@ def map_title(rec):
     
     return title
 
-def navieBayes(train_df, columns_lists):
+def navieBayes(df, columns_lists):
     
     ## P(A and B)  = P(A|B) * P(B)
     ## P(A|B) = P(A and B) / P(B)
@@ -87,17 +87,18 @@ def navieBayes(train_df, columns_lists):
     ## P(B|A) = P(A and B) / P(A)
     ADJUSTMENT = 0.0001
     
-    total = len(train_df)
-    bayes['A'] = len(train_df[train_df['Survived'] == 0]) / total
-    bayes['D'] = len(train_df[train_df['Survived'] == 1]) / total
+    total = len(df)
+    
+    bayes['A'] = len(df[df['Survived'] == 0]) / total
+    bayes['D'] = len(df[df['Survived'] == 1]) / total
     
     for name in columns_lists:
         for val in columns_lists[name]:
-            bayes[name + "=" + str(val)] = (len(train_df[train_df[name] == val]) / total) + ADJUSTMENT
+            bayes[name + "=" + str(val)] = (len(df[df[name] == val]) / total) + ADJUSTMENT
             bayes["A|" + name + "=" + str(val)] = (len(
-                train_df[(train_df[name] == val) & (train_df['Survived'] == 1)]) / total / bayes[name + "=" + str(val)]) + ADJUSTMENT
+                df[(df[name] == val) & (df['Survived'] == 1)]) / total / bayes[name + "=" + str(val)]) + ADJUSTMENT
             bayes["D|" + name + "=" + str(val)] = (len(
-                train_df[(train_df[name] == val) & (train_df['Survived'] == 0)]) / total / bayes[name + "=" + str(val)]) + ADJUSTMENT
+                df[(df[name] == val) & (df['Survived'] == 0)]) / total / bayes[name + "=" + str(val)]) + ADJUSTMENT
             
     
 def captureCabin(val):
