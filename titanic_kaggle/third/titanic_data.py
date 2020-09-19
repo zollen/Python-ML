@@ -185,8 +185,7 @@ all_df = pd.concat( [ train_df, test_df ], ignore_index = True )
 
 fillAge(all_df, train_df)
 fillAge(all_df, test_df)
-#binAge(train_df)
-#binAge(test_df)
+
 train_df['Age'] = train_df['Age'].astype('int32')
 test_df['Age'] = test_df['Age'].astype('int32')
 
