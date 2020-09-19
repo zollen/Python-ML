@@ -12,7 +12,6 @@ import pandas as pd
 import seaborn as sb
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.model_selection import RandomizedSearchCV
-from sklearn import preprocessing
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import GroupKFold, RepeatedStratifiedKFold
 from sklearn.model_selection import cross_val_score
