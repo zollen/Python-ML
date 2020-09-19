@@ -116,15 +116,7 @@ train_df.drop(columns = label_column, inplace = True)
 
 cat_columns = []
 for name in categorical_columns:
-    encoder = preprocessing.LabelEncoder()
     keys = np.union1d(train_df[name].unique(), test_df[name].unique())
-    
-    if len(keys) == 2:
-        encoder = preprocessing.LabelBinarizer()
-        
-    encoder.fit(keys)
-    train_df[name] = encoder.transform(train_df[name].values)
-    test_df[name] = encoder.transform(test_df[name].values)
     
     for key in keys:
         func = lambda x : 1 if x == key else 0
