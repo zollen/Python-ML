@@ -179,6 +179,8 @@ print("============================= AVERAGE ===========================")
 display_score(np.mean(tbl['accuracy']), np.mean(tbl['precision']), np.mean(tbl['recall']), 
               np.mean(tbl['auc']), np.mean(tbl['loss']))
 
-preds = model.predict(test_df)
-results = pd.DataFrame({'PassengerId': test_df['PassengerId'], 'Survived': preds })
-results.to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
+if False:
+    preds = model.predict(test_df)
+    results = pd.DataFrame({'PassengerId': test_df['PassengerId'], 'Survived': preds })
+    results.to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
+
