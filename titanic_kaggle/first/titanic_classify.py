@@ -194,12 +194,4 @@ if False:
     results = pd.DataFrame({'PassengerId': test_df['PassengerId'], 'Survived': preds })
     results.to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
 
-preds = model.predict(test_df[all_features_columns])
-
-
-
-if True:
-    print("========== TEST DATA ============")
-    result_df = pd.DataFrame({ "PassengerId": test_df['PassengerId'], "Survived" : preds })
-    result_df.to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
 
