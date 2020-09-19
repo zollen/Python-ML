@@ -295,8 +295,8 @@ train_df['Room'] = train_df['Room'].astype('int32')
 test_df['Room'] = test_df['Room'].astype('int32')
 
 outputs = ['PassengerId', 'Name', 'Ticket', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked',  'Pclass', 'Cabin', 'Room', 'Survived' ]
-train_df[outputs].to_csv('data/train_processed.csv', index=False)
+train_df[outputs].to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)
 outputs = ['PassengerId', 'Name', 'Ticket', 'Age', 'SibSp', 'Parch', 'Fare', 'Sex', 'Embarked',  'Pclass', 'Cabin', 'Room' ]
-test_df[outputs].to_csv('data/test_processed.csv', index=False)
+test_df[outputs].to_csv(os.path.join(PROJECT_DIR, 'data/test_processed.csv'), index=False)
 
 print("Done")

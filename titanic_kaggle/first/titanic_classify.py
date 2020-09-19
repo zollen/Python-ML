@@ -5,12 +5,15 @@ Created on Aug. 26, 2020
 '''
 
 import os
+import random
 from pathlib import Path
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn import preprocessing
 from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import GroupKFold, RepeatedStratifiedKFold
+from sklearn.model_selection import cross_val_score
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
@@ -18,8 +21,10 @@ from sklearn.metrics import roc_auc_score
 from sklearn.metrics import log_loss
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
-from sklearn.model_selection import StratifiedKFold
-from sklearn.model_selection import cross_val_score
+import warnings
+
+
+warnings.filterwarnings('ignore')
 
 SEED = 87
 
@@ -33,6 +38,66 @@ numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare' ]
 categorical_columns = [ 'Sex', 'Embarked',  'Pclass' ]
 all_features_columns = numeric_columns + categorical_columns 
 
+def score_model(observed, predicted):
+    accuracy = accuracy_score(observed, predicted)
+    precision = precision_score(observed, predicted)
+    recall = recall_score(observed, predicted)
+    auc = roc_auc_score(observed, predicted)
+    loss = log_loss(observed, predicted)
+    
+    return accuracy, precision, recall, auc, loss
+
+def display_score(accur, prec, recal, auc, loss):
+    print("Accuracy: %0.2f    Precision: %0.2f    Recall: %0.2f    AUC: %0.2f    Loss: %0.2f" %
+          (accur, prec, recal, auc, loss))
+    
+def show_score (observed, predicted):
+    print("Accuracy: %0.2f    Precision: %0.2f    Recall: %0.2f    AUC: %0.2f    Loss: %0.2f" %
+           (score_model(observed, predicted)))
+
+def groups_generator(total, k, seed):
+    
+    groups = []
+    
+    done = False
+    while done == False:
+        for item in range(0, k):
+            groups.append(item)
+            if len(groups) == total:
+                done = True
+                break
+            
+    random.seed(seed)
+    random.shuffle(groups)
+    
+    return groups
+
+def cross_validation(df, labels, k, repeats, seeds):
+    
+    tbl = {}
+    tbl['accuracy'], tbl['precision'], tbl['recall'], tbl['auc'],tbl['loss'] = [], [], [], [], []
+        
+    for i in range(0, repeats):
+        kfold = GroupKFold(n_splits = k)
+        groups = groups_generator(len(df), k, seeds[i])
+        for train_index, test_index in kfold.split(df, groups = groups):
+            x_train, y_train = df.iloc[train_index], labels.iloc[train_index]
+            x_test, y_test = df.iloc[test_index], labels.iloc[test_index]
+            classifier = LogisticRegression()
+            classifier.fit(x_train, y_train)
+            preds = classifier.predict(x_test)
+            a1, a2, a3, a4, a5 = score_model(y_test, preds)
+            tbl['accuracy'].append(a1)
+            tbl['precision'].append(a2)
+            tbl['recall'].append(a3)
+            tbl['auc'].append(a4)
+            tbl['loss'].append(a5)
+            
+    a1, a2, a3, a4, a5 = np.mean(tbl['accuracy']), np.mean(tbl['precision']), np.mean(tbl['recall']), np.mean(tbl['auc']), np.mean(tbl['loss'])
+    
+    display_score(a1, a2, a3, a4, a5)
+    
+    return a1, a2, a3, a4, a5
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'))
@@ -95,30 +160,46 @@ if False:
 
 model = LogisticRegression(max_iter=500, solver='lbfgs')
 model.fit(train_df[all_features_columns], train_df[label_column].squeeze())
+preds = model.predict(train_df[all_features_columns])
+target = train_df[label_column].squeeze()
+show_score(target, preds)
+print(confusion_matrix(target, preds))
+print(classification_report(target, preds))
+
+print("================== CROSS VALIDATION ==================")
+kfold = RepeatedStratifiedKFold(n_splits = 9, n_repeats = 5, random_state = 87)
+results = cross_val_score(LogisticRegression(), 
+                          train_df, target, cv = kfold)
+print("9-Folds Cross Validation Accuracy: %0.2f" % results.mean())
+
 print("LogisticRegression Score: ", model.score(train_df[all_features_columns], train_df[label_column]))
 
-print("================= TRAINING DATA =====================")
-preds = model.predict(train_df[all_features_columns])
-print("Accuracy: %0.2f" % accuracy_score(train_df[label_column], preds))
-print("Precision: %0.2f" % precision_score(train_df[label_column], preds))
-print("Recall: %0.2f" % recall_score(train_df[label_column], preds))
-print("AUC-ROC: %0.2f" % roc_auc_score(train_df[label_column], preds))
-print("Log Loss: %0.2f" % log_loss(train_df[label_column], preds))
-print(confusion_matrix(train_df[label_column], preds))
-print(classification_report(train_df[label_column], preds))
 
-kfold = StratifiedKFold(n_splits = 9, shuffle = True, random_state = SEED)
-results = cross_val_score(LogisticRegression(max_iter=500, solver='lbfgs'), train_df[all_features_columns], train_df[label_column].squeeze(), cv = kfold)
-print("9-Folds Cross Validation Accuracy: %0.2f" % results.mean())
-print()
-print()
+tbl = {}
+tbl['accuracy'], tbl['precision'], tbl['recall'], tbl['auc'],tbl['loss'] = [], [], [], [], []
+        
+for k in range(4, 10):
+    a1, a2, a3, a4, a5 = cross_validation(train_df[all_features_columns], target, k, 3, [0, 23, 87])
+    tbl['accuracy'].append(a1)
+    tbl['precision'].append(a2)
+    tbl['recall'].append(a3)
+    tbl['auc'].append(a4)
+    tbl['loss'].append(a5)
+print("============================= AVERAGE ===========================")
+display_score(np.mean(tbl['accuracy']), np.mean(tbl['precision']), np.mean(tbl['recall']), 
+              np.mean(tbl['auc']), np.mean(tbl['loss']))
 
+if False:
+    preds = model.predict(test_df)
+    results = pd.DataFrame({'PassengerId': test_df['PassengerId'], 'Survived': preds })
+    results.to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
 
 preds = model.predict(test_df[all_features_columns])
 
-result_df = pd.DataFrame({ "PassengerId": test_df['PassengerId'], "Survived" : preds })
 
-print("========== TEST DATA ============")
 
-print(result_df.head())
+if True:
+    print("========== TEST DATA ============")
+    result_df = pd.DataFrame({ "PassengerId": test_df['PassengerId'], "Survived" : preds })
+    result_df.to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
 
