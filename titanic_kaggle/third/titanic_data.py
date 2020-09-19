@@ -11,7 +11,7 @@ import pandas as pd
 import pprint
 import seaborn as sb
 import warnings
-import titanic_kaggle.second.titanic_lib as tb
+import titanic_kaggle.third.titanic_lib as tb
 
 warnings.filterwarnings('ignore')
 
