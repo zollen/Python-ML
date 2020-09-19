@@ -39,6 +39,40 @@ title_category = {
         'GramPa.':'GramPa',
         'GramMa.': 'GramMa'
     }
+
+titles = {
+    "Army": 0,
+    "Doctor": 1,
+    "Nurse": 2,
+    "Clergy": 3,
+    "Baronness": 4,
+    "Baron": 5,
+    "Mr": 6,
+    "Mrs": 7,
+    "Miss": 8,
+    "Master": 9,
+    "Girl": 10,
+    "Boy": 11,
+    "GramPa": 12,
+    "GramMa": 13
+    }
+
+cabins = {
+    'A': 0,
+    'B': 1,
+    'C': 2,
+    'D': 3,
+    'E': 4,
+    'F': 5,
+    'G': 6,
+    'X': 7
+    }
+
+embarkeds = {
+    'S': 0,
+    'Q': 1,
+    'C': 2
+    }
     
 def map_title(rec):
     title = title_category[rec['Title']]
@@ -100,6 +134,16 @@ def navieBayes(df, columns_lists):
             bayes["D|" + name + "=" + str(val)] = (len(
                 df[(df[name] == val) & (df['Survived'] == 0)]) / total / bayes[name + "=" + str(val)]) + ADJUSTMENT
             
+def captureRoom(val):
+
+    if str(val) != 'nan':
+        x = re.findall("[0-9]+", val)
+        if len(x) == 0:
+            x = [ 0 ]
+
+        return x[0]
+        
+    return 0
     
 def captureCabin(val):
     
@@ -219,8 +263,6 @@ def fill_by_regression(df_src, df_dest, name, columns):
 
     preds = model.predict(df2[input_columns])
     preds = [ round(i, 0) for i in preds ]
-    print("Predicted %s values: " % name)
-    print(np.stack((withoutVal['PassengerId'], preds), axis=1))
 
     df_dest.loc[df_dest[name].isna() == True, name] = preds
 
