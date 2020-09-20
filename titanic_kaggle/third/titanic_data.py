@@ -178,8 +178,13 @@ titles = {
 train_df['Title'] = train_df['Title'].map(titles)
 test_df['Title'] = test_df['Title'].map(titles)
 
+sexes = {
+    'male': 0,
+    'female': 1
+    }  
 
-
+train_df['Sex'] = train_df['Sex'].map(sexes)
+test_df['Sex'] = test_df['Sex'].map(sexes)
 
 all_df = pd.concat( [ train_df, test_df ], ignore_index = True )
 
@@ -242,8 +247,10 @@ tb.reeigneeringSurvProb(test_df, columns )
 
 
 
-train_df.drop(columns = ['Name', 'Ticket', 'SibSp', 'Parch', 'Sex'], inplace = True)
-test_df.drop(columns = ['Name', 'Ticket', 'SibSp', 'Parch', 'Sex'], inplace = True)
+train_df.drop(columns = ['Name', 'Ticket', 'Title'], inplace = True)
+test_df.drop(columns = ['Name', 'Ticket', 'Title'], inplace = True)
+
+print(train_df.head())
 
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)
