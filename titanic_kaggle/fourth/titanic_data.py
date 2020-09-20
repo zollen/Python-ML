@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
+import pprint
 import titanic_kaggle.lib.titanic_lib as tb
 import warnings
 
@@ -15,6 +16,34 @@ warnings.filterwarnings('ignore')
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 np.random.seed(0)
+pp = pprint.PrettyPrinter(indent=3) 
+
+def binAge(df):
+    df.loc[df['Age'] < 7, 'Age'] = 3
+    df.loc[(df['Age'] < 15) & (df['Age'] >= 7), 'Age'] = 10
+    df.loc[(df['Age'] < 20) & (df['Age'] >= 15), 'Age'] = 18
+    df.loc[(df['Age'] < 30) & (df['Age'] >= 20), 'Age'] = 25
+    df.loc[(df['Age'] < 40) & (df['Age'] >= 30), 'Age'] = 35
+    df.loc[(df['Age'] < 50) & (df['Age'] >= 40), 'Age'] = 45
+    df.loc[(df['Age'] < 60) & (df['Age'] >= 50), 'Age'] = 55
+    df.loc[(df['Age'] < 70) & (df['Age'] >= 60), 'Age'] = 65
+    df.loc[df['Age'] >= 70, 'Age'] = 75
+    
+def binFare(df):
+    df.loc[df['Fare'] < 10, 'Fare'] = 5
+    df.loc[(df['Fare'] < 20) & (df['Fare'] >= 10), 'Fare'] = 15
+    df.loc[(df['Fare'] < 30) & (df['Fare'] >= 20), 'Fare'] = 25
+    df.loc[(df['Fare'] < 40) & (df['Fare'] >= 30), 'Fare'] = 35
+    df.loc[(df['Fare'] < 50) & (df['Fare'] >= 40), 'Fare'] = 45
+    df.loc[(df['Fare'] < 60) & (df['Fare'] >= 50), 'Fare'] = 55
+    df.loc[(df['Fare'] < 70) & (df['Fare'] >= 60), 'Fare'] = 65
+    df.loc[(df['Fare'] < 80) & (df['Fare'] >= 70), 'Fare'] = 75
+    df.loc[(df['Fare'] < 90) & (df['Fare'] >= 80), 'Fare'] = 85
+    df.loc[(df['Fare'] < 100) & (df['Fare'] >= 90), 'Fare'] = 95
+    df.loc[(df['Fare'] < 120) & (df['Fare'] >= 100), 'Fare'] = 110
+    df.loc[(df['Fare'] < 200) & (df['Fare'] >= 120), 'Fare'] = 160
+    df.loc[(df['Fare'] < 300) & (df['Fare'] >= 200), 'Fare'] = 250
+    df.loc[df['Fare'] >= 300, 'Fare'] = 500
 
 
 label_column = [ 'Survived']
@@ -61,21 +90,34 @@ tb.reeigneeringFamilySize(test_df)
 tb.typecast(train_df)
 tb.typecast(test_df)
 
+ttrain_df = train_df.copy()
+ttest_df = test_df.copy()
+binFare(ttrain_df)
+binAge(ttrain_df)
+binFare(ttest_df)
+binAge(ttest_df)
+
+                 
 tbl = {
-    "Title": np.union1d(train_df['Title'].unique(), test_df['Title'].unique()),
-    "Age": np.union1d(train_df['Age'].unique(), test_df['Age'].unique()),
-    "Sex": train_df['Sex'].unique(),
-    "Pclass": train_df['Pclass'].unique(),
-    "Cabin": np.union1d(train_df['Cabin'].unique(), test_df['Cabin'].unique()),
-    "Size": np.union1d(train_df['Size'].unique(), test_df['Size'].unique()),
-    "Fare": np.union1d(train_df['Fare'].unique(), test_df['Fare'].unique()),
-    "Embarked": train_df['Embarked'].unique()    
+    "Title": np.union1d(ttrain_df['Title'].unique(), ttest_df['Title'].unique()),
+    "Age": np.union1d(ttrain_df['Age'].unique(), ttest_df['Age'].unique()),
+    "Sex": ttrain_df['Sex'].unique(),
+    "Pclass": ttrain_df['Pclass'].unique(),
+    "Cabin": np.union1d(ttrain_df['Cabin'].unique(), ttest_df['Cabin'].unique()),
+    "Size": np.union1d(ttrain_df['Size'].unique(), ttest_df['Size'].unique()),
+    "Fare": np.union1d(ttrain_df['Fare'].unique(), ttest_df['Fare'].unique()),
+    "Embarked": ttrain_df['Embarked'].unique()    
     }
 
-tb.navieBayes(train_df, tbl)
+pp.pprint(tbl)
+
+tb.navieBayes(ttrain_df, tbl)
 columns = [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare', 'Cabin' ]
-tb.reeigneeringSurvProb(train_df, columns)
-tb.reeigneeringSurvProb(test_df, columns )
+tb.reeigneeringSurvProb(ttrain_df, columns)
+tb.reeigneeringSurvProb(ttest_df, columns )
+
+train_df['Chance'] = ttrain_df['Chance']
+test_df['Chance'] = ttest_df['Chance']
 
 
 train_df.drop(columns = ['Name', 'Ticket'], inplace = True)
