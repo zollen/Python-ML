@@ -39,8 +39,7 @@ def typecast(df):
     df['Embarked'] = df['Embarked'].astype('int64')
     df['Cabin'] = df['Cabin'].astype('int64')
     df['Title'] = df['Title'].astype('int64')
-    
-    ## int64 Fare after testing is available
+    df['Fare'] = df['Fare'].astype('int64')
 
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
