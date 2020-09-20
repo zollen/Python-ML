@@ -55,8 +55,28 @@ tb.fill_by_classification(train_df, train_df, 'Cabin', [ 'Title', 'Survived', 'S
 tb.fill_by_regression(tb.combine(train_df, test_df), test_df, 'Age', [ 'Title', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
 tb.fill_by_classification(tb.combine( train_df, test_df ), test_df, 'Cabin', [ 'Title', 'Age', 'SibSp', 'Parch', 'Embarked', 'Sex', 'Fare', 'Pclass' ])
 
+tb.reeigneeringFamilySize(train_df)
+tb.reeigneeringFamilySize(test_df)
+
 tb.typecast(train_df)
 tb.typecast(test_df)
+
+tbl = {
+    "Title": np.union1d(train_df['Title'].unique(), test_df['Title'].unique()),
+    "Age": np.union1d(train_df['Age'].unique(), test_df['Age'].unique()),
+    "Sex": train_df['Sex'].unique(),
+    "Pclass": train_df['Pclass'].unique(),
+    "Cabin": np.union1d(train_df['Cabin'].unique(), test_df['Cabin'].unique()),
+    "Size": np.union1d(train_df['Size'].unique(), test_df['Size'].unique()),
+    "Fare": np.union1d(train_df['Fare'].unique(), test_df['Fare'].unique()),
+    "Embarked": train_df['Embarked'].unique()    
+    }
+
+tb.navieBayes(train_df, tbl)
+columns = [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare', 'Cabin' ]
+tb.reeigneeringSurvProb(train_df, columns)
+tb.reeigneeringSurvProb(test_df, columns )
+
 
 train_df.drop(columns = ['Name', 'Ticket'], inplace = True)
 test_df.drop(columns = ['Name', 'Ticket'], inplace = True)
