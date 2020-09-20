@@ -89,73 +89,66 @@ def binFare(df):
     
 def fillCabin(src_df, dest_df):
     
-    print(len(dest_df[dest_df['Cabin'].isna() == True]))
+    df = dest_df.copy()
     
+    binFare(df)
+    binAge(df)
+     
     cabins = src_df.groupby(['Title', 'Fare', 'Pclass', 'SibSp', 'Parch', 'Embarked', 'Cabin'])['Cabin'].count()
     
     for index, _ in cabins.items():
-        dest_df.loc[(dest_df['Cabin'].isna() == True) &
-                 (dest_df['Title'] == index[0]) & 
-                 (dest_df['Fare'] == index[1]) & 
-                 (dest_df['Pclass'] == index[2]) &
-                 (dest_df['SibSp'] == index[3]) &
-                 (dest_df['Parch'] == index[4]) & 
-                 (dest_df['Embarked'] == index[5]), 'Cabin'] = cabins[index[0], index[1], index[2], index[3], index[4], index[5]].idxmax()
-
-    print(len(dest_df[dest_df['Cabin'].isna() == True]))
+        df.loc[(df['Cabin'].isna() == True) &
+                 (df['Title'] == index[0]) & 
+                 (df['Fare'] == index[1]) & 
+                 (df['Pclass'] == index[2]) &
+                 (df['SibSp'] == index[3]) &
+                 (df['Parch'] == index[4]) & 
+                 (df['Embarked'] == index[5]), 'Cabin'] = cabins[index[0], index[1], index[2], index[3], index[4], index[5]].idxmax()
         
     cabins = src_df.groupby(['Title', 'Fare', 'Pclass', 'SibSp', 'Parch', 'Cabin'])['Cabin'].count()
 
     for index, _ in cabins.items():
-        dest_df.loc[(dest_df['Cabin'].isna() == True) &
-                 (dest_df['Title'] == index[0]) & 
-                 (dest_df['Fare'] == index[1]) & 
-                 (dest_df['Pclass'] == index[2]) &
-                 (dest_df['SibSp'] == index[3]) &
-                 (dest_df['Parch'] == index[4]), 'Cabin'] = cabins[index[0], index[1], index[2], index[3], index[4]].idxmax()
-                 
-    print(len(dest_df[dest_df['Cabin'].isna() == True]))
-    
+        df.loc[(df['Cabin'].isna() == True) &
+                 (df['Title'] == index[0]) & 
+                 (df['Fare'] == index[1]) & 
+                 (df['Pclass'] == index[2]) &
+                 (df['SibSp'] == index[3]) &
+                 (df['Parch'] == index[4]), 'Cabin'] = cabins[index[0], index[1], index[2], index[3], index[4]].idxmax()
+                   
     cabins = src_df.groupby(['Title', 'Fare', 'Pclass', 'SibSp', 'Cabin'])['Cabin'].count()
 
     for index, _ in cabins.items():
-        dest_df.loc[(dest_df['Cabin'].isna() == True) &
-                 (dest_df['Title'] == index[0]) & 
-                 (dest_df['Fare'] == index[1]) & 
-                 (dest_df['Pclass'] == index[2]) &
-                 (dest_df['SibSp'] == index[3]), 'Cabin'] = cabins[index[0], index[1], index[2], index[3]].idxmax()
+        df.loc[(df['Cabin'].isna() == True) &
+                 (df['Title'] == index[0]) & 
+                 (df['Fare'] == index[1]) & 
+                 (df['Pclass'] == index[2]) &
+                 (df['SibSp'] == index[3]), 'Cabin'] = cabins[index[0], index[1], index[2], index[3]].idxmax()
                  
-    print(len(dest_df[dest_df['Cabin'].isna() == True]))
-    
     cabins = src_df.groupby(['Title', 'Fare', 'Pclass', 'Cabin'])['Cabin'].count()
 
     for index, _ in cabins.items():
-        dest_df.loc[(dest_df['Cabin'].isna() == True) &
-                 (dest_df['Title'] == index[0]) & 
-                 (dest_df['Fare'] == index[1]) & 
-                 (dest_df['Pclass'] == index[2]), 'Cabin'] = cabins[index[0], index[1], index[2]].idxmax()
-                 
-    print(len(dest_df[dest_df['Cabin'].isna() == True]))
-    
+        df.loc[(df['Cabin'].isna() == True) &
+                 (df['Title'] == index[0]) & 
+                 (df['Fare'] == index[1]) & 
+                 (df['Pclass'] == index[2]), 'Cabin'] = cabins[index[0], index[1], index[2]].idxmax()
+                  
     cabins = src_df.groupby(['Title', 'Fare', 'Cabin'])['Cabin'].count()
 
     for index, _ in cabins.items():
-        dest_df.loc[(dest_df['Cabin'].isna() == True) &
-                 (dest_df['Title'] == index[0]) & 
-                 (dest_df['Fare'] == index[1]), 'Cabin'] = cabins[index[0], index[1]].idxmax()
-                 
-    print(len(dest_df[dest_df['Cabin'].isna() == True]))
-    
+        df.loc[(df['Cabin'].isna() == True) &
+                 (df['Title'] == index[0]) & 
+                 (df['Fare'] == index[1]), 'Cabin'] = cabins[index[0], index[1]].idxmax()
+                  
     cabins = src_df.groupby(['Title', 'Cabin'])['Cabin'].count()
 
     for index, _ in cabins.items():
-        dest_df.loc[(dest_df['Cabin'].isna() == True) &
-                 (dest_df['Title'] == index[0]), 'Cabin'] = cabins[index[0]].idxmax()
+        df.loc[(df['Cabin'].isna() == True) &
+                 (df['Title'] == index[0]), 'Cabin'] = cabins[index[0]].idxmax()
                  
-    dest_df.loc[(dest_df['Cabin'].isna() == True) & (
-        (dest_df['Title'] == 3) | (dest_df['Title'] == 11)), 'Cabin' ] = 'X'
+    df.loc[(df['Cabin'].isna() == True) & (
+        (df['Title'] == 3) | (dest_df['Title'] == 11)), 'Cabin' ] = 'X'
         
-    print(len(dest_df[dest_df['Cabin'].isna() == True]))
+    dest_df['Cabin'] = df['Cabin']
     
 PROJECT_DIR=str(Path(__file__).parent.parent)  
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
@@ -195,48 +188,53 @@ fillAge(all_df, all_df)
 train_df['Age'] = train_df['Age'].astype('int32')
 test_df['Age'] = test_df['Age'].astype('int32')
 
-ttrain_df = train_df.copy()
-ttest_df = test_df.copy()
-
 binFare(all_df)
 binAge(all_df)
-binFare(ttrain_df)
-binAge(ttrain_df)
-binFare(ttest_df)
-binAge(ttest_df)
 
-fillCabin(all_df, ttrain_df)
-fillCabin(all_df, ttest_df)
-
-train_df['Cabin'] = ttrain_df['Cabin']
-test_df['Cabin'] = ttest_df['Cabin']
-
+fillCabin(all_df, train_df)
+fillCabin(all_df, test_df)
+fillCabin(all_df, all_df)
 
 train_df['Cabin'] = train_df['Cabin'].map(tb.cabins)
 test_df['Cabin'] = test_df['Cabin'].map(tb.cabins)
 
 tb.reeigneeringFamilySize(train_df)
 tb.reeigneeringFamilySize(test_df)
+tb.reeigneeringFamilySize(all_df)
 
 tb.typecast(train_df)
 tb.typecast(test_df)
 
+
+ttrain_df = train_df.copy()
+ttest_df = test_df.copy()
+binFare(ttrain_df)
+binAge(ttrain_df)
+binFare(ttest_df)
+binAge(ttest_df)
+
                  
 tbl = {
-    "Title": np.union1d(train_df['Title'].unique(), test_df['Title'].unique()),
-    "Age": np.union1d(train_df['Age'].unique(), test_df['Age'].unique()),
-    "Sex": train_df['Sex'].unique(),
-    "Pclass": train_df['Pclass'].unique(),
-    "Cabin": np.union1d(train_df['Cabin'].unique(), test_df['Cabin'].unique()),
-    "Size": np.union1d(train_df['Size'].unique(), test_df['Size'].unique()),
-    "Fare": np.union1d(train_df['Fare'].unique(), test_df['Fare'].unique()),
-    "Embarked": train_df['Embarked'].unique()    
+    "Title": np.union1d(ttrain_df['Title'].unique(), ttest_df['Title'].unique()),
+    "Age": np.union1d(ttrain_df['Age'].unique(), ttest_df['Age'].unique()),
+    "Sex": ttrain_df['Sex'].unique(),
+    "Pclass": ttrain_df['Pclass'].unique(),
+    "Cabin": np.union1d(ttrain_df['Cabin'].unique(), ttest_df['Cabin'].unique()),
+    "Size": np.union1d(ttrain_df['Size'].unique(), ttest_df['Size'].unique()),
+    "Fare": np.union1d(ttrain_df['Fare'].unique(), ttest_df['Fare'].unique()),
+    "Embarked": ttrain_df['Embarked'].unique()    
     }
 
-tb.navieBayes(train_df, tbl)
+pp.pprint(tbl)
+
+
+tb.navieBayes(ttrain_df, tbl)
 columns = [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare', 'Cabin' ]
-tb.reeigneeringSurvProb(train_df, columns)
-tb.reeigneeringSurvProb(test_df, columns )
+tb.reeigneeringSurvProb(ttrain_df, columns)
+tb.reeigneeringSurvProb(ttest_df, columns )
+
+train_df['Chance'] = ttrain_df['Chance']
+test_df['Chance'] = ttest_df['Chance']
 
 
 train_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size'], inplace = True)
