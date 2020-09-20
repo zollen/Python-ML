@@ -5,6 +5,7 @@ Created on Aug. 1, 2020
 '''
 
 import os
+import re
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -34,6 +35,17 @@ all_features_columns = numeric_columns + categorical_columns
 ## 1. PCA and MeanShift analysis for Age and Fare
 ## 2. Mutli-steps group based medians approximation for Cabin
 ## 3. Rich women and Alive girl
+def captureRoom(val):
+
+    if str(val) != 'nan':
+        x = re.findall("[0-9]+", val)
+        if len(x) == 0:
+            x = [ 0 ]
+
+        return x[0]
+        
+    return 0
+
 def fillAge(src_df, dest_df):
     
     ages = src_df.groupby(['Title', 'Sex', 'SibSp', 'Parch'])['Age'].median()
@@ -220,6 +232,8 @@ embarkeds = {
 train_df['Embarked'] = train_df['Embarked'].map(embarkeds)
 test_df['Embarked'] = test_df['Embarked'].map(embarkeds)
 
+train_df['Room']  = train_df['Cabin'].apply(captureRoom)
+test_df['Room']  = test_df['Cabin'].apply(captureRoom)
 
 train_df['Cabin'] = train_df['Cabin'].map(cabins)
 test_df['Cabin'] = test_df['Cabin'].map(cabins)
@@ -249,8 +263,6 @@ tb.reeigneeringSurvProb(test_df, columns )
 
 train_df.drop(columns = ['Name', 'Ticket', 'Title'], inplace = True)
 test_df.drop(columns = ['Name', 'Ticket', 'Title'], inplace = True)
-
-print(train_df.head())
 
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)
