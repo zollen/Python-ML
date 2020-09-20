@@ -73,7 +73,12 @@ embarkeds = {
     'Q': 1,
     'C': 2
     }
-    
+ 
+sexes = {
+    'male': 0,
+    'female': 1
+    }  
+ 
 def map_title(rec):
     title = title_category[rec['Title']]
     sex = rec['Sex']
