@@ -12,7 +12,7 @@ import pandas as pd
 import pprint
 import seaborn as sb
 import warnings
-import titanic_kaggle.third.titanic_lib as tb
+import titanic_kaggle.lib.titanic_lib as tb
 
 warnings.filterwarnings('ignore')
 
@@ -35,17 +35,6 @@ all_features_columns = numeric_columns + categorical_columns
 ## 1. PCA and MeanShift analysis for Age and Fare
 ## 2. Mutli-steps group based medians approximation for Cabin
 ## 3. Rich women and Alive girl
-def captureRoom(val):
-
-    if str(val) != 'nan':
-        x = re.findall("[0-9]+", val)
-        if len(x) == 0:
-            x = [ 0 ]
-
-        return x[0]
-        
-    return 0
-
 def fillAge(src_df, dest_df):
     
     ages = src_df.groupby(['Title', 'Sex', 'SibSp', 'Parch'])['Age'].median()
@@ -209,34 +198,18 @@ test_df['Age'] = test_df['Age'].astype('int32')
 binFare(all_df)
 binAge(all_df)
 
-cabins = {
-    'A': 0,
-    'B': 1,
-    'C': 2,
-    'D': 3,
-    'E': 4,
-    'F': 5,
-    'G': 6,
-    'X': 7
-    }
-
 fillCabin(all_df, train_df)
 fillCabin(all_df, test_df)
 
-embarkeds = {
-    'S': 0,
-    'Q': 1,
-    'C': 2
-    }
 
-train_df['Embarked'] = train_df['Embarked'].map(embarkeds)
-test_df['Embarked'] = test_df['Embarked'].map(embarkeds)
+train_df['Embarked'] = train_df['Embarked'].map(tb.embarkeds)
+test_df['Embarked'] = test_df['Embarked'].map(tb.embarkeds)
 
-train_df['Room']  = train_df['Cabin'].apply(captureRoom)
-test_df['Room']  = test_df['Cabin'].apply(captureRoom)
+train_df['Room']  = train_df['Cabin'].apply(tb.captureRoom)
+test_df['Room']  = test_df['Cabin'].apply(tb.captureRoom)
 
-train_df['Cabin'] = train_df['Cabin'].map(cabins)
-test_df['Cabin'] = test_df['Cabin'].map(cabins)
+train_df['Cabin'] = train_df['Cabin'].map(tb.cabins)
+test_df['Cabin'] = test_df['Cabin'].map(tb.cabins)
 
 tb.reeigneeringFamilySize(train_df)
 tb.reeigneeringFamilySize(test_df)
@@ -261,8 +234,8 @@ tb.reeigneeringSurvProb(test_df, columns )
 
 
 
-train_df.drop(columns = ['Name', 'Ticket', 'Title'], inplace = True)
-test_df.drop(columns = ['Name', 'Ticket', 'Title'], inplace = True)
+train_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size'], inplace = True)
+test_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size'], inplace = True)
 
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)
