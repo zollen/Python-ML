@@ -158,25 +158,8 @@ tb.reeigneeringTitle(test_df)
 train_df['Cabin'] = train_df['Cabin'].apply(tb.captureCabin) 
 test_df['Cabin'] = test_df['Cabin'].apply(tb.captureCabin) 
 
-titles = {
-    "Army": 0,
-    "Doctor": 1,
-    "Nurse": 2,
-    "Clergy": 3,
-    "Baronness": 4,
-    "Baron": 5,
-    "Mr": 6,
-    "Mrs": 7,
-    "Miss": 8,
-    "Master": 9,
-    "Girl": 10,
-    "Boy": 11,
-    "GramPa": 12,
-    "GramMa": 13
-    }
-
-train_df['Title'] = train_df['Title'].map(titles)
-test_df['Title'] = test_df['Title'].map(titles)
+train_df['Title'] = train_df['Title'].map(tb.titles)
+test_df['Title'] = test_df['Title'].map(tb.titles)
 
 sexes = {
     'male': 0,
@@ -212,6 +195,9 @@ test_df['Cabin'] = test_df['Cabin'].map(tb.cabins)
 
 tb.reeigneeringFamilySize(train_df)
 tb.reeigneeringFamilySize(test_df)
+
+tb.typecast(train_df)
+tb.typecast(test_df)
                  
 tbl = {
     "Title": np.union1d(train_df['Title'].unique(), test_df['Title'].unique()),

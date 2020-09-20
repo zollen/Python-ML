@@ -78,6 +78,24 @@ sexes = {
     'male': 0,
     'female': 1
     }  
+
+def captures(df):
+    df['Room']  = df['Cabin'].apply(captureRoom)
+    df['Cabin'] = df['Cabin'].apply(captureCabin) 
+    df['Title'] = df['Title'].map(titles)
+    df['Sex'] = df['Sex'].map(sexes)
+    df['Embarked'] = df['Embarked'].map(embarkeds)
+    df['Cabin'] = df['Cabin'].map(cabins)
+    
+def typecast(df):
+    df['Room'] = df['Room'].astype('int64')
+    df['Age'] = df['Age'].astype('int64')
+    df['Sex'] = df['Sex'].astype('int64')
+    df['Embarked'] = df['Embarked'].astype('int64')
+    df['Cabin'] = df['Cabin'].astype('int64')
+    df['Title'] = df['Title'].astype('int64')
+    df['Fare'] = df['Fare'].astype('int64')
+
  
 def map_title(rec):
     title = title_category[rec['Title']]

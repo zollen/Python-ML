@@ -10,7 +10,6 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LogisticRegression
-from sklearn import preprocessing
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.model_selection import GroupKFold, RepeatedStratifiedKFold
 from sklearn.model_selection import cross_val_score
