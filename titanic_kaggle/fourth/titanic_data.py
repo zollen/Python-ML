@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import titanic_kaggle.fourth.titanic_lib as tb
+import titanic_kaggle.lib.titanic_lib as tb
 import warnings
 
 warnings.filterwarnings('ignore')
