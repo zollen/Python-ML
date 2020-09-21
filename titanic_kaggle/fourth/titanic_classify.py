@@ -9,6 +9,7 @@ import random
 from pathlib import Path
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.model_selection import GroupKFold, RepeatedStratifiedKFold
@@ -33,7 +34,7 @@ np.random.seed(SEED)
 
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Name', 'Ticket' ]
-numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare', 'Room' ]
+numeric_columns = [ 'Age', 'SibSp', 'Parch', 'Fare', 'Room', 'Chance' ]
 categorical_columns = [ 'Sex', 'Embarked',  'Pclass' ]
 all_features_columns = numeric_columns + categorical_columns 
 
@@ -118,7 +119,11 @@ for name in categorical_columns:
 
 categorical_columns = cat_columns
 
-
+if len(numeric_columns) > 0:
+    scaler = MinMaxScaler()
+    train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
+    test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
+    
 if False:
     param_grid = dict({ "n_estimators": [ 50, 75, 100, 150 ],
                        "max_depth": [ 2, 5, 10, 15, 20, 25, 30 ],
