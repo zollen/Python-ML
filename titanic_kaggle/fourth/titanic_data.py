@@ -19,31 +19,33 @@ np.random.seed(0)
 pp = pprint.PrettyPrinter(indent=3) 
 
 def binAge(df):
-    df.loc[df['Age'] < 7, 'Age'] = 3
-    df.loc[(df['Age'] < 15) & (df['Age'] >= 7), 'Age'] = 10
-    df.loc[(df['Age'] < 20) & (df['Age'] >= 15), 'Age'] = 18
-    df.loc[(df['Age'] < 30) & (df['Age'] >= 20), 'Age'] = 25
-    df.loc[(df['Age'] < 40) & (df['Age'] >= 30), 'Age'] = 35
-    df.loc[(df['Age'] < 50) & (df['Age'] >= 40), 'Age'] = 45
-    df.loc[(df['Age'] < 60) & (df['Age'] >= 50), 'Age'] = 55
-    df.loc[(df['Age'] < 70) & (df['Age'] >= 60), 'Age'] = 65
-    df.loc[df['Age'] >= 70, 'Age'] = 75
+    df.loc[df['Age'] < 14, 'Age'] = 7
+    df.loc[(df['Age'] < 19) & (df['Age'] >= 14), 'Age'] = 17
+    df.loc[(df['Age'] < 22) & (df['Age'] >= 19), 'Age'] = 20
+    df.loc[(df['Age'] < 25) & (df['Age'] >= 22), 'Age'] = 24
+    df.loc[(df['Age'] < 28) & (df['Age'] >= 25), 'Age'] = 27
+    df.loc[(df['Age'] < 31.8) & (df['Age'] >= 28), 'Age'] = 30
+    df.loc[(df['Age'] < 36) & (df['Age'] >= 31.8), 'Age'] = 34
+    df.loc[(df['Age'] < 41) & (df['Age'] >= 36), 'Age'] = 38
+    df.loc[(df['Age'] < 50) & (df['Age'] >= 41), 'Age'] = 46
+    df.loc[(df['Age'] < 80) & (df['Age'] >= 50), 'Age'] = 70
+    df.loc[df['Age'] >= 80, 'Age'] = 80
     
 def binFare(df):
-    df.loc[df['Fare'] < 10, 'Fare'] = 5
-    df.loc[(df['Fare'] < 20) & (df['Fare'] >= 10), 'Fare'] = 15
-    df.loc[(df['Fare'] < 30) & (df['Fare'] >= 20), 'Fare'] = 25
-    df.loc[(df['Fare'] < 40) & (df['Fare'] >= 30), 'Fare'] = 35
-    df.loc[(df['Fare'] < 50) & (df['Fare'] >= 40), 'Fare'] = 45
-    df.loc[(df['Fare'] < 60) & (df['Fare'] >= 50), 'Fare'] = 55
-    df.loc[(df['Fare'] < 70) & (df['Fare'] >= 60), 'Fare'] = 65
-    df.loc[(df['Fare'] < 80) & (df['Fare'] >= 70), 'Fare'] = 75
-    df.loc[(df['Fare'] < 90) & (df['Fare'] >= 80), 'Fare'] = 85
-    df.loc[(df['Fare'] < 100) & (df['Fare'] >= 90), 'Fare'] = 95
-    df.loc[(df['Fare'] < 120) & (df['Fare'] >= 100), 'Fare'] = 110
-    df.loc[(df['Fare'] < 200) & (df['Fare'] >= 120), 'Fare'] = 160
-    df.loc[(df['Fare'] < 300) & (df['Fare'] >= 200), 'Fare'] = 250
-    df.loc[df['Fare'] >= 300, 'Fare'] = 500
+    df.loc[df['Fare'] < 7.229, 'Fare'] = 4
+    df.loc[(df['Fare'] < 7.75) & (df['Fare'] >= 7.229), 'Fare'] = 6
+    df.loc[(df['Fare'] < 7.896) & (df['Fare'] >= 7.75), 'Fare'] = 7
+    df.loc[(df['Fare'] < 8.05) & (df['Fare'] >= 7.896), 'Fare'] = 8
+    df.loc[(df['Fare'] < 10.5) & (df['Fare'] >= 8.05), 'Fare'] = 9
+    df.loc[(df['Fare'] < 13) & (df['Fare'] >= 10.5), 'Fare'] = 11
+    df.loc[(df['Fare'] < 15.85) & (df['Fare'] >= 13), 'Fare'] = 14
+    df.loc[(df['Fare'] < 24) & (df['Fare'] >= 15.85), 'Fare'] = 20
+    df.loc[(df['Fare'] < 26.55) & (df['Fare'] >= 24), 'Fare'] = 25
+    df.loc[(df['Fare'] < 33.308) & (df['Fare'] >= 26.55), 'Fare'] = 30
+    df.loc[(df['Fare'] < 55.9) & (df['Fare'] >= 33.308), 'Fare'] = 45
+    df.loc[(df['Fare'] < 83.158) & (df['Fare'] >= 55.9), 'Fare'] = 75
+    df.loc[(df['Fare'] < 512.329) & (df['Fare'] >= 83.158), 'Fare'] = 100
+    df.loc[df['Fare'] >= 300, 'Fare'] = 150
 
 
 label_column = [ 'Survived']
