@@ -234,10 +234,8 @@ tb.reeigneeringSurvProb(ttest_df, columns )
 train_df['Chance'] = ttrain_df['Chance']
 test_df['Chance'] = ttest_df['Chance']
 
-
 train_df['Cabin'] = train_df['Cabin'] * 1000 + train_df['Room']
 test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
-
 
 
 """
