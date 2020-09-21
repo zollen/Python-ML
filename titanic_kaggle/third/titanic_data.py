@@ -197,6 +197,7 @@ fillCabin(all_df, all_df)
 
 train_df['Cabin'] = train_df['Cabin'].map(tb.cabins)
 test_df['Cabin'] = test_df['Cabin'].map(tb.cabins)
+all_df['Cabin'] = all_df['Cabin'].map(tb.cabins)
 
 tb.reeigneeringFamilySize(train_df)
 tb.reeigneeringFamilySize(test_df)
@@ -237,8 +238,12 @@ train_df['Chance'] = ttrain_df['Chance']
 test_df['Chance'] = ttest_df['Chance']
 
 
-train_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size'], inplace = True)
-test_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size'], inplace = True)
+train_df['Cabin'] = train_df['Cabin'] * 1000 + train_df['Room']
+test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
+
+
+train_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
+test_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
 
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)
