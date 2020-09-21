@@ -30,10 +30,7 @@ numeric_columns = [ 'Age', 'Fare' ]
 categorical_columns = [ 'Sex', 'Title', 'Pclass', 'Embarked', 'Cabin' ]
 all_features_columns = numeric_columns + categorical_columns 
 
-## TO DO LIST
-## 1. PCA and MeanShift analysis for Age and Fare
-## 2. Mutli-steps group based medians approximation for Cabin
-## 3. Rich women and Alive girl
+
 def fillAge(src_df, dest_df):
     
     ages = src_df.groupby(['Title', 'Sex', 'SibSp', 'Parch'])['Age'].median()
@@ -240,6 +237,13 @@ test_df['Chance'] = ttest_df['Chance']
 
 train_df['Cabin'] = train_df['Cabin'] * 1000 + train_df['Room']
 test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
+
+
+
+"""
+1. implementing Rich Women 
+2. implementing Ticket 
+"""
 
 
 train_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
