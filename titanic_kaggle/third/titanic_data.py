@@ -12,6 +12,8 @@ import pprint
 import seaborn as sb
 import warnings
 import titanic_kaggle.lib.titanic_lib as tb
+from sklearn.preprocessing import Binarizer
+from sklearn.metrics import accuracy_score
 
 warnings.filterwarnings('ignore')
 
@@ -242,14 +244,14 @@ train_df['Cabin'] = train_df['Cabin'] * 1000 + train_df['Room']
 test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
 
 """
-1. implementing Rich Women 
-2. implementing Ticket 
+1. Adding coef to each bayes features *use pso aglo
+2. Search common Name of relatives
+3. implementing Ticket 
 """
 
-"""
-F1(sex) * F2(Age) * F3(fare) * F4(Pclass) * F2(Age) * F5(Embarked)
-Use bar charts to determine the functions
-"""
+ttrain_df['Bayes'] = Binarizer(threshold=0.5).fit_transform(
+    np.expand_dims(train_df['Chance'].values, 1))
+print(accuracy_score(ttrain_df['Survived'], ttrain_df['Bayes']))
 
 train_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
 test_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
