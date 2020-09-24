@@ -131,7 +131,7 @@ if False:
                        "solver": [ 'lbfgs' ],
                        "max_iter": [500, 550, 600, 650, 660, 670, 680, 690, 700, 750 ],
                        "l1_ratio": [ None, 0.001, 0.01, 0.002, 0.02, 0.003, 0.03, 0.004, 0.04, 0.005, 0.05 ] })
-    model = RandomizedSearchCV(estimator = LogisticRegression(max_iter=500, solver='lbfgs'), 
+    model = RandomizedSearchCV(estimator = LogisticRegression(), 
                         param_distributions = param_grid, n_jobs=-1, n_iter=100)
 
     model.fit(train_df[all_features_columns], train_df[label_column].squeeze())
