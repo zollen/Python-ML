@@ -232,9 +232,11 @@ pp.pprint(tbl)
 
 
 tb.navieBayes(ttrain_df, tbl)
-columns = [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare', 'Cabin' ]
-tb.reeigneeringSurvProb(ttrain_df, columns)
-tb.reeigneeringSurvProb(ttest_df, columns )
+columns = [ 'Title', 'Age', 'Sex', 'Pclass', 'Cabin', 'Size', 'Fare', 'Embarked' ]
+coeffs = { "Title": 1.7661, "Age": 0.8183, "Sex": 0.7392, "Pclass": 0.8121, 
+          "Cabin": -0.8381, "Size": 1.8125, "Fare": 0.2657, "Embarked": -0.2694 }
+tb.reeigneeringSurvProb(ttrain_df, coeffs, columns)
+tb.reeigneeringSurvProb(ttest_df, coeffs, columns )
 
 train_df['Chance'] = ttrain_df['Chance']
 test_df['Chance'] = ttest_df['Chance']
@@ -254,7 +256,7 @@ test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
 
 ttrain_df['Bayes'] = Binarizer(threshold=0.5).fit_transform(
     np.expand_dims(train_df['Chance'].values, 1))
-print(accuracy_score(ttrain_df['Survived'], ttrain_df['Bayes']))
+print("Bayes Accuracy: %0.4f" % accuracy_score(ttrain_df['Survived'], ttrain_df['Bayes']))
 
 train_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
 test_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)

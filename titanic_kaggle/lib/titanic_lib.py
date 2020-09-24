@@ -225,8 +225,8 @@ def reeigneeringFamilySize(dest_df):
     dest_df['Size'] = dest_df['SibSp'] + dest_df['Parch'] + 1
     dest_df['Size'] = dest_df['Size'].apply(captureSize)
 
-def reeigneeringSurvProb(dest_df, columns):
-    func = survivability(False, columns)
+def reeigneeringSurvProb(dest_df, coeffs, columns):
+    func = survivability(False, coeffs, columns)
     dest_df['Chance'] = dest_df.apply(func, axis = 1)
                     
 def reeigneeringCabin(src_df, dest_df):
@@ -309,14 +309,14 @@ def fill_by_classification(df_src, df_dest, name, columns):
     
     df_dest.loc[df_dest[name].isna() == True, name] = preds
 
-def survivability(classification, columns):
+def survivability(classification, coeffs, columns):
     
     def func(rec):
         live = np.log(bayes['A'])
         die = np.log(bayes['D'])
         for name in columns:
-            live += np.log(bayes['A|' + name + '=' + str(rec[name])])
-            die += np.log(bayes['D|' + name + '=' + str(rec[name])])
+            live += np.log(bayes['A|' + name + '=' + str(rec[name])]) * coeffs[name]
+            die += np.log(bayes['D|' + name + '=' + str(rec[name])]) * coeffs[name]
     
         if classification:
             return 1 if live > die else 0

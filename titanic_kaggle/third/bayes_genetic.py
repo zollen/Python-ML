@@ -4,6 +4,12 @@ Created on Sep. 24, 2020
 @author: zollen
 '''
 import os
+import operator
+import random
+import math
+from deap import base
+from deap import creator
+from deap import tools
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -31,6 +37,7 @@ numeric_columns = [ 'Age', 'Fare' ]
 categorical_columns = [ 'Sex', 'Title', 'Pclass', 'Embarked', 'Cabin' ]
 all_features_columns = numeric_columns + categorical_columns 
 
+    
 def fillAge(src_df, dest_df):
     
     ages = src_df.groupby(['Title', 'Sex', 'SibSp', 'Parch'])['Age'].median()
@@ -230,9 +237,11 @@ pp.pprint(tbl)
 
 
 tb.navieBayes(ttrain_df, tbl)
-columns = [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare', 'Cabin' ]
-tb.reeigneeringSurvProb(ttrain_df, columns)
-tb.reeigneeringSurvProb(ttest_df, columns )
+columns = [ 'Title', 'Age', 'Sex', 'Pclass', 'Cabin', 'Size', 'Fare', 'Embarked' ]
+coeffs = { "Title": 1.0, "Age": 1.0, "Sex": 1.0, "Pclass": 1.0, 
+          "Cabin": 1.0, "Size": 1.0, "Fare": 1.0, "Embarked": 1.0 }
+tb.reeigneeringSurvProb(ttrain_df, coeffs, columns)
+tb.reeigneeringSurvProb(ttest_df, coeffs, columns )
 
 train_df['Chance'] = ttrain_df['Chance']
 test_df['Chance'] = ttest_df['Chance']
@@ -240,10 +249,73 @@ test_df['Chance'] = ttest_df['Chance']
 train_df['Cabin'] = train_df['Cabin'] * 1000 + train_df['Room']
 test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
 
-
-
-
-
 ttrain_df['Bayes'] = Binarizer(threshold=0.5).fit_transform(
     np.expand_dims(train_df['Chance'].values, 1))
 pp.pprint("Accuracy %0.4f" % accuracy_score(ttrain_df['Survived'], ttrain_df['Bayes']))
+
+tttest_df = ttrain_df.copy()
+def evaluate(individual):
+    calculate(tttest_df, dict(zip(columns, individual)), columns)
+    return accuracy_score(tttest_df['Survived'], tttest_df['Chance']), 
+
+def calculate(dest_df, coeffs, columns):
+    func = tb.survivability(True, coeffs, columns)
+    dest_df['Chance'] = dest_df.apply(func, axis = 1)
+
+def generate(size, pmin, pmax, smin, smax):
+    part = creator.Particle(random.uniform(pmin, pmax) for _ in range(size)) 
+    part.speed = [random.uniform(smin, smax) for _ in range(size)]
+    part.smin = smin
+    part.smax = smax
+    return part
+    
+def update(part, best, phi1, phi2):
+    u1 = (random.uniform(0, phi1) for _ in range(len(part)))
+    u2 = (random.uniform(0, phi2) for _ in range(len(part)))
+    v_u1 = map(operator.mul, u1, map(operator.sub, part.best, part))
+    v_u2 = map(operator.mul, u2, map(operator.sub, best, part))
+    part.speed = list(map(operator.add, part.speed, map(operator.add, v_u1, v_u2)))
+    for i, speed in enumerate(part.speed):
+        if abs(speed) < part.smin:
+            part.speed[i] = math.copysign(part.smin, speed)
+        elif abs(speed) > part.smax:
+            part.speed[i] = math.copysign(part.smax, speed)
+    part[:] = list(map(operator.add, part, part.speed))
+
+creator.create("FitnessMax", base.Fitness, weights=(1.0,))
+creator.create("Particle", list, fitness=creator.FitnessMax, speed=list, 
+    smin=None, smax=None, best=None)
+
+toolbox = base.Toolbox()
+toolbox.register("particle", generate, size=8, pmin=0.1, pmax=2, smin=-0.2, smax=0.2)
+toolbox.register("population", tools.initRepeat, list, toolbox.particle)
+toolbox.register("update", update, phi1=0.2, phi2=0.2)
+toolbox.register("evaluate", evaluate)
+
+def main():
+    pop = toolbox.population(n=10)
+
+    GEN = 4
+    best = None
+
+    for g in range(GEN):
+        for part in pop:
+            part.fitness.values = toolbox.evaluate(part)
+            if not part.best or part.best.fitness < part.fitness:
+                part.best = creator.Particle(part)
+                part.best.fitness.values = part.fitness.values
+            if not best or best.fitness < part.fitness:
+                best = creator.Particle(part)
+                best.fitness.values = part.fitness.values
+            
+        for part in pop:
+            toolbox.update(part, best)
+
+    print("=== BEST ===")
+    pp.pprint(dict(zip(columns, best)))
+    print("BEST Accuracy: %0.4f" % evaluate(best))
+    
+    return pop, best
+
+if __name__ == "__main__":
+    main()
