@@ -293,9 +293,9 @@ toolbox.register("update", update, phi1=0.2, phi2=0.2)
 toolbox.register("evaluate", evaluate)
 
 def main():
-    pop = toolbox.population(n=10)
+    pop = toolbox.population(n=500)
 
-    GEN = 4
+    GEN = 30
     best = None
 
     for g in range(GEN):

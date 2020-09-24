@@ -233,8 +233,8 @@ pp.pprint(tbl)
 
 tb.navieBayes(ttrain_df, tbl)
 columns = [ 'Title', 'Age', 'Sex', 'Pclass', 'Cabin', 'Size', 'Fare', 'Embarked' ]
-coeffs = { "Title": 1.7661, "Age": 0.8183, "Sex": 0.7392, "Pclass": 0.8121, 
-          "Cabin": -0.8381, "Size": 1.8125, "Fare": 0.2657, "Embarked": -0.2694 }
+coeffs = { "Title": 1.7516, "Age": 0.6860, "Sex": 0.3505, "Pclass": 0.1558, 
+         "Cabin": -0.3116, "Size": 1.3449, "Fare": 0.5797, "Embarked": 0.8154 }
 tb.reeigneeringSurvProb(ttrain_df, coeffs, columns)
 tb.reeigneeringSurvProb(ttest_df, coeffs, columns )
 
@@ -245,18 +245,14 @@ train_df['Cabin'] = train_df['Cabin'] * 1000 + train_df['Room']
 test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
 
 """
-1. Adding coef to each bayes features *use pso algo
-2. Search common Name of relatives
-3. implementing Ticket 
+1. Search common Name of relatives
+2. implementing Ticket 
 """
 
 
 
 
 
-ttrain_df['Bayes'] = Binarizer(threshold=0.5).fit_transform(
-    np.expand_dims(train_df['Chance'].values, 1))
-print("Bayes Accuracy: %0.4f" % accuracy_score(ttrain_df['Survived'], ttrain_df['Bayes']))
 
 train_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
 test_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
