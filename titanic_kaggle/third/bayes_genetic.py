@@ -1,9 +1,8 @@
 '''
-Created on Aug. 1, 2020
+Created on Sep. 24, 2020
 
 @author: zollen
 '''
-
 import os
 from pathlib import Path
 import numpy as np
@@ -31,7 +30,6 @@ identity_columns = [ 'PassengerId', 'Ticket' ]
 numeric_columns = [ 'Age', 'Fare' ]
 categorical_columns = [ 'Sex', 'Title', 'Pclass', 'Embarked', 'Cabin' ]
 all_features_columns = numeric_columns + categorical_columns 
-
 
 def fillAge(src_df, dest_df):
     
@@ -242,25 +240,10 @@ test_df['Chance'] = ttest_df['Chance']
 train_df['Cabin'] = train_df['Cabin'] * 1000 + train_df['Room']
 test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
 
-"""
-1. Adding coef to each bayes features *use pso algo
-2. Search common Name of relatives
-3. implementing Ticket 
-"""
-
 
 
 
 
 ttrain_df['Bayes'] = Binarizer(threshold=0.5).fit_transform(
     np.expand_dims(train_df['Chance'].values, 1))
-print(accuracy_score(ttrain_df['Survived'], ttrain_df['Bayes']))
-
-train_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
-test_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
-
-
-train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)
-test_df.to_csv(os.path.join(PROJECT_DIR, 'data/test_processed.csv'), index=False)
-
-print("Done")
+pp.pprint("Accuracy %0.4f" % accuracy_score(ttrain_df['Survived'], ttrain_df['Bayes']))
