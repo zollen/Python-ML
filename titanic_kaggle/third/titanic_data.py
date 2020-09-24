@@ -87,8 +87,7 @@ def binFare(df):
     df.loc[(df['Fare'] < 33.308) & (df['Fare'] >= 26.55), 'Fare'] = 30
     df.loc[(df['Fare'] < 55.9) & (df['Fare'] >= 33.308), 'Fare'] = 45
     df.loc[(df['Fare'] < 83.158) & (df['Fare'] >= 55.9), 'Fare'] = 75
-    df.loc[(df['Fare'] < 512.329) & (df['Fare'] >= 83.158), 'Fare'] = 100
-    df.loc[df['Fare'] >= 300, 'Fare'] = 150
+    df.loc[(df['Fare'] < 1000) & (df['Fare'] >= 83.158), 'Fare'] = 100
     
 def fillCabin(src_df, dest_df):
     
@@ -244,7 +243,7 @@ train_df['Cabin'] = train_df['Cabin'] * 1000 + train_df['Room']
 test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
 
 """
-1. Adding coef to each bayes features *use pso aglo
+1. Adding coef to each bayes features *use pso algo
 2. Search common Name of relatives
 3. implementing Ticket 
 """

@@ -14,6 +14,7 @@ from sklearn.impute import KNNImputer
 
 bayes = {}
 
+
 title_category = {
         "Capt.": "Army",
         "Col.": "Army",
