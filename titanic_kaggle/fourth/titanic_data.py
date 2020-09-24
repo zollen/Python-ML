@@ -114,9 +114,11 @@ tbl = {
 pp.pprint(tbl)
 
 tb.navieBayes(ttrain_df, tbl)
-columns = [ 'Title', 'Sex', 'Pclass', 'Embarked', 'Size', 'Age', 'Fare', 'Cabin' ]
-tb.reeigneeringSurvProb(ttrain_df, columns)
-tb.reeigneeringSurvProb(ttest_df, columns )
+columns = [ 'Title', 'Age', 'Sex', 'Pclass', 'Cabin', 'Size', 'Fare', 'Embarked' ]
+coeffs = { "Title": 1.7516, "Age": 0.6860, "Sex": 0.3505, "Pclass": 0.1558, 
+         "Cabin": -0.3116, "Size": 1.3449, "Fare": 0.5797, "Embarked": 0.8154 }
+tb.reeigneeringSurvProb(ttrain_df, coeffs, columns)
+tb.reeigneeringSurvProb(ttest_df, coeffs, columns )
 
 train_df['Chance'] = ttrain_df['Chance']
 test_df['Chance'] = ttest_df['Chance']

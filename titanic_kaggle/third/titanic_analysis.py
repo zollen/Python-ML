@@ -8,7 +8,6 @@ import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import titanic_kaggle.second.titanic_lib as tb
 import seaborn as sb
 from matplotlib import pyplot as plt
 

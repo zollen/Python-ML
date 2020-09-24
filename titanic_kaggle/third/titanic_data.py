@@ -247,6 +247,13 @@ test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
 """
 1. Search common Name of relatives
 2. implementing Ticket 
+3. Incrase max_iter for the LogisticRegression
+Best Score:  0.828278199736363
+Best penalty:  none
+Best C:  0
+Best solver:  lbfgs
+Best max_iter:  670
+Best l1_ratio:  0.04
 """
 
 

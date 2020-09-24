@@ -125,31 +125,24 @@ if len(numeric_columns) > 0:
     test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
     
 if False:
-    param_grid = dict({ "n_estimators": [ 50, 75, 100, 150 ],
-                       "max_depth": [ 2, 5, 10, 15, 20, 25, 30 ],
-                       "learning_rate": [ 0.001, 0.01, 0.1, 0.3, 0.5 ],
-                       "gamma": [ 0, 1, 2, 3, 4 ],
-                       "min_child_weight": [ 0, 1, 2, 3, 5, 7, 10 ],
-                       "subsample": [ 0.2, 0.4, 0.6, 0.8, 1.0 ],
-                       "reg_lambda": [ 0, 0.5, 1, 2, 3 ],
-                       "reg_alpha": [ 0, 0.5, 1 ],
-                       "max_leaves": [0, 1, 2, 5, 10 ],
-                       "max_bin": [ 128, 256, 512, 1024 ] })
-    model = RandomizedSearchCV(estimator = LogisticRegression(), 
+    param_grid = dict({ 
+                       "penalty": [ 'l1', 'l2', 'elasticnet', 'none' ],
+                       "C": [ 0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2 ],
+                       "solver": [ 'lbfgs' ],
+                       "max_iter": [500, 550, 600, 650, 660, 670, 680, 690, 700, 750 ],
+                       "l1_ratio": [ None, 0.001, 0.01, 0.002, 0.02, 0.003, 0.03, 0.004, 0.04, 0.005, 0.05 ] })
+    model = RandomizedSearchCV(estimator = LogisticRegression(max_iter=500, solver='lbfgs'), 
                         param_distributions = param_grid, n_jobs=-1, n_iter=100)
 
     model.fit(train_df[all_features_columns], train_df[label_column].squeeze())
 
     print("====================================================================================")
     print("Best Score: ", model.best_score_)
-    print("Best n_estimators: ", model.best_estimator_.n_estimators)
-    print("Best max_depth: ", model.best_estimator_.max_depth)
-    print("Best eta: ", model.best_estimator_.learning_rate)
-    print("Best gamma: ", model.best_estimator_.gamma)
-    print("Best min_child_weight: ", model.best_estimator_.min_child_weight)
-    print("Best subsample: ", model.best_estimator_.subsample)
-    print("Best lambda: ", model.best_estimator_.reg_lambda)
-    print("Best alpha: ", model.best_estimator_.reg_alpha)
+    print("Best penalty: ", model.best_estimator_.penalty)
+    print("Best C: ", model.best_estimator_.C)
+    print("Best solver: ", model.best_estimator_.solver)
+    print("Best max_iter: ", model.best_estimator_.max_iter)
+    print("Best l1_ratio: ", model.best_estimator_.l1_ratio)
 
     exit()
 
