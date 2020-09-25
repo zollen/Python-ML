@@ -157,7 +157,92 @@ def navieBayes(df, columns_lists):
                 df[(df[name] == val) & (df['Survived'] == 1)]) / total / bayes[name + "=" + str(val)]) + ADJUSTMENT
             bayes["D|" + name + "=" + str(val)] = (len(
                 df[(df[name] == val) & (df['Survived'] == 0)]) / total / bayes[name + "=" + str(val)]) + ADJUSTMENT
+
+def captureSurname(name):
+    
+    names = name.split(sep='(')
+    
+    surnames = ''    
+    for name in names:
+         
+        if len(surnames) > 0:
+            surnames += ','
             
+        lst = name.split()
+        lastName = lst[-1]
+         
+        if lastName == 'Jr' or lastName == 'II' or lastName == 'Mrs.':
+            lastName = lst[-2]
+    
+        if len(lastName) <= 1:
+            lastName = lst[-2] + "." + lastName
+            
+        lastName = lastName.replace(')', '')
+        lastName = lastName.replace('"', '')
+        lastName = lastName.replace(',', '')
+            
+        surnames += lastName
+        
+    return surnames
+    
+def calculateFamilyMembers(df):
+    
+    def word_count(msg):
+        counts = dict()
+        words = msg.split()
+
+        for word in words:
+            if word in counts:
+                counts[word] += 1
+            else:
+                counts[word] = 1
+
+        return counts
+    
+    df['Surname'] = 'None'
+    df.loc[(df['Parch'] > 0) | (df['SibSp'] > 0), 'Surname'] = df.loc[(df['Parch'] > 0) | (df['SibSp'] > 0), 'Name'].apply(captureSurname)
+    
+    allLiveNames = ''
+    allDeadNames = ''
+    for rec, life in zip(df['Surname'], df['Survived']):
+        if rec == 'None':
+            continue
+    
+        lst = rec.split(',')
+    
+        for name in lst:
+            if life == 1:
+                allLiveNames += name + ' '
+            else:
+                allDeadNames += name + ' '
+
+    namesLiveCount = word_count(allLiveNames)
+    namesDeadCount = word_count(allDeadNames)
+    
+    df['Surname'].drop(columns = ['Surname'], inplace = True)
+    
+    return namesLiveCount, namesDeadCount
+
+def captureFamilyMembersRatio(alives, deads): 
+    
+    def func(lastName):
+        names = lastName.split(',')
+
+        friends = 0
+        for name in names:
+            if name == 'None':
+                continue
+        
+            if name in alives:
+                friends += alives[name]
+            
+            if name in deads:
+                friends -= deads[name]
+
+        return friends
+    
+    return func
+                    
 def captureRoom(val):
 
     if str(val) != 'nan':
@@ -195,6 +280,14 @@ def captureSize(val):
             return 5
     return val
 
+def reenigneeringFamilyMembers(df, alives, deads):
+    
+    df['Surname'] = 'None'  
+    df.loc[(df['Parch'] > 0) | (df['SibSp'] > 0), 'Surname'] = df.loc[(df['Parch'] > 0) | (df['SibSp'] > 0), 'Name'].apply(captureSurname)  
+    func = captureFamilyMembersRatio(alives, deads) 
+    df['Family'] = df['Surname'].apply(func) 
+    df.drop(columns = ['Surname'], inplace = True)
+    
 def reeigneeringTitle(dest_df):
     dest_df['Title'] = dest_df['Name'].apply(lambda x : re.search('[a-zA-Z]+\\.', x).group(0))
     dest_df['Title'] = dest_df.apply(map_title, axis = 1)
