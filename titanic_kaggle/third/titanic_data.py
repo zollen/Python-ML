@@ -264,7 +264,8 @@ test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
 2. implementing Ticket 
 3. Optimize XGBoostRegressor seperately and put the result as one of the column here
 4. Build your own LogistcRegression with genetic optimization
-5. Reassign proper value for Title, risky with the lowest and safest with the highest
+5. Family feature as categorical
+6. Review other classifier algo in WisdomVault and build your own with python
 """
 
 
