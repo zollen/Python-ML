@@ -243,8 +243,27 @@ train_df['Cabin'] = train_df['Cabin'] * 1000 + train_df['Room']
 test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
 
 """
-1. Search common Name of relatives
+1. XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
+       colsample_bytree=1, gamma=0, learning_rate=0.1, max_delta_step=0,
+       max_depth=3, min_child_weight=1, missing=None, n_estimators=100,
+       n_jobs=1, nthread=None, objective='binary:logistic', random_state=0,
+       reg_alpha=0, reg_lambda=1, scale_pos_weight=1, seed=None,
+       silent=True, subsample=1)
+       
+    gbm_param_grid = {
+        'n_estimators': range(8, 20),
+        'max_depth': range(6, 10),
+        'learning_rate': [.4, .45, .5, .55, .6],
+        'colsample_bytree': [.6, .7, .8, .9, 1]
+    }
+    
+    xgb_random = RandomizedSearchCV(param_distributions=gbm_param_grid, 
+                                    estimator = XGBClassifier(n_estimators=10), 
+                                    scoring = "accuracy", 
+                                    verbose = 1, n_iter = 50, cv = 4)
 2. implementing Ticket 
+3. Optimize XGBoostRegressor seperately and put the result as one of the column here
+4. Build your own LogistcRegression with genetic optimization
 """
 
 
