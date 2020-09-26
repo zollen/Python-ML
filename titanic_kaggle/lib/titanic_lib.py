@@ -11,6 +11,7 @@ import re
 from sklearn import preprocessing
 from sklearn.ensemble import ExtraTreesClassifier, ExtraTreesRegressor
 from sklearn.impute import KNNImputer
+from xgboost import XGBRegressor
 
 bayes = {}
 
@@ -280,6 +281,34 @@ def captureSize(val):
             return 5
     return val
 
+def reenigneeringXgBoost(src_df, dest_df, categorical_columns, numeric_columns):
+    
+    ssrc_df = src_df.copy()
+    ddest_df = dest_df.copy()
+    
+    cat_columns = []
+
+    for name in categorical_columns:
+    
+        keys = np.union1d(src_df[name].unique(), dest_df[name].unique())
+
+        for key in keys:
+            func = lambda x : 1 if x == key else 0
+            ssrc_df[name + '.' + str(key)] = ssrc_df[name].apply(func)
+            ddest_df[name + '.' + str(key)] = ddest_df[name].apply(func)
+            cat_columns.append(name + '.' + str(key))
+        
+
+        categorical_columns = cat_columns
+        
+    columns = categorical_columns + numeric_columns
+
+    model = XGBRegressor(objective="reg:linear")
+    model.fit(ssrc_df[columns], ssrc_df['Survived'].squeeze())
+    dest_df['XGBoost'] = model.predict(ddest_df[columns])
+    dest_df['XGBoost'] = dest_df['XGBoost'].round(4)
+    
+    
 def reenigneeringFamilyMembers(df, alives, deads):
     
     df['Surname'] = 'None'  
