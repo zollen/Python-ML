@@ -43,19 +43,19 @@ title_category = {
     }
 
 titles = {
-    "Army": 0,
-    "Doctor": 1,
-    "Nurse": 2,
-    "Clergy": 3,
-    "Baronness": 4,
-    "Baron": 5,
-    "Mr": 6,
-    "Mrs": 7,
-    "Miss": 8,
-    "Master": 9,
-    "Girl": 10,
-    "Boy": 11,
-    "GramPa": 12,
+    "Army": 5,
+    "Doctor": 4,
+    "Nurse": 12,
+    "Clergy": 1,
+    "Baronness": 9,
+    "Baron": 6,
+    "Mr": 3,
+    "Mrs": 11,
+    "Miss": 10,
+    "Master": 8,
+    "Girl": 7,
+    "Boy": 0,
+    "GramPa": 2,
     "GramMa": 13
     }
 

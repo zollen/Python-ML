@@ -144,8 +144,7 @@ def fillCabin(src_df, dest_df):
         df.loc[(df['Cabin'].isna() == True) &
                  (df['Title'] == index[0]), 'Cabin'] = cabins[index[0]].idxmax()
                  
-    df.loc[(df['Cabin'].isna() == True) & (
-        (df['Title'] == 3) | (dest_df['Title'] == 11)), 'Cabin' ] = 'X'
+    df.loc[df['Cabin'].isna() == True, 'Cabin' ] = 'X'
              
     dest_df['Cabin'] = df['Cabin']
     
@@ -262,8 +261,8 @@ test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
 2. Ticket (1. ticket number alone, 2. ticket number and ticket prefix prob(Chance))
 3. Try SVM Regression seperately before or after binned values
 4. Try XGBoost Regression before binned values
-4. Build your own LogistcRegression with genetic optimization
-5. Put back Title with correct numeric values
+5. Build your own LogistcRegression with genetic optimization
+
 """
 
 
