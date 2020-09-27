@@ -92,7 +92,6 @@ def fillCabin(src_df, dest_df):
     df = dest_df.copy()
     
     binFare(df)
-    binAge(df)
       
     cabins = src_df.groupby(['Title', 'Fare', 'Pclass', 'SibSp', 'Parch', 'Embarked', 'Cabin'])['Cabin'].count()
     
@@ -189,7 +188,6 @@ train_df['Age'] = train_df['Age'].astype('int32')
 test_df['Age'] = test_df['Age'].astype('int32')
 
 binFare(all_df)
-binAge(all_df)
 
 fillCabin(all_df, train_df)
 fillCabin(all_df, test_df)
