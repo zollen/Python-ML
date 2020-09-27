@@ -261,7 +261,7 @@ test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
                                     estimator = XGBClassifier(n_estimators=10), 
                                     scoring = "accuracy", 
                                     verbose = 1, n_iter = 50, cv = 4)
-2. implementing Ticket (ticket number alone, ticket number and ticket prefix prob(Chance))
+2. Ticket (1. ticket number alone, 2. ticket number and ticket prefix prob(Chance))
 3. Try SVM Regression seperately before or after binned values
 4. Try XGBoost Regression before binned values
 4. Build your own LogistcRegression with genetic optimization
