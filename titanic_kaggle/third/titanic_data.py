@@ -240,7 +240,7 @@ train_df['Cabin'] = train_df['Cabin'] * 1000 + train_df['Room']
 test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
 
 """
-1. Ticket (1. ticket number alone, 2. ticket number and ticket prefix pro
+1. Ticket, search for identical ticketId (1. ticket number alone, 2. ticket number and ticket prefix pro
 2. try SVM with C = 150-200
 3. implement features importants plots 
 
@@ -255,6 +255,7 @@ features_imp.plot(kind='barh', figsize=(20, 20))
 4. Build your own LogistcRegression with genetic optimizatio
 5. Keep Size and remove Parch and SibSp
 6. Replace LogisticRegression with SVM
+7. keep df['Size'], remove Parch and SibSp
 """
 
 
@@ -262,8 +263,8 @@ features_imp.plot(kind='barh', figsize=(20, 20))
 
 
 
-train_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
-test_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
+train_df.drop(columns = ['Name', 'Ticket', 'Title', 'SibSp', 'Parch', 'Room'], inplace = True)
+test_df.drop(columns = ['Name', 'Ticket', 'Title', 'SibSp', 'Parch', 'Room'], inplace = True)
 
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)
