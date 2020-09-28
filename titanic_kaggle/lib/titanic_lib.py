@@ -8,6 +8,7 @@ Created on Sep. 7, 2020
 import numpy as np
 import pandas as pd
 import re
+from sklearn.preprocessing import MinMaxScaler
 from sklearn import preprocessing
 from sklearn import svm
 from sklearn.ensemble import ExtraTreesClassifier, ExtraTreesRegressor
@@ -314,9 +315,18 @@ def reenigneeringXgBoost(src_df, dest_df, columns):
     return dest_df['XGBoost']
     
 def reengineeringSVM(src_df, dest_df, columns):
+    
+    ssrc_df = src_df.copy()
+    ddest_df = dest_df.copy()
+    
+    scaler = MinMaxScaler()
+    ssrc_df[columns] = scaler.fit_transform(ssrc_df[columns])
+    ddest_df[columns] = scaler.transform(ddest_df[columns])
+    
     svm = svm.SVR(kernel='rbf', gamma ='auto', C = 300.0)
-    svm.fit(src_df[columns], src_df[columns])
-    src_df['SVM'] = svm.predict(dest_df[columns])
+    svm.fit(ssrc_df[columns], ssrc_df['Survived'])
+    
+    dest_df['SVM'] = svm.predict(ddest_df[columns])
     dest_df['SVM'] = dest_df['SVM'].round(4)
     
 def reenigneeringFamilyMembers(df, alives, deads):
