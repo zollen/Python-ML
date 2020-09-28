@@ -152,8 +152,7 @@ def fillCabin(src_df, dest_df):
         df.loc[(df['Cabin'].isna() == True) &
                  (df['Title'] == index[0]), 'Cabin'] = cabins[index[0]].idxmax()
                  
-    df.loc[(df['Cabin'].isna() == True) & (
-        (df['Title'] == 3) | (dest_df['Title'] == 11)), 'Cabin' ] = 'X'
+    df.loc[(df['Cabin'].isna() == True), 'Cabin' ] = 'X'
              
     dest_df['Cabin'] = df['Cabin']
     
@@ -293,9 +292,9 @@ toolbox.register("update", update, phi1=0.2, phi2=0.2)
 toolbox.register("evaluate", evaluate)
 
 def main():
-    pop = toolbox.population(n=500)
+    pop = toolbox.population(n=1000)
 
-    GEN = 30
+    GEN = 150
     best = None
 
     for g in range(GEN):
