@@ -254,6 +254,7 @@ features_imp.plot(kind='barh', figsize=(20, 20))
 
 4. Build your own LogistcRegression with genetic optimizatio
 5. Keep Size and remove Parch and SibSp
+6. Replace LogisticRegression with SVM
 """
 
 
