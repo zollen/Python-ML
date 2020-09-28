@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import re
 from sklearn import preprocessing
+from sklearn import svm
 from sklearn.ensemble import ExtraTreesClassifier, ExtraTreesRegressor
 from sklearn.impute import KNNImputer
 from xgboost import XGBRegressor
@@ -312,6 +313,11 @@ def reenigneeringXgBoost(src_df, dest_df, columns):
     
     return dest_df['XGBoost']
     
+def reengineeringSVM(src_df, dest_df, columns):
+    svm = svm.SVR(kernel='rbf', gamma ='auto', C = 300.0)
+    svm.fit(src_df[columns], src_df[columns])
+    src_df['SVM'] = svm.predict(dest_df[columns])
+    dest_df['SVM'] = dest_df['SVM'].round(4)
     
 def reenigneeringFamilyMembers(df, alives, deads):
     
