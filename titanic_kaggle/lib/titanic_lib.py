@@ -17,6 +17,46 @@ from xgboost import XGBRegressor
 
 bayes = {}
 
+tickets = {
+    'A': 'A',
+    'A4': 'B',
+    'A5': 'B',
+    'AS': 'B',
+    'AQ3': 'A',
+    'AQ4': 'B',
+    'C': 'D',
+    'CA': 'E',
+    'LINE': 'F',
+    'STONO': 'D',
+    'STONOQ': 'B',
+    'STONO2': 'G',
+    'SOTONO2': 'B',
+    'SOTONOQ': 'H',
+    'CASOTON': 'B',
+    'SP': 'B',
+    'SC': 'G',
+    'SCOW': 'B',
+    'SCA4': 'B',
+    'SCA3': 'I',
+    'SCOW': 'B',
+    'SCAH': 'G',
+    'SCAHBASLE': 'L',
+    'SCPARIS': 'D',
+    'FA': 'B',
+    'FC': 'B',
+    'FCC': 'K',
+    'LP': 'B',
+    'PC': 'L',
+    'PP': 'L',
+    'PPP': 'G',
+    'SOC': 'H',
+    'SOP': 'B',
+    'SOPP': 'B',
+    'SWPP': 'L',
+    'WC': 'H',
+    'WEP': 'E',
+    'X': 'E'
+    }
 
 title_category = {
         "Capt.": "Army",
@@ -99,6 +139,7 @@ def typecast(df):
     df['Cabin'] = df['Cabin'].astype('int64')
     df['Title'] = df['Title'].astype('int64')
     df['Fare'] = df['Fare'].astype('int64')
+    df['Ticket'] = df['Ticket'].astype('float64')
 
  
 def map_title(rec):
@@ -137,6 +178,33 @@ def map_title(rec):
     
     
     return title
+
+def representsInt(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+def captureTicketPrefix(val):
+    m = re.findall('[a-zA-Z0-9./]+', val)
+    if len(m) == 0:
+        return ''
+    
+    prefix = ''
+    for token in m:
+        
+        token = token.replace('/', '').replace('.', '').upper()
+        
+        if representsInt(token):
+            continue
+        
+        prefix += token
+        
+    if len(prefix) == 0:
+        prefix = 'X'
+   
+    return prefix
 
 def navieBayes(df, columns_lists):
     
