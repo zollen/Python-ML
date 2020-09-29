@@ -263,8 +263,8 @@ features_imp.plot(kind='barh', figsize=(20, 20))
 
 
 
-train_df.drop(columns = ['Name', 'Ticket', 'Title', 'SibSp', 'Parch', 'Room'], inplace = True)
-test_df.drop(columns = ['Name', 'Ticket', 'Title', 'SibSp', 'Parch', 'Room'], inplace = True)
+train_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
+test_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
 
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)
