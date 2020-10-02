@@ -204,6 +204,18 @@ def captureTicketPrefix(val):
    
     return prefix
 
+def captureTicketId(val):
+    m = re.findall('[0-9]+', val)
+    if len(m) == 0:
+        return 0
+    
+    big = -1
+    for num in m:
+        if int(num) > big:
+            big = int(num)
+    
+    return big
+
 def navieBayes(df, columns_lists):
     
     ## P(A and B)  = P(A|B) * P(B)
