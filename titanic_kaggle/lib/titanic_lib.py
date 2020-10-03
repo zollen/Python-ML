@@ -379,10 +379,10 @@ def reengineeringSVM(src_df, dest_df, columns):
     ssrc_df[columns] = scaler.fit_transform(ssrc_df[columns])
     ddest_df[columns] = scaler.transform(ddest_df[columns])
     
-    svm = svm.SVR(kernel='rbf', gamma ='auto', C = 300.0)
-    svm.fit(ssrc_df[columns], ssrc_df['Survived'])
+    model = svm.SVR(kernel='rbf', gamma ='auto', C = 300.0)
+    model.fit(ssrc_df[columns], ssrc_df['Survived'])
     
-    dest_df['SVM'] = svm.predict(ddest_df[columns])
+    dest_df['SVM'] = model.predict(ddest_df[columns])
     dest_df['SVM'] = dest_df['SVM'].round(4)
     
 def reenigneeringFamilyMembers(df, alives, deads):
