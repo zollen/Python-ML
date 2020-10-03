@@ -361,28 +361,6 @@ def captureSize(val):
             return 5
     return val
 
-def oneHotEncoder(df1, df2, columns):
-    
-    ddf1 = df1.copy()
-    ddf2 = df2.copy()
-    
-    cat_columns = []
-
-    for name in columns:
-    
-        keys = np.union1d(ddf1[name].unique(), ddf2[name].unique())
-
-        for key in keys:
-            func = lambda x : 1 if x == key else 0
-            ddf1[name + '.' + str(key)] = ddf1[name].apply(func)
-            ddf2[name + '.' + str(key)] = ddf2[name].apply(func)
-            cat_columns.append(name + '.' + str(key))
-        
-        ddf1.drop(columns = [name], inplace = True)
-        ddf2.drop(columns = [name], inplace = True)
-    
-    return ddf1, ddf2, cat_columns
-
 def reenigneeringXgBoost(src_df, dest_df, columns):
      
     model = XGBRegressor(objective="reg:linear")
