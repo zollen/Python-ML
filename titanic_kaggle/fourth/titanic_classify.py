@@ -22,6 +22,7 @@ from sklearn.metrics import log_loss
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 import warnings
+from statsmodels.tools.tools import categorical
 
 
 warnings.filterwarnings('ignore')
@@ -103,21 +104,17 @@ PROJECT_DIR=str(Path(__file__).parent.parent)
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test_processed.csv'))
 
+## Don't build your own categorical columns, it won't work
+train_df = pd.get_dummies(train_df, columns = categorical_columns)
+test_df = pd.get_dummies(test_df, columns = categorical_columns)
 
-cat_columns = []
 
-for name in categorical_columns:
-    
-    keys = np.union1d(train_df[name].unique(), test_df[name].unique())
+categorical_columns = [ 'Sex_0', 'Sex_1', 'Embarked_0', 'Embarked_1', 'Embarked_2',
+                       'Pclass_1', 'Pclass_2', 'Pclass_3' ]
 
-    for key in keys:
-        func = lambda x : 1 if x == key else 0
-        train_df[name + '.' + str(key)] = train_df[name].apply(func)
-        test_df[name + '.' + str(key)] = train_df[name].apply(func)
-        cat_columns.append(name + '.' + str(key))
-        
+all_features_columns = numeric_columns + categorical_columns 
 
-categorical_columns = cat_columns
+print(all_features_columns)
 
 if len(numeric_columns) > 0:
     scaler = MinMaxScaler()
