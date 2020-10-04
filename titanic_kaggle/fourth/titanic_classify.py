@@ -22,7 +22,6 @@ from sklearn.metrics import log_loss
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 import warnings
-from statsmodels.tools.tools import categorical
 
 
 warnings.filterwarnings('ignore')
