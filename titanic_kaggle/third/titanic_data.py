@@ -236,8 +236,6 @@ tb.reeigneeringSurvProb(ttest_df, coeffs, columns )
 train_df['Chance'] = ttrain_df['Chance']
 test_df['Chance'] = ttest_df['Chance']
 
-train_df['Cabin'] = train_df['Cabin'] * 1000 + train_df['Room']
-test_df['Cabin'] = test_df['Cabin'] * 1000 + test_df['Room']
 
 """
 1. Ticket, search for identical ticketId (1. ticket number alone, 2. ticket number and ticket prefix pro
@@ -261,8 +259,8 @@ features_imp.plot(kind='barh', figsize=(20, 20))
 
 
 
-train_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
-test_df.drop(columns = ['Name', 'Ticket', 'Title', 'Size', 'Room'], inplace = True)
+train_df.drop(columns = ['Name', 'Ticket', 'Cabin', 'Title', 'Size', 'Room'], inplace = True)
+test_df.drop(columns = ['Name', 'Ticket', 'Cabin', 'Title', 'Size', 'Room'], inplace = True)
 
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)
