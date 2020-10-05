@@ -57,6 +57,25 @@ tickets = {
     'X': 'X'
     }
 
+prefixToId = {
+     "A": 30,
+     "WC": 60,
+     "STONOQ": 90,
+     "SOC": 120,
+     "LINE": 150,
+     "WEP": 180,
+     "CA": 210,
+     "STONO2": 240,
+     "X": 270,
+     "C": 300,     
+     "STONO": 330,
+     "SCPARIS": 360,
+     "M": 390,
+     "PC": 420,
+     "PP": 450,
+     "FCC": 480
+     }  
+
 title_category = {
         "Capt.": "Army",
         "Col.": "Army",
@@ -207,9 +226,9 @@ def captureTicketPrefix(val):
 def captureTicketId(val):
     m = re.findall('[0-9]+', val)
     if len(m) == 0:
-        return 0
+        return 1
     
-    big = -1
+    big = 0
     for num in m:
         if int(num) > big:
             big = int(num)
