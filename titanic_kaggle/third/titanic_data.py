@@ -20,6 +20,7 @@ warnings.filterwarnings('ignore')
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
+pd.set_option('display.width', 1000)
 np.random.seed(0)
 sb.set_style('whitegrid')
 pp = pprint.PrettyPrinter(indent=3) 

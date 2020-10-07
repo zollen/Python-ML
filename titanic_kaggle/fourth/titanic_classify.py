@@ -29,7 +29,8 @@ warnings.filterwarnings('ignore')
 SEED = 87
 
 pd.set_option('max_columns', None)
-pd.set_option('max_rows', 10)
+pd.set_option('max_rows', None)
+pd.set_option('display.width', 1000)
 np.random.seed(SEED)
 
 label_column = [ 'Survived']
