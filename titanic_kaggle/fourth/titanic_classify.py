@@ -124,14 +124,15 @@ if len(numeric_columns) > 0:
 if False:
     param_grid = dict({ 
                        "penalty": [ 'l1', 'l2', 'elasticnet', 'none' ],
-                       "C": [ 0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2 ],
+                       "C": range(0, 10),
                        "solver": [ 'lbfgs' ],
-                       "max_iter": [500, 550, 600, 650, 660, 670, 680, 690, 700, 750 ],
-                       "l1_ratio": [ None, 0.001, 0.01, 0.002, 0.02, 0.003, 0.03, 0.004, 0.04, 0.005, 0.05 ] })
+                       "max_iter": range(0, 1000),
+                       "l1_ratio": np.arange(0, 1, 0.0001)
+                       })
     model = RandomizedSearchCV(estimator = LogisticRegression(), 
                         param_distributions = param_grid, n_jobs=-1, n_iter=100)
 
-    model.fit(train_df[all_features_columns], train_df[label_column].squeeze())
+    model.fit(train_df[all_features_columns], train_df[label_column])
 
     print("====================================================================================")
     print("Best Score: ", model.best_score_)
