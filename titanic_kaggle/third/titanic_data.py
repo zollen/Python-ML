@@ -178,6 +178,12 @@ test_df['Sex'] = test_df['Sex'].map(tb.sexes)
 train_df['Embarked'] = train_df['Embarked'].map(tb.embarkeds)
 test_df['Embarked'] = test_df['Embarked'].map(tb.embarkeds)
 
+train_df['Ticket'] = train_df['Ticket'].apply(tb.captureTicketId)
+test_df['Ticket'] = test_df['Ticket'].apply(tb.captureTicketId)
+
+train_df['Ticket'] = np.log(train_df['Ticket'])
+test_df['Ticket'] = np.log(test_df['Ticket'])
+
 all_df = pd.concat( [ train_df, test_df ], ignore_index = True )
 
 fillAge(all_df, train_df)
@@ -260,8 +266,11 @@ features_imp.plot(kind='barh', figsize=(20, 20))
 
 
 
-train_df.drop(columns = ['Name', 'Ticket', 'Cabin', 'Title', 'Size', 'Room'], inplace = True)
-test_df.drop(columns = ['Name', 'Ticket', 'Cabin', 'Title', 'Size', 'Room'], inplace = True)
+
+
+
+train_df.drop(columns = ['Name', 'Cabin', 'Title', 'Size', 'Room'], inplace = True)
+test_df.drop(columns = ['Name', 'Cabin', 'Title', 'Size', 'Room'], inplace = True)
 
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)

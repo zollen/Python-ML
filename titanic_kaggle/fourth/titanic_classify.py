@@ -34,8 +34,8 @@ pd.set_option('display.width', 1000)
 np.random.seed(SEED)
 
 label_column = [ 'Survived']
-identity_columns = [ 'PassengerId', 'Name', 'Ticket' ]
-numeric_columns = [ 'SibSp', 'Parch', 'Chance' ]
+identity_columns = [ 'PassengerId', 'Name' ]
+numeric_columns = [ 'SibSp', 'Parch', 'Chance', 'Ticket' ]
 categorical_columns = [ 'Sex', 'Embarked',  'Pclass' ]
 all_features_columns = numeric_columns + categorical_columns 
 
