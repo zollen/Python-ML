@@ -15,16 +15,16 @@ from deap import algorithms
 from deap import benchmarks
 import numpy as np
 
-# simultaneously maximize -0.5(x - 3)^2 + 6 and mininize (x - 3)^2
+# simultaneously maximize -0.5(x - 3)^2 + 6 and mininize (x - 2)^2
 # the target is locate the x that has the best of both objectives
 # within inteval of -10 and 10:
-# x = 3.0 is where it achieves the best of both objectives 
+# x is between 2.9-3.0 are where it achieves the best of both objectives 
 
 def multiObjsFunc(x):
-    return -0.5 * (x[0] - 3) **2 + 6, (x[0] - 3) **2
+    return -0.5 * (x[0] - 3) **2 + 6, (x[0] - 2) **2
     
 
-BOUND_LOW, BOUND_UP = -4.0, 4.0
+BOUND_LOW, BOUND_UP = -2.0, 7.0
 NOBJS = 2
 NGEN = 400
 MU=100
@@ -81,7 +81,7 @@ def main(seed=None):
         pop = toolbox.select(pop + offspring, MU)
     
 
-    return toolbox.select(pop, 5)
+    return tools.selBest(pop, 5)
 
 if __name__ == "__main__":
     pop = main()
