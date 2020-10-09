@@ -15,16 +15,16 @@ from deap import algorithms
 from deap import benchmarks
 import numpy as np
 
-# simultaneously maximize sin(x) and mininize cos(x)
+# simultaneously maximize 0.5(x - 3)^2 + 6 and mininize (x - 3)^2
 # the target is locate the x that has the best of both objectives
-# within inteval of -1 and 1:
-# x = -1.0], 0.0, -0.6508, -0.9827, -0.0228
-# achieves the best results
+# within inteval of -10 and 10:
+# x = 3.0 is where it achieves the best of both objectives 
+
 def multiObjsFunc(x):
-    return np.sin(x[0]), np.cos(x[0]) 
+    return -0.5 * (x[0] - 3) **2 + 6, (x[0] - 3) **2
     
 
-BOUND_LOW, BOUND_UP = -1.0, 1.0
+BOUND_LOW, BOUND_UP = -4.0, 4.0
 NOBJS = 2
 NGEN = 400
 MU=100
@@ -37,7 +37,7 @@ NDIMS = 1  # one point - x
 
 ref_points = tools.uniform_reference_points(NOBJS, REFERENCE_PTS)
 
-creator.create("FitnessMin", base.Fitness, weights=(-1.0, 1.0))
+creator.create("FitnessMin", base.Fitness, weights=(1.0, -1.0))
 creator.create("Individual", list, fitness=creator.FitnessMin)
 
 def uniform(low, up, size=None):
