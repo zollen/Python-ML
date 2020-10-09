@@ -1,6 +1,9 @@
 '''
 Created on Oct. 8, 2020
 
+Non-dominated Sorting Genetic Algorithm 3 (NSGA-3)
+Multiple-Objectives Optimization
+
 @author: zollen
 '''
 
@@ -27,8 +30,7 @@ MUTPB = 0.1
 REFERENCE_PTS = 10
 NDIMS = 30
 
-# Functions zdt4 has bounds x1 = [0, 1], xn = [-5, 5], with n = 2, ..., 10
-# BOUND_LOW, BOUND_UP = [0.0] + [-5.0]*9, [1.0] + [5.0]*9
+
 
 ref_points = tools.uniform_reference_points(NOBJS, REFERENCE_PTS)
 
