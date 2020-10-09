@@ -15,13 +15,16 @@ from deap import algorithms
 from deap import benchmarks
 import numpy as np
 
-# simultaneously maximize 0.5(x - 5) and mininize log(x)
+# simultaneously maximize sin(x) and mininize cos(x)
 # the target is locate the x that has the best of both objectives
-def multiObjsFunc(val):
-    return np.log(val[0]), 0.5 * (val[0] - 5)
+# within inteval of -1 and 1:
+# x = [-1.0], [7.777105436868048e-06], [-0.6508562126643136], [-0.9982355282437874], [-0.02815364548010235]
+# achieves the best results
+def multiObjsFunc(x):
+    return np.sin(x[0]), np.cos(x[0]) 
     
 
-BOUND_LOW, BOUND_UP = -3.0, 3.0
+BOUND_LOW, BOUND_UP = -1.0, 1.0
 NOBJS = 2
 NGEN = 400
 MU=100
