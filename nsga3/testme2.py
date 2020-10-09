@@ -15,7 +15,7 @@ from deap import algorithms
 from deap import benchmarks
 import numpy as np
 
-# simultaneously maximize 0.5(x - 3)^2 + 6 and mininize (x - 3)^2
+# simultaneously maximize -0.5(x - 3)^2 + 6 and mininize (x - 3)^2
 # the target is locate the x that has the best of both objectives
 # within inteval of -10 and 10:
 # x = 3.0 is where it achieves the best of both objectives 
