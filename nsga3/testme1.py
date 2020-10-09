@@ -9,33 +9,30 @@ from deap import base
 from deap import creator
 from deap import tools
 from deap import algorithms
+from deap import benchmarks
 import numpy as np
-from pymop.factory import get_problem
 
-def factorial(val):
-    fact = 1
-    for i in range(1, val+1):
-        fact = fact * i
-        
-    return fact
 
-PROBLEM = "dtlz2"
-NOBJ = 3
-K = 10
-NDIM = NOBJ + K - 1
-P = 12
-H = factorial(NOBJ + P - 1) / (factorial(P) * factorial(NOBJ - 1))
+
+# Functions zdt4 has bounds x1 = [0, 1], xn = [-5, 5], with n = 2, ..., 10
+# BOUND_LOW, BOUND_UP = [0.0] + [-5.0]*9, [1.0] + [5.0]*9
+# Functions zdt1, zdt2, zdt3 have 30 dimensions, zdt4 and zdt6 have 10
+# Functions zdt1, zdt2, zdt3, zdt6 have bounds [0, 1]
 BOUND_LOW, BOUND_UP = 0.0, 1.0
-problem = get_problem(PROBLEM, n_var=NDIM, n_obj=NOBJ)
-
-MU = int(H + (4 - H % 4))
+NOBJS = 2
 NGEN = 400
-CXPB = 1.0
-MUTPB = 1.0
+MU=100
+CXPB = 0.9
+MUTPB = 0.1
+REFERENCE_PTS = 10
+NDIMS = 30
 
-ref_points = tools.uniform_reference_points(NOBJ, P)
+# Functions zdt4 has bounds x1 = [0, 1], xn = [-5, 5], with n = 2, ..., 10
+# BOUND_LOW, BOUND_UP = [0.0] + [-5.0]*9, [1.0] + [5.0]*9
 
-creator.create("FitnessMin", base.Fitness, weights=(-1.0,) * NOBJ)
+ref_points = tools.uniform_reference_points(NOBJS, REFERENCE_PTS)
+
+creator.create("FitnessMin", base.Fitness, weights=(-1.0,-1.0))
 creator.create("Individual", list, fitness=creator.FitnessMin)
 
 def uniform(low, up, size=None):
@@ -45,13 +42,13 @@ def uniform(low, up, size=None):
         return [random.uniform(a, b) for a, b in zip([low] * size, [up] * size)]
 
 toolbox = base.Toolbox()
-toolbox.register("attr_float", uniform, BOUND_LOW, BOUND_UP, NDIM)
+toolbox.register("attr_float", uniform, BOUND_LOW, BOUND_UP, NDIMS)
 toolbox.register("individual", tools.initIterate, creator.Individual, toolbox.attr_float)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-toolbox.register("evaluate", problem.evaluate, return_values_of=["F"])
+toolbox.register("evaluate", benchmarks.zdt1)
 toolbox.register("mate", tools.cxSimulatedBinaryBounded, low=BOUND_LOW, up=BOUND_UP, eta=30.0)
-toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0, indpb=1.0/NDIM)
+toolbox.register("mutate", tools.mutPolynomialBounded, low=BOUND_LOW, up=BOUND_UP, eta=20.0, indpb=1.0/NDIMS)
 toolbox.register("select", tools.selNSGA3, ref_points=ref_points)
 
 def main(seed=None):
