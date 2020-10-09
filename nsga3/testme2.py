@@ -18,7 +18,7 @@ import numpy as np
 # simultaneously maximize sin(x) and mininize cos(x)
 # the target is locate the x that has the best of both objectives
 # within inteval of -1 and 1:
-# x = [-1.0], [7.777105436868048e-06], [-0.6508562126643136], [-0.9982355282437874], [-0.02815364548010235]
+# x = -1.0], 0.0, -0.6508, -0.9827, -0.0228
 # achieves the best results
 def multiObjsFunc(x):
     return np.sin(x[0]), np.cos(x[0]) 
@@ -86,4 +86,4 @@ def main(seed=None):
 if __name__ == "__main__":
     pop = main()
     
-    print(pop)
+    print(np.round(pop, 4))
