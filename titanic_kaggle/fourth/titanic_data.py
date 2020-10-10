@@ -245,9 +245,7 @@ test_df['Chance'] = ttest_df['Chance']
 
 
 """
-1. Ticket, search for identical ticketId (1. ticket number alone, 2. ticket number and ticket prefix pro
-2. try SVM column with C = 150-200
-3. implement features importants plots 
+1. implement features importants plots 
 
 features_imp = pd.DataFrame()
 features_imp['feature'] = features_names
@@ -257,7 +255,7 @@ features_imp.set_index('feature', inplace=True)
 features_imp.plot(kind='barh', figsize=(20, 20))
 
 
-4. Build your own LogistcRegression with genetic optimizatio
+2. Build your own LogistcRegression with genetic optimizatio
 
 """
 
