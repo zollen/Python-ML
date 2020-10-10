@@ -5,6 +5,7 @@ Created on Sep. 7, 2020
 '''
 
 import os
+import re
 import pprint
 from pathlib import Path
 import numpy as np
@@ -39,12 +40,19 @@ lives, deads = tb.calculateFamilyMembers(train_df)
 tb.reenigneeringFamilyMembers(train_df, lives, deads)
 tb.reenigneeringFamilyMembers(test_df, lives, deads)
 
+train_df['Ticket'] = train_df['Ticket'].apply(tb.captureTicketId)
+test_df['Ticket'] = test_df['Ticket'].apply(tb.captureTicketId)
 
-print(test_df['Family'])
+train_df['Ticket'] = np.log(train_df['Ticket'])
+test_df['Ticket'] = np.log(test_df['Ticket'])
+
+print(train_df['Ticket'])
+
+
 
 
 if False:
-    dd = train_df[train_df['Sex'] == 'female']
-    sb.catplot(x = 'Pclass', y = 'Age', hue = 'Survived', data = dd)
+    dd = train_df[(train_df['Sex'] == 'male') & (train_df['Pclass'] == 1) & (train_df['Fare'] > 50)]
+    sb.catplot(x = 'Pclass', y = 'Fare', hue = 'Survived', data = dd)
     plt.show()
     

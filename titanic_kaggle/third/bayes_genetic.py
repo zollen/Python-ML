@@ -93,7 +93,19 @@ def binFare(df):
     df.loc[(df['Fare'] < 55.9) & (df['Fare'] >= 33.308), 'Fare'] = 45
     df.loc[(df['Fare'] < 83.158) & (df['Fare'] >= 55.9), 'Fare'] = 75
     df.loc[(df['Fare'] < 1000) & (df['Fare'] >= 83.158), 'Fare'] = 100
-    
+
+def binTicket(df):
+    df.loc[df['Ticket'] < 7.889] = 3
+    df.loc[(df['Ticket'] < 9.257) & (df['Ticket'] >= 7.889), 'Ticket'] = 8
+    df.loc[(df['Ticket'] < 9.775) & (df['Ticket'] >= 9.257), 'Ticket'] = 9
+    df.loc[(df['Ticket'] < 10.263) & (df['Ticket'] >= 9.775), 'Ticket'] = 10
+    df.loc[(df['Ticket'] < 11.627) & (df['Ticket'] >= 10.263), 'Ticket'] = 11
+    df.loc[(df['Ticket'] < 12.379) & (df['Ticket'] >= 11.627), 'Ticket'] = 12
+    df.loc[(df['Ticket'] < 12.746) & (df['Ticket'] >= 12.379), 'Ticket'] = 13
+    df.loc[(df['Ticket'] < 12.763) & (df['Ticket'] >= 12.746), 'Ticket'] = 14
+    df.loc[(df['Ticket'] < 12.822) & (df['Ticket'] >= 12.763), 'Ticket'] = 15
+    df.loc[df['Ticket'] >= 12.822, 'Ticket'] = 16
+        
 def fillCabin(src_df, dest_df):
     
     df = dest_df.copy()
@@ -185,6 +197,13 @@ test_df['Sex'] = test_df['Sex'].map(tb.sexes)
 train_df['Embarked'] = train_df['Embarked'].map(tb.embarkeds)
 test_df['Embarked'] = test_df['Embarked'].map(tb.embarkeds)
 
+train_df['Ticket'] = train_df['Ticket'].apply(tb.captureTicketId)
+test_df['Ticket'] = test_df['Ticket'].apply(tb.captureTicketId)
+
+train_df['Ticket'] = np.log(train_df['Ticket'])
+test_df['Ticket'] = np.log(test_df['Ticket'])
+
+
 all_df = pd.concat( [ train_df, test_df ], ignore_index = True )
 
 fillAge(all_df, train_df)
@@ -219,6 +238,8 @@ binFare(ttrain_df)
 binAge(ttrain_df)
 binFare(ttest_df)
 binAge(ttest_df)
+binTicket(ttrain_df)
+binTicket(ttest_df)
 
                  
 tbl = {
@@ -229,16 +250,20 @@ tbl = {
     "Cabin": np.union1d(ttrain_df['Cabin'].unique(), ttest_df['Cabin'].unique()),
     "Size": np.union1d(ttrain_df['Size'].unique(), ttest_df['Size'].unique()),
     "Fare": np.union1d(ttrain_df['Fare'].unique(), ttest_df['Fare'].unique()),
-    "Embarked": ttrain_df['Embarked'].unique()    
+    "Embarked": ttrain_df['Embarked'].unique(),
+    "Ticket": np.union1d(ttrain_df['Ticket'].unique(), ttest_df['Ticket'].unique())
     }
 
 pp.pprint(tbl)
 
 
 tb.navieBayes(ttrain_df, tbl)
-columns = [ 'Title', 'Age', 'Sex', 'Pclass', 'Cabin', 'Size', 'Fare', 'Embarked' ]
+
+columns = [ 'Title', 'Age', 'Sex', 'Pclass', 'Cabin', 'Size', 'Fare', 'Embarked', "Ticket" ]
 coeffs = { "Title": 1.0, "Age": 1.0, "Sex": 1.0, "Pclass": 1.0, 
-          "Cabin": 1.0, "Size": 1.0, "Fare": 1.0, "Embarked": 1.0 }
+          "Cabin": 1.0, "Size": 1.0, "Fare": 1.0, "Embarked": 1.0, 
+          "Ticket": 1.0 }
+
 tb.reeigneeringSurvProb(ttrain_df, coeffs, columns)
 tb.reeigneeringSurvProb(ttest_df, coeffs, columns )
 
@@ -286,13 +311,13 @@ creator.create("Particle", list, fitness=creator.FitnessMax, speed=list,
     smin=None, smax=None, best=None)
 
 toolbox = base.Toolbox()
-toolbox.register("particle", generate, size=8, pmin=0.1, pmax=2, smin=-0.2, smax=0.2)
+toolbox.register("particle", generate, size=9, pmin=0.1, pmax=2, smin=-0.2, smax=0.2)
 toolbox.register("population", tools.initRepeat, list, toolbox.particle)
 toolbox.register("update", update, phi1=0.2, phi2=0.2)
 toolbox.register("evaluate", evaluate)
 
 def main():
-    pop = toolbox.population(n=1000)
+    pop = toolbox.population(n=2000)
 
     GEN = 150
     best = None
