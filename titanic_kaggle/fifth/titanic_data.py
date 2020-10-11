@@ -183,14 +183,15 @@ test_df['Age'] = test_df['Age'].astype('int64')
 train_df['Title'] = train_df['Title'].map(tb.titles)
 test_df['Title'] = test_df['Title'].map(tb.titles)
 
+train_df['Size'] = train_df['Parch'] + train_df['SibSp'] + 1
+test_df['Size'] = test_df['Parch'] + test_df['SibSp'] + 1
 
 
 
 
 
-
-train_df.drop(columns = ['Name'], inplace = True)
-test_df.drop(columns = ['Name'], inplace = True)
+train_df.drop(columns = ['Name', 'Parch', 'SibSp'], inplace = True)
+test_df.drop(columns = ['Name', 'Parch', 'SibSp'], inplace = True)
 
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'), index=False)

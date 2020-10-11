@@ -36,8 +36,8 @@ np.random.seed(SEED)
 
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Name' ]
-numeric_columns = [ 'Age', 'Fare', 'SibSp', 'Parch', 'Ticket' ]
-categorical_columns = [ 'Title', 'Sex', 'Embarked',  'Pclass', 'Cabin' ]
+numeric_columns = [ 'Age', 'Fare', 'Size', 'Ticket', 'Title', 'Sex', 'Embarked',  'Pclass', 'Cabin' ]
+categorical_columns =  []
 all_features_columns = numeric_columns + categorical_columns 
 
 def score_model(observed, predicted):
@@ -116,6 +116,8 @@ categorical_columns = list(test_uni)
 
 all_features_columns = numeric_columns + categorical_columns 
 
+print(all_features_columns)
+
 if len(numeric_columns) > 0:
     scaler = MinMaxScaler()
     train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
@@ -144,15 +146,11 @@ if False:
 
     exit()
 
-pca = PCA(n_components = 2)
+pca = PCA(n_components = 7)
 pca.fit(train_df[all_features_columns])
 
-print(pca.explained_variance_ratio_)
-print(pca.singular_values_)
-
-ttrain_df = pd.DataFrame(pca.transform(train_df[all_features_columns]))
-ttest_df = pd.DataFrame(pca.transform(test_df[all_features_columns]))
-
+ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_features_columns]))
+ttest_df = pd.DataFrame(pca.fit_transform(test_df[all_features_columns]))
 
 model = svm.SVC(kernel='rbf', gamma ='auto', C=1.0)
 model.fit(ttrain_df, train_df[label_column].squeeze())
@@ -168,7 +166,7 @@ results = cross_val_score(svm.SVC(kernel='rbf', gamma ='auto', C=1.0),
                           ttrain_df, target, cv = kfold)
 print("9-Folds Cross Validation Accuracy: %0.2f" % results.mean())
 
-print("LogisticRegression Score: ", model.score(ttrain_df, train_df[label_column]))
+print("PCA/SVM Score: ", model.score(ttrain_df, train_df[label_column]))
 
 
 tbl = {}
