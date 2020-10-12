@@ -88,13 +88,13 @@ def capturePostTitle(rec):
     sex = rec['Sex']
     age = rec['Age']
     
-    if title == 'Mr' and age < 16:
-        return 'Master'
+    if sex == 'male' and age < 11:
+        return 'Boy'
     elif sex == 'female' and age < 16:
         return 'Girl'
-    elif age >= 55 and sex == 'male':
+    elif age >= 50 and sex == 'male' and title == 'Mr':
         return 'GramPa'
-    elif age >= 55 and sex == 'female':
+    elif age >= 50 and sex == 'female' and (title == 'Miss' or title == 'Mrs' or title == 'Ms'):
         return 'GramMa'
     
     
@@ -185,7 +185,6 @@ test_df['Title'] = test_df['Title'].map(tb.titles)
 
 train_df['Size'] = train_df['Parch'] + train_df['SibSp'] + 1
 test_df['Size'] = test_df['Parch'] + test_df['SibSp'] + 1
-
 
 
 

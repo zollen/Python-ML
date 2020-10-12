@@ -85,7 +85,7 @@ def cross_validation(df, labels, k, repeats, seeds):
         for train_index, test_index in kfold.split(df, groups = groups):
             x_train, y_train = df.iloc[train_index], labels.iloc[train_index]
             x_test, y_test = df.iloc[test_index], labels.iloc[test_index]
-            classifier = svm.SVC(kernel='rbf', gamma ='auto', C=1.0)
+            classifier = svm.SVC(kernel='rbf', gamma ='auto', C=1)
             classifier.fit(x_train, y_train)
             preds = classifier.predict(x_test)
             a1, a2, a3, a4, a5 = score_model(y_test, preds)
@@ -106,8 +106,8 @@ train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test_processed.csv'))
 
 ## Don't build your own categorical columns, it won't work
-train_df = pd.get_dummies(train_df, columns = categorical_columns)
-test_df = pd.get_dummies(test_df, columns = categorical_columns)
+#train_df = pd.get_dummies(train_df, columns = categorical_columns)
+#test_df = pd.get_dummies(test_df, columns = categorical_columns)
 
 train_uni = set(train_df.columns).symmetric_difference(numeric_columns + ['PassengerId'] + label_column)
 test_uni = set(test_df.columns).symmetric_difference(numeric_columns + ['PassengerId'])
@@ -123,36 +123,36 @@ if len(numeric_columns) > 0:
     train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
     test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
     
+    
+pca = PCA(n_components = 4)
+ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_features_columns]))
+ttest_df = pd.DataFrame(pca.transform(test_df[all_features_columns]))
+    
 if False:
     param_grid = dict({ 
-                       "penalty": [ 'l1', 'l2', 'elasticnet', 'none' ],
-                       "C": range(0, 10),
-                       "solver": [ 'lbfgs' ],
-                       "max_iter": range(0, 1000),
-                       "l1_ratio": np.arange(0, 1, 0.0001)
+                       "C": range(0, 500),
+                       "degree": range(2, 20),
+                       "kernel": [ 'linear', 'poly', 'sigmoid', 'rbf' ],
+                       "gamma": [ 'auto', 'scale' ],
+                       "max_iter": range(50, 5000)
                        })
-    model = RandomizedSearchCV(estimator = svm.SVC(kernel='rbf', gamma ='auto', C=1.0), 
+    model = RandomizedSearchCV(estimator = svm.SVC(), 
                         param_distributions = param_grid, n_jobs=-1, n_iter=100)
 
-    model.fit(train_df[all_features_columns], train_df[label_column])
+    model.fit(ttrain_df, train_df[label_column])
 
     print("====================================================================================")
     print("Best Score: ", model.best_score_)
-    print("Best penalty: ", model.best_estimator_.penalty)
     print("Best C: ", model.best_estimator_.C)
-    print("Best solver: ", model.best_estimator_.solver)
+    print("Best kernel: ", model.best_estimator_.kernel)
+    print("Best degree: ", model.best_estimator_.degree)
+    print("Best gamma: ", model.best_estimator_.gamma)
     print("Best max_iter: ", model.best_estimator_.max_iter)
-    print("Best l1_ratio: ", model.best_estimator_.l1_ratio)
 
     exit()
 
-pca = PCA(n_components = 7)
-pca.fit(train_df[all_features_columns])
 
-ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_features_columns]))
-ttest_df = pd.DataFrame(pca.fit_transform(test_df[all_features_columns]))
-
-model = svm.SVC(kernel='rbf', gamma ='auto', C=1.0)
+model = svm.SVC(kernel='rbf', gamma ='auto', C=1)
 model.fit(ttrain_df, train_df[label_column].squeeze())
 preds = model.predict(ttrain_df)
 target = train_df[label_column].squeeze()
@@ -162,7 +162,7 @@ print(classification_report(target, preds))
 
 print("================== CROSS VALIDATION ==================")
 kfold = RepeatedStratifiedKFold(n_splits = 9, n_repeats = 5, random_state = 87)
-results = cross_val_score(svm.SVC(kernel='rbf', gamma ='auto', C=1.0), 
+results = cross_val_score(svm.SVC(kernel='rbf', gamma ='auto', C=1), 
                           ttrain_df, target, cv = kfold)
 print("9-Folds Cross Validation Accuracy: %0.2f" % results.mean())
 
