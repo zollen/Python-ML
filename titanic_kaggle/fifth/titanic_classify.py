@@ -36,7 +36,7 @@ np.random.seed(SEED)
 
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Name' ]
-numeric_columns = [ 'Age', 'Fare', 'Size', 'Ticket', 'Title', 'Sex', 'Embarked',  'Pclass', 'Cabin' ]
+numeric_columns = [ 'Age', 'Fare', 'Title', 'Size', 'Ticket', 'Sex', 'Embarked',  'Pclass', 'Cabin' ]
 categorical_columns =  []
 all_features_columns = numeric_columns + categorical_columns 
 
@@ -85,7 +85,7 @@ def cross_validation(df, labels, k, repeats, seeds):
         for train_index, test_index in kfold.split(df, groups = groups):
             x_train, y_train = df.iloc[train_index], labels.iloc[train_index]
             x_test, y_test = df.iloc[test_index], labels.iloc[test_index]
-            classifier = svm.SVC(kernel='rbf', gamma ='auto', C=1)
+            classifier = svm.SVC(kernel='rbf', gamma ='auto', C=1.0)
             classifier.fit(x_train, y_train)
             preds = classifier.predict(x_test)
             a1, a2, a3, a4, a5 = score_model(y_test, preds)
@@ -105,26 +105,27 @@ PROJECT_DIR=str(Path(__file__).parent.parent)
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_processed.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test_processed.csv'))
 
-## Don't build your own categorical columns, it won't work
-#train_df = pd.get_dummies(train_df, columns = categorical_columns)
-#test_df = pd.get_dummies(test_df, columns = categorical_columns)
+if len(categorical_columns) > 0:
+    ## Don't build your own categorical columns, it won't work
+    train_df = pd.get_dummies(train_df, columns = categorical_columns)
+    test_df = pd.get_dummies(test_df, columns = categorical_columns)
 
-train_uni = set(train_df.columns).symmetric_difference(numeric_columns + ['PassengerId'] + label_column)
-test_uni = set(test_df.columns).symmetric_difference(numeric_columns + ['PassengerId'])
+    train_uni = set(train_df.columns).symmetric_difference(numeric_columns + ['PassengerId'] + label_column)
+    test_uni = set(test_df.columns).symmetric_difference(numeric_columns + ['PassengerId'])
 
-categorical_columns = list(test_uni)
-
-all_features_columns = numeric_columns + categorical_columns 
-
-print(all_features_columns)
+    categorical_columns = list(test_uni)
+    all_features_columns = numeric_columns + categorical_columns 
+    
 
 if len(numeric_columns) > 0:
     scaler = MinMaxScaler()
     train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
     test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
+
+print(all_features_columns)
     
     
-pca = PCA(n_components = 4)
+pca = PCA(n_components = 5)
 ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_features_columns]))
 ttest_df = pd.DataFrame(pca.transform(test_df[all_features_columns]))
     
@@ -152,7 +153,7 @@ if False:
     exit()
 
 
-model = svm.SVC(kernel='rbf', gamma ='auto', C=1)
+model = svm.SVC(kernel='rbf', gamma ='auto', C=1.0)
 model.fit(ttrain_df, train_df[label_column].squeeze())
 preds = model.predict(ttrain_df)
 target = train_df[label_column].squeeze()
@@ -162,7 +163,7 @@ print(classification_report(target, preds))
 
 print("================== CROSS VALIDATION ==================")
 kfold = RepeatedStratifiedKFold(n_splits = 9, n_repeats = 5, random_state = 87)
-results = cross_val_score(svm.SVC(kernel='rbf', gamma ='auto', C=1), 
+results = cross_val_score(svm.SVC(kernel='rbf', gamma ='auto', C=1.0), 
                           ttrain_df, target, cv = kfold)
 print("9-Folds Cross Validation Accuracy: %0.2f" % results.mean())
 

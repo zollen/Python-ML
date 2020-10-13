@@ -88,13 +88,13 @@ def capturePostTitle(rec):
     sex = rec['Sex']
     age = rec['Age']
     
-    if sex == 'male' and age < 11:
-        return 'Boy'
+    if sex == 'male' and age < 16:
+        return 'Master'
     elif sex == 'female' and age < 16:
         return 'Girl'
-    elif age >= 50 and sex == 'male' and title == 'Mr':
+    elif age >= 50 and sex == 'male':
         return 'GramPa'
-    elif age >= 50 and sex == 'female' and (title == 'Miss' or title == 'Mrs' or title == 'Ms'):
+    elif age >= 50 and sex == 'female':
         return 'GramMa'
     
     
