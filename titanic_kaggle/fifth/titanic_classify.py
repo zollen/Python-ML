@@ -118,14 +118,21 @@ if len(categorical_columns) > 0:
     
 
 if len(numeric_columns) > 0:
+    num_columns = []
+    for name in numeric_columns:
+        if train_df[name].max() > 1:
+            num_columns.append(name)
+            
     scaler = MinMaxScaler()
-    train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
-    test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
+    train_df[num_columns] = scaler.fit_transform(train_df[num_columns])
+    test_df[num_columns] = scaler.transform(test_df[num_columns])
 
 print(all_features_columns)
-    
-    
-pca = PCA(n_components = 5)
+
+
+
+ 
+pca = PCA(n_components = 3)
 ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_features_columns]))
 ttest_df = pd.DataFrame(pca.transform(test_df[all_features_columns]))
     
