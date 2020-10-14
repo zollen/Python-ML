@@ -13,6 +13,8 @@ import pprint
 import seaborn as sb
 import warnings
 import titanic_kaggle.lib.titanic_lib as tb
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import ExtraTreesRegressor, ExtraTreesClassifier
 
 warnings.filterwarnings('ignore')
@@ -201,6 +203,45 @@ def binAge(df):
     df.drop(columns = ['AgeP'], inplace = True)   
 
 
+def prepare(src_df, dest_df):
+    
+    global categorical_columns
+    
+    src_df = pd.get_dummies(src_df, columns = categorical_columns)
+    dest_df = pd.get_dummies(dest_df, columns = categorical_columns)
+
+    train_uni = set(dest_df.columns).symmetric_difference(numeric_columns + ['Name', 'PassengerId'] + label_column)
+
+    cat_columns = list(train_uni)
+    
+    all__columns = numeric_columns + cat_columns 
+     
+    scaler = MinMaxScaler()
+    src_df[numeric_columns] = scaler.fit_transform(src_df[numeric_columns])
+    dest_df[numeric_columns] = scaler.transform(dest_df[numeric_columns])
+    
+    return src_df, dest_df, all__columns
+    
+def reenigneeringRegressor(model, name, src_df, dest_df, pred = False):
+    
+    df1 = src_df.copy()
+    df2 = dest_df.copy()
+     
+    df1, df2, all_columns = prepare(df1, df2)
+    
+    if 'Survived' in all_columns:
+        all_columns.remove('Survived')
+    
+    model.fit(df1[all_columns], df1['Survived'].squeeze())
+    if pred == False:
+        dest_df[name] = model.predict_proba(df2[all_columns])[:, 0]
+    else:
+        dest_df[name] = model.predict(df2[all_columns])
+        
+    dest_df[name] = dest_df[name].round(4)
+    
+
+
             
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
@@ -294,6 +335,10 @@ calFare(train_df)
 binFare(train_df)
 binFare(test_df)
 
+reenigneeringRegressor(LogisticRegression(max_iter=500, solver='lbfgs'), 
+                       "Logistic", train_df, train_df)
+reenigneeringRegressor(LogisticRegression(max_iter=500, solver='lbfgs'), 
+                       "Logistic", train_df, test_df)
 
 
 
