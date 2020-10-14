@@ -92,14 +92,116 @@ def capturePostTitle(rec):
         return 'Master'
     elif sex == 'female' and age < 16:
         return 'Girl'
-    elif age >= 50 and sex == 'male':
+    elif age >= 55 and sex == 'male':
         return 'GramPa'
-    elif age >= 50 and sex == 'female':
+    elif age >= 55 and sex == 'female':
         return 'GramMa'
     
     
     return title
 
+fareBinned = {}
+def calFare(df):
+         
+    last = 0
+    for fare in [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170 ]:
+        alivesBoy = len(df[(df['Fare'] >= last) & 
+                             (df['Fare'] < fare) & 
+                             (df['Sex'] == 0) &
+                             (df['Survived'] == 1)])
+        deadsBoy = len(df[(df['Fare'] >= last) & 
+                            (df['Fare'] < fare) &
+                            (df['Sex'] == 0) & 
+                            (df['Survived'] == 0)])
+        alivesGirl = len(df[(df['Fare'] >= last) & 
+                             (df['Fare'] < fare) & 
+                             (df['Sex'] == 1) &
+                             (df['Survived'] == 1)])
+        deadsGirl = len(df[(df['Fare'] >= last) & 
+                            (df['Fare'] < fare) &
+                            (df['Sex'] == 1) & 
+                            (df['Survived'] == 0)])
+    
+        ratioBoy = 0 if alivesBoy + deadsBoy == 0 else alivesBoy / (alivesBoy + deadsBoy)
+        ratioGirl = 0 if alivesGirl + deadsGirl == 0 else alivesGirl / (alivesGirl + deadsGirl)
+#        print("[%2d, %2d]: Male {%2d, %2d} ==> [%0.4f], Female {%2d, %2d} ==> [%0.4f]" % 
+#              (last, fare, alivesBoy, deadsBoy, ratioBoy, alivesGirl, deadsGirl, ratioGirl))
+        
+        fareBinned[str(last) + ":" + str(fare) + ":male"] = round(ratioBoy, 4)
+        fareBinned[str(last) + ":" + str(fare) + ":female"] = round(ratioGirl, 4)        
+        last = fare
+        
+def binFare(df):
+    
+    last = 0
+    for fare in [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170]:
+        male = str(last) + ":" + str(fare) + ":male"
+        female = str(last) + ":" + str(fare) + ":female"
+        df.loc[(df['Fare'] >= last) & (df['Fare'] < fare) & (df['Sex'] == 0), 'FareP'] = fareBinned[male]
+        df.loc[(df['Fare'] >= last) & (df['Fare'] < fare) & (df['Sex'] == 1), 'FareP'] = fareBinned[female]
+        last = fare
+    
+    df.loc[(df['Fare'] >= 170) & (df['Sex'] == 0), 'FareP'] = fareBinned[male]
+    df.loc[(df['Fare'] >= 170) & (df['Sex'] == 1), 'FareP'] = fareBinned[female]
+    
+    df.loc[(df['Fare'] >= 200) & (df['Sex'] == 0), 'FareP'] = 0.0
+    df.loc[(df['Fare'] >= 200) & (df['Sex'] == 1), 'FareP'] = 1.0
+    
+    df.loc[(df['Fare'] >= 500) & (df['Sex'] == 0), 'FareP'] = 1.0
+    df.loc[(df['Fare'] >= 500) & (df['Sex'] == 1), 'FareP'] = 1.0
+    
+    df['Fare'] = df['FareP']
+    df.drop(columns = ['FareP'], inplace = True)   
+    
+ageBinned = {}
+def calAge(df):
+         
+    last = 0
+    for age in [ 5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 75, 80 ]:
+        alivesBoy = len(df[(df['Age'] >= last) & 
+                             (df['Age'] < age) & 
+                             (df['Sex'] == 0) &
+                             (df['Survived'] == 1)])
+        deadsBoy = len(df[(df['Age'] >= last) & 
+                            (df['Age'] < age) &
+                            (df['Sex'] == 0) & 
+                            (df['Survived'] == 0)])
+        alivesGirl = len(df[(df['Age'] >= last) & 
+                             (df['Age'] < age) & 
+                             (df['Sex'] == 1) &
+                             (df['Survived'] == 1)])
+        deadsGirl = len(df[(df['Age'] >= last) & 
+                            (df['Age'] < age) &
+                            (df['Sex'] == 1) & 
+                            (df['Survived'] == 0)])
+    
+        ratioBoy = 0 if alivesBoy + deadsBoy == 0 else alivesBoy / (alivesBoy + deadsBoy)
+        ratioGirl = 0 if alivesGirl + deadsGirl == 0 else alivesGirl / (alivesGirl + deadsGirl)
+#        print("[%2d, %2d]: Male {%2d, %2d} ==> [%0.4f], Female {%2d, %2d} ==> [%0.4f]" % 
+#              (last, age, alivesBoy, deadsBoy, ratioBoy, alivesGirl, deadsGirl, ratioGirl))
+        
+        ageBinned[str(last) + ":" + str(age) + ":male"] = round(ratioBoy, 4)
+        ageBinned[str(last) + ":" + str(age) + ":female"] = round(ratioGirl, 4)
+        last = age
+        
+def binAge(df):
+    
+    last = 0
+    for age in [ 5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 75, 80 ]:
+        male = str(last) + ":" + str(age) + ":male"
+        female = str(last) + ":" + str(age) + ":female"
+        df.loc[(df['Age'] >= last) & (df['Age'] < age) & (df['Sex'] == 0), 'AgeP'] = ageBinned[male]
+        df.loc[(df['Age'] >= last) & (df['Age'] < age) & (df['Sex'] == 1), 'AgeP'] = ageBinned[female]
+        last = age
+    
+    df.loc[(df['Age'] >= 80) & (df['Sex'] == 0), 'AgeP'] = ageBinned[male]
+    df.loc[(df['Age'] >= 80) & (df['Sex'] == 1), 'AgeP'] = ageBinned[female]
+    
+    df['Age'] = df['AgeP']
+    df.drop(columns = ['AgeP'], inplace = True)   
+
+
+            
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 pd.set_option('display.width', 1000)
@@ -177,14 +279,23 @@ test_df['Ticket'] = test_df['Ticket'].round(4)
 train_df['Fare'] = train_df['Fare'].round(2)
 test_df['Fare'] = test_df['Fare'].round(2)
 
-train_df['Age'] = train_df['Age'].astype('int64')
-test_df['Age'] = test_df['Age'].astype('int64')
-
 train_df['Title'] = train_df['Title'].map(tb.titles)
 test_df['Title'] = test_df['Title'].map(tb.titles)
 
 train_df['Size'] = train_df['Parch'] + train_df['SibSp'] + 1
 test_df['Size'] = test_df['Parch'] + test_df['SibSp'] + 1
+
+
+calAge(train_df)
+binAge(train_df)
+binAge(test_df)
+
+calFare(train_df)
+binFare(train_df)
+binFare(test_df)
+
+
+
 
 
 
