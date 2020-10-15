@@ -335,6 +335,9 @@ calFare(train_df)
 binFare(train_df)
 binFare(test_df)
 
+
+
+
 reenigneeringRegressor(LogisticRegression(max_iter=500, solver='lbfgs'), 
                        "Logistic", train_df, train_df)
 reenigneeringRegressor(LogisticRegression(max_iter=500, solver='lbfgs'), 
