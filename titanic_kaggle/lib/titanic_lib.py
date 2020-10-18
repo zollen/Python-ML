@@ -260,30 +260,30 @@ def navieBayes(df, columns_lists):
 
 def captureSurname(name):
     
-    names = name.split(sep='(')
+    names = name.split(sep='.')
     
-    surnames = ''    
-    for name in names:
-         
-        if len(surnames) > 0:
-            surnames += ','
-            
-        lst = name.split()
-        lastName = lst[-1]
-         
-        if lastName == 'Jr' or lastName == 'II' or lastName == 'Mrs.':
-            lastName = lst[-2]
-    
-        if len(lastName) <= 1:
-            lastName = lst[-2] + "." + lastName
-            
-        lastName = lastName.replace(')', '')
-        lastName = lastName.replace('"', '')
-        lastName = lastName.replace(',', '')
-            
-        surnames += lastName
+    nams = names[1].strip().split(sep = ' ')
+             
+    last = []
+    pos = 0
+    for nam in nams:
+       
+        if nam.find("(") >= 0 and pos > 0:
+            break
         
-    return surnames
+        if nam.find('"') >= 0 and pos > 0:
+            break
+        
+        last.append(nam)
+        
+        pos += 1
+
+        
+    if len(last[-1]) == 1 or last[-1] == 'Jr' or last[-1] == 'II':
+        last[-1] = last[-2] + "." + last[-1] 
+    
+        
+    return last[-1].replace('(', '').replace(')', '').replace('"', '')
     
 def calculateFamilyMembers(df):
     
