@@ -279,7 +279,7 @@ def captureSurname(name):
         pos += 1
 
         
-    if len(last[-1]) == 1 or last[-1] == 'Jr' or last[-1] == 'II':
+    if len(last[-1]) == 1 or last[-1] == 'Jr' or last[-1] == 'II' or last[-1] == 'IV':
         last[-1] = last[-2] + "." + last[-1] 
     
         
