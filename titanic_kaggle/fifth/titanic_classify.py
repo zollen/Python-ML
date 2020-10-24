@@ -36,8 +36,8 @@ np.random.seed(SEED)
 
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Name' ]
-numeric_columns = [ 'Age', 'Fare', 'Title', 'Size', 'Ticket', 'Sex', 
-                   'Embarked',  'Pclass', 'Logistic' ]
+numeric_columns = [ 'Age', 'Fare', 'Title', 'Size', 'Ticket', 'Sex',
+                   'Embarked', 'Cabin', 'Pclass', 'Logistic' ]
 categorical_columns =  []
 all_features_columns = numeric_columns + categorical_columns 
 
@@ -133,7 +133,7 @@ print(all_features_columns)
 
 
  
-pca = PCA(n_components = 3)
+pca = PCA(n_components = 2)
 ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_features_columns]))
 ttest_df = pd.DataFrame(pca.transform(test_df[all_features_columns]))
     

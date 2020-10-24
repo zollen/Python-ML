@@ -15,89 +15,97 @@ import warnings
 import titanic_kaggle.lib.titanic_lib as tb
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import ExtraTreesRegressor, ExtraTreesClassifier
+from sklearn.ensemble import ExtraTreesRegressor
 
 warnings.filterwarnings('ignore')
 
 label_column = [ 'Survived']
 identity_columns = [ 'PassengerId', 'Ticket' ]
-numeric_columns = [ 'Age', 'Fare' ]
-categorical_columns = [ 'Sex', 'Title', 'Pclass', 'Embarked', 'Cabin' ]
+numeric_columns = [ 'Age', 'Fare', 'Cabin', 'Size' ]
+categorical_columns = [ 'Sex', 'Title', 'Pclass', 'Embarked' ]
 all_features_columns = numeric_columns + categorical_columns 
 
 
 
-def fill_by_regression(df_src, df_dest, name, columns):
- 
-    input_columns = columns
-    predicted_columns = [ name ]
-
-    cat_columns = set(input_columns).intersection(categorical_columns)
+def fillValues(name, *args):
+    key, columns, label = ['PassengerId'], ['Title', 'Sex', 'Fare', 'SibSp', 'Parch', 'Pclass', 'Embarked' ], [name]
     
-    df1 = tb.normalize({}, df_src, cat_columns)
-    df2 = tb.normalize({}, df_dest, cat_columns)
-       
+    alldf = []
+    for df in args:
+        alldf.append(df)
+        
+    all_df = pd.concat(alldf)
+    all_df = all_df[key + columns + label]
+    
+    all_df = pd.get_dummies(all_df, columns = ['Title', 'Sex', 'Pclass', 'Embarked'])
+    
+    cols = set(all_df.columns)
+    cols.remove(name)
+    
+
+    all_df_in = all_df.loc[all_df[name].isna() == False, cols]
+    all_df_lb = all_df.loc[all_df[name].isna() == False, label]
+
     model = ExtraTreesRegressor(random_state = 0)
-    model.fit(df1[input_columns], df_src[predicted_columns])
-
-    preds = model.predict(df2[input_columns])
-    preds = [ round(i, 0) for i in preds ]
-
-    return preds
-
-def fill_by_classification(df_src, df_dest, name, columns):
-
-    input_columns = columns
-    predicted_columns = [ name ]
-
-    cat_columns = set(input_columns).intersection(categorical_columns)
-
-    df1 = tb.normalize({}, df_src, cat_columns)
-    df2 = tb.normalize({}, df_dest, cat_columns)
-     
-    model = ExtraTreesClassifier(random_state = 0)
-    model.fit(df1[input_columns], df_src[predicted_columns])
-    preds = model.predict(df2[input_columns])
+    model.fit(all_df_in, all_df_lb)
     
-    return preds
+    
+    all_df_im = all_df.loc[all_df[name].isna() == True, cols]
+       
+    preds = model.predict(all_df_im)
+    all_df_im[name] = preds
+    
+    
+    for df in args:
+        df.loc[df[name].isna() == True, name] = all_df_im.loc[all_df_im['PassengerId'].isin(df['PassengerId']), name]
+        df[name] = df[name].astype('int64')
+    
+   
+    
             
-def capturePreTitle(rec):
+def preprocessingTitle(rec):
     name = rec['Name']
     sex = rec['Sex']
+
     name = re.search('[a-zA-Z]+\\.', name).group(0)
     name = name.replace(".", "")
     if name == 'Col' or name == 'Capt' or name  == 'Major':
-        name = 'Army'
+        name = 0
     elif name == 'Rev' and sex == 'male':
-        return 'Clergy'
+        return 1
     elif name == 'Dr' and sex == 'female':
-        name = 'Mrs'
+        name = 2
     elif name == 'Dr' and sex == 'male':
-        return 'Doctor'
+        return 3
     elif name == 'Sir' or name == 'Don':
-        name = 'Baron'
+        name = 4
+    elif name == 'Mme' or name == 'Mrs':
+        name = 5
     elif name == 'Lady' or name == 'Countess' or name == 'Dona':
-        return 'Baronness'
-    elif name == 'Mme':
-        return 'Mrs'
+        return 6
     elif name == 'Miss' or name == 'Ms' or name == 'Mlle' or name == 'Jonkheer':
-        return 'Miss'
+        return 7
+    elif name == 'Master':
+        return 8
+    elif name == 'Mr':
+        return 9
+        
     
     return name
       
-def capturePostTitle(rec):
+def postrocessingTitle(rec):
     title = rec['Title']
     sex = rec['Sex']
     age = rec['Age']
     
     if sex == 'male' and age < 16:
-        return 'Master'
+        return 10
     elif sex == 'female' and age < 16:
-        return 'Girl'
+        return 11
     elif age >= 55 and sex == 'male':
-        return 'GramPa'
+        return 12
     elif age >= 55 and sex == 'female':
-        return 'GramMa'
+        return 13
     
     
     return title
@@ -106,7 +114,7 @@ fareBinned = {}
 def calFare(df):
          
     last = 0
-    for fare in [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170 ]:
+    for fare in [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 200, 500, 1000 ]:
         alivesBoy = len(df[(df['Fare'] >= last) & 
                              (df['Fare'] < fare) & 
                              (df['Sex'] == 0) &
@@ -133,33 +141,25 @@ def calFare(df):
         fareBinned[str(last) + ":" + str(fare) + ":female"] = round(ratioGirl, 4)        
         last = fare
         
-def binFare(df):
+def binFare(*args):
     
-    last = 0
-    for fare in [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170]:
-        male = str(last) + ":" + str(fare) + ":male"
-        female = str(last) + ":" + str(fare) + ":female"
-        df.loc[(df['Fare'] >= last) & (df['Fare'] < fare) & (df['Sex'] == 0), 'FareP'] = fareBinned[male]
-        df.loc[(df['Fare'] >= last) & (df['Fare'] < fare) & (df['Sex'] == 1), 'FareP'] = fareBinned[female]
-        last = fare
+    for df in args:
+        last = 0
+        for fare in [ 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 200, 500, 1000]:
+            male = str(last) + ":" + str(fare) + ":male"
+            female = str(last) + ":" + str(fare) + ":female"
+            df.loc[(df['Fare'] >= last) & (df['Fare'] < fare) & (df['Sex'] == 0), 'FareP'] = fareBinned[male]
+            df.loc[(df['Fare'] >= last) & (df['Fare'] < fare) & (df['Sex'] == 1), 'FareP'] = fareBinned[female]
+            last = fare
     
-    df.loc[(df['Fare'] >= 170) & (df['Sex'] == 0), 'FareP'] = fareBinned[male]
-    df.loc[(df['Fare'] >= 170) & (df['Sex'] == 1), 'FareP'] = fareBinned[female]
-    
-    df.loc[(df['Fare'] >= 200) & (df['Sex'] == 0), 'FareP'] = 0.0
-    df.loc[(df['Fare'] >= 200) & (df['Sex'] == 1), 'FareP'] = 1.0
-    
-    df.loc[(df['Fare'] >= 500) & (df['Sex'] == 0), 'FareP'] = 1.0
-    df.loc[(df['Fare'] >= 500) & (df['Sex'] == 1), 'FareP'] = 1.0
-    
-    df['Fare'] = df['FareP']
-    df.drop(columns = ['FareP'], inplace = True)   
+        df['Fare'] = df['FareP'].round(4)
+        df.drop(columns = ['FareP'], inplace = True)   
     
 ageBinned = {}
 def calAge(df):
          
     last = 0
-    for age in [ 5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 75, 80 ]:
+    for age in [ 5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 75, 100 ]:
         alivesBoy = len(df[(df['Age'] >= last) & 
                              (df['Age'] < age) & 
                              (df['Sex'] == 0) &
@@ -186,23 +186,41 @@ def calAge(df):
         ageBinned[str(last) + ":" + str(age) + ":female"] = round(ratioGirl, 4)
         last = age
         
-def binAge(df):
+def binAge(*args):
     
-    last = 0
-    for age in [ 5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 75, 80 ]:
-        male = str(last) + ":" + str(age) + ":male"
-        female = str(last) + ":" + str(age) + ":female"
-        df.loc[(df['Age'] >= last) & (df['Age'] < age) & (df['Sex'] == 0), 'AgeP'] = ageBinned[male]
-        df.loc[(df['Age'] >= last) & (df['Age'] < age) & (df['Sex'] == 1), 'AgeP'] = ageBinned[female]
-        last = age
+    for df in args:
+        last = 0
+        for age in [ 5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 75, 100 ]:
+            male = str(last) + ":" + str(age) + ":male"
+            female = str(last) + ":" + str(age) + ":female"
+            df.loc[(df['Age'] >= last) & (df['Age'] < age) & (df['Sex'] == 0), 'AgeP'] = ageBinned[male]
+            df.loc[(df['Age'] >= last) & (df['Age'] < age) & (df['Sex'] == 1), 'AgeP'] = ageBinned[female]
+            last = age
     
-    df.loc[(df['Age'] >= 80) & (df['Sex'] == 0), 'AgeP'] = ageBinned[male]
-    df.loc[(df['Age'] >= 80) & (df['Sex'] == 1), 'AgeP'] = ageBinned[female]
-    
-    df['Age'] = df['AgeP']
-    df.drop(columns = ['AgeP'], inplace = True)   
+        df['Age'] = df['AgeP'].round(4)
+        df.drop(columns = ['AgeP'], inplace = True)   
 
-
+titleBinned = {}
+def calTitle(df):
+    
+    for title in [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ]:
+        alives = len(df[(df['Title'] == title) & (df['Survived'] == 1)])
+        deads = len(df[(df['Title'] == title) & (df['Survived'] == 0)])
+        ratio = 0 if alives + deads == 0 else alives / (alives + deads)
+#        print("[%2d]: Alives {%3d} Dead: {%3d} ==> [%0.4f]" % 
+#              (title, alives, deads, ratio))
+        titleBinned[str(title)] = ratio
+    
+def binTitle(*args):
+    
+    for df in args:
+        for title in [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ]:
+            df.loc[df['Title'] == title, 'TitleP'] = titleBinned[str(title)]
+            
+        df['Title'] = df['TitleP'].round(4)
+        df.drop(columns = ['TitleP'], inplace = True)   
+    
+            
 def prepare(src_df, dest_df):
     
     global categorical_columns
@@ -215,6 +233,7 @@ def prepare(src_df, dest_df):
     cat_columns = list(train_uni)
     
     all__columns = numeric_columns + cat_columns 
+    
      
     scaler = MinMaxScaler()
     src_df[numeric_columns] = scaler.fit_transform(src_df[numeric_columns])
@@ -231,6 +250,7 @@ def reenigneeringRegressor(model, name, src_df, dest_df, pred = False):
     
     if 'Survived' in all_columns:
         all_columns.remove('Survived')
+
     
     model.fit(df1[all_columns], df1['Survived'].squeeze())
     if pred == False:
@@ -239,7 +259,15 @@ def reenigneeringRegressor(model, name, src_df, dest_df, pred = False):
         dest_df[name] = model.predict(df2[all_columns])
         
     dest_df[name] = dest_df[name].round(4)
+
+def calCabin(rec):
+    prefix = rec['CabinPrefix']
+    room = rec['CabinRoom']
     
+    if str(prefix) != 'nan':
+        return int(prefix) + int(room)
+    
+    return np.nan    
 
 
             
@@ -261,53 +289,57 @@ train_df.loc[train_df['Embarked'].isna() == True, 'Embarked'] = 'S'
 train_df.loc[train_df['Fare'].isna() == True, 'Fare'] = 7.25
 test_df.loc[test_df['Embarked'].isna() == True, 'Embarked'] = 'S' 
 test_df.loc[test_df['Fare'].isna() == True, 'Fare'] = 7.25
+train_df['Fare'] = train_df['Fare'].round(2)
+test_df['Fare'] = test_df['Fare'].round(2)
 
-## Extract Title from Name
-train_df['Title'] = train_df.apply(capturePreTitle, axis = 1)
-test_df['Title'] = test_df.apply(capturePreTitle, axis = 1)
 
-## Fill missing Age
-res = fill_by_regression(train_df[train_df['Age'].isna() == False], 
-                   train_df[train_df['Age'].isna() == True], 'Age', 
-                   [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
+## extract Title from Name
+train_df['Title'] = train_df.apply(preprocessingTitle, axis = 1)
+test_df['Title'] = test_df.apply(preprocessingTitle, axis = 1)
 
-train_df.loc[train_df['Age'].isna() == True, 'Age'] = res
 
-res = fill_by_regression(tb.combine(train_df, test_df[test_df['Age'].isna() == False]), 
-                   test_df[test_df['Age'].isna() == True], 'Age', 
-                   [ 'Title', 'SibSp', 'Parch', 'Fare', 'Sex', 'Pclass', 'Embarked' ])
-
-test_df.loc[test_df['Age'].isna() == True, 'Age'] = res
-
-## Readjust Title
-train_df['Title'] = train_df.apply(capturePostTitle, axis = 1)
-test_df['Title'] = test_df.apply(capturePostTitle, axis = 1)
-
+## encoding sex
 train_df['Sex'] = train_df['Sex'].map(tb.sexes)
 test_df['Sex'] = test_df['Sex'].map(tb.sexes)
 
+## encoding Embarked
 train_df['Embarked'] = train_df['Embarked'].map(tb.embarkeds)
 test_df['Embarked'] = test_df['Embarked'].map(tb.embarkeds)
 
-## Fill missing Cabin
-train_df['Cabin'] = train_df['Cabin'].apply(tb.captureCabin) 
-test_df['Cabin'] = test_df['Cabin'].apply(tb.captureCabin) 
 
-res = fill_by_classification(train_df[train_df['Cabin'].isna() == False], 
-                       train_df[train_df['Cabin'].isna() == True], 'Cabin', 
-                       [ 'Title', 'Survived', 'SibSp', 'Parch', 'Fare', 'Sex', 'Age', 'Pclass', 'Embarked' ])
+## filling ages
+fillValues('Age', train_df, test_df)
 
-train_df.loc[train_df['Cabin'].isna() == True, 'Cabin'] = res
 
-res = fill_by_classification(tb.combine(train_df, test_df[test_df['Cabin'].isna() == False]),
-                        test_df[test_df['Cabin'].isna() == True], 'Cabin', 
-                        [ 'Title', 'SibSp', 'Parch', 'Fare', 'Sex', 'Age', 'Pclass', 'Embarked' ])
+## adjust title
+train_df['Title'] = train_df.apply(postrocessingTitle, axis = 1)
+test_df['Title'] = test_df.apply(postrocessingTitle, axis = 1)
 
-test_df.loc[test_df['Cabin'].isna() == True, 'Cabin'] = res
 
-train_df['Cabin'] = train_df['Cabin'].map(tb.cabins)
-test_df['Cabin'] = test_df['Cabin'].map(tb.cabins)
+## encoding cabin
+train_df['CabinPrefix'] = train_df['Cabin'].apply(tb.captureCabin) 
+test_df['CabinPrefix'] = test_df['Cabin'].apply(tb.captureCabin) 
 
+train_df['CabinRoom'] = train_df['Cabin'].apply(tb.captureRoom)
+test_df['CabinRoom'] = test_df['Cabin'].apply(tb.captureRoom) 
+
+train_df['CabinPrefix'] = train_df['CabinPrefix'].map({ 'A': 0, 'B': 800, 'C': 400, 
+                                           'D': 1200, 'E': 1000, 'F': 600, 'G': 200 })
+test_df['CabinPrefix'] = test_df['CabinPrefix'].map({ 'A': 0, 'B': 800, 'C': 400, 
+                                           'D': 1200, 'E': 1000, 'F': 600, 'G': 200 })
+train_df['Cabin'] = train_df.apply(calCabin, axis = 1)
+test_df['Cabin'] = test_df.apply(calCabin, axis = 1)
+
+
+## Fill Cabin
+fillValues('Cabin', train_df, test_df)
+
+
+train_df.drop(columns = ['CabinPrefix', 'CabinRoom'], inplace = True)
+test_df.drop(columns = ['CabinPrefix', 'CabinRoom'], inplace = True)
+
+
+## engineering ticket number
 train_df['Ticket'] = train_df['Ticket'].apply(tb.captureTicketId)
 test_df['Ticket'] = test_df['Ticket'].apply(tb.captureTicketId)
 
@@ -317,25 +349,21 @@ test_df['Ticket'] = np.log(test_df['Ticket'])
 train_df['Ticket'] = train_df['Ticket'].round(4)
 test_df['Ticket'] = test_df['Ticket'].round(4)
 
-train_df['Fare'] = train_df['Fare'].round(2)
-test_df['Fare'] = test_df['Fare'].round(2)
 
-train_df['Title'] = train_df['Title'].map(tb.titles)
-test_df['Title'] = test_df['Title'].map(tb.titles)
-
+## engineering family size
 train_df['Size'] = train_df['Parch'] + train_df['SibSp'] + 1
 test_df['Size'] = test_df['Parch'] + test_df['SibSp'] + 1
 
 
+
 calAge(train_df)
-binAge(train_df)
-binAge(test_df)
+binAge(train_df, test_df)
 
 calFare(train_df)
-binFare(train_df)
-binFare(test_df)
+binFare(train_df, test_df)
 
-
+calTitle(train_df)
+binTitle(train_df, test_df)
 
 
 reenigneeringRegressor(LogisticRegression(max_iter=500, solver='lbfgs'), 
@@ -344,7 +372,8 @@ reenigneeringRegressor(LogisticRegression(max_iter=500, solver='lbfgs'),
                        "Logistic", train_df, test_df)
 
 
-
+## Try incorporate Title for filling Age and Cabin
+## Try incorporate the new Cabin value in Fourth 
 
 
 

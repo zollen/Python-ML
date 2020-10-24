@@ -336,9 +336,9 @@ def captureRoom(val):
 def captureCabin(val):
     
     if str(val) != 'nan':
-        x = re.findall("[a-zA-Z]+[0-9]{1}", val)
+        x = re.findall("[a-zA-Z]{1}", val)
         if len(x) == 0:
-            x = re.findall("[a-zA-Z]{1}", val)
+            x = ['X']
             
         return x[0][0]
         

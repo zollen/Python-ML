@@ -10,7 +10,11 @@ import pandas as pd
 import pprint
 from matplotlib import pyplot as plt
 import seaborn as sb
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.ensemble import ExtraTreesClassifier, ExtraTreesRegressor
+import titanic_kaggle.lib.titanic_lib as tb
 import warnings
+from titanic_kaggle.lib.titanic_lib import captureRoom
 
 warnings.filterwarnings('ignore')
 
@@ -25,27 +29,99 @@ PROJECT_DIR=str(Path(__file__).parent.parent)
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
 
-last = 0
-for age in [ 5, 10, 15, 20, 25, 30, 35, 40, 50, 55, 60, 65, 70, 75, 80 ]:
-    alivesBoy = len(train_df[(train_df['Age'] >= last) & 
-                             (train_df['Age'] < age) & 
-                             (train_df['Sex'] == 'male') &
-                             (train_df['Survived'] == 1)])
-    deadsBoy = len(train_df[(train_df['Age'] >= last) & 
-                            (train_df['Age'] < age) &
-                            (train_df['Sex'] == 'male') & 
-                            (train_df['Survived'] == 0)])
-    alivesGirl = len(train_df[(train_df['Age'] >= last) & 
-                             (train_df['Age'] < age) & 
-                             (train_df['Sex'] == 'female') &
-                             (train_df['Survived'] == 1)])
-    deadsGirl = len(train_df[(train_df['Age'] >= last) & 
-                            (train_df['Age'] < age) &
-                            (train_df['Sex'] == 'female') & 
-                            (train_df['Survived'] == 0)])
+train_df.loc[train_df['Cabin'] == 'T', 'Cabin'] = 'A'
+train_df.loc[train_df['Embarked'].isna() == True, 'Embarked'] = 'S'
+train_df.loc[train_df['Fare'].isna() == True, 'Fare'] = 7.25
+test_df.loc[test_df['Embarked'].isna() == True, 'Embarked'] = 'S' 
+test_df.loc[test_df['Fare'].isna() == True, 'Fare'] = 7.25
+
+train_df['CabinPrefix'] = train_df['Cabin'].apply(tb.captureCabin)
+test_df['CabinPrefix'] = test_df['Cabin'].apply(tb.captureCabin)
+train_df['CabinPrefix'] = train_df['CabinPrefix'].map({ 'A': 0, 'B': 800, 'C': 400, 
+                                           'D': 1200, 'E': 1000, 'F': 600, 'G': 200 })
+test_df['CabinPrefix'] = test_df['CabinPrefix'].map({ 'A': 0, 'B': 800, 'C': 400, 
+                                           'D': 1200, 'E': 1000, 'F': 600, 'G': 200 })
+
+train_df['CabinRoom'] = train_df['Cabin'].apply(tb.captureRoom)
+test_df['CabinRoom'] = test_df['Cabin'].apply(tb.captureRoom)
+
+def calCabin(rec):
+    prefix = rec['CabinPrefix']
+    room = rec['CabinRoom']
     
-    ratioBoy = 0 if alivesBoy + deadsBoy == 0 else alivesBoy / (alivesBoy + deadsBoy)
-    ratioGirl = 0 if alivesGirl + deadsGirl == 0 else alivesGirl / (alivesGirl + deadsGirl)
-    print("[%2d, %2d]: Male {%2d, %2d} ==> [%0.4f], Female {%2d, %2d} ==> [%0.4f]" % 
-          (last, age, alivesBoy, deadsBoy, ratioBoy, alivesGirl, deadsGirl, ratioGirl))
-    last = age
+    if str(prefix) != 'nan':
+        return int(prefix) + int(room)
+    
+    return np.nan
+
+train_df['Cabin'] = train_df.apply(calCabin, axis = 1)
+test_df['Cabin'] = test_df.apply(calCabin, axis = 1)
+
+train_df.drop(columns = ['CabinPrefix', 'CabinRoom'], inplace = True)
+test_df.drop(columns= ['CabinPrefix', 'CabinRoom'], inplace = True)
+
+
+
+    
+def fillValues(name, df):
+    columns, label = ['Sex', 'Fare', 'SibSp', 'Parch', 'Pclass', 'Embarked' ], [name]
+    
+    all_df = pd.concat([ train_df, test_df ])
+    all_df.set_index('PassengerId', inplace=True)
+
+    all_df = all_df[columns + label]
+    all_df['Embarked'] = all_df['Embarked'].map({'S': 0, 'Q': 1, 'C': 2})
+    all_df['Sex'] = all_df['Sex'].map({'male': 0, 'female': 1})
+    all_df = pd.get_dummies(all_df, columns = ['Sex', 'Pclass', 'Embarked'])
+    
+    cols = set(all_df.columns)
+    cols.remove(name)
+    
+
+    all_df_in = all_df.loc[all_df[name].isna() == False, cols]
+    all_df_lb = all_df.loc[all_df[name].isna() == False, label]
+
+
+    model = ExtraTreesRegressor(random_state = 0)
+    model.fit(all_df_in, all_df_lb)
+    
+    
+    work_df = df[columns + label]
+    work_df['Embarked'] = work_df['Embarked'].map({'S': 0, 'Q': 1, 'C': 2})
+    work_df['Sex'] = work_df['Sex'].map({'male': 0, 'female': 1})  
+    work_df = pd.get_dummies(work_df, columns = ['Sex', 'Pclass', 'Embarked'])
+    
+    impute_df = work_df.loc[work_df[name].isna() == True, cols]
+    
+    imputed = model.predict(impute_df)
+    df.loc[df[name].isna() == True, name] = imputed
+    
+    df[name] = df[name].astype('int64')
+
+tmp_train_df, tmp_test_df = train_df.copy(), test_df.copy() 
+
+fillValues('Age', tmp_train_df)
+fillValues('Age', tmp_test_df)
+
+fillValues('Cabin', tmp_train_df)
+fillValues('Cabin', tmp_test_df)
+
+train_df['Age'], test_df['Age'] = tmp_train_df['Age'], tmp_test_df['Age']
+train_df['Cabin'], test_df['Cabin'] = tmp_train_df['Cabin'], tmp_test_df['Cabin']
+
+train_df['Ticket'] = train_df['Ticket'].apply(tb.captureTicketId)
+test_df['Ticket'] = test_df['Ticket'].apply(tb.captureTicketId)
+
+def testme(name, *args):
+    print(name)
+    for value in args:
+        print(value)
+    
+    
+testme('hello', 1, 2, 3)
+
+exit()
+## study material
+## https://www.kaggle.com/ash316/eda-to-prediction-dietanic
+pd.crosstab([train_df.Sex, train_df.Survived], train_df.Pclass, margins = True).style.background_gradient(cmap = 'summer_r')
+pd.crosstab(train_df.Title, train_df.Sex).T.style.background_gradient(cmap='summer_r')

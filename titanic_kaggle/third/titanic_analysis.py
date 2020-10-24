@@ -46,13 +46,15 @@ test_df['Ticket'] = test_df['Ticket'].apply(tb.captureTicketId)
 train_df['Ticket'] = np.log(train_df['Ticket'])
 test_df['Ticket'] = np.log(test_df['Ticket'])
 
-print(train_df['Ticket'])
 
+print(train_df.describe())
 
-
-
-if False:
-    dd = train_df[(train_df['Sex'] == 'male') & (train_df['Pclass'] == 1) & (train_df['Fare'] > 50)]
-    sb.catplot(x = 'Pclass', y = 'Fare', hue = 'Survived', data = dd)
-    plt.show()
+  
+df = train_df[['Sex', 'Age', 'SibSp', 'Parch', 'Fare', 'Embarked', 'Pclass']]
+df['Sex'] = df['Sex'].map({'male': 0, 'female': 1})
+corr = df.corr()   
+mask = np.triu(np.ones_like(corr, dtype=np.bool))    
+plt.figure(figsize=(14, 10))   
+sb.heatmap(corr, mask=mask, cmap='RdBu_r', annot=True, linewidths=0.5, fmt='0.2f')
+plt.show()
     
