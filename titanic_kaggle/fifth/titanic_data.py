@@ -221,44 +221,45 @@ def binTitle(*args):
         df.drop(columns = ['TitleP'], inplace = True)   
     
             
-def prepare(src_df, dest_df):
+def prepare(*args):
     
     global categorical_columns
     
-    src_df = pd.get_dummies(src_df, columns = categorical_columns)
-    dest_df = pd.get_dummies(dest_df, columns = categorical_columns)
+    alldf = []
+    for df in args:
+        alldf.append(df)
+        
+    all_df = pd.concat(alldf)    
+    all_df = pd.get_dummies(all_df, columns = categorical_columns)
 
-    train_uni = set(dest_df.columns).symmetric_difference(numeric_columns + ['Name', 'PassengerId'] + label_column)
+    train_uni = set(all_df.columns).symmetric_difference(numeric_columns + ['Name', 'PassengerId'] + label_column)
 
     cat_columns = list(train_uni)
     
     all__columns = numeric_columns + cat_columns 
-    
-     
+      
     scaler = MinMaxScaler()
-    src_df[numeric_columns] = scaler.fit_transform(src_df[numeric_columns])
-    dest_df[numeric_columns] = scaler.transform(dest_df[numeric_columns])
+    all_df[numeric_columns] = scaler.fit_transform(all_df[numeric_columns])
     
-    return src_df, dest_df, all__columns
+    return all_df, all__columns
     
-def reenigneeringRegressor(model, name, src_df, dest_df, pred = False):
+def computeRegression(name, df1, df2):
     
-    df1 = src_df.copy()
-    df2 = dest_df.copy()
+    all_df, all_columns = prepare(df1, df2)
      
-    df1, df2, all_columns = prepare(df1, df2)
-    
     if 'Survived' in all_columns:
         all_columns.remove('Survived')
 
+    all_df_in = all_df.loc[all_df['Survived'].isna() == False, ['PassengerId'] + all_columns]
+    all_df_lb = all_df.loc[all_df['Survived'].isna() == False, 'Survived']
     
-    model.fit(df1[all_columns], df1['Survived'].squeeze())
-    if pred == False:
-        dest_df[name] = model.predict_proba(df2[all_columns])[:, 0]
-    else:
-        dest_df[name] = model.predict(df2[all_columns])
+    model = LogisticRegression(max_iter=500, solver='lbfgs')
+    model.fit(all_df_in[all_columns], all_df_lb)
         
-    dest_df[name] = dest_df[name].round(4)
+    for df in [ df1, df2 ]:
+        df[all_columns] = all_df.loc[all_df['PassengerId'].isin(df['PassengerId']), all_columns]
+        df[name] = model.predict_proba(df[all_columns])[:, 0]
+        df[name] = df[name].round(4)
 
 def calCabin(rec):
     prefix = rec['CabinPrefix']
@@ -366,14 +367,10 @@ calTitle(train_df)
 binTitle(train_df, test_df)
 
 
-reenigneeringRegressor(LogisticRegression(max_iter=500, solver='lbfgs'), 
-                       "Logistic", train_df, train_df)
-reenigneeringRegressor(LogisticRegression(max_iter=500, solver='lbfgs'), 
-                       "Logistic", train_df, test_df)
+computeRegression("Logistic", train_df, test_df)
 
 
-## Try incorporate Title for filling Age and Cabin
-## Try incorporate the new Cabin value in Fourth 
+
 
 
 
