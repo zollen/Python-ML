@@ -114,6 +114,9 @@ test_df['Ticket'] = test_df['Ticket'].apply(tb.captureTicketId)
 
 
 ## study material
-## https://www.kaggle.com/ash316/eda-to-prediction-dietanic
-pd.crosstab([train_df.Sex, train_df.Survived], train_df.Pclass, margins = True).style.background_gradient(cmap = 'summer_r')
-pd.crosstab(train_df.Title, train_df.Sex).T.style.background_gradient(cmap='summer_r')
+## https://pbpython.com/pandas-crosstab.html
+sb.heatmap(pd.crosstab([train_df.Sex, train_df.Survived], [train_df.Pclass, train_df.Survived]),
+           cmap='YlGnBu', annot = True, cbar = True)
+
+plt.show()
+
