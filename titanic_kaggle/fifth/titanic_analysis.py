@@ -112,15 +112,7 @@ train_df['Cabin'], test_df['Cabin'] = tmp_train_df['Cabin'], tmp_test_df['Cabin'
 train_df['Ticket'] = train_df['Ticket'].apply(tb.captureTicketId)
 test_df['Ticket'] = test_df['Ticket'].apply(tb.captureTicketId)
 
-def testme(name, *args):
-    print(name)
-    for value in args:
-        print(value)
-    
-    
-testme('hello', 1, 2, 3)
 
-exit()
 ## study material
 ## https://www.kaggle.com/ash316/eda-to-prediction-dietanic
 pd.crosstab([train_df.Sex, train_df.Survived], train_df.Pclass, margins = True).style.background_gradient(cmap = 'summer_r')
