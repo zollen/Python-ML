@@ -265,7 +265,7 @@ def calCabin(rec):
     prefix = rec['CabinPrefix']
     room = rec['CabinRoom']
     
-    if str(prefix) != 'nan':
+    if str(prefix) != 'nan' and str(room) != 'nan':
         return int(prefix) + int(room)
     
     return np.nan    
