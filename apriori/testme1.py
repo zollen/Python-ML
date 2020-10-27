@@ -131,3 +131,49 @@ for size in range(2, 5):
 
 
 print("Final Answer (1,2,3) and (1,2,5)")    
+
+'''
+Generate strong assoication rules from itemsets (where strong association fules satisfy
+both mimimum support and minimum confidence)
+
+1. For each frequent itemset l, generate all nonempty subsets of l
+2. For every nonemptpy subset s of l, output the rule "s => (l - s)" if:
+    support_count(l) / support_count(s) >= min_conf, where min_conf is the minimum
+    confidence threshold.
+    
+    confidence(A => B) = P(B|A) = support_count(A and B) / support_count(A)
+    
+'''
+items_set['1,2,3'] = 2
+items_set['1,2,5'] = 2
+items_set['1'] = 6
+items_set['2'] = 7
+items_set['3'] = 6
+items_set['5'] = 2
+items_set['1,2'] = 4
+items_set['1,3'] = 4
+items_set['2,3'] = 2
+items_set['1,5'] = 2
+items_set['2,5'] = 2
+
+print("============ (1,2,3) ================")
+print("Confidence(1 => 2 and 3): %0.2f"  %  (items_set['2,3'] / items_set['1']))
+print("Confidence(2 => 1 and 3): %0.2f" % (items_set['1,3'] / items_set['2']))
+print("Confidence(3 => 1 and 2): %0.2f" % (items_set['1,2'] / items_set['3']))
+print("Confidence(1 and 2 => 3): %0.2f" % (items_set['3'] / items_set['1,2']))
+print("Confidence(2 and 3 => 1): %0.2f" % (items_set['1'] / items_set['2,3']))
+print("Confidence(1 and 3 => 2): %0.2f" % (items_set['2'] / items_set['1,3']))
+
+print("Lets say the minimum confidence threshold is 0.6")
+print("Strong Assoication Rules: Conf(3 => 1 and 2), Conf(1 and 2 => 3), Conf(2 and 3 => 1) and Conf(1 and 3 => 2)")
+
+print("============ (1,2,5) ================")
+print("Confidence(1 => 2 and 5): %0.2f" % (items_set['2,5'] / items_set['1']))
+print("Confidence(2 => 1 and 5): %0.2f" % (items_set['1,5'] / items_set['2']))
+print("Confidence(5 => 1 and 2): %0.2f" % (items_set['1,2'] / items_set['5']))
+print("Confidence(1 and 2 => 5): %0.2f" % (items_set['5'] / items_set['1,2']))
+print("Confidence(1 and 5 => 2): %0.2f" % (items_set['2'] / items_set['1,5']))
+print("Confidence(2 and 5 => 1): %0.2f" % (items_set['1'] / items_set['2,5']))
+
+print("Lets say the minimum confidence threshold is 0.6")
+print("Strong Assoication Rules: Conf(5 => 1 and 2), Conf(1 and 5 => 2) and Conf(2 and 5 => 1)")
