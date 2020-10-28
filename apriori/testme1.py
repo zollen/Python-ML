@@ -31,6 +31,7 @@ transactions = [
         ['1', '2', '3', '5'],
         ['1', '2', '3']
     ]
+TOTAL_TRANSACTIONS = 9
 
 pp = pprint.PrettyPrinter(indent=3, width = 10) 
 
@@ -144,36 +145,79 @@ both mimimum support and minimum confidence)
     confidence(A => B) = P(B|A) = support_count(A and B) / support_count(A)
     
 '''
-items_set['1,2,3'] = 2
-items_set['1,2,5'] = 2
-items_set['1'] = 6
-items_set['2'] = 7
-items_set['3'] = 6
-items_set['5'] = 2
-items_set['1,2'] = 4
-items_set['1,3'] = 4
-items_set['2,3'] = 2
-items_set['1,5'] = 2
-items_set['2,5'] = 2
+items_set['1,2,3'] = 2 / TOTAL_TRANSACTIONS
+items_set['1,2,5'] = 2 / TOTAL_TRANSACTIONS
+items_set['1'] = 6 / TOTAL_TRANSACTIONS
+items_set['2'] = 7 / TOTAL_TRANSACTIONS
+items_set['3'] = 6 / TOTAL_TRANSACTIONS
+items_set['5'] = 2 / TOTAL_TRANSACTIONS
+items_set['1,2'] = 4 / TOTAL_TRANSACTIONS
+items_set['1,3'] = 4 / TOTAL_TRANSACTIONS
+items_set['2,3'] = 2 / TOTAL_TRANSACTIONS
+items_set['1,5'] = 2 / TOTAL_TRANSACTIONS
+items_set['2,5'] = 2 / TOTAL_TRANSACTIONS
+
+conf, lift, conv = {}, {}, {}
+
+conf['1=>2,3'] = items_set['1,2,3'] / items_set['1']
+conf['2=>1,3'] = items_set['1,2,3'] / items_set['2']
+conf['3=>1,2'] = items_set['1,2,3'] / items_set['3']
+conf['1,2=>3'] = items_set['1,2,3'] / items_set['1,2']
+conf['2,3=>1'] = items_set['1,2,3'] / items_set['2,3']
+conf['1,3=>2'] = items_set['1,2,3'] / items_set['1,3']
+conf['1=>2,5'] = items_set['1,2,5'] / items_set['1']
+conf['2=>1,5'] = items_set['1,2,5'] / items_set['2']
+conf['5=>1,2'] = items_set['1,2,5'] / items_set['5']
+conf['1,2=>5'] = items_set['1,2,5'] / items_set['1,2']
+conf['2,5=>1'] = items_set['1,2,5'] / items_set['2,5']
+conf['1,5=>2'] = items_set['1,2,5'] / items_set['1,5']
+
+lift['1=>2,3'] = items_set['1,2,3'] / (items_set['1'] * items_set['2,3'])
+lift['2=>1,3'] = items_set['1,2,3'] / (items_set['2'] * items_set['1,3'])
+lift['3=>1,2'] = items_set['1,2,3'] / (items_set['3'] * items_set['1,2'])
+lift['1,2=>3'] = items_set['1,2,3'] / (items_set['1,2'] * items_set['3'])
+lift['2,3=>1'] = items_set['1,2,3'] / (items_set['2,3'] * items_set['1'])
+lift['1,3=>2'] = items_set['1,2,3'] / (items_set['1,3'] * items_set['2'])
+lift['1=>2,5'] = items_set['1,2,5'] / (items_set['1'] * items_set['2,5'])
+lift['2=>1,5'] = items_set['1,2,5'] / (items_set['2'] * items_set['1,5'])
+lift['5=>1,2'] = items_set['1,2,5'] / (items_set['5'] * items_set['1,2'])
+lift['1,2=>5'] = items_set['1,2,5'] / (items_set['1,2'] * items_set['5'])
+lift['2,5=>1'] = items_set['1,2,5'] / (items_set['2,5'] * items_set['1'])
+lift['1,5=>2'] = items_set['1,2,5'] / (items_set['1,5'] * items_set['2'])
+
+conv['1=>2,3'] = 0 if 1 - conf['1=>2,3'] == 0 else (1 - items_set['2,3']) / (1 - conf['1=>2,3'])
+conv['2=>1,3'] = 0 if 1 - conf['2=>1,3'] == 0 else (1 - items_set['1,3']) / (1 - conf['2=>1,3'])
+conv['3=>1,2'] = 0 if 1 - conf['3=>1,2'] == 0 else (1 - items_set['1,2']) / (1 - conf['3=>1,2'])
+conv['1,2=>3'] = 0 if 1 - conf['1,2=>3'] == 0 else (1 - items_set['3']) / (1 - conf['1,2=>3'])
+conv['2,3=>1'] = 0 if 1 - conf['2,3=>1'] == 0 else (1 - items_set['1']) / (1 - conf['2,3=>1'])
+conv['1,3=>2'] = 0 if 1 - conf['1,3=>2'] == 0 else (1 - items_set['2']) / (1 - conf['1,3=>2'])
+conv['1=>2,5'] = 0 if 1 - conf['1=>2,5'] == 0 else (1 - items_set['2,5']) / (1 - conf['1=>2,5'])
+conv['2=>1,5'] = 0 if 1 - conf['2=>1,5'] == 0 else (1 - items_set['1,5']) / (1 - conf['2=>1,5'])
+conv['5=>1,2'] = 0 if 1 - conf['5=>1,2'] == 0 else (1 - items_set['1,2']) / (1 - conf['5=>1,2'])
+conv['1,2=>5'] = 0 if 1 - conf['1,2=>5'] == 0 else (1 - items_set['5']) / (1 - conf['1,2=>5'])
+conv['2,5=>1'] = 0 if 1 - conf['2,5=>1'] == 0 else (1 - items_set['1']) / (1 - conf['2,5=>1'])
+conv['1,5=>2'] = 0 if 1 - conf['1,5=>2'] == 0 else (1 - items_set['2']) / (1 - conf['1,5=>2'])
 
 print("============ (1,2,3) ================")
-print("1 => 2 and 3: Confidence: %0.2f, Lift: %0.2f"  %  (items_set['1,2,3'] / items_set['1'], items_set['1,2,3'] / (items_set['1'] * items_set['2,3'])))
-print("2 => 1 and 3: Confidence: %0.2f, Lift: %0.2f" % (items_set['1,2,3'] / items_set['2'], items_set['1,2,3'] / (items_set['2'] * items_set['1,3'])))
-print("3 => 1 and 2: Confidence: %0.2f, Lift: %0.2f" % (items_set['1,2,3'] / items_set['3'], items_set['1,2,3'] / (items_set['3'] * items_set['1,2'])))
-print("1 and 2 => 3: Confidence: %0.2f, Lift: %0.2f" % (items_set['1,2,3'] / items_set['1,2'], items_set['1,2,3'] / (items_set['1,2'] * items_set['3'])))
-print("2 and 3 => 1: Confidence: %0.2f, Lift: %0.2f" % (items_set['1,2,3'] / items_set['2,3'], items_set['1,2,3'] / (items_set['2,3'] * items_set['1'])))
-print("1 and 3 => 2: Confidence: %0.2f, Lift: %0.2f" % (items_set['1,2,3'] / items_set['1,3'], items_set['1,2,3'] / (items_set['1,3'] * items_set['2'])))
+print("        Confidence    Lift    Conviction")
+print("1 => 2 and 3: %0.2f    %0.2f    %0.2f"  % (conf['1=>2,3'], lift['1=>2,3'], conv['1=>2,3']))
+print("2 => 1 and 3: %0.2f    %0.2f    %0.2f" % (conf['2=>1,3'], lift['2=>1,3'], conv['2=>1,3']))
+print("3 => 1 and 2: %0.2f    %0.2f    %0.2f" % (conf['3=>1,2'], lift['3=>1,2'], conv['3=>1,2']))
+print("1 and 2 => 3: %0.2f    %0.2f    %0.2f" % (conf['1,2=>3'], lift['1,2=>3'], conv['1,2=>3']))
+print("2 and 3 => 1: %0.2f    %0.2f    %0.2f" % (conf['2,3=>1'], lift['2,3=>1'], conv['2,3=>1']))
+print("1 and 3 => 2: %0.2f    %0.2f    %0.2f" % (conf['1,3=>2'], lift['1,3=>2'], conv['1,3=>2']))
 
 print("Lets say the minimum confidence threshold is 0.6")
 print("Strong Assoication Rules: Conf(2 and 3 => 1)")
 
 print("============ (1,2,5) ================")
-print("1 => 2 and 5: Confidence: %0.2f, Lift: %0.2f" % (items_set['1,2,5'] / items_set['1'], items_set['1,2,3'] / (items_set['1'] * items_set['2,5'])))
-print("2 => 1 and 5: Confidence: %0.2f, Lift: %0.2f" % (items_set['1,2,5'] / items_set['2'], items_set['1,2,3'] / (items_set['2'] * items_set['1,5'])))
-print("5 => 1 and 2: Confidence: %0.2f, Lift: %0.2f" % (items_set['1,2,5'] / items_set['5'], items_set['1,2,3'] / (items_set['5'] * items_set['1,2'])))
-print("1 and 2 => 5: Confidence: %0.2f, Lift: %0.2f" % (items_set['1,2,5'] / items_set['1,2'], items_set['1,2,3'] / (items_set['1,2'] * items_set['5'])))
-print("1 and 5 => 2: Confidence: %0.2f, Lift: %0.2f" % (items_set['1,2,5'] / items_set['1,5'], items_set['1,2,3'] / (items_set['1,5'] * items_set['2'])))
-print("2 and 5 => 1: Confidence: %0.2f, Lift: %0.2f" % (items_set['1,2,5'] / items_set['2,5'], items_set['1,2,3'] / (items_set['2,5'] * items_set['1'])))
+print("        Confidence    Lift    Conviction")
+print("1 => 2 and 5: %0.2f,   %0.2f    %02.f" % (conf['1=>2,5'], lift['1=>2,5'], conv['1=>2,5']))
+print("2 => 1 and 5: %0.2f,   %0.2f    %0.2f" % (conf['2=>1,5'], lift['2=>1,5'], conv['2=>1,5']))
+print("5 => 1 and 2: %0.2f,   %0.2f    %0.2f" % (conf['5=>1,2'], lift['5=>1,2'], conv['5=>1,2']))
+print("1 and 2 => 5: %0.2f,   %0.2f    %0.2f" % (conf['1,2=>5'], lift['1,2=>5'], conv['1,2=>5']))
+print("1 and 5 => 2: %0.2f,   %0.2f    %0.2f" % (conf['1,5=>2'], lift['1,5=>2'], conv['1,5=>2']))
+print("2 and 5 => 1: %0.2f,   %0.2f    %0.2f" % (conf['2,5=>1'], lift['2,5=>1'], conv['2,5=>1']))
 
 print("Lets say the minimum confidence threshold is 0.6")
 print("Strong Assoication Rules: Conf(1 and 2 => 5), Conf(1 and 5 => 2) and Conf(2 and 5 => 1)")
