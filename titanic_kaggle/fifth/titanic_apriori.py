@@ -9,12 +9,13 @@ from pathlib import Path
 import pandas as pd
 from mlxtend.frequent_patterns import apriori
 import titanic_kaggle.lib.titanic_lib as tb
-
+import warnings
 
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 pd.set_option('max_colwidth', 200)
 pd.set_option('display.width', 1000)
+warnings.filterwarnings('ignore')
 
 def fillAge(src_df, dest_df):
     
@@ -95,8 +96,9 @@ binAge(test_df)
 binFare(train_df)
 binFare(test_df)
 
-train_df.drop(columns = ['PassengerId', 'Ticket', 'Name', 'Cabin' ], inplace = True)
+train_df.drop(columns = ['PassengerId', 'Ticket', 'Name', 'Cabin'], inplace = True)
 
+print(train_df.columns)
 
 
 for name in train_df.columns:
@@ -105,8 +107,6 @@ for name in train_df.columns:
     
     train_df.drop(columns = [name], inplace = True)
 
-print(train_df.columns)
-
 freq_df = apriori(train_df, min_support=0.20, use_colnames=True)
 freq_df['length'] = freq_df['itemsets'].apply(lambda x: len(x))
-print(freq_df[freq_df['length'] == 5])
+print(freq_df[freq_df['length'] >= 5])
