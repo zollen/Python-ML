@@ -100,13 +100,15 @@ train_df.drop(columns = ['PassengerId', 'Ticket', 'Name', 'Cabin'], inplace = Tr
 
 print(train_df.columns)
 
+check_df = train_df.copy()
 
-for name in train_df.columns:
-    for val in train_df[name].unique():
-        train_df[name + "_" + str(val)] = train_df[name].apply(lambda x : True if x == val else False)
+
+for name in check_df.columns:
+    for val in check_df[name].unique():
+        check_df[name + "_" + str(val)] = check_df[name].apply(lambda x : True if x == val else False)
     
-    train_df.drop(columns = [name], inplace = True)
+    check_df.drop(columns = [name], inplace = True)
 
-freq_df = apriori(train_df, min_support=0.20, use_colnames=True)
+freq_df = apriori(check_df, min_support=0.20, use_colnames=True)
 freq_df['length'] = freq_df['itemsets'].apply(lambda x: len(x))
 print(freq_df[freq_df['length'] >= 5])
