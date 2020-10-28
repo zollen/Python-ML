@@ -132,6 +132,7 @@ for size in range(2, 5):
 
 
 print("Final Answer (1,2,3) and (1,2,5)")    
+print()
 
 '''
 Generate strong assoication rules from itemsets (where strong association fules satisfy
@@ -200,7 +201,7 @@ conv['1,5=>2'] = 0 if 1 - conf['1,5=>2'] == 0 else (1 - items_set['2']) / (1 - c
 
 print("============ (1,2,3) ================")
 print("        Confidence    Lift    Conviction")
-print("1 => 2 and 3: %0.2f    %0.2f    %0.2f"  % (conf['1=>2,3'], lift['1=>2,3'], conv['1=>2,3']))
+print("1 => 2 and 3: %0.2f    %0.2f    %0.2f" % (conf['1=>2,3'], lift['1=>2,3'], conv['1=>2,3']))
 print("2 => 1 and 3: %0.2f    %0.2f    %0.2f" % (conf['2=>1,3'], lift['2=>1,3'], conv['2=>1,3']))
 print("3 => 1 and 2: %0.2f    %0.2f    %0.2f" % (conf['3=>1,2'], lift['3=>1,2'], conv['3=>1,2']))
 print("1 and 2 => 3: %0.2f    %0.2f    %0.2f" % (conf['1,2=>3'], lift['1,2=>3'], conv['1,2=>3']))
@@ -210,6 +211,7 @@ print("1 and 3 => 2: %0.2f    %0.2f    %0.2f" % (conf['1,3=>2'], lift['1,3=>2'],
 print("Lets say the minimum confidence threshold is 0.6")
 print("Strong Assoication Rules: Conf(2 and 3 => 1)")
 
+print()
 print("============ (1,2,5) ================")
 print("        Confidence    Lift    Conviction")
 print("1 => 2 and 5: %0.2f,   %0.2f    %02.f" % (conf['1=>2,5'], lift['1=>2,5'], conv['1=>2,5']))
