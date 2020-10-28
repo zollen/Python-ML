@@ -160,6 +160,10 @@ items_set['2,5'] = 2 / TOTAL_TRANSACTIONS
 
 conf, lift, conv = {}, {}, {}
 
+'''
+ Confidence: conf(X -> Y) = supp(X and Y) / supp(Y)
+             P(X|Y)= P(X and Y) / P(Y)
+'''
 conf['1=>2,3'] = items_set['1,2,3'] / items_set['1']
 conf['2=>1,3'] = items_set['1,2,3'] / items_set['2']
 conf['3=>1,2'] = items_set['1,2,3'] / items_set['3']
@@ -173,6 +177,11 @@ conf['1,2=>5'] = items_set['1,2,5'] / items_set['1,2']
 conf['2,5=>1'] = items_set['1,2,5'] / items_set['2,5']
 conf['1,5=>2'] = items_set['1,2,5'] / items_set['1,5']
 
+'''
+ Lift: lift(X -> Y) = supp(X and Y) / (supp(X) * supp(Y))
+ Life > 1 means the itemset Y is likely to be bought with itemset X
+ Life < 1 means the itemset Y is unlikely to be bought if the itemset X is bought
+'''
 lift['1=>2,3'] = items_set['1,2,3'] / (items_set['1'] * items_set['2,3'])
 lift['2=>1,3'] = items_set['1,2,3'] / (items_set['2'] * items_set['1,3'])
 lift['3=>1,2'] = items_set['1,2,3'] / (items_set['3'] * items_set['1,2'])
@@ -186,6 +195,11 @@ lift['1,2=>5'] = items_set['1,2,5'] / (items_set['1,2'] * items_set['5'])
 lift['2,5=>1'] = items_set['1,2,5'] / (items_set['2,5'] * items_set['1'])
 lift['1,5=>2'] = items_set['1,2,5'] / (items_set['1,5'] * items_set['2'])
 
+'''
+ Conviction: conv(X -> Y) = (1 - supp(Y)) / (1 - conf(X -> Y)
+ The conviction value of 1.32 means that the rule would be incorrect 32% more often if the
+ assoication between X and Y was an accidental chance
+'''
 conv['1=>2,3'] = 0 if 1 - conf['1=>2,3'] == 0 else (1 - items_set['2,3']) / (1 - conf['1=>2,3'])
 conv['2=>1,3'] = 0 if 1 - conf['2=>1,3'] == 0 else (1 - items_set['1,3']) / (1 - conf['2=>1,3'])
 conv['3=>1,2'] = 0 if 1 - conf['3=>1,2'] == 0 else (1 - items_set['1,2']) / (1 - conf['3=>1,2'])
