@@ -100,15 +100,28 @@ train_df.drop(columns = ['PassengerId', 'Title', 'Ticket', 'Name', 'Cabin'], inp
 
 print(train_df.columns)
 
+
 check_df = train_df.copy()
 
-
 for name in check_df.columns:
+    if name == 'Survived':
+        continue
     for val in check_df[name].unique():
         check_df[name + "_" + str(val)] = check_df[name].apply(lambda x : True if x == val else False)
     
     check_df.drop(columns = [name], inplace = True)
+    
+alive_df = check_df[check_df['Survived'] == 1]
+dead_df = check_df[check_df['Survived'] == 0]
 
-freq_df = apriori(check_df, min_support=0.20, use_colnames=True)
+alive_df.drop(columns = ['Survived'], inplace = True)
+dead_df.drop(columns = ['Survived'], inplace = True)
+
+print("=========================================  [ALIVES] =========================================")
+freq_df = apriori(alive_df, min_support=0.10, use_colnames=True)
 freq_df['length'] = freq_df['itemsets'].apply(lambda x: len(x))
-print(freq_df[freq_df['length'] >= 5])
+print(freq_df[freq_df['length'] >= 4])
+print("========================================  [DEADS] ===========================================")
+freq_df = apriori(dead_df, min_support=0.10, use_colnames=True)
+freq_df['length'] = freq_df['itemsets'].apply(lambda x: len(x))
+print(freq_df[freq_df['length'] >= 6])
