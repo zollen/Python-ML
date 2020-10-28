@@ -96,7 +96,7 @@ binAge(test_df)
 binFare(train_df)
 binFare(test_df)
 
-train_df.drop(columns = ['PassengerId', 'Ticket', 'Name', 'Cabin'], inplace = True)
+train_df.drop(columns = ['PassengerId', 'Title', 'Ticket', 'Name', 'Cabin'], inplace = True)
 
 print(train_df.columns)
 
