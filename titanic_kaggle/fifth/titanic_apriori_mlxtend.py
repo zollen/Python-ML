@@ -12,6 +12,7 @@ from mlxtend.frequent_patterns import association_rules
 import titanic_kaggle.lib.titanic_lib as tb
 import warnings
 
+
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 pd.set_option('max_colwidth', 200)
@@ -73,7 +74,16 @@ def binFare(df):
     df.loc[(df['Fare'] < 55.9) & (df['Fare'] >= 33.308), 'Fare'] = 45
     df.loc[(df['Fare'] < 83.158) & (df['Fare'] >= 55.9), 'Fare'] = 75
     df.loc[(df['Fare'] < 1000) & (df['Fare'] >= 83.158), 'Fare'] = 100
-    
+
+def calLength(rec):
+    return len(rec['antecedents']) + len(rec['consequents'])   
+
+def checkme(bag):
+    if 'Survived_0' in bag or 'Survived_1' in bag:
+        return True
+    else:
+        return False
+     
 PROJECT_DIR=str(Path(__file__).parent.parent)  
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
@@ -99,35 +109,21 @@ binFare(test_df)
 
 train_df.drop(columns = ['PassengerId', 'Title', 'Ticket', 'Name', 'Cabin'], inplace = True)
 
-print(train_df.columns)
-
-
 check_df = train_df.copy()
 
 for name in check_df.columns:
-    if name == 'Survived':
-        continue
+
     for val in check_df[name].unique():
         check_df[name + "_" + str(val)] = check_df[name].apply(lambda x : True if x == val else False)
     
     check_df.drop(columns = [name], inplace = True)
     
-alive_df = check_df[check_df['Survived'] == 1]
-dead_df = check_df[check_df['Survived'] == 0]
 
-alive_df.drop(columns = ['Survived'], inplace = True)
-dead_df.drop(columns = ['Survived'], inplace = True)
+columns = [ 'antecedents', 'consequents', 'length', 'confidence', 'lift', 'conviction' ]
 
-columns = [ 'antecedents', 'consequents', 'confidence', 'lift', 'conviction']
-
-print("=========================================  [ALIVES] =========================================")
-freq_df = apriori(alive_df, min_support=0.05, use_colnames=True)
+freq_df = apriori(check_df, min_support=0.10, use_colnames=True)
 freq_df = association_rules(freq_df, metric="confidence", min_threshold=0.7)
-freq_df['length'] = freq_df['antecedents'].apply(lambda x: len(x))
-print(freq_df.loc[freq_df['length'] >= 4, columns])
-print()
-print("========================================  [DEADS] ===========================================")
-freq_df = apriori(dead_df, min_support=0.10, use_colnames=True)
-freq_df = association_rules(freq_df, metric="confidence", min_threshold=0.7)
-freq_df['length'] = freq_df['antecedents'].apply(lambda x: len(x))
-print(freq_df.loc[freq_df['length'] >= 5, columns])
+freq_df['length'] = freq_df.apply(calLength, axis = 1)    
+freq_df['result'] = freq_df['consequents'].apply(checkme)
+print(freq_df.loc[(freq_df['result'] == True) & (freq_df['length'] >= 6), columns])
+
