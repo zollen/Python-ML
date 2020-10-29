@@ -79,13 +79,13 @@ def calLength(rec):
     return len(rec['antecedents']) + len(rec['consequents'])   
 
 def check0(bag):
-    if 'Survived_0' in bag:
+    if 'Survived_0' in bag and len(bag) == 1:
         return True
     else:
         return False
     
 def check1(bag):
-    if 'Survived_1' in bag:
+    if 'Survived_1' in bag and len(bag) == 1:
         return True
     else:
         return False
