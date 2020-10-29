@@ -78,8 +78,14 @@ def binFare(df):
 def calLength(rec):
     return len(rec['antecedents']) + len(rec['consequents'])   
 
-def checkme(bag):
-    if 'Survived_0' in bag or 'Survived_1' in bag:
+def check0(bag):
+    if 'Survived_0' in bag:
+        return True
+    else:
+        return False
+    
+def check1(bag):
+    if 'Survived_1' in bag:
         return True
     else:
         return False
@@ -124,6 +130,9 @@ columns = [ 'antecedents', 'consequents', 'length', 'confidence', 'lift', 'convi
 freq_df = apriori(check_df, min_support=0.10, use_colnames=True)
 freq_df = association_rules(freq_df, metric="confidence", min_threshold=0.7)
 freq_df['length'] = freq_df.apply(calLength, axis = 1)    
-freq_df['result'] = freq_df['consequents'].apply(checkme)
-print(freq_df.loc[(freq_df['result'] == True) & (freq_df['length'] >= 6), columns])
-
+freq_df['Survived_0'] = freq_df['consequents'].apply(check0)
+freq_df['Survived_1'] = freq_df['consequents'].apply(check1)
+print("== DEAD =============================================")
+print(freq_df.loc[(freq_df['Survived_0'] == True) & (freq_df['length'] >= 6), columns])
+print("== ALIVE ============================================")
+print(freq_df.loc[(freq_df['Survived_1'] == True) & (freq_df['length'] >= 6), columns])
