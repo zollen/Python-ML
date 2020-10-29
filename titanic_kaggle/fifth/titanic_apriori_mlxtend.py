@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import pandas as pd
 from mlxtend.frequent_patterns import apriori
+from mlxtend.frequent_patterns import association_rules
 import titanic_kaggle.lib.titanic_lib as tb
 import warnings
 
@@ -117,11 +118,16 @@ dead_df = check_df[check_df['Survived'] == 0]
 alive_df.drop(columns = ['Survived'], inplace = True)
 dead_df.drop(columns = ['Survived'], inplace = True)
 
+columns = [ 'antecedents', 'consequents', 'confidence', 'lift', 'conviction']
+
 print("=========================================  [ALIVES] =========================================")
-freq_df = apriori(alive_df, min_support=0.10, use_colnames=True)
-freq_df['length'] = freq_df['itemsets'].apply(lambda x: len(x))
-print(freq_df[freq_df['length'] >= 4])
+freq_df = apriori(alive_df, min_support=0.05, use_colnames=True)
+freq_df = association_rules(freq_df, metric="confidence", min_threshold=0.7)
+freq_df['length'] = freq_df['antecedents'].apply(lambda x: len(x))
+print(freq_df.loc[freq_df['length'] >= 4, columns])
+print()
 print("========================================  [DEADS] ===========================================")
 freq_df = apriori(dead_df, min_support=0.10, use_colnames=True)
-freq_df['length'] = freq_df['itemsets'].apply(lambda x: len(x))
-print(freq_df[freq_df['length'] >= 6])
+freq_df = association_rules(freq_df, metric="confidence", min_threshold=0.7)
+freq_df['length'] = freq_df['antecedents'].apply(lambda x: len(x))
+print(freq_df.loc[freq_df['length'] >= 5, columns])
