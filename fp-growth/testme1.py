@@ -112,6 +112,7 @@ print(root)
 
 print("Third Step: Building a conditional database")
 print("Third Step: Starting from lowest to highest support count element => L5, L4, L3, L1")
+print("L2 is the last and also the highest support count element. we can ignore it")
 print("Third Step: Conditional Pattern Base")
 conditional_pattern_base = {
     "L5": [],
