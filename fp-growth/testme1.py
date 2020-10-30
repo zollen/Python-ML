@@ -3,10 +3,9 @@ Created on Oct. 29, 2020
 
 @author: zollen
 @description: Frequent-Pattern growth (FP-growth)
-              Association rules mining (apriori alternative )
+              Association rules mining (apriori alternative. FP-grow use less memory )
 '''
 import pprint
-
 
 class Node:
     def __init__(self, name):
@@ -43,15 +42,15 @@ class Node:
         return info + "[" + self.name + "] ==> " + str(self.count) + "\n"
     
     def traverse(self, name, allpaths):
-        self._traverse(name, allpaths, [])
+        self._traverse(name, allpaths, {})
         
     def _traverse(self, name, allpaths, path):
         
-        if self.name != 'Null':
-            path.append(self.name)
+        if self.name != 'Null' and self.name != name:
+            path[self.name] = self
          
-        if name == self.name and path not in allpaths:
-            allpaths.append(path)
+        if name == self.name and len(path) > 0 and path not in allpaths:
+            allpaths.append([ path, self.count ] )
             return
                 
         for child in self.children:
@@ -69,6 +68,8 @@ class Node:
     def __str__(self):
         return self.describe(0)
         
+pp = pprint.PrettyPrinter(indent=3) 
+
         
 transactions = [
     ["L1", "L2", "L5"],
@@ -82,6 +83,8 @@ transactions = [
     ["L1", "L2", "L3"]
     ]    
 
+
+print("First Step: sorting the elememts based on the support counts")
 sort_order = {}
 
 for trans in transactions:
@@ -89,21 +92,76 @@ for trans in transactions:
         if tt not in sort_order:
             sort_order[tt] = 0
         sort_order[tt] += 1
-    
-       
+        
+print("Sort Order: ", sort_order)
+
 for trans in transactions:
     trans.sort(key = lambda x : sort_order[x], reverse = True)
+    
+pp.pprint(transactions)
 
 
+print("Second Step: Building a FP-Tree")
 root = Node('Null')
 
 for trans in transactions:
-    root.add(trans)
-
+    root.add(trans.copy())
 
 print(root)
-print("Starting from lowest to highest support count element => L5, L4, L3, L1")
 
-kk = []
-root.traverse('L5', kk)
-print(kk)
+
+print("Third Step: Building a conditional database")
+print("Third Step: Starting from lowest to highest support count element => L5, L4, L3, L1")
+print("Third Step: Conditional Pattern Base")
+conditional_pattern_base = {
+    "L5": [],
+    "L4": [],
+    "L3": [],
+    "L1": []
+    }
+
+
+for key in conditional_pattern_base:
+    _first1 = True
+    root.traverse(key, conditional_pattern_base[key])
+    out = "{"
+    for items, count in conditional_pattern_base[key]:
+        out += '{' if _first1 == True else ", {"
+        _first1 = False  
+        
+        _first2 = True
+        for id in items:
+            out += "" if _first2 == True else ","
+            out += items[id].name
+            _first2 = False
+            
+        out += ": " + str(count) + "}"
+    out += "}"  
+    print(key, " ==> ", out)
+
+print("Fourth Step: Building Conditional FP-Tree")
+THRESHOLD = 2
+conditional_fp_tree = {}
+
+for key, paths in conditional_pattern_base.items():
+    tmp = {}
+    for path in paths:
+        count =  path[1]
+        for pth in path[0]:
+            if pth not in tmp:
+                tmp[pth] = 0
+            tmp[pth] += count
+            
+    deleted = []
+    for id in tmp:
+        if tmp[id] < THRESHOLD:
+            deleted.append(id)
+            
+    for id in deleted:
+        del tmp[id]
+ 
+    conditional_fp_tree[key] = tmp
+
+pp.pprint(conditional_fp_tree)
+
+print("Fifth Step: Building Frequent Patterns Generated")
