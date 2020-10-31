@@ -6,6 +6,8 @@ Created on Oct. 29, 2020
               Association rules mining (apriori alternative. FP-grow use less memory )
 '''
 import pprint
+import random
+
 
 class Node:
     def __init__(self, name):
@@ -109,7 +111,6 @@ for trans in transactions:
 
 print(root)
 
-
 print("Third Step: Building a conditional database")
 print("Third Step: Starting from lowest to highest support count element => L5, L4, L3, L1")
 print("L2 is the last and also the highest support count element. we can ignore it")
@@ -140,29 +141,43 @@ for key in conditional_pattern_base:
     out += "}"  
     print(key, " ==> ", out)
 
+
 print("Fourth Step: Building Conditional FP-Tree")
 THRESHOLD = 2
-conditional_fp_tree = {}
+conditional_fp_tree = {
+    "L5": {},
+    "L4": {},
+    "L3": {},
+    "L1": {}
+    }
 
-for key, paths in conditional_pattern_base.items():
+
+objnames = {}
+
+
+for key in conditional_pattern_base:
     tmp = {}
-    for path in paths:
-        count =  path[1]
-        for pth in path[0]:
-            if pth not in tmp:
-                tmp[pth] = 0
-            tmp[pth] += count
-            
-    deleted = []
+    names = []
+    for items, count in conditional_pattern_base[key]:
+        for itm in items:
+            obj = items[itm]
+            objnames[obj] = items[itm].name
+            if obj not in tmp:
+                tmp[obj] = 0 
+                
+            tmp[obj] += count
+ 
+    out = '{'        
     for id in tmp:
         if tmp[id] < THRESHOLD:
-            deleted.append(id)
-            
-    for id in deleted:
-        del tmp[id]
- 
-    conditional_fp_tree[key] = tmp
+            continue
+        
+        if len(out) > 1:
+            out += ", "
+        out += objnames[id] + ": " + str(tmp[id])
+    out +="}"
 
-pp.pprint(conditional_fp_tree)
+    print(key, " ==> ", out)
+
 
 print("Fifth Step: Building Frequent Patterns Generated")
