@@ -4,6 +4,7 @@ Created on Oct. 29, 2020
 @author: zollen
 @description: Frequent-Pattern growth (FP-growth)
               Association rules mining (apriori alternative. FP-grow use less memory )
+@url https://www.youtube.com/watch?v=VB8KWm8MXss&ab_channel=CSEGURUS              
 '''
 import pprint
 import random
