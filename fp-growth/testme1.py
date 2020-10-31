@@ -174,7 +174,7 @@ for key in conditional_pattern_base:
         
 out = ''
 for key in conditional_fp_tree:  
-    out += key + ": {"
+    out += key + "  ==> {"
     _first = True
     for obj in conditional_fp_tree[key]:
         if _first == False:
