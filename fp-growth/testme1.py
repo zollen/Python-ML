@@ -166,18 +166,24 @@ for key in conditional_pattern_base:
                 tmp[obj] = 0 
                 
             tmp[obj] += count
- 
-    out = '{'        
-    for id in tmp:
-        if tmp[id] < THRESHOLD:
+         
+    for obj in tmp:
+        if tmp[obj] < THRESHOLD:
             continue
+        conditional_fp_tree[key][obj] = tmp[obj]
         
-        if len(out) > 1:
+out = ''
+for key in conditional_fp_tree:  
+    out += key + ": {"
+    _first = True
+    for obj in conditional_fp_tree[key]:
+        if _first == False:
             out += ", "
-        out += objnames[id] + ": " + str(tmp[id])
-    out +="}"
-
-    print(key, " ==> ", out)
+        _first = False
+        out += objnames[obj] + ": " + str(conditional_fp_tree[key][obj])
+    out += "}\n" 
+print(out)
+    
 
 
 print("Fifth Step: Building Frequent Patterns Generated")
