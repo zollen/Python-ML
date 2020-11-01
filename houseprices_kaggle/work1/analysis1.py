@@ -98,7 +98,7 @@ if False:
 
     fig.tight_layout()
 
-if True:
+if False:
     log_num = np.log1p(num_train)
     # compare skewnesses original with after of logarithm
     skewness = pd.concat([num_train.apply(lambda x: skew(x.dropna())),
@@ -108,8 +108,16 @@ if True:
     ax = skewness.plot.barh(figsize=(15,12), title='Comparison of skewness of original and logarithmized', width=0.8)
     ax.set_xlabel('skewness');
 
+if True:
+    def spearman(frame, features):
+        spr = pd.DataFrame()
+        spr['feature'] = features
+        spr['spearman'] = [frame[f].corr(frame['SalePrice'], 'spearman') for f in features]
+        spr = spr.sort_values('spearman', ascending = False)
+        plt.figure(figsize=(10, 0.25*len(features)))
+        sb.barplot(data=spr, y='feature', x='spearman', orient='h')
 
 
-
+    spearman(num_train, numeric_columns)
 
 plt.show()
