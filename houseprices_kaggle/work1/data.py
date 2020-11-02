@@ -9,10 +9,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pprint
+from sklearn.preprocessing import MinMaxScaler
 from lightgbm import LGBMRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.metrics import mean_squared_error
 import warnings
+
 
 
 warnings.filterwarnings('ignore')
@@ -57,12 +59,46 @@ imputer.fit(train_df[all_columns])
 train_df[all_columns] = imputer.transform(train_df[all_columns])
 test_df[all_columns] = imputer.transform(test_df[all_columns])
 
+for name in  categorical_columns:
+    train_df[name] = train_df[name].round(0).astype("int64")
+    test_df[name] = test_df[name].round(0).astype("int64")
+    
+
+
+for name in ['MiscVal', 'PoolArea', 'LotArea', '3SsnPorch', 'LowQualFinSF',
+             'KitchenAbvGr', 'BsmtFinSF2', 'ScreenPorch', 'BsmtHalfBath',
+             'EnclosedPorch', 'MasVnrArea', 'OpenPorchSF', 'LotFrontage',
+             'BsmtFinSF1', 'WoodDeckSF', 'MSSubClass', '1stFlrSF', 'GrLivArea',
+             '2ndFlrSF', 'OverallQual', 'TotRmsAbvGrd', 'HalfBath', 'Fireplaces',
+              'BsmtFullBath', ]:
+    train_df[name] = np.log1p(train_df[name])
+    test_df[name] = np.log1p(test_df[name])
+
+all_df = pd.concat([ train_df, test_df ])     
+
+all_df = pd.get_dummies(all_df, columns = categorical_columns)
+
+categorical_columns = set(all_df.columns).symmetric_difference(numeric_columns + ['Id', 'SalePrice'])
+categorical_columns = list(categorical_columns)
+
+train_df[categorical_columns] = all_df.loc[all_df['Id'].isin(train_df['Id']), categorical_columns]
+test_df[categorical_columns] = all_df.loc[all_df['Id'].isin(test_df['Id']), categorical_columns]
+
+all_columns = numeric_columns + categorical_columns
+
+
+scaler = MinMaxScaler()
+train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
+test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
+
+
+
 model = LGBMRegressor()
 model.fit(train_df[all_columns], train_df['SalePrice'])
 train_df['Prediction'] = model.predict(train_df[all_columns]).astype('int64')
 test_df['SalePrice'] = model.predict(test_df[all_columns]).astype('int64')
 
-print(train_df[['Id', 'SalePrice', 'Prediction']])
+
 print("======================================================")
 print("RSME: ", np.sqrt(mean_squared_error(train_df['SalePrice'], train_df['Prediction'])))
 
