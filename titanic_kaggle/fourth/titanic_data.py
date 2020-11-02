@@ -163,6 +163,10 @@ test_df.loc[test_df['Fare'].isna() == True, 'Fare'] = 7.25
 tb.reeigneeringTitle(train_df)
 tb.reeigneeringTitle(test_df)
 
+
+train_df['LogFare'] = np.log1p(train_df['Fare'])
+test_df['LogFare'] = np.log1p(test_df['Fare'])
+
 train_df['Room']  = train_df['Cabin'].apply(tb.captureRoom)
 test_df['Room']  = test_df['Cabin'].apply(tb.captureRoom)
 
@@ -184,14 +188,16 @@ test_df['Ticket'] = test_df['Ticket'].apply(tb.captureTicketId)
 train_df['Ticket'] = np.log(train_df['Ticket'])
 test_df['Ticket'] = np.log(test_df['Ticket'])
 
+train_df['Ticket'] = train_df['Ticket'].round(4)
+test_df['Ticket'] = test_df['Ticket'].round(4)
+train_df['LogFare'] = train_df['Fare'].round(4)
+test_df['LogFare'] = test_df['Fare'].round(4)
+
 all_df = pd.concat( [ train_df, test_df ], ignore_index = True )
 
 fillAge(all_df, train_df)
 fillAge(all_df, test_df)
 fillAge(all_df, all_df)
-
-train_df['Age'] = train_df['Age'].astype('int32')
-test_df['Age'] = test_df['Age'].astype('int32')
 
 binFare(all_df)
 
