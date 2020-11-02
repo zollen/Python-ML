@@ -2,6 +2,7 @@
 Created on Nov. 1, 2020
 
 @author: zollen
+@url: https://www.kaggle.com/toyox2020/house-prices-comprehensive-eda-visualization
 '''
 
 import os
@@ -108,16 +109,17 @@ if False:
     ax = skewness.plot.barh(figsize=(15,12), title='Comparison of skewness of original and logarithmized', width=0.8)
     ax.set_xlabel('skewness');
 
-if True:
-    def spearman(frame, features):
+if False:
+    def spearman(frame, features, target = 'SalePrice'):
         spr = pd.DataFrame()
         spr['feature'] = features
-        spr['spearman'] = [frame[f].corr(frame['SalePrice'], 'spearman') for f in features]
+        spr['spearman'] = [frame[f].corr(frame[target], 'spearman') for f in features]
         spr = spr.sort_values('spearman', ascending = False)
         plt.figure(figsize=(10, 0.25*len(features)))
         sb.barplot(data=spr, y='feature', x='spearman', orient='h')
 
 
     spearman(num_train, numeric_columns)
+
 
 plt.show()
