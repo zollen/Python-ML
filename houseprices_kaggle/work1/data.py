@@ -65,3 +65,5 @@ test_df['SalePrice'] = model.predict(test_df[all_columns]).astype('int64')
 print(train_df[['Id', 'SalePrice', 'Prediction']])
 print("======================================================")
 print("RSME: ", np.sqrt(mean_squared_error(train_df['SalePrice'], train_df['Prediction'])))
+
+test_df[['Id', 'SalePrice']].to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
