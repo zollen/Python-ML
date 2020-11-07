@@ -59,7 +59,7 @@ feats = pd.DataFrame({'importance': model.feature_importances_}, index=tmp_df.co
 feats['dtype'] = ['numeric' if feat in numeric_columns else 'categorical' for feat in tmp_df.columns]
 num_train = train_df[numeric_columns + ['SalePrice']]
 
-if False:
+if True:
     fig, ax = plt.subplots(figsize=(20,10))
     bars = ax.bar(feats.index, feats['importance'])
     leg1 = ax.legend(['categorical'], loc=(0.9, 0.9))
