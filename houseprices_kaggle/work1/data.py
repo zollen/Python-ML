@@ -159,8 +159,8 @@ for age in range(1800, 2020, 5):
 
 last = 0
 for area in range(0, 2000, 100):
-    train_df.loc[(train_df['MasVnrArea'] >= last) & (train_df['MasVnrArea'] < age), 'MasVnrAreaP'] = area
-    test_df.loc[(test_df['MasVnrArea'] >= last) & (test_df['MasVnrArea'] < age), 'MasVnrAreaP'] = area
+    train_df.loc[(train_df['MasVnrArea'] >= last) & (train_df['MasVnrArea'] < area), 'MasVnrAreaP'] = area
+    test_df.loc[(test_df['MasVnrArea'] >= last) & (test_df['MasVnrArea'] < area), 'MasVnrAreaP'] = area
     last = area    
     
 
@@ -307,16 +307,16 @@ Fill MasVnrArea
 '''
 last = 0
 for sff in range(0, 3000, 200):
-    train_df.loc[(train_df['1stFlrSF'] >= last) & (train_df['1stFlrSF'] < age), '1stFlrSFP'] = sff
-    test_df.loc[(test_df['1stFlrSF'] >= last) & (test_df['1stFlrSF'] < age), '1stFlrSFP'] = sff
-    all_df.loc[(all_df['1stFlrSF'] >= last) & (all_df['1stFlrSF'] < age), '1stFlrSFP'] = sff
+    train_df.loc[(train_df['1stFlrSF'] >= last) & (train_df['1stFlrSF'] < sff), '1stFlrSFP'] = sff
+    test_df.loc[(test_df['1stFlrSF'] >= last) & (test_df['1stFlrSF'] < sff), '1stFlrSFP'] = sff
+    all_df.loc[(all_df['1stFlrSF'] >= last) & (all_df['1stFlrSF'] < sff), '1stFlrSFP'] = sff
     last = sff    
     
 last = 0
 for sff in range(0, 2000, 100):
-    train_df.loc[(train_df['WoodDeckSF'] >= last) & (train_df['WoodDeckSF'] < age), 'WoodDeckSFP'] = sff
-    test_df.loc[(test_df['WoodDeckSF'] >= last) & (test_df['WoodDeckSF'] < age), 'WoodDeckSFP'] = sff
-    all_df.loc[(all_df['WoodDeckSF'] >= last) & (all_df['WoodDeckSF'] < age), 'WoodDeckSFP'] = sff
+    train_df.loc[(train_df['WoodDeckSF'] >= last) & (train_df['WoodDeckSF'] < sff), 'WoodDeckSFP'] = sff
+    test_df.loc[(test_df['WoodDeckSF'] >= last) & (test_df['WoodDeckSF'] < sff), 'WoodDeckSFP'] = sff
+    all_df.loc[(all_df['WoodDeckSF'] >= last) & (all_df['WoodDeckSF'] < sff), 'WoodDeckSFP'] = sff
     last = sff        
   
     
