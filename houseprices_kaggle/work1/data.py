@@ -48,16 +48,16 @@ for area in range(0, 2000, 100):
     last = area    
     
 last = 0
-for sff in range(0, 3000, 200):
-    train_df.loc[(train_df['1stFlrSF'] >= last) & (train_df['1stFlrSF'] < sff), '1stFlrSFP'] = sff
-    test_df.loc[(test_df['1stFlrSF'] >= last) & (test_df['1stFlrSF'] < sff), '1stFlrSFP'] = sff
-    last = sff    
+for size in range(0, 3000, 200):
+    train_df.loc[(train_df['1stFlrSF'] >= last) & (train_df['1stFlrSF'] < size), '1stFlrSFP'] = size
+    test_df.loc[(test_df['1stFlrSF'] >= last) & (test_df['1stFlrSF'] < size), '1stFlrSFP'] = size
+    last = size    
     
 last = 0
-for sff in range(0, 2000, 100):
-    train_df.loc[(train_df['WoodDeckSF'] >= last) & (train_df['WoodDeckSF'] < sff), 'WoodDeckSFP'] = sff
-    test_df.loc[(test_df['WoodDeckSF'] >= last) & (test_df['WoodDeckSF'] < sff), 'WoodDeckSFP'] = sff
-    last = sff       
+for size in range(0, 2000, 100):
+    train_df.loc[(train_df['WoodDeckSF'] >= last) & (train_df['WoodDeckSF'] < size), 'WoodDeckSFP'] = size
+    test_df.loc[(test_df['WoodDeckSF'] >= last) & (test_df['WoodDeckSF'] < size), 'WoodDeckSFP'] = size
+    last = size       
     
 last = 0
 for size in range(0, 1200, 100):
