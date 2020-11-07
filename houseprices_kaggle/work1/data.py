@@ -34,6 +34,45 @@ test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
 train_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = True)
 test_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = True)
 
+
+last = 0
+for age in [1920, 1931, 1947, 1955, 1960, 1965, 1970, 1976, 1984, 1994, 1999, 2003, 2005, 2006, 2030]:
+    train_df.loc[(train_df['YearBuilt'] >= last) & (train_df['YearBuilt'] < age), 'YearBuiltP'] = age
+    test_df.loc[(test_df['YearBuilt'] >= last) & (test_df['YearBuilt'] < age), 'YearBuiltP'] = age
+    last = age
+
+last = 0
+for area in [16, 95, 148.067, 206, 285.533, 412, 2000]:
+    train_df.loc[(train_df['MasVnrArea'] >= last) & (train_df['MasVnrArea'] < area), 'MasVnrAreaP'] = area
+    test_df.loc[(test_df['MasVnrArea'] >= last) & (test_df['MasVnrArea'] < area), 'MasVnrAreaP'] = area
+    last = area    
+    
+last = 0
+for sff in [699.067, 791.067, 848, 894, 948.333, 1000.2, 1056.867, 1120, 1182, 1266, 1362, 1482.4, 1614.933, 1742, 8000]:
+    train_df.loc[(train_df['1stFlrSF'] >= last) & (train_df['1stFlrSF'] < sff), '1stFlrSFP'] = sff
+    test_df.loc[(test_df['1stFlrSF'] >= last) & (test_df['1stFlrSF'] < sff), '1stFlrSFP'] = sff
+    last = sff    
+    
+last = 0
+for sff in [38.267, 100, 140, 164, 192, 225.4, 304.733, 1000]:
+    train_df.loc[(train_df['WoodDeckSF'] >= last) & (train_df['WoodDeckSF'] < sff), 'WoodDeckSFP'] = sff
+    test_df.loc[(test_df['WoodDeckSF'] >= last) & (test_df['WoodDeckSF'] < sff), 'WoodDeckSFP'] = sff
+    last = sff       
+    
+last = 0
+for size in range(0, 1200, 100):
+    train_df.loc[(train_df['LowQualFinSF'] >= last) & (train_df['LowQualFinSF'] < size), 'LowQualFinSFP'] = size
+    test_df.loc[(test_df['LowQualFinSF'] >= last) & (test_df['LowQualFinSF'] < size), 'LowQualFinSFP'] = size
+    last = size
+
+last = 0
+for size in [20, 30, 40, 50, 64, 83.2, 113, 155, 1000]:
+    train_df.loc[(train_df['OpenPorchSF'] >= last) & (train_df['OpenPorchSF'] < size), 'OpenPorchSFP'] = size
+    test_df.loc[(test_df['OpenPorchSF'] >= last) & (test_df['OpenPorchSF'] < size), 'OpenPorchSFP'] = size
+    last = size
+
+
+    
 all_df = pd.concat([ train_df, test_df ]) 
 
 
@@ -151,20 +190,9 @@ all_df.loc[(all_df['GarageYrBlt'].isna() == True) &
              (all_df['GarageArea'] == 0), 'GarageYrBlt'] = 0       
 
 
-last = 0
-for age in range(1800, 2020, 5):
-    train_df.loc[(train_df['YearBuilt'] >= last) & (train_df['YearBuilt'] < age), 'YearBuiltP'] = age
-    test_df.loc[(test_df['YearBuilt'] >= last) & (test_df['YearBuilt'] < age), 'YearBuiltP'] = age
-    last = age
 
-last = 0
-for area in range(0, 2000, 100):
-    train_df.loc[(train_df['MasVnrArea'] >= last) & (train_df['MasVnrArea'] < area), 'MasVnrAreaP'] = area
-    test_df.loc[(test_df['MasVnrArea'] >= last) & (test_df['MasVnrArea'] < area), 'MasVnrAreaP'] = area
-    last = area    
     
 
-all_df = pd.concat([ train_df, test_df ]) 
 
 
 '''
@@ -256,9 +284,7 @@ def fillGarageYrBlt(df1, df2):
 
 fillGarageYrBlt(train_df, test_df)
 
-train_df.drop(columns = ['YearBuiltP', 'MasVnrAreaP' ], inplace = True)
-test_df.drop(columns = ['YearBuiltP', 'MasVnrAreaP' ], inplace = True)
-all_df.drop(columns = ['YearBuiltP', 'MasVnrAreaP' ], inplace = True)
+
 
 
 '''
@@ -305,21 +331,6 @@ fillMasVnrType(train_df, test_df)
 '''
 Fill MasVnrArea
 '''
-last = 0
-for sff in range(0, 3000, 200):
-    train_df.loc[(train_df['1stFlrSF'] >= last) & (train_df['1stFlrSF'] < sff), '1stFlrSFP'] = sff
-    test_df.loc[(test_df['1stFlrSF'] >= last) & (test_df['1stFlrSF'] < sff), '1stFlrSFP'] = sff
-    all_df.loc[(all_df['1stFlrSF'] >= last) & (all_df['1stFlrSF'] < sff), '1stFlrSFP'] = sff
-    last = sff    
-    
-last = 0
-for sff in range(0, 2000, 100):
-    train_df.loc[(train_df['WoodDeckSF'] >= last) & (train_df['WoodDeckSF'] < sff), 'WoodDeckSFP'] = sff
-    test_df.loc[(test_df['WoodDeckSF'] >= last) & (test_df['WoodDeckSF'] < sff), 'WoodDeckSFP'] = sff
-    all_df.loc[(all_df['WoodDeckSF'] >= last) & (all_df['WoodDeckSF'] < sff), 'WoodDeckSFP'] = sff
-    last = sff        
-  
-    
 def fillMasVnrArea(df1, df2):
      
     grps = all_df.groupby(['OverallQual', '1stFlrSFP', 'TotRmsAbvGrd', 
@@ -341,36 +352,12 @@ def fillMasVnrArea(df1, df2):
                     
 fillMasVnrArea(train_df, test_df)             
           
-train_df.drop(columns = ['1stFlrSFP', 'WoodDeckSFP'], inplace = True)
-test_df.drop(columns = ['1stFlrSFP', 'WoodDeckSFP'], inplace = True)
-all_df.drop(columns = ['1stFlrSFP', 'WoodDeckSFP'], inplace = True)
 
        
        
 '''
 Fill LotFrontage
 '''       
-last = 0
-for size in range(0, 1200, 100):
-    train_df.loc[(train_df['LowQualFinSF'] >= last) & (train_df['LowQualFinSF'] < size), 'LowQualFinSFP'] = size
-    test_df.loc[(test_df['LowQualFinSF'] >= last) & (test_df['LowQualFinSF'] < size), 'LowQualFinSFP'] = size
-    all_df.loc[(all_df['LowQualFinSF'] >= last) & (all_df['LowQualFinSF'] < size), 'LowQualFinSFP'] = size
-    last = size
-
-last = 0
-for size in range(0, 2000, 100):
-    train_df.loc[(train_df['OpenPorchSF'] >= last) & (train_df['OpenPorchSF'] < size), 'OpenPorchSFP'] = size
-    test_df.loc[(test_df['OpenPorchSF'] >= last) & (test_df['OpenPorchSF'] < size), 'OpenPorchSFP'] = size
-    all_df.loc[(all_df['OpenPorchSF'] >= last) & (all_df['OpenPorchSF'] < size), 'OpenPorchSFP'] = size
-    last = size
-
-last = 0
-for size in range(0, 3000, 200):
-    train_df.loc[(train_df['1stFlrSF'] >= last) & (train_df['1stFlrSF'] < size), '1stFlrSFP'] = size
-    test_df.loc[(test_df['1stFlrSF'] >= last) & (test_df['1stFlrSF'] < size), '1stFlrSFP'] = size
-    all_df.loc[(all_df['1stFlrSF'] >= last) & (all_df['1stFlrSF'] < size), '1stFlrSFP'] = size
-    last = size
-    
 def fillLotFrontage(df1, df2):
     
     grps = all_df.groupby(['OverallQual', 'MSSubClass', '1stFlrSFP', 'LowQualFinSFP',
@@ -429,9 +416,6 @@ def fillLotFrontage(df1, df2):
                  
 fillLotFrontage(train_df, test_df)  
 
-train_df.drop(columns = ['LowQualFinSFP', 'OpenPorchSFP', '1stFlrSFP'], inplace = True)
-test_df.drop(columns = ['LowQualFinSFP', 'OpenPorchSFP', '1stFlrSFP'], inplace = True)
-all_df.drop(columns = ['LowQualFinSFP', 'OpenPorchSFP', '1stFlrSFP'], inplace = True)  
        
        
 
@@ -503,7 +487,8 @@ test_df.loc[test_df['SaleType'].isna() == True, 'SaleType'] = 'WD'
 
 
 
-
+train_df.drop(columns = ['YearBuiltP', 'MasVnrAreaP', '1stFlrSFP', 'WoodDeckSFP', 'OpenPorchSFP', 'LowQualFinSFP'], inplace = True)
+test_df.drop(columns = ['YearBuiltP', 'MasVnrAreaP', '1stFlrSFP', 'WoodDeckSFP', 'OpenPorchSFP', 'LowQualFinSFP'], inplace = True)
 
 
 col_types = train_df.columns.to_series().groupby(train_df.dtypes)
