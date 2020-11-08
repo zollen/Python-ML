@@ -212,41 +212,6 @@ all_df.loc[(all_df['GarageYrBlt'].isna() == True) &
 
 
 
-    
-
-
-
-'''
-Fill GarageType
-'''
-def fillGarageType(df1, df2):
-       
-    grps = all_df.groupby(['OverallQual', 'YearBuiltP', 'MasVnrAreaP', 'GarageType'])['GarageType'].count()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['GarageType'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['YearBuiltP'] == index[1]) &
-                 (df['MasVnrAreaP'] == index[2]), 'GarageType'] = grps[index[0], index[1], index[2]].idxmax()
-                 
-    grps = all_df.groupby(['OverallQual', 'YearBuiltP', 'GarageType'])['GarageType'].count()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['GarageType'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['YearBuiltP'] == index[1]), 'GarageType'] = grps[index[0], index[1]].idxmax()
-                 
-    grps = all_df.groupby(['OverallQual', 'GarageType'])['GarageType'].count()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['GarageType'].isna() == True) &
-                 (df['OverallQual'] == index[0]), 'GarageType'] = grps[index[0]].idxmax()
-                 
-    
-fillGarageType(train_df, test_df)
-
-
-
 
 '''
 Fill GarageFinish
