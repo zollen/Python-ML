@@ -216,60 +216,10 @@ all_df.loc[(all_df['GarageYrBlt'].isna() == True) &
 '''
 Fill GarageFinish
 '''
-def fillGarageFinish(df1, df2):
-       
-    grps = all_df.groupby(['OverallQual', 'YearBuiltP', 'MasVnrAreaP', 'GarageFinish'])['GarageFinish'].count()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['GarageFinish'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['YearBuiltP'] == index[1]) &
-                 (df['MasVnrAreaP'] == index[2]), 'GarageFinish'] = grps[index[0], index[1], index[2]].idxmax()
-                 
-    
-    grps = all_df.groupby(['OverallQual', 'YearBuiltP', 'GarageFinish'])['GarageFinish'].count()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['GarageFinish'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['YearBuiltP'] == index[1]), 'GarageFinish'] = grps[index[0], index[1]].idxmax()
-                 
-    
-    grps = all_df.groupby(['OverallQual', 'GarageFinish'])['GarageFinish'].count()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['GarageFinish'].isna() == True) &
-                 (df['OverallQual'] == index[0]), 'GarageFinish'] = grps[index[0]].idxmax()
-                 
-    
-    
-fillGarageFinish(train_df, test_df)
-
-
-'''
-Fill GarageYrBlt
-'''
-def fillGarageYrBlt(df1, df2):
-    
-    grps = all_df.groupby(['OverallQual', 'YearBuiltP'])['GarageYrBlt'].median()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['GarageYrBlt'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['YearBuiltP'] == index[1]), 'GarageYrBlt'] = grps[index[0], index[1]]
-     
-    grps = all_df.groupby(['OverallQual'])['GarageYrBlt'].median()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['GarageYrBlt'].isna() == True) &
-                   (df['OverallQual'] == index), 'GarageYrBlt'] = grps[index]
-                   
-    df1['GarageYrBlt'] = df1['GarageYrBlt'].round(0)
-    df2['GarageYrBlt'] = df2['GarageYrBlt'].round(0)
-    
-
-fillGarageYrBlt(train_df, test_df)
-
+test_df.loc[test_df['Id'] == 2127, 'GarageFinish'] = 'Unf'
+test_df.loc[test_df['Id'] == 2127, 'GarageYrBlt'] = 1936
+test_df.loc[test_df['Id'] == 2577, 'GarageFinish'] = 'Unf'
+test_df.loc[test_df['Id'] == 2577, 'GarageYrBlt'] = 1924
 
 
 
@@ -470,6 +420,10 @@ test_df.loc[test_df['Functional'].isna() == True, 'Functional'] = 'Typ'
 Fill SaleType
 '''
 test_df.loc[test_df['SaleType'].isna() == True, 'SaleType'] = 'WD'
+
+
+
+
 
 
 
