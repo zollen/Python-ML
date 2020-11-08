@@ -36,13 +36,13 @@ test_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = Tr
 
 
 last = 0
-for age in range(1000, 2020, 5):
+for age in range(1000, 2020, 10):
     train_df.loc[(train_df['YearBuilt'] >= last) & (train_df['YearBuilt'] < age), 'YearBuiltP'] = age
     test_df.loc[(test_df['YearBuilt'] >= last) & (test_df['YearBuilt'] < age), 'YearBuiltP'] = age
     last = age
 
 last = 0
-for area in range(0, 2000, 100):
+for area in range(0, 2000, 200):
     train_df.loc[(train_df['MasVnrArea'] >= last) & (train_df['MasVnrArea'] < area), 'MasVnrAreaP'] = area
     test_df.loc[(test_df['MasVnrArea'] >= last) & (test_df['MasVnrArea'] < area), 'MasVnrAreaP'] = area
     last = area    
@@ -54,19 +54,19 @@ for size in range(0, 3000, 200):
     last = size    
     
 last = 0
-for size in range(0, 2000, 100):
+for size in range(0, 2000, 200):
     train_df.loc[(train_df['WoodDeckSF'] >= last) & (train_df['WoodDeckSF'] < size), 'WoodDeckSFP'] = size
     test_df.loc[(test_df['WoodDeckSF'] >= last) & (test_df['WoodDeckSF'] < size), 'WoodDeckSFP'] = size
     last = size       
     
 last = 0
-for size in range(0, 1200, 100):
+for size in range(0, 1200, 200):
     train_df.loc[(train_df['LowQualFinSF'] >= last) & (train_df['LowQualFinSF'] < size), 'LowQualFinSFP'] = size
     test_df.loc[(test_df['LowQualFinSF'] >= last) & (test_df['LowQualFinSF'] < size), 'LowQualFinSFP'] = size
     last = size
 
 last = 0
-for size in range(0, 2000, 100):
+for size in range(0, 2000, 200):
     train_df.loc[(train_df['OpenPorchSF'] >= last) & (train_df['OpenPorchSF'] < size), 'OpenPorchSFP'] = size
     test_df.loc[(test_df['OpenPorchSF'] >= last) & (test_df['OpenPorchSF'] < size), 'OpenPorchSFP'] = size
     last = size
