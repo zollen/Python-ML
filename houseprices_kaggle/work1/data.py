@@ -144,10 +144,10 @@ test_df.loc[test_df['Id'] == 2121, 'BsmtQual'] = 'TA'
 test_df.loc[test_df['Id'] == 2121, 'BsmtCond'] = 'TA'
 test_df.loc[test_df['Id'] == 2121, 'BsmtFinType1'] = 'Unf'
 test_df.loc[test_df['Id'] == 2121, 'BsmtFinType2'] = 'Unf'
-test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF1'] = 406
-test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF2'] = 301
+test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF1'] = 407
+test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF2'] = 289
 test_df.loc[test_df['Id'] == 2121, 'BsmtUnfSF'] = 52
-test_df.loc[test_df['Id'] == 2121, 'TotalBsmtSF'] = 916
+test_df.loc[test_df['Id'] == 2121, 'TotalBsmtSF'] = 828
 test_df.loc[test_df['Id'] == 2121, 'BsmtFullBath'] = 0
 test_df.loc[test_df['Id'] == 2121, 'BsmtHalfBath'] = 0
 
@@ -156,10 +156,10 @@ test_df.loc[test_df['Id'] == 2189, 'BsmtQual'] = 'TA'
 test_df.loc[test_df['Id'] == 2189, 'BsmtCond'] = 'TA'
 test_df.loc[test_df['Id'] == 2189, 'BsmtFinType1'] = 'Unf'
 test_df.loc[test_df['Id'] == 2189, 'BsmtFinType2'] = 'Unf'
-test_df.loc[test_df['Id'] == 2189, 'BsmtFinSF1'] = 449
-test_df.loc[test_df['Id'] == 2189, 'BsmtFinSF2'] = 438
-test_df.loc[test_df['Id'] == 2189, 'BsmtUnfSF'] = 52
-test_df.loc[test_df['Id'] == 2189, 'TotalBsmtSF'] = 2847
+test_df.loc[test_df['Id'] == 2189, 'BsmtFinSF1'] = 438
+test_df.loc[test_df['Id'] == 2189, 'BsmtFinSF2'] = 475
+test_df.loc[test_df['Id'] == 2189, 'BsmtUnfSF'] = 212
+test_df.loc[test_df['Id'] == 2189, 'TotalBsmtSF'] = 2801
 test_df.loc[test_df['Id'] == 2189, 'BsmtFullBath'] = 1
 test_df.loc[test_df['Id'] == 2189, 'BsmtHalfBath'] = 0
 
@@ -172,8 +172,8 @@ test_df.loc[test_df['Id'] == 2127, 'GarageQual'] = 'Fa'
 # MSSubClass(70) MSZoning(RM) LotArea(9060) YearBuilt(1923) GarageType(Detchd)
 test_df.loc[test_df['Id'] == 2577, 'GarageQual'] = 'Fa'
 test_df.loc[test_df['Id'] == 2577, 'GarageCond'] = 'TA'
-test_df.loc[test_df['Id'] == 2577, 'GarageArea'] = 240
-test_df.loc[test_df['Id'] == 2577, 'GarageYrBlt'] = 1930
+test_df.loc[test_df['Id'] == 2577, 'GarageArea'] = 226
+test_df.loc[test_df['Id'] == 2577, 'GarageYrBlt'] = 1924
 test_df.loc[test_df['Id'] == 2577, 'GarageFinish'] = 'Unf'
 test_df.loc[test_df['Id'] == 2577, 'GarageCars'] = 1
 
