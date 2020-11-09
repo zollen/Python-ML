@@ -12,8 +12,6 @@ import pprint
 from sklearn.preprocessing import MinMaxScaler
 from lightgbm import LGBMRegressor
 from sklearn.metrics import mean_squared_error
-from matplotlib import pyplot as plt
-import seaborn as sb
 import warnings
 
 
@@ -57,13 +55,6 @@ numeric_columns.remove('Id')
 numeric_columns.remove('SalePrice')
 
 all_columns = numeric_columns + categorical_columns
-
-#corr = train_df[all_columns].corr()
-#mask = np.triu(np.ones_like(corr, dtype=np.bool))    
-#plt.figure(figsize=(16, 16))   
-#sb.heatmap(corr, mask=mask, cmap='RdBu_r', annot=False, linewidths=0.5, fmt='0.2f')
-#plt.show()
-
 
 
             
