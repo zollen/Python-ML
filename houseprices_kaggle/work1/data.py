@@ -227,7 +227,7 @@ test_df.loc[test_df['Id'] == 2577, 'GarageYrBlt'] = 1924
 Fill Electrical
 '''
 # MSSubClass(80) MSZoing(RL) OverallQual(5) YearBuilt(2006) MasVnrArea(Sbrkr)
-train_df.loc[train_df['Electrical'].isna() == True, 'Electrical'] = 1.0
+train_df.loc[train_df['Electrical'].isna() == True, 'Electrical'] = 'Mix'
 
 
 
