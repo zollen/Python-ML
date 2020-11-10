@@ -10,7 +10,6 @@ import numpy as np
 import pandas as pd
 import pprint
 from sklearn.preprocessing import MinMaxScaler
-from lightgbm import LGBMRegressor
 from sklearn.metrics import mean_squared_error
 import warnings
 
@@ -84,12 +83,30 @@ scaler = MinMaxScaler()
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import Ridge
+from sklearn.linear_model import Lasso
+from sklearn.linear_model import ElasticNet
+from sklearn.linear_model import Huber
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import ExtraTreeRegressor
+from sklearn.svm import SVR
+from sklearn.ensemble import RandomForestRegressor
+from lightgbm import LGBMRegressor
+from xgboost import XGBRegressor
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import AdaBoostRegressor
+from catboost import CatBoostRegressor
+from sklearn.decomposition import PCA
 
+#pca = PCA(n_components = 5)
+#ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
+#ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
-model = LGBMRegressor()
+model = CatBoostRegressor()
 model.fit(train_df[all_columns], train_df['SalePrice'])
-train_df['Prediction'] = model.predict(train_df[all_columns]).astype('int64')
-test_df['SalePrice'] = model.predict(test_df[all_columns]).astype('int64')
+train_df['Prediction'] = model.predict(train_df[all_columns]).round(0).astype('int64')
+test_df['SalePrice'] = model.predict(test_df[all_columns]).round(0).astype('int64')
 
 
 print("======================================================")

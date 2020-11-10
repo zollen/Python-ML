@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pprint
+from sklearn.model_selection import KFold, cross_val_score
 from xgboost import XGBClassifier
 import warnings
 from xgboost.sklearn import XGBRegressor
@@ -93,6 +94,12 @@ def fillValue(name, fid):
         
 
 
+n_folds = 5
+
+def rmsle_cv(model, data, label):
+    kf = KFold(n_folds, shuffle=True, random_state=87).get_n_splits(data.values)
+    rmse= np.sqrt(-cross_val_score(model, data.values, label, scoring="neg_mean_squared_error", cv = kf))
+    return(rmse)
 
 
 
