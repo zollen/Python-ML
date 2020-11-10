@@ -211,9 +211,9 @@ all_df.loc[(all_df['GarageYrBlt'].isna() == True) &
 Fill GarageFinish
 '''
 test_df.loc[test_df['Id'] == 2127, 'GarageFinish'] = 'Unf'
-test_df.loc[test_df['Id'] == 2127, 'GarageYrBlt'] = 1936
+test_df.loc[test_df['Id'] == 2127, 'GarageYrBlt'] = 1925
 test_df.loc[test_df['Id'] == 2577, 'GarageFinish'] = 'Unf'
-test_df.loc[test_df['Id'] == 2577, 'GarageYrBlt'] = 1924
+test_df.loc[test_df['Id'] == 2577, 'GarageYrBlt'] = 1950
 
 
 
