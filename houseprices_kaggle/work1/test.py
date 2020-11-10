@@ -95,9 +95,9 @@ def fillValue(name, fid):
         labs = dict(zip(keys, vals))
         rlabs = dict(zip(vals, keys))
         all_ddf[name] = all_ddf[name].map(labs)
-        model = XGBClassifier()
+        model = XGBClassifier(random_state = 87)
     else:
-        model = XGBRegressor()
+        model = XGBRegressor(random_state = 87)
         
 
     model.fit(all_ddf[all_columns], all_ddf[name])
@@ -120,11 +120,12 @@ def rmsle_cv(model, data, label):
     return(rmse)
 
 
-fillValue('GarageCond', 2127)
-fillValue('GarageQual', 2127)
+print(all_df.loc[all_df['Id'].isin([2041, 2186, 2525, 2218, 2219, 333, 949, 1488, 2349, 2121, 2189]), ['Id', 'BsmtExposure', 'BsmtQual', 'BsmtCond', 'BsmtFinType1', 'BsmtFinType2', 'BsmtFinSF1', 'BsmtFinSF2', 'BsmtUnfSF', 'TotalBsmtSF', 'BsmtFullBath', 'BsmtHalfBath']])
 
-for token in ['GarageQual', 'GarageCond', 'GarageArea', 'GarageYrBlt', 'GarageFinish', 'GarageCars']:
-    fillValue(token, 2577)
+
+'''
+Id = 2121 may have no basement!!!
+'''
 
 '''
 Strong Correlation

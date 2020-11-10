@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import pprint
 from sklearn.preprocessing import MinMaxScaler
+from scipy.special import boxcox1p
 from sklearn.metrics import mean_squared_error
 import warnings
 
@@ -56,15 +57,15 @@ numeric_columns.remove('SalePrice')
 all_columns = numeric_columns + categorical_columns
 
 
-            
-#for name in ['MiscVal', 'PoolArea', 'LotArea', '3SsnPorch', 'LowQualFinSF',
-#             'KitchenAbvGr', 'BsmtFinSF2', 'ScreenPorch', 'BsmtHalfBath',
-#             'EnclosedPorch', 'MasVnrArea', 'OpenPorchSF', 'LotFrontage',
-#             'BsmtFinSF1', 'WoodDeckSF', 'MSSubClass', '1stFlrSF', 'GrLivArea',
-#             '2ndFlrSF', 'OverallQual', 'TotRmsAbvGrd', 'HalfBath', 'Fireplaces',
-#              'BsmtFullBath', ]:
-#    train_df[name] = np.log1p(train_df[name])
-#    test_df[name] = np.log1p(test_df[name])
+if False:            
+    for name in ['MiscVal', 'PoolArea', 'LotArea', '3SsnPorch', 'LowQualFinSF',
+             'KitchenAbvGr', 'BsmtFinSF2', 'ScreenPorch', 'BsmtHalfBath',
+             'EnclosedPorch', 'MasVnrArea', 'OpenPorchSF', 'LotFrontage',
+             'BsmtFinSF1', 'WoodDeckSF', 'MSSubClass', '1stFlrSF', 'GrLivArea',
+             '2ndFlrSF', 'OverallQual', 'TotRmsAbvGrd', 'HalfBath', 'Fireplaces',
+              'BsmtFullBath', ]:
+        train_df[name] = boxcox1p(train_df[name], 0.15)
+        test_df[name] = boxcox1p(test_df[name], 0.15)
 
 all_df = pd.concat([ train_df, test_df ])     
 
@@ -103,6 +104,7 @@ from sklearn.decomposition import PCA
 #ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
 #ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
+# CatBoostRegressor(loss_function='RMSE')
 model = CatBoostRegressor()
 model.fit(train_df[all_columns], train_df['SalePrice'])
 train_df['Prediction'] = model.predict(train_df[all_columns]).round(0).astype('int64')
