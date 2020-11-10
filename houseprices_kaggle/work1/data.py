@@ -119,16 +119,16 @@ test_df.loc[test_df['Id'] == 2525, 'BsmtCond'] = 'TA'
 test_df.loc[test_df['Id'] == 2218, 'BsmtQual'] = 'TA'
 
 # OverallQual(4), OverallCond(7), BsmtCond(TA), TotalBsmtSF(356), BsmtExposure(No), BsmtQual(NaN)
-test_df.loc[test_df['Id'] == 2219, 'BsmtQual'] = 'TA'
+test_df.loc[test_df['Id'] == 2219, 'BsmtQual'] = 'Fa'
 
 # OverallQual(8), OverallCond(5), TotalBsmtSF(3206), BsmtQual(Gd), BsmtCond(TA), BsmtExposure(No), BsmtFinType2(NaN)
-train_df.loc[train_df['Id'] == 333, 'BsmtFinType2'] = 'Rec'
+train_df.loc[train_df['Id'] == 333, 'BsmtFinType2'] = 'ALQ'
 
 # OverallQual(7), OverallCond(5), TotalBsmtSF(936), BsmtQual(Gd)  BsmtCond(TA) BsmtExposure(NaN)
 train_df.loc[train_df['Id'] == 949, 'BsmtExposure'] = 'No'
 
 # OverallQual(8), OverallCond(5), TotalBsmtSF(1595), BsmtQual(Gd)  BsmtCond(TA) BsmtExposure(NaN)
-test_df.loc[test_df['Id'] == 1488, 'BsmtExposure'] = 'No'
+test_df.loc[test_df['Id'] == 1488, 'BsmtExposure'] = 'Av'
 
 # OverallQual(5), OverallCond(5), TotalBsmtSF(725), BsmtQual(Gd)  BsmtCond(TA) BsmtExposure(NaN)
 test_df.loc[test_df['Id'] == 2349, 'BsmtExposure'] = 'No'
@@ -136,25 +136,25 @@ test_df.loc[test_df['Id'] == 2349, 'BsmtExposure'] = 'No'
 test_df.loc[test_df['Id'] == 2121, 'BsmtExposure'] = 'No'
 test_df.loc[test_df['Id'] == 2121, 'BsmtQual'] = 'TA'
 test_df.loc[test_df['Id'] == 2121, 'BsmtCond'] = 'TA'
-test_df.loc[test_df['Id'] == 2121, 'BsmtFinType1'] = 'Unf'
-test_df.loc[test_df['Id'] == 2121, 'BsmtFinType2'] = 'Unf'
-test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF1'] = 407
-test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF2'] = 289
-test_df.loc[test_df['Id'] == 2121, 'BsmtUnfSF'] = 52
-test_df.loc[test_df['Id'] == 2121, 'TotalBsmtSF'] = 828
+test_df.loc[test_df['Id'] == 2121, 'BsmtFinType1'] = 'Rec'
+test_df.loc[test_df['Id'] == 2121, 'BsmtFinType2'] = 'Rec'
+test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF1'] = 332
+test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF2'] = 192
+test_df.loc[test_df['Id'] == 2121, 'BsmtUnfSF'] = 431
+test_df.loc[test_df['Id'] == 2121, 'TotalBsmtSF'] = 893
 test_df.loc[test_df['Id'] == 2121, 'BsmtFullBath'] = 0
 test_df.loc[test_df['Id'] == 2121, 'BsmtHalfBath'] = 0
 
-test_df.loc[test_df['Id'] == 2189, 'BsmtExposure'] = 'Gd'
-test_df.loc[test_df['Id'] == 2189, 'BsmtQual'] = 'TA'
-test_df.loc[test_df['Id'] == 2189, 'BsmtCond'] = 'TA'
-test_df.loc[test_df['Id'] == 2189, 'BsmtFinType1'] = 'Unf'
-test_df.loc[test_df['Id'] == 2189, 'BsmtFinType2'] = 'Unf'
-test_df.loc[test_df['Id'] == 2189, 'BsmtFinSF1'] = 438
-test_df.loc[test_df['Id'] == 2189, 'BsmtFinSF2'] = 475
-test_df.loc[test_df['Id'] == 2189, 'BsmtUnfSF'] = 212
-test_df.loc[test_df['Id'] == 2189, 'TotalBsmtSF'] = 2801
-test_df.loc[test_df['Id'] == 2189, 'BsmtFullBath'] = 1
+test_df.loc[test_df['Id'] == 2189, 'BsmtExposure'] = 'NA'
+test_df.loc[test_df['Id'] == 2189, 'BsmtQual'] = 'NA'
+test_df.loc[test_df['Id'] == 2189, 'BsmtCond'] = 'NA'
+test_df.loc[test_df['Id'] == 2189, 'BsmtFinType1'] = 'NA'
+test_df.loc[test_df['Id'] == 2189, 'BsmtFinType2'] = 'NA'
+test_df.loc[test_df['Id'] == 2189, 'BsmtFinSF1'] = 0
+test_df.loc[test_df['Id'] == 2189, 'BsmtFinSF2'] = 0
+test_df.loc[test_df['Id'] == 2189, 'BsmtUnfSF'] = 0
+test_df.loc[test_df['Id'] == 2189, 'TotalBsmtSF'] = 0
+test_df.loc[test_df['Id'] == 2189, 'BsmtFullBath'] = 0
 test_df.loc[test_df['Id'] == 2189, 'BsmtHalfBath'] = 0
 
 '''

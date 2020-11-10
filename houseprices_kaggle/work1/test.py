@@ -11,6 +11,7 @@ import pprint
 from sklearn.model_selection import KFold, cross_val_score
 from xgboost import XGBClassifier
 import warnings
+from sklearn.impute import SimpleImputer
 from xgboost.sklearn import XGBRegressor
 
 
@@ -58,10 +59,27 @@ def fillValue(name, fid):
     numeric_columns.remove('Id')
     numeric_columns.remove('SalePrice')
     
+    all_ddf = all_df.copy()
+    
+    for colnam in categorical_columns:
+        keys = all_df[colnam].unique()
+        
+        if np.nan in keys:
+            keys.remove(np.nan)
+            
+        vals = [ i  for i in range(0, len(keys))]
+        labs = dict(zip(keys, vals))
+        all_ddf[colnam] = all_ddf[colnam].map(labs)
+            
+    
+    imputer = SimpleImputer()
+    all_ddf[categorical_columns + numeric_columns] = imputer.fit_transform(all_ddf[categorical_columns + numeric_columns])
+    all_ddf[categorical_columns + numeric_columns] = all_ddf[categorical_columns + numeric_columns].round(0).astype('int64')
+    
 
-    damn_df = pd.get_dummies(all_df, columns = categorical_columns) 
-    single_df = damn_df[damn_df['Id'] == fid]
-    all_ddf = pd.get_dummies(all_df.dropna(), columns = categorical_columns) 
+    all_ddf = pd.get_dummies(all_ddf, columns = categorical_columns) 
+    single_df = all_ddf[all_ddf['Id'] == fid]  
+    all_ddf = all_ddf[all_ddf[name].isna() == False]
     
 
     categorical_columns = list(set(all_ddf.columns).symmetric_difference(numeric_columns + ['Id', 'SalePrice', name]))
@@ -69,7 +87,7 @@ def fillValue(name, fid):
     
     if all_df[name].dtypes == 'object':
         keys = all_ddf[name].unique().tolist()
-        
+
         if np.nan in keys:
             keys.remove(np.nan)
         
@@ -81,7 +99,7 @@ def fillValue(name, fid):
     else:
         model = XGBRegressor()
         
- 
+
     model.fit(all_ddf[all_columns], all_ddf[name])
     prediction = model.predict(single_df[all_columns])
 
@@ -102,9 +120,11 @@ def rmsle_cv(model, data, label):
     return(rmse)
 
 
+fillValue('GarageCond', 2127)
+fillValue('GarageQual', 2127)
 
-
-
+for token in ['GarageQual', 'GarageCond', 'GarageArea', 'GarageYrBlt', 'GarageFinish', 'GarageCars']:
+    fillValue(token, 2577)
 
 '''
 Strong Correlation
