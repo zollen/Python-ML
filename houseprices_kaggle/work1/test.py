@@ -35,7 +35,7 @@ test_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = Tr
 
 all_df = pd.concat([ train_df, test_df ]) 
 
-
+kk = []
 def fillValue(name, fid):
     
     global all_df
@@ -104,24 +104,23 @@ def fillValue(name, fid):
     prediction = model.predict(single_df[all_columns])
 
     all_df.loc[all_df['Id'] == fid, name] = prediction[0]
-    
+     
     if all_df[name].dtypes == 'object':        
         print("%4d[%12s] ===> %s" %(fid, name, rlabs[prediction[0]]))
+        all_df.loc[all_df['Id'] == fid, name] = rlabs[prediction[0]]
     else:
+        all_df.loc[all_df['Id'] == fid, name] = prediction[0]
         print("%4d[%12s] ===> %d" %(fid, name, prediction[0]))
+        kk.append(np.round(prediction[0], 0))
         
 
 
-n_folds = 5
-
-def rmsle_cv(model, data, label):
-    kf = KFold(n_folds, shuffle=True, random_state=87).get_n_splits(data.values)
-    rmse= np.sqrt(-cross_val_score(model, data.values, label, scoring="neg_mean_squared_error", cv = kf))
-    return(rmse)
+for fid in [18, 40, 91, 103, 157, 183, 260, 343, 363, 372, 393, 521, 533, 534, 554, 647, 706, 737, 750, 779, 869, 895, 898, 985, 1001, 1012, 1036, 1046, 1049, 1050, 1091, 1180, 1217, 1219, 1233, 1322, 1413, 1586, 1594, 1730, 1779, 1815, 1848, 1849, 1857, 1858, 1859, 1861, 1916, 2041, 2051, 2067, 2069, 2121, 2123, 2186, 2189, 2190, 2191, 2194, 2217, 2225, 2388, 2436, 2453, 2454, 2491, 2499, 2525, 2548, 2553, 2565, 2579, 2600, 2703, 2764, 2767, 2804, 2805, 2825, 2892, 2905]:
+    fillValue('BsmtCond', fid)
+    
 
 
-
-
+print(kk)
 
 '''
 Strong Correlation
