@@ -101,8 +101,17 @@ if False:
     fig.tight_layout()
 
 if True:
+    '''
+    skew_features = features[numerics2].apply(lambda x: skew(x)).sort_values(ascending=False)
+
+    high_skew = skew_features[skew_features > 0.5]
+    skew_index = high_skew.index
+
+    for i in skew_index:
+        features[i] = boxcox1p(features[i], boxcox_normmax(features[i] + 1))
+    '''
     log_num = np.log1p(num_train)
-    box_num = boxcox1p(num_train, 0.01)
+    box_num = boxcox1p(num_train, 0.1)
     # compare skewnesses original with after of logarithm
     skewness = pd.concat([
                         num_train.apply(lambda x: skew(x.dropna())),
