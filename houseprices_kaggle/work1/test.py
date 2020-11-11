@@ -111,7 +111,7 @@ def fillValue(name, fid):
     else:
         all_df.loc[all_df['Id'] == fid, name] = prediction[0]
         print("%4d[%12s] ===> %d" %(fid, name, prediction[0]))
-        kk.append(np.round(prediction[0], 0))
+
         
 
 
@@ -120,7 +120,7 @@ for fid in [18, 40, 91, 103, 157, 183, 260, 343, 363, 372, 393, 521, 533, 534, 5
     
 
 
-print(kk)
+
 
 '''
 Strong Correlation
