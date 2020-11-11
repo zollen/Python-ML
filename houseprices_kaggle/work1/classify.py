@@ -105,8 +105,7 @@ from sklearn.decomposition import PCA
 #ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
 #ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
-# CatBoostRegressor(loss_function='RMSE')
-model = CatBoostRegressor(random_state = SEED)
+model = CatBoostRegressor(random_seed=SEED, loss_function='RMSE')
 model.fit(train_df[all_columns], train_df['SalePrice'])
 train_df['Prediction'] = model.predict(train_df[all_columns]).round(0).astype('int64')
 test_df['SalePrice'] = model.predict(test_df[all_columns]).round(0).astype('int64')

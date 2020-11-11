@@ -360,19 +360,10 @@ all_df.loc[all_df['Fireplaces'] == 0, 'FireplaceQu'] = 'NA'
 '''
 Fill MSZoning   
 '''
-def fillMSZoning(df1, df2):
-      
-    grps = all_df.groupby(['MSSubClass', 'Neighborhood', 'Condition1', 'Condition2',
-                           'MSZoning'])['MSZoning'].count()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['MSZoning'].isna() == True) &
-                 (df['MSSubClass'] == index[0]) &
-                 (df['Neighborhood'] == index[1]) & 
-                 (df['Condition1'] == index[2]) &
-                 (df['Condition2'] == index[3]), 'MSZoning'] = grps[index[0], index[1], index[2], index[3]].idxmax()
-
-fillMSZoning(train_df, test_df)
+test_df.loc[test_df['Id'] == 1916, 'MSZoning'] = 'C (all)'
+test_df.loc[test_df['Id'] == 2217, 'MSZoning'] = 'RM'
+test_df.loc[test_df['Id'] == 2251, 'MSZoning'] = 'RM'
+test_df.loc[test_df['Id'] == 2905, 'MSZoning'] = 'RL'
 
 
 
@@ -388,8 +379,8 @@ all_df.loc[all_df['Utilities'].isna() == True, 'Utilities'] = 'AllPub'
 '''
 Fill Exterior1st & Exterior2nd
 '''
-test_df.loc[(test_df['Exterior1st'].isna() == True) &
-            (test_df['Exterior2nd'].isna() == True), ['Exterior1st', 'Exterior2nd']] = 'Plywood'
+test_df.loc[(test_df['Exterior1st'].isna() == True), 'Exterior1st'] = 'Wd Sdng'
+test_df.loc[(test_df['Exterior2nd'].isna() == True), 'Exterior2nd'] = 'Plywood'
 
 
 
