@@ -11,7 +11,9 @@ Pearson's method
 2. 3(mean - median) / stddev
         Combining 1. and 2. ==> mode = 3(median) - 2(mean)
         
-        
- 
+Moment based method
+1    sigma(x - mean)^3        
+- * ------------------
+n        variance^3
 
 '''
