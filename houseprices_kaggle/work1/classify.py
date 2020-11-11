@@ -11,7 +11,9 @@ import pandas as pd
 import pprint
 from sklearn.preprocessing import MinMaxScaler
 from scipy.special import boxcox1p
+from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import cross_val_score
 import warnings
 
 SEED = 87
@@ -23,6 +25,14 @@ pd.set_option('display.width', 1000)
 np.random.seed(SEED)
 
 pp = pprint.PrettyPrinter(indent=3) 
+
+def rmsle_cv(data, label, n_folds):
+    kf = KFold(n_folds, shuffle=True, random_state=SEED).get_n_splits(data.values)
+    rmse= np.sqrt(-1 * cross_val_score(CatBoostRegressor(random_seed=SEED, loss_function='RMSE', verbose = False), 
+                                  data.values, label, scoring="neg_mean_squared_error", cv = kf))
+    return(rmse)
+
+
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_data.csv'))
@@ -105,7 +115,7 @@ from sklearn.decomposition import PCA
 #ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
 #ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
-model = CatBoostRegressor(random_seed=SEED, loss_function='RMSE')
+model = CatBoostRegressor(random_seed=SEED, loss_function='RMSE', verbose=False)
 model.fit(train_df[all_columns], train_df['SalePrice'])
 train_df['Prediction'] = model.predict(train_df[all_columns]).round(0).astype('int64')
 test_df['SalePrice'] = model.predict(test_df[all_columns]).round(0).astype('int64')
@@ -113,5 +123,4 @@ test_df['SalePrice'] = model.predict(test_df[all_columns]).round(0).astype('int6
 
 print("======================================================")
 print("RSME: ", np.sqrt(mean_squared_error(train_df['SalePrice'], train_df['Prediction'])))
-
 test_df[['Id', 'SalePrice']].to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
