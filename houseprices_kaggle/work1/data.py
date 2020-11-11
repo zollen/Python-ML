@@ -134,15 +134,15 @@ test_df.loc[test_df['Id'] == 1488, 'BsmtExposure'] = 'Av'
 test_df.loc[test_df['Id'] == 2349, 'BsmtExposure'] = 'No'
 
 ## 2121 may have no basement
-test_df.loc[test_df['Id'] == 2121, 'BsmtExposure'] = 'No'
-test_df.loc[test_df['Id'] == 2121, 'BsmtQual'] = 'TA'
-test_df.loc[test_df['Id'] == 2121, 'BsmtCond'] = 'TA'
-test_df.loc[test_df['Id'] == 2121, 'BsmtFinType1'] = 'Rec'
-test_df.loc[test_df['Id'] == 2121, 'BsmtFinType2'] = 'Rec'
-test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF1'] = 332
-test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF2'] = 192
-test_df.loc[test_df['Id'] == 2121, 'BsmtUnfSF'] = 431
-test_df.loc[test_df['Id'] == 2121, 'TotalBsmtSF'] = 893
+test_df.loc[test_df['Id'] == 2121, 'BsmtExposure'] = 'NA'
+test_df.loc[test_df['Id'] == 2121, 'BsmtQual'] = 'NA'
+test_df.loc[test_df['Id'] == 2121, 'BsmtCond'] = 'NA'
+test_df.loc[test_df['Id'] == 2121, 'BsmtFinType1'] = 'NA'
+test_df.loc[test_df['Id'] == 2121, 'BsmtFinType2'] = 'NA'
+test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF1'] = 0
+test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF2'] = 0
+test_df.loc[test_df['Id'] == 2121, 'BsmtUnfSF'] = 0
+test_df.loc[test_df['Id'] == 2121, 'TotalBsmtSF'] = 0
 test_df.loc[test_df['Id'] == 2121, 'BsmtFullBath'] = 0
 test_df.loc[test_df['Id'] == 2121, 'BsmtHalfBath'] = 0
 

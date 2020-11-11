@@ -120,12 +120,8 @@ def rmsle_cv(model, data, label):
     return(rmse)
 
 
-print(all_df.loc[all_df['Id'].isin([2041, 2186, 2525, 2218, 2219, 333, 949, 1488, 2349, 2121, 2189]), ['Id', 'BsmtExposure', 'BsmtQual', 'BsmtCond', 'BsmtFinType1', 'BsmtFinType2', 'BsmtFinSF1', 'BsmtFinSF2', 'BsmtUnfSF', 'TotalBsmtSF', 'BsmtFullBath', 'BsmtHalfBath']])
 
 
-'''
-Id = 2121 may have no basement!!!
-'''
 
 '''
 Strong Correlation
