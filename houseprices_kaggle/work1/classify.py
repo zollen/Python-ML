@@ -20,6 +20,7 @@ warnings.filterwarnings('ignore')
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 pd.set_option('display.width', 1000)
+np.random.seed(87)
 
 pp = pprint.PrettyPrinter(indent=3) 
 
@@ -105,7 +106,7 @@ from sklearn.decomposition import PCA
 #ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
 # CatBoostRegressor(loss_function='RMSE')
-model = CatBoostRegressor()
+model = CatBoostRegressor(random_state = 87)
 model.fit(train_df[all_columns], train_df['SalePrice'])
 train_df['Prediction'] = model.predict(train_df[all_columns]).round(0).astype('int64')
 test_df['SalePrice'] = model.predict(test_df[all_columns]).round(0).astype('int64')

@@ -133,6 +133,7 @@ test_df.loc[test_df['Id'] == 1488, 'BsmtExposure'] = 'Av'
 # OverallQual(5), OverallCond(5), TotalBsmtSF(725), BsmtQual(Gd)  BsmtCond(TA) BsmtExposure(NaN)
 test_df.loc[test_df['Id'] == 2349, 'BsmtExposure'] = 'No'
 
+## 2121 may have no basement
 test_df.loc[test_df['Id'] == 2121, 'BsmtExposure'] = 'No'
 test_df.loc[test_df['Id'] == 2121, 'BsmtQual'] = 'TA'
 test_df.loc[test_df['Id'] == 2121, 'BsmtCond'] = 'TA'
@@ -228,61 +229,58 @@ train_df.loc[train_df['Electrical'].isna() == True, 'Electrical'] = 'Mix'
 '''
 Fill MasVnrType
 '''
-def fillMasVnrType(df1, df2):
-    
-    grps = all_df.groupby(['OverallQual', 'MSZoning', 'Exterior1st', 'Exterior2nd', 'MasVnrType'])['MasVnrType'].count()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['MasVnrType'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['MSZoning'] == index[1]) & 
-                 (df['Exterior1st'] == index[2]) &
-                 (df['Exterior2nd'] == index[3]), 'MasVnrType'] = grps[index[0], index[1], index[2], index[3]].idxmax()
-                 
-    grps = all_df.groupby(['OverallQual', 'MSZoning', 'Exterior2nd', 'MasVnrType'])['MasVnrType'].count()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['MasVnrType'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['MSZoning'] == index[1]) & 
-                 (df['Exterior2nd'] == index[2]), 'MasVnrType'] = grps[index[0], index[1], index[2]].idxmax()
-                 
-    grps = all_df.groupby(['OverallQual', 'MSZoning', 'MasVnrType'])['MasVnrType'].count()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['MasVnrType'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['MSZoning'] == index[1]), 'MasVnrType'] = grps[index[0], index[1]].idxmax()
-    
-fillMasVnrType(train_df, test_df)
+train_df.loc[train_df['Id'] == 235, 'MasVnrType'] = 'BrkFace'
+train_df.loc[train_df['Id'] == 530, 'MasVnrType'] = 'BrkFace'
+train_df.loc[train_df['Id'] == 651, 'MasVnrType'] = 'Stone'
+train_df.loc[train_df['Id'] == 937, 'MasVnrType'] = 'BrkFace'
+train_df.loc[train_df['Id'] == 974, 'MasVnrType'] = 'Stone'
+train_df.loc[train_df['Id'] == 978, 'MasVnrType'] = 'Stone'
+train_df.loc[train_df['Id'] == 1244, 'MasVnrType'] = 'BrkFace'
+train_df.loc[train_df['Id'] == 1279, 'MasVnrType'] = 'BrkFace'
+test_df.loc[test_df['Id'] == 1692, 'MasVnrType'] = 'BrkFace'
+test_df.loc[test_df['Id'] == 1707, 'MasVnrType'] = 'Stone'
+test_df.loc[test_df['Id'] == 1883, 'MasVnrType'] = 'BrkFace'
+test_df.loc[test_df['Id'] == 1993, 'MasVnrType'] = 'BrkFace'
+test_df.loc[test_df['Id'] == 2005, 'MasVnrType'] = 'Stone'
+test_df.loc[test_df['Id'] == 2042, 'MasVnrType'] = 'BrkFace'
+test_df.loc[test_df['Id'] == 2312, 'MasVnrType'] = 'Stone'
+test_df.loc[test_df['Id'] == 2326, 'MasVnrType'] = 'BrkFace'
+test_df.loc[test_df['Id'] == 2341, 'MasVnrType'] = 'Stone'
+test_df.loc[test_df['Id'] == 2350, 'MasVnrType'] = 'Stone'
+test_df.loc[test_df['Id'] == 2369, 'MasVnrType'] = 'Stone'
+test_df.loc[test_df['Id'] == 2593, 'MasVnrType'] = 'BrkFace'
+test_df.loc[test_df['Id'] == 2611, 'MasVnrType'] = 'BrkFace'
+test_df.loc[test_df['Id'] == 2658, 'MasVnrType'] = 'Stone'
+test_df.loc[test_df['Id'] == 2687, 'MasVnrType'] = 'Stone'
+test_df.loc[test_df['Id'] == 2863, 'MasVnrType'] = 'BrkFace'
 
-             
              
 '''
 Fill MasVnrArea
 '''
-def fillMasVnrArea(df1, df2):
-     
-    grps = all_df.groupby(['OverallQual', '1stFlrSFP', 'TotRmsAbvGrd', 
-                           'GarageCars', 'WoodDeckSFP', 'MasVnrArea'])['MasVnrArea'].count()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['MasVnrArea'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['1stFlrSFP'] == index[1]) & 
-                 (df['TotRmsAbvGrd'] == index[2]) &
-                 (df['GarageCars'] == index[3]) &
-                 (df['WoodDeckSFP'] == index[4]), 'MasVnrArea'] = grps[index[0], index[1], index[2], index[3], index[4]].idxmax()
-    
-    grps = all_df.groupby(['OverallQual', 'MasVnrArea'])['MasVnrArea'].count()             
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['MasVnrArea'].isna() == True) &
-                 (df['OverallQual'] == index[0]), 'MasVnrArea'] = grps[index[0]].idxmax()
-                    
-fillMasVnrArea(train_df, test_df)             
-          
-
+train_df.loc[train_df['Id'] == 235, 'MasVnrArea'] = 168
+train_df.loc[train_df['Id'] == 530, 'MasVnrArea'] = 568
+train_df.loc[train_df['Id'] == 651, 'MasVnrArea'] = 127
+train_df.loc[train_df['Id'] == 937, 'MasVnrArea'] = 119
+train_df.loc[train_df['Id'] == 974, 'MasVnrArea'] = 124
+train_df.loc[train_df['Id'] == 978, 'MasVnrArea'] = 140
+train_df.loc[train_df['Id'] == 1244, 'MasVnrArea'] = 333
+train_df.loc[train_df['Id'] == 1279, 'MasVnrArea'] = 220
+test_df.loc[test_df['Id'] == 1692, 'MasVnrArea'] = 107
+test_df.loc[test_df['Id'] == 1707, 'MasVnrArea'] = 151
+test_df.loc[test_df['Id'] == 1883, 'MasVnrArea'] = 142
+test_df.loc[test_df['Id'] == 1993, 'MasVnrArea'] = 128
+test_df.loc[test_df['Id'] == 2005, 'MasVnrArea'] = 184
+test_df.loc[test_df['Id'] == 2042, 'MasVnrArea'] = 212
+test_df.loc[test_df['Id'] == 2312, 'MasVnrArea'] = 66
+test_df.loc[test_df['Id'] == 2326, 'MasVnrArea'] = 87
+test_df.loc[test_df['Id'] == 2341, 'MasVnrArea'] = 250
+test_df.loc[test_df['Id'] == 2350, 'MasVnrArea'] = 201
+test_df.loc[test_df['Id'] == 2369, 'MasVnrArea'] = 166
+test_df.loc[test_df['Id'] == 2593, 'MasVnrArea'] = 90
+test_df.loc[test_df['Id'] == 2658, 'MasVnrArea'] = 402
+test_df.loc[test_df['Id'] == 2687, 'MasVnrArea'] = 298
+test_df.loc[test_df['Id'] == 2863, 'MasVnrArea'] = 99
        
        
 '''

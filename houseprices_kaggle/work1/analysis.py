@@ -12,6 +12,7 @@ import pandas as pd
 from scipy.stats import skew
 import pprint
 from sklearn.preprocessing import LabelEncoder
+from scipy.special import boxcox1p
 from lightgbm import LGBMRegressor
 import seaborn as sb
 from matplotlib import pyplot as plt
@@ -99,12 +100,16 @@ if False:
 
     fig.tight_layout()
 
-if False:
+if True:
     log_num = np.log1p(num_train)
+    box_num = boxcox1p(num_train, 0.01)
     # compare skewnesses original with after of logarithm
-    skewness = pd.concat([num_train.apply(lambda x: skew(x.dropna())),
-                      log_num.apply(lambda x: skew(x.dropna()))],
-                     axis=1).rename(columns={0:'original', 1:'logarithmization'}).sort_values('original')
+    skewness = pd.concat([
+                        num_train.apply(lambda x: skew(x.dropna())),
+                        log_num.apply(lambda x: skew(x.dropna())),
+                        box_num.apply(lambda x: skew(x.dropna()))      
+                        ],
+                     axis=1).rename(columns={0:'original', 1:'logarithmization', 2:'boxcox'}).sort_values('original')
  
     ax = skewness.plot.barh(figsize=(15,12), title='Comparison of skewness of original and logarithmized', width=0.8)
     ax.set_xlabel('skewness');
