@@ -9,11 +9,10 @@ import numpy as np
 import pandas as pd
 import pprint
 from sklearn.model_selection import KFold, cross_val_score
-from xgboost import XGBClassifier
+from xgboost import XGBRegressor, XGBClassifier
 import warnings
 from sklearn.impute import SimpleImputer
 from lightgbm import LGBMClassifier, LGBMRegressor
-from xgboost.sklearn import XGBRegressor
 
 
 
@@ -21,6 +20,7 @@ warnings.filterwarnings('ignore')
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 pd.set_option('display.width', 1000)
+np.random.seed(0)
 
 pp = pprint.PrettyPrinter(indent=3) 
 
@@ -96,9 +96,9 @@ def fillValue(name, fid):
         labs = dict(zip(keys, vals))
         rlabs = dict(zip(vals, keys))
         all_ddf[name] = all_ddf[name].map(labs)
-        model = LGBMClassifier(random_state = 0)
+        model = XGBClassifier(random_state = 0)
     else:
-        model = LGBMRegressor(random_state = 0)
+        model = XGBRegressor(random_state = 0)
         
 
     model.fit(all_ddf[all_columns], all_ddf[name])
