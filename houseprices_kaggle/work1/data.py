@@ -162,13 +162,13 @@ test_df.loc[test_df['Id'] == 2189, 'BsmtHalfBath'] = 0
 Fill GarageFinish, GarageType, GarageQual, GarageCond
 '''
 test_df.loc[test_df['Id'] == 2127, 'GarageCond'] = 'TA'
-test_df.loc[test_df['Id'] == 2127, 'GarageQual'] = 'Fa'
+test_df.loc[test_df['Id'] == 2127, 'GarageQual'] = 'TA'
 
 # MSSubClass(70) MSZoning(RM) LotArea(9060) YearBuilt(1923) GarageType(Detchd)
 test_df.loc[test_df['Id'] == 2577, 'GarageQual'] = 'Fa'
 test_df.loc[test_df['Id'] == 2577, 'GarageCond'] = 'TA'
-test_df.loc[test_df['Id'] == 2577, 'GarageArea'] = 226
-test_df.loc[test_df['Id'] == 2577, 'GarageYrBlt'] = 1924
+test_df.loc[test_df['Id'] == 2577, 'GarageArea'] = 568
+test_df.loc[test_df['Id'] == 2577, 'GarageYrBlt'] = 1967
 test_df.loc[test_df['Id'] == 2577, 'GarageFinish'] = 'Unf'
 test_df.loc[test_df['Id'] == 2577, 'GarageCars'] = 1
 
