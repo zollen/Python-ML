@@ -74,37 +74,37 @@ all_df = pd.concat([ train_df, test_df ])
 Fill BsmtQual, BsmtCond, BsmtFinType2, BsmtExposure
 '''
 train_df.loc[(train_df['BsmtCond'].isna() == True) &
-            (train_df['TotalBsmtSF'] == 0), 'BsmtCond'] = 'NA'
+            (train_df['TotalBsmtSF'] == 0), 'BsmtCond'] = 'None'
 train_df.loc[(train_df['BsmtQual'].isna() == True) &
-            (train_df['TotalBsmtSF'] == 0), 'BsmtQual'] = 'NA'
+            (train_df['TotalBsmtSF'] == 0), 'BsmtQual'] = 'None'
 train_df.loc[(train_df['BsmtFinType1'].isna() == True) &
-            (train_df['TotalBsmtSF'] == 0), 'BsmtFinType1'] = 'NA'
+            (train_df['TotalBsmtSF'] == 0), 'BsmtFinType1'] = 'None'
 train_df.loc[(train_df['BsmtFinType2'].isna() == True) &
-            (train_df['TotalBsmtSF'] == 0), 'BsmtFinType2'] = 'NA'
+            (train_df['TotalBsmtSF'] == 0), 'BsmtFinType2'] = 'None'
 train_df.loc[(train_df['BsmtExposure'].isna() == True) &
-            (train_df['TotalBsmtSF'] == 0), 'BsmtExposure'] = 'NA'
+            (train_df['TotalBsmtSF'] == 0), 'BsmtExposure'] = 'None'
 
 test_df.loc[(test_df['BsmtCond'].isna() == True) &
-            (test_df['TotalBsmtSF'] == 0), 'BsmtCond'] = 'NA'
+            (test_df['TotalBsmtSF'] == 0), 'BsmtCond'] = 'None'
 test_df.loc[(test_df['BsmtQual'].isna() == True) &
-            (test_df['TotalBsmtSF'] == 0), 'BsmtQual'] = 'NA'
+            (test_df['TotalBsmtSF'] == 0), 'BsmtQual'] = 'None'
 test_df.loc[(test_df['BsmtFinType1'].isna() == True) &
-            (test_df['TotalBsmtSF'] == 0), 'BsmtFinType1'] = 'NA'
+            (test_df['TotalBsmtSF'] == 0), 'BsmtFinType1'] = 'None'
 test_df.loc[(test_df['BsmtFinType2'].isna() == True) &
-            (test_df['TotalBsmtSF'] == 0), 'BsmtFinType2'] = 'NA'
+            (test_df['TotalBsmtSF'] == 0), 'BsmtFinType2'] = 'None'
 test_df.loc[(test_df['BsmtExposure'].isna() == True) &
-            (test_df['TotalBsmtSF'] == 0), 'BsmtExposure'] = 'NA'
+            (test_df['TotalBsmtSF'] == 0), 'BsmtExposure'] = 'None'
                
 all_df.loc[(all_df['BsmtCond'].isna() == True) &
-            (all_df['TotalBsmtSF'] == 0), 'BsmtCond'] = 'NA'
+            (all_df['TotalBsmtSF'] == 0), 'BsmtCond'] = 'None'
 all_df.loc[(all_df['BsmtQual'].isna() == True) &
-            (all_df['TotalBsmtSF'] == 0), 'BsmtQual'] = 'NA'
+            (all_df['TotalBsmtSF'] == 0), 'BsmtQual'] = 'None'
 all_df.loc[(all_df['BsmtFinType1'].isna() == True) &
-            (all_df['TotalBsmtSF'] == 0), 'BsmtFinType1'] = 'NA'
+            (all_df['TotalBsmtSF'] == 0), 'BsmtFinType1'] = 'None'
 all_df.loc[(all_df['BsmtFinType2'].isna() == True) &
-            (all_df['TotalBsmtSF'] == 0), 'BsmtFinType2'] = 'NA'
+            (all_df['TotalBsmtSF'] == 0), 'BsmtFinType2'] = 'None'
 all_df.loc[(all_df['BsmtExposure'].isna() == True) &
-            (all_df['TotalBsmtSF'] == 0), 'BsmtExposure'] = 'NA'
+            (all_df['TotalBsmtSF'] == 0), 'BsmtExposure'] = 'None'
              
 # OverallQual(8), OverallCond(9), BsmtQual(Gd), TotalBsmtSF(1426), BsmtExposure(Mn), BsmtCond(Nan)
 test_df.loc[test_df['Id'] == 2041, 'BsmtCond'] = 'TA'
@@ -134,11 +134,11 @@ test_df.loc[test_df['Id'] == 1488, 'BsmtExposure'] = 'Av'
 test_df.loc[test_df['Id'] == 2349, 'BsmtExposure'] = 'No'
 
 ## 2121 may have no basement
-test_df.loc[test_df['Id'] == 2121, 'BsmtExposure'] = 'NA'
-test_df.loc[test_df['Id'] == 2121, 'BsmtQual'] = 'NA'
-test_df.loc[test_df['Id'] == 2121, 'BsmtCond'] = 'NA'
-test_df.loc[test_df['Id'] == 2121, 'BsmtFinType1'] = 'NA'
-test_df.loc[test_df['Id'] == 2121, 'BsmtFinType2'] = 'NA'
+test_df.loc[test_df['Id'] == 2121, 'BsmtExposure'] = 'None'
+test_df.loc[test_df['Id'] == 2121, 'BsmtQual'] = 'None'
+test_df.loc[test_df['Id'] == 2121, 'BsmtCond'] = 'None'
+test_df.loc[test_df['Id'] == 2121, 'BsmtFinType1'] = 'None'
+test_df.loc[test_df['Id'] == 2121, 'BsmtFinType2'] = 'None'
 test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF1'] = 0
 test_df.loc[test_df['Id'] == 2121, 'BsmtFinSF2'] = 0
 test_df.loc[test_df['Id'] == 2121, 'BsmtUnfSF'] = 0
@@ -146,11 +146,11 @@ test_df.loc[test_df['Id'] == 2121, 'TotalBsmtSF'] = 0
 test_df.loc[test_df['Id'] == 2121, 'BsmtFullBath'] = 0
 test_df.loc[test_df['Id'] == 2121, 'BsmtHalfBath'] = 0
 
-test_df.loc[test_df['Id'] == 2189, 'BsmtExposure'] = 'NA'
-test_df.loc[test_df['Id'] == 2189, 'BsmtQual'] = 'NA'
-test_df.loc[test_df['Id'] == 2189, 'BsmtCond'] = 'NA'
-test_df.loc[test_df['Id'] == 2189, 'BsmtFinType1'] = 'NA'
-test_df.loc[test_df['Id'] == 2189, 'BsmtFinType2'] = 'NA'
+test_df.loc[test_df['Id'] == 2189, 'BsmtExposure'] = 'None'
+test_df.loc[test_df['Id'] == 2189, 'BsmtQual'] = 'None'
+test_df.loc[test_df['Id'] == 2189, 'BsmtCond'] = 'None'
+test_df.loc[test_df['Id'] == 2189, 'BsmtFinType1'] = 'None'
+test_df.loc[test_df['Id'] == 2189, 'BsmtFinType2'] = 'None'
 test_df.loc[test_df['Id'] == 2189, 'BsmtFinSF1'] = 0
 test_df.loc[test_df['Id'] == 2189, 'BsmtFinSF2'] = 0
 test_df.loc[test_df['Id'] == 2189, 'BsmtUnfSF'] = 0
@@ -173,35 +173,35 @@ test_df.loc[test_df['Id'] == 2577, 'GarageFinish'] = 'Unf'
 test_df.loc[test_df['Id'] == 2577, 'GarageCars'] = 1
 
 train_df.loc[(train_df['GarageFinish'].isna() == True) & 
-             (train_df['GarageArea'] == 0), 'GarageFinish'] = 'NA'
+             (train_df['GarageArea'] == 0), 'GarageFinish'] = 'None'
 train_df.loc[(train_df['GarageType'].isna() == True) & 
-             (train_df['GarageArea'] == 0), 'GarageType'] = 'NA'
+             (train_df['GarageArea'] == 0), 'GarageType'] = 'None'
 train_df.loc[(train_df['GarageQual'].isna() == True) & 
-             (train_df['GarageArea'] == 0), 'GarageQual'] = 'NA'    
+             (train_df['GarageArea'] == 0), 'GarageQual'] = 'None'    
 train_df.loc[(train_df['GarageCond'].isna() == True) & 
-             (train_df['GarageArea'] == 0), 'GarageCond'] = 'NA'   
+             (train_df['GarageArea'] == 0), 'GarageCond'] = 'None'   
 train_df.loc[(train_df['GarageYrBlt'].isna() == True) & 
              (train_df['GarageArea'] == 0), 'GarageYrBlt'] = 0
 
 test_df.loc[(test_df['GarageFinish'].isna() == True) & 
-             (test_df['GarageArea'] == 0), 'GarageFinish'] = 'NA'
+             (test_df['GarageArea'] == 0), 'GarageFinish'] = 'None'
 test_df.loc[(test_df['GarageType'].isna() == True) & 
-             (test_df['GarageArea'] == 0), 'GarageType'] = 'NA'
+             (test_df['GarageArea'] == 0), 'GarageType'] = 'None'
 test_df.loc[(test_df['GarageQual'].isna() == True) & 
-             (test_df['GarageArea'] == 0), 'GarageQual'] = 'NA'    
+             (test_df['GarageArea'] == 0), 'GarageQual'] = 'None'    
 test_df.loc[(test_df['GarageCond'].isna() == True) & 
-             (test_df['GarageArea'] == 0), 'GarageCond'] = 'NA' 
+             (test_df['GarageArea'] == 0), 'GarageCond'] = 'None' 
 test_df.loc[(test_df['GarageYrBlt'].isna() == True) & 
              (test_df['GarageArea'] == 0), 'GarageYrBlt'] = 0
              
 all_df.loc[(all_df['GarageFinish'].isna() == True) & 
-             (all_df['GarageArea'] == 0), 'GarageFinish'] = 'NA'
+             (all_df['GarageArea'] == 0), 'GarageFinish'] = 'None'
 all_df.loc[(all_df['GarageType'].isna() == True) & 
-             (all_df['GarageArea'] == 0), 'GarageType'] = 'NA'
+             (all_df['GarageArea'] == 0), 'GarageType'] = 'None'
 all_df.loc[(all_df['GarageQual'].isna() == True) & 
-             (all_df['GarageArea'] == 0), 'GarageQual'] = 'NA'    
+             (all_df['GarageArea'] == 0), 'GarageQual'] = 'None'    
 all_df.loc[(all_df['GarageCond'].isna() == True) & 
-             (all_df['GarageArea'] == 0), 'GarageCond'] = 'NA' 
+             (all_df['GarageArea'] == 0), 'GarageCond'] = 'None' 
 all_df.loc[(all_df['GarageYrBlt'].isna() == True) & 
              (all_df['GarageArea'] == 0), 'GarageYrBlt'] = 0       
 
@@ -351,9 +351,9 @@ fillLotFrontage(train_df, test_df)
 '''
 Fill FireplaceQu
 '''
-train_df.loc[train_df['Fireplaces'] == 0, 'FireplaceQu'] = 'NA'
-test_df.loc[test_df['Fireplaces'] == 0, 'FireplaceQu'] = 'NA'
-all_df.loc[all_df['Fireplaces'] == 0, 'FireplaceQu'] = 'NA'
+train_df.loc[train_df['Fireplaces'] == 0, 'FireplaceQu'] = 'None'
+test_df.loc[test_df['Fireplaces'] == 0, 'FireplaceQu'] = 'None'
+all_df.loc[all_df['Fireplaces'] == 0, 'FireplaceQu'] = 'None'
 
 
 
