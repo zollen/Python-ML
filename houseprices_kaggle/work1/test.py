@@ -10,7 +10,7 @@ import pandas as pd
 import pprint
 import warnings
 from sklearn.impute import SimpleImputer
-from lightgbm import LGBMClassifier, LGBMRegressor
+from catboost import CatBoostClassifier, CatBoostRegressor
 
 
 
@@ -82,7 +82,7 @@ def fillValue(name, fid):
     
 
     categorical_columns = list(set(all_ddf.columns).symmetric_difference(numeric_columns + ['Id', 'SalePrice', name]))
-    categorical_columns.sort()
+    categorical_columns.sort(reverse = True)
     all_columns = numeric_columns + categorical_columns
     
     if all_df[name].dtypes == 'object':
@@ -95,15 +95,16 @@ def fillValue(name, fid):
         labs = dict(zip(keys, vals))
         rlabs = dict(zip(vals, keys))
         all_ddf[name] = all_ddf[name].map(labs)
-        model = LGBMClassifier(random_state = 0)
+        model = CatBoostClassifier(random_state = 0, verbose = False)
     else:
-        model = LGBMRegressor(random_state = 0)
+        model = CatBoostRegressor(random_state = 0, verbose = False)
         
 
     model.fit(all_ddf[all_columns], all_ddf[name])
     prediction = model.predict(single_df[all_columns])
     
     if all_df[name].dtypes == 'object':  
+        prediction = prediction[:, 0]
         print("%4d[%12s] ===> %s" % (fid, name, rlabs[prediction[0]]))
         all_df.loc[all_df['Id'] == fid, name] = rlabs[prediction[0]]
         kk.append(rlabs[prediction[0]])
@@ -115,10 +116,10 @@ def fillValue(name, fid):
         
 
 for fid in [1916, 2217, 2251, 2905]: 
-    fillValue('MSZoning', fid)
-    
+   fillValue('MSZoning', fid)
+   
 
-print(kk)
+
 
 
 '''
