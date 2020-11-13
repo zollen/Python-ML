@@ -119,10 +119,10 @@ test_df.loc[test_df['Id'] == 2525, 'BsmtCond'] = 'TA'
 test_df.loc[test_df['Id'] == 2218, 'BsmtQual'] = 'TA'
 
 # OverallQual(4), OverallCond(7), BsmtCond(TA), TotalBsmtSF(356), BsmtExposure(No), BsmtQual(NaN)
-test_df.loc[test_df['Id'] == 2219, 'BsmtQual'] = 'Fa'
+test_df.loc[test_df['Id'] == 2219, 'BsmtQual'] = 'TA'
 
 # OverallQual(8), OverallCond(5), TotalBsmtSF(3206), BsmtQual(Gd), BsmtCond(TA), BsmtExposure(No), BsmtFinType2(NaN)
-train_df.loc[train_df['Id'] == 333, 'BsmtFinType2'] = 'ALQ'
+train_df.loc[train_df['Id'] == 333, 'BsmtFinType2'] = 'BLQ'
 
 # OverallQual(7), OverallCond(5), TotalBsmtSF(936), BsmtQual(Gd)  BsmtCond(TA) BsmtExposure(NaN)
 train_df.loc[train_df['Id'] == 949, 'BsmtExposure'] = 'No'
