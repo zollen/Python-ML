@@ -8,8 +8,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pprint
-from sklearn.model_selection import KFold, cross_val_score
-from xgboost import XGBRegressor, XGBClassifier
 import warnings
 from sklearn.impute import SimpleImputer
 from lightgbm import LGBMClassifier, LGBMRegressor
@@ -84,6 +82,7 @@ def fillValue(name, fid):
     
 
     categorical_columns = list(set(all_ddf.columns).symmetric_difference(numeric_columns + ['Id', 'SalePrice', name]))
+    categorical_columns.sort()
     all_columns = numeric_columns + categorical_columns
     
     if all_df[name].dtypes == 'object':
@@ -96,14 +95,14 @@ def fillValue(name, fid):
         labs = dict(zip(keys, vals))
         rlabs = dict(zip(vals, keys))
         all_ddf[name] = all_ddf[name].map(labs)
-        model = XGBClassifier(random_state = 0)
+        model = LGBMClassifier(random_state = 0)
     else:
-        model = XGBRegressor(random_state = 0)
+        model = LGBMRegressor(random_state = 0)
         
 
     model.fit(all_ddf[all_columns], all_ddf[name])
     prediction = model.predict(single_df[all_columns])
-
+    
     if all_df[name].dtypes == 'object':  
         print("%4d[%12s] ===> %s" % (fid, name, rlabs[prediction[0]]))
         all_df.loc[all_df['Id'] == fid, name] = rlabs[prediction[0]]

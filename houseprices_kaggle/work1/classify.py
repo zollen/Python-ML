@@ -14,6 +14,7 @@ from scipy.special import boxcox1p
 from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
+from catboost import CatBoostRegressor
 import warnings
 
 SEED = 87
@@ -84,6 +85,7 @@ all_df = pd.get_dummies(all_df, columns = categorical_columns)
 
 categorical_columns = set(all_df.columns).symmetric_difference(numeric_columns + ['Id', 'SalePrice'])
 categorical_columns = list(categorical_columns)
+categorical_columns.sort()
 
 train_df[categorical_columns] = all_df.loc[all_df['Id'].isin(train_df['Id']), categorical_columns]
 test_df[categorical_columns] = all_df.loc[all_df['Id'].isin(test_df['Id']), categorical_columns]
@@ -95,6 +97,7 @@ scaler = MinMaxScaler()
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
+'''
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import Ridge
 from sklearn.linear_model import Lasso
@@ -110,6 +113,7 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.ensemble import AdaBoostRegressor
 from catboost import CatBoostRegressor
 from sklearn.decomposition import PCA
+'''
 
 #pca = PCA(n_components = 5)
 #ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
