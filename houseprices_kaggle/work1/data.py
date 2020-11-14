@@ -198,16 +198,6 @@ test_df.loc[(test_df['GarageCond'].isna() == True) &
 test_df.loc[(test_df['GarageYrBlt'].isna() == True) & 
              (test_df['GarageArea'] == 0), 'GarageYrBlt'] = 0
              
-all_df.loc[(all_df['GarageFinish'].isna() == True) & 
-             (all_df['GarageArea'] == 0), 'GarageFinish'] = 'None'
-all_df.loc[(all_df['GarageType'].isna() == True) & 
-             (all_df['GarageArea'] == 0), 'GarageType'] = 'None'
-all_df.loc[(all_df['GarageQual'].isna() == True) & 
-             (all_df['GarageArea'] == 0), 'GarageQual'] = 'None'    
-all_df.loc[(all_df['GarageCond'].isna() == True) & 
-             (all_df['GarageArea'] == 0), 'GarageCond'] = 'None' 
-all_df.loc[(all_df['GarageYrBlt'].isna() == True) & 
-             (all_df['GarageArea'] == 0), 'GarageYrBlt'] = 0       
 
 
 
