@@ -100,7 +100,7 @@ if False:
 
     fig.tight_layout()
 
-if True:
+if False:
     '''
     skew_features = features[numerics2].apply(lambda x: skew(x)).sort_values(ascending=False)
 
@@ -134,8 +134,10 @@ if False:
 
 
     spearman(num_train, numeric_columns)
-    
 
-
+if False:    
+    corrmat = train_df.corr()
+    plt.subplots(figsize=(16,10))
+    sb.heatmap(corrmat, vmax=0.9, square=True)
 
 plt.show()
