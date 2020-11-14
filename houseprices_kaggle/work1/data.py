@@ -165,7 +165,7 @@ test_df.loc[test_df['Id'] == 2127, 'GarageCond'] = 'TA'
 test_df.loc[test_df['Id'] == 2127, 'GarageQual'] = 'TA'
 
 # MSSubClass(70) MSZoning(RM) LotArea(9060) YearBuilt(1923) GarageType(Detchd)
-test_df.loc[test_df['Id'] == 2577, 'GarageQual'] = 'Fa'
+test_df.loc[test_df['Id'] == 2577, 'GarageQual'] = 'TA'
 test_df.loc[test_df['Id'] == 2577, 'GarageCond'] = 'TA'
 test_df.loc[test_df['Id'] == 2577, 'GarageArea'] = 568
 test_df.loc[test_df['Id'] == 2577, 'GarageYrBlt'] = 1967
@@ -361,7 +361,7 @@ all_df.loc[all_df['Fireplaces'] == 0, 'FireplaceQu'] = 'None'
 Fill MSZoning   
 '''
 test_df.loc[test_df['Id'] == 1916, 'MSZoning'] = 'C (all)'
-test_df.loc[test_df['Id'] == 2217, 'MSZoning'] = 'RM'
+test_df.loc[test_df['Id'] == 2217, 'MSZoning'] = 'C (all)'
 test_df.loc[test_df['Id'] == 2251, 'MSZoning'] = 'RM'
 test_df.loc[test_df['Id'] == 2905, 'MSZoning'] = 'RL'
 
