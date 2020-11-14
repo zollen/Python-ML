@@ -28,25 +28,7 @@ test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
 train_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = True)
 test_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = True)
 
-
-last = 0
-for val in range(1000, 2020, 10):
-    train_df.loc[(train_df['YearBuilt'] >= last) & (train_df['YearBuilt'] < val), 'YearBuiltP'] = val
-    test_df.loc[(test_df['YearBuilt'] >= last) & (test_df['YearBuilt'] < val), 'YearBuiltP'] = val
-    last = val
-
-last = 0
-for val in range(0, 2000, 200):
-    train_df.loc[(train_df['MasVnrArea'] >= last) & (train_df['MasVnrArea'] < val), 'MasVnrAreaP'] = val
-    test_df.loc[(test_df['MasVnrArea'] >= last) & (test_df['MasVnrArea'] < val), 'MasVnrAreaP'] = val
-    last = val    
-    
-last = 0
-for val in range(0, 3000, 200):
-    train_df.loc[(train_df['1stFlrSF'] >= last) & (train_df['1stFlrSF'] < val), '1stFlrSFP'] = val
-    test_df.loc[(test_df['1stFlrSF'] >= last) & (test_df['1stFlrSF'] < val), '1stFlrSFP'] = val
-    last = val    
-    
+      
 last = 0
 for val in range(0, 2000, 200):
     train_df.loc[(train_df['WoodDeckSF'] >= last) & (train_df['WoodDeckSF'] < val), 'WoodDeckSFP'] = val
@@ -54,18 +36,40 @@ for val in range(0, 2000, 200):
     last = val       
     
 last = 0
-for val in range(0, 1200, 200):
-    train_df.loc[(train_df['LowQualFinSF'] >= last) & (train_df['LowQualFinSF'] < val), 'LowQualFinSFP'] = val
-    test_df.loc[(test_df['LowQualFinSF'] >= last) & (test_df['LowQualFinSF'] < val), 'LowQualFinSFP'] = val
-    last = val
-
-last = 0
 for val in range(0, 2000, 200):
     train_df.loc[(train_df['OpenPorchSF'] >= last) & (train_df['OpenPorchSF'] < val), 'OpenPorchSFP'] = val
     test_df.loc[(test_df['OpenPorchSF'] >= last) & (test_df['OpenPorchSF'] < val), 'OpenPorchSFP'] = val
     last = val
 
-
+last = 0
+for val in range(0, 800, 20):
+    train_df.loc[(train_df['EnclosedPorch'] >= last) & (train_df['EnclosedPorch'] < val), 'EnclosedPorchP'] = val
+    test_df.loc[(test_df['EnclosedPorch'] >= last) & (test_df['EnclosedPorch'] < val), 'EnclosedPorchP'] = val
+    last = val
+    
+last = 0
+for val in range(0, 550, 20):
+    train_df.loc[(train_df['3SsnPorch'] >= last) & (train_df['3SsnPorch'] < val), '3SsnPorchP'] = val
+    test_df.loc[(test_df['3SsnPorch'] >= last) & (test_df['3SsnPorch'] < val), '3SsnPorchP'] = val
+    last = val
+    
+last = 0
+for val in range(0, 800, 20):
+    train_df.loc[(train_df['ScreenPorch'] >= last) & (train_df['ScreenPorch'] < val), 'ScreenPorchP'] = val
+    test_df.loc[(test_df['ScreenPorch'] >= last) & (test_df['ScreenPorch'] < val), 'ScreenPorchP'] = val
+    last = val
+    
+last = 0
+for val in range(0, 800, 50):
+    train_df.loc[(train_df['PoolArea'] >= last) & (train_df['PoolArea'] < val), 'PoolAreaP'] = val
+    test_df.loc[(test_df['PoolArea'] >= last) & (test_df['PoolArea'] < val), 'PoolAreaP'] = val
+    last = val
+    
+last = 0
+for val in range(0, 15500, 100):
+    train_df.loc[(train_df['MiscVal'] >= last) & (train_df['MiscVal'] < val), 'MiscValP'] = val
+    test_df.loc[(test_df['MiscVal'] >= last) & (test_df['MiscVal'] < val), 'MiscValP'] = val
+    last = val
     
 all_df = pd.concat([ train_df, test_df ]) 
 
@@ -285,56 +289,121 @@ test_df.loc[test_df['Id'] == 2863, 'MasVnrArea'] = 99
        
 '''
 Fill LotFrontage
-'''       
+'''          
 def fillLotFrontage(df1, df2):
     
-    grps = all_df.groupby(['OverallQual', 'MSSubClass', '1stFlrSFP', 'LowQualFinSFP',
-                           'OpenPorchSFP', 'GarageCars'])['LotFrontage'].median()
+    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP',
+                           'WoodDeckSFP', 'OpenPorchSFP', 'EnclosedPorchP', '3SsnPorchP', 
+                           'ScreenPorchP', 'MiscValP'])['LotFrontage'].median()
     for index, _ in grps.items():
         for df in  [ df1, df2 ]:
             df.loc[(df['LotFrontage'].isna() == True) &
                  (df['OverallQual'] == index[0]) &
-                 (df['MSSubClass'] == index[1]) & 
-                 (df['1stFlrSFP'] == index[2]) &
-                 (df['LowQualFinSFP'] == index[3]) &
-                 (df['OpenPorchSFP'] == index[4]) &
-                 (df['GarageCars'] == index[5]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4], index[5]]
-      
-    grps = all_df.groupby(['OverallQual', 'MSSubClass', '1stFlrSFP', 'LowQualFinSFP',
-                           'OpenPorchSFP'])['LotFrontage'].median()
+                 (df['OverallCond'] == index[1]) &
+                 (df['MSSubClass'] == index[2]) & 
+                 (df['PoolAreaP'] == index[3]) &
+                 (df['WoodDeckSFP'] == index[4]) &
+                 (df['OpenPorchSFP'] == index[5]) &
+                 (df['EnclosedPorchP'] == index[6]) &
+                 (df['3SsnPorchP'] == index[7]) &
+                 (df['ScreenPorchP'] == index[8]) &
+                 (df['MiscValP'] == index[9]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4], index[5], index[6], index[7], index[8], index[9]]
+    
+    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP',
+                           'WoodDeckSFP', 'OpenPorchSFP', 'EnclosedPorchP', '3SsnPorchP', 
+                           'ScreenPorchP'])['LotFrontage'].median()
     for index, _ in grps.items():
         for df in  [ df1, df2 ]:
             df.loc[(df['LotFrontage'].isna() == True) &
                  (df['OverallQual'] == index[0]) &
-                 (df['MSSubClass'] == index[1]) & 
-                 (df['1stFlrSFP'] == index[2]) &
-                 (df['LowQualFinSFP'] == index[3]) &
-                 (df['OpenPorchSFP'] == index[4]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4]]
-                 
-    grps = all_df.groupby(['OverallQual', 'MSSubClass', '1stFlrSFP', 'LowQualFinSFP'
+                 (df['OverallCond'] == index[1]) &
+                 (df['MSSubClass'] == index[2]) & 
+                 (df['PoolAreaP'] == index[3]) &
+                 (df['WoodDeckSFP'] == index[4]) &
+                 (df['OpenPorchSFP'] == index[5]) &
+                 (df['EnclosedPorchP'] == index[6]) &
+                 (df['3SsnPorchP'] == index[7]) &
+                 (df['ScreenPorchP'] == index[8]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4], index[5], index[6], index[7], index[8]]
+    
+    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP',
+                           'WoodDeckSFP', 'OpenPorchSFP', 'EnclosedPorchP', '3SsnPorchP' 
                            ])['LotFrontage'].median()
     for index, _ in grps.items():
         for df in  [ df1, df2 ]:
             df.loc[(df['LotFrontage'].isna() == True) &
                  (df['OverallQual'] == index[0]) &
-                 (df['MSSubClass'] == index[1]) & 
-                 (df['1stFlrSFP'] == index[2]) &
-                 (df['LowQualFinSFP'] == index[3]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3]]
-                 
-    grps = all_df.groupby(['OverallQual', 'MSSubClass', '1stFlrSFP'])['LotFrontage'].median()
+                 (df['OverallCond'] == index[1]) &
+                 (df['MSSubClass'] == index[2]) & 
+                 (df['PoolAreaP'] == index[3]) &
+                 (df['WoodDeckSFP'] == index[4]) &
+                 (df['OpenPorchSFP'] == index[5]) &
+                 (df['EnclosedPorchP'] == index[6]) &
+                 (df['3SsnPorchP'] == index[7]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4], index[5], index[6], index[7]]
+    
+    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP',
+                           'WoodDeckSFP', 'OpenPorchSFP', 'EnclosedPorchP'
+                           ])['LotFrontage'].median()
     for index, _ in grps.items():
         for df in  [ df1, df2 ]:
             df.loc[(df['LotFrontage'].isna() == True) &
                  (df['OverallQual'] == index[0]) &
-                 (df['MSSubClass'] == index[1]) & 
-                 (df['1stFlrSFP'] == index[2]), 'LotFrontage'] = grps[index[0], index[1], index[2]]
+                 (df['OverallCond'] == index[1]) &
+                 (df['MSSubClass'] == index[2]) & 
+                 (df['PoolAreaP'] == index[3]) &
+                 (df['WoodDeckSFP'] == index[4]) &
+                 (df['OpenPorchSFP'] == index[5]) &
+                 (df['EnclosedPorchP'] == index[6]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4], index[5], index[6]]
                  
-    grps = all_df.groupby(['OverallQual', 'MSSubClass'])['LotFrontage'].median()
+    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP',
+                           'WoodDeckSFP', 'OpenPorchSFP'
+                           ])['LotFrontage'].median()
     for index, _ in grps.items():
         for df in  [ df1, df2 ]:
             df.loc[(df['LotFrontage'].isna() == True) &
                  (df['OverallQual'] == index[0]) &
-                 (df['MSSubClass'] == index[1]), 'LotFrontage'] = grps[index[0], index[1]]
+                 (df['OverallCond'] == index[1]) &
+                 (df['MSSubClass'] == index[2]) & 
+                 (df['PoolAreaP'] == index[3]) &
+                 (df['WoodDeckSFP'] == index[4]) &
+                 (df['OpenPorchSFP'] == index[5]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4], index[5]]
+                 
+    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP',
+                           'WoodDeckSFP'])['LotFrontage'].median()
+    for index, _ in grps.items():
+        for df in  [ df1, df2 ]:
+            df.loc[(df['LotFrontage'].isna() == True) &
+                 (df['OverallQual'] == index[0]) &
+                 (df['OverallCond'] == index[1]) &
+                 (df['MSSubClass'] == index[2]) & 
+                 (df['PoolAreaP'] == index[3]) &
+                 (df['WoodDeckSFP'] == index[4]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4]]
+                 
+    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP'
+                           ])['LotFrontage'].median()
+    for index, _ in grps.items():
+        for df in  [ df1, df2 ]:
+            df.loc[(df['LotFrontage'].isna() == True) &
+                 (df['OverallQual'] == index[0]) &
+                 (df['OverallCond'] == index[1]) &
+                 (df['MSSubClass'] == index[2]) & 
+                 (df['PoolAreaP'] == index[3]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3]]
+                 
+    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass'
+                           ])['LotFrontage'].median()
+    for index, _ in grps.items():
+        for df in  [ df1, df2 ]:
+            df.loc[(df['LotFrontage'].isna() == True) &
+                 (df['OverallQual'] == index[0]) &
+                 (df['OverallCond'] == index[1]) &
+                 (df['MSSubClass'] == index[2]), 'LotFrontage'] = grps[index[0], index[1], index[2]]
+                 
+    grps = all_df.groupby(['OverallQual', 'OverallCond'
+                           ])['LotFrontage'].median()
+    for index, _ in grps.items():
+        for df in  [ df1, df2 ]:
+            df.loc[(df['LotFrontage'].isna() == True) &
+                 (df['OverallQual'] == index[0]) &
+                 (df['OverallCond'] == index[1]), 'LotFrontage'] = grps[index[0], index[1]]
                  
     grps = all_df.groupby(['OverallQual'])['LotFrontage'].median()
     for index, _ in grps.items():
@@ -342,6 +411,8 @@ def fillLotFrontage(df1, df2):
             df.loc[(df['LotFrontage'].isna() == True) &
                  (df['OverallQual'] == index), 'LotFrontage'] = grps[index]
                  
+      
+    
 fillLotFrontage(train_df, test_df)  
 
        
@@ -410,8 +481,12 @@ test_df.loc[test_df['SaleType'].isna() == True, 'SaleType'] = 'WD'
 
 
 
-train_df.drop(columns = ['YearBuiltP', 'MasVnrAreaP', '1stFlrSFP', 'WoodDeckSFP', 'OpenPorchSFP', 'LowQualFinSFP'], inplace = True)
-test_df.drop(columns = ['YearBuiltP', 'MasVnrAreaP', '1stFlrSFP', 'WoodDeckSFP', 'OpenPorchSFP', 'LowQualFinSFP'], inplace = True)
+train_df.drop(columns = ['WoodDeckSFP', 'OpenPorchSFP',
+                         'EnclosedPorchP', '3SsnPorchP', 
+                         'ScreenPorchP', 'PoolAreaP', 'MiscValP'], inplace = True)
+test_df.drop(columns = ['WoodDeckSFP', 'OpenPorchSFP', 
+                        'EnclosedPorchP', '3SsnPorchP', 
+                        'ScreenPorchP', 'PoolAreaP', 'MiscValP'], inplace = True)
 
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_data.csv'), index = False)
