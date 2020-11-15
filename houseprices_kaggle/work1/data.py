@@ -42,19 +42,19 @@ for val in range(0, 2000, 200):
     last = val
 
 last = 0
-for val in range(0, 800, 20):
+for val in range(0, 800, 50):
     train_df.loc[(train_df['EnclosedPorch'] >= last) & (train_df['EnclosedPorch'] < val), 'EnclosedPorchP'] = val
     test_df.loc[(test_df['EnclosedPorch'] >= last) & (test_df['EnclosedPorch'] < val), 'EnclosedPorchP'] = val
     last = val
     
 last = 0
-for val in range(0, 550, 20):
+for val in range(0, 550, 50):
     train_df.loc[(train_df['3SsnPorch'] >= last) & (train_df['3SsnPorch'] < val), '3SsnPorchP'] = val
     test_df.loc[(test_df['3SsnPorch'] >= last) & (test_df['3SsnPorch'] < val), '3SsnPorchP'] = val
     last = val
     
 last = 0
-for val in range(0, 800, 20):
+for val in range(0, 800, 50):
     train_df.loc[(train_df['ScreenPorch'] >= last) & (train_df['ScreenPorch'] < val), 'ScreenPorchP'] = val
     test_df.loc[(test_df['ScreenPorch'] >= last) & (test_df['ScreenPorch'] < val), 'ScreenPorchP'] = val
     last = val
