@@ -468,7 +468,8 @@ test_df.loc[test_df['SaleType'].isna() == True, 'SaleType'] = 'WD'
 
 
 
-
+train_df['TotalSF'] = train_df['TotalBsmtSF'] + train_df['1stFlrSF'] + train_df['2ndFlrSF']
+test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2ndFlrSF']
 
 
 train_df.drop(columns = ['WoodDeckSFP', 'OpenPorchSFP',

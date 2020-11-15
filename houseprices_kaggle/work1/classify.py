@@ -68,17 +68,6 @@ numeric_columns.remove('SalePrice')
 
 all_columns = numeric_columns + categorical_columns
 
-
-if False:            
-    for name in ['MiscVal', 'PoolArea', 'LotArea', '3SsnPorch', 'LowQualFinSF',
-             'KitchenAbvGr', 'BsmtFinSF2', 'ScreenPorch', 'BsmtHalfBath',
-             'EnclosedPorch', 'MasVnrArea', 'OpenPorchSF', 'LotFrontage',
-             'BsmtFinSF1', 'WoodDeckSF', 'MSSubClass', '1stFlrSF', 'GrLivArea',
-             '2ndFlrSF', 'OverallQual', 'TotRmsAbvGrd', 'HalfBath', 'Fireplaces',
-              'BsmtFullBath', ]:
-        train_df[name] = boxcox1p(train_df[name], 0.15)
-        test_df[name] = boxcox1p(test_df[name], 0.15)
-
 all_df = pd.concat([ train_df, test_df ])     
 
 all_df = pd.get_dummies(all_df, columns = categorical_columns)
