@@ -10,7 +10,6 @@ import numpy as np
 import pandas as pd
 import pprint
 from sklearn.preprocessing import MinMaxScaler
-from scipy.special import boxcox1p
 from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
