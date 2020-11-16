@@ -7,8 +7,12 @@ Created on Oct. 31, 2020
 import os
 from pathlib import Path
 import pandas as pd
+import numpy as np
+import math
 import pprint
 import warnings
+from scipy.stats import skew, boxcox_normmax
+from scipy.special import boxcox1p
 
 
 
@@ -481,6 +485,50 @@ test_df.drop(columns = ['WoodDeckSFP', 'OpenPorchSFP',
                         'EnclosedPorchP', '3SsnPorchP', 
                         'ScreenPorchP', 'PoolAreaP', 'MiscValP'], inplace = True)
 
+
+
+'''
+DeSkew numerical features
+'''
+col_types = train_df.columns.to_series().groupby(train_df.dtypes)
+numeric_columns = []
+       
+for col in col_types:
+    if col[0] != 'object':
+        numeric_columns += col[1].unique().tolist()
+
+numeric_columns.remove('Id')
+numeric_columns.remove('SalePrice')
+
+   
+for name in numeric_columns:
+    col_df = pd.DataFrame()
+    
+    col_df['NORM'] = train_df[name].values
+    col_df['LOG1P'] = train_df[name].apply(lambda x : np.log1p(x)).values
+    cb_val = boxcox_normmax(train_df[name] + 1)
+    col_df['COXBOX'] = boxcox1p(train_df[name], cb_val).values
+    
+    nums = []
+    
+    nums.append(np.abs(skew(col_df['NORM'])))
+    nums.append(np.abs(skew(col_df['LOG1P'])))
+    nums.append(np.abs(skew(col_df['COXBOX'])))
+    
+    nums  = [999 if math.isnan(x) else x for x in nums]
+        
+    
+    smallest = nums.index(min(nums))
+    if smallest == 1:
+        train_df[name] = col_df['LOG1P']
+        test_df[name] = test_df[name].apply(lambda x : np.log1p(x)).values
+    elif smallest == 2:
+        train_df[name] = col_df['COXBOX']
+        test_df[name] = boxcox1p(test_df[name], cb_val).values
+            
+  
+  
+  
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_data.csv'), index = False)
 test_df.to_csv(os.path.join(PROJECT_DIR, 'data/test_data.csv'), index = False)
