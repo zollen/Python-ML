@@ -488,8 +488,6 @@ test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2nd
 '''
 Remove support features
 '''
-
-
 train_df.drop(columns = ['WoodDeckSFP', 'OpenPorchSFP',
                          'EnclosedPorchP', '3SsnPorchP', 
                          'ScreenPorchP', 'PoolAreaP', 'MiscValP'], inplace = True)
