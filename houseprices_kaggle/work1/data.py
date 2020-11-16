@@ -506,8 +506,8 @@ for name in numeric_columns:
     
     col_df['NORM'] = train_df[name].values
     col_df['LOG1P'] = train_df[name].apply(lambda x : np.log1p(x)).values
-    cb_val = boxcox_normmax(train_df[name] + 1)
-    col_df['COXBOX'] = boxcox1p(train_df[name], cb_val).values
+    cb_lambda = boxcox_normmax(train_df[name] + 1)
+    col_df['COXBOX'] = boxcox1p(train_df[name], cb_lambda).values
     
     nums = []
     
@@ -524,7 +524,7 @@ for name in numeric_columns:
         test_df[name] = test_df[name].apply(lambda x : np.log1p(x)).values
     elif smallest == 2:
         train_df[name] = col_df['COXBOX']
-        test_df[name] = boxcox1p(test_df[name], cb_val).values
+        test_df[name] = boxcox1p(test_df[name], cb_lambda).values
             
   
   
