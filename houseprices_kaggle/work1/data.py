@@ -66,7 +66,7 @@ for val in range(0, 800, 50):
     last = val
     
 last = 0
-for val in range(0, 15500, 100):
+for val in range(0, 15500, 500):
     train_df.loc[(train_df['MiscVal'] >= last) & (train_df['MiscVal'] < val), 'MiscValP'] = val
     test_df.loc[(test_df['MiscVal'] >= last) & (test_df['MiscVal'] < val), 'MiscValP'] = val
     last = val
