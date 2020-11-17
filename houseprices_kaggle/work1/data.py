@@ -481,7 +481,7 @@ test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2nd
 
 
 '''
-Add HasPool
+Add Questionable features
 '''
 #train_df['HasPool'] = train_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
 #test_df['HasPool'] = test_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
