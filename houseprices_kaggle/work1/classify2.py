@@ -32,7 +32,7 @@ pp = pprint.PrettyPrinter(indent=3)
 
 def rmse_cv(data, label, n_folds):
     kf = KFold(n_folds, shuffle=True, random_state=SEED).get_n_splits(data.values)
-    rmse = np.sqrt(-1 * cross_val_score(LGBMRegressor(random_seed=SEED), 
+    rmse = np.sqrt(-1 * cross_val_score(LGBMRegressor(random_seed=SEED, metric = 'rmse'), 
                                   data.values, label, scoring="neg_mean_squared_error", cv = kf))
     return np.mean(rmse)
 
@@ -102,7 +102,7 @@ if False:
             }
     
     optimizer = BayesSearchCV(
-                estimator = LGBMRegressor(random_seed=SEED), 
+                estimator = LGBMRegressor(random_seed=SEED, metric = 'rmse'), 
                 search_spaces = params,
                 scoring = make_scorer(mean_squared_error, greater_is_better=False, needs_threshold=False),
                 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=0),
@@ -124,6 +124,7 @@ if False:
 
 '''
 model = LGBMRegressor(objective='regression', 
+                                       metric = 'rmse',
                                        num_leaves=4,
                                        learning_rate=0.01, 
                                        n_estimators=5000,
@@ -134,7 +135,7 @@ model = LGBMRegressor(objective='regression',
                                        feature_fraction=0.2,
                                        feature_fraction_seed=7)
 '''
-model = LGBMRegressor()
+model = LGBMRegressor(random_seed=SEED, metric = 'rmse')
     
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
