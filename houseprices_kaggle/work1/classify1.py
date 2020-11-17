@@ -111,7 +111,6 @@ from sklearn.decomposition import PCA
 #ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
 #ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
-
 if False:
     params = {
                 'iterations': Integer(100, 1000),

@@ -480,9 +480,17 @@ test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2nd
 
 
 
-
-
-
+'''
+Add HasPool
+'''
+#train_df['HasPool'] = train_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
+#test_df['HasPool'] = test_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
+#train_df['HasGarage'] = train_df['GarageArea'].apply(lambda x: 1 if x > 0 else 0)
+#test_df['HasGarage'] = test_df['GarageArea'].apply(lambda x: 1 if x > 0 else 0)
+#train_df['HasBsmt'] = train_df['TotalBsmtSF'].apply(lambda x: 1 if x > 0 else 0)
+#test_df['HasBsmt'] = test_df['TotalBsmtSF'].apply(lambda x: 1 if x > 0 else 0)
+#train_df['HasFireplace'] = train_df['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
+#test_df['HasFireplace'] = test_df['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
 
 
 '''
