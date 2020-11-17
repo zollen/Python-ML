@@ -14,6 +14,10 @@ from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
 from catboost import CatBoostRegressor
+from sklearn.metrics import make_scorer
+from sklearn.model_selection import StratifiedKFold
+from skopt import BayesSearchCV
+from skopt.space.space import Integer, Real
 import warnings
 
 SEED = 87
@@ -108,6 +112,37 @@ from sklearn.decomposition import PCA
 #ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
 
+if False:
+    params = {
+                'iterations': Integer(100, 1000),
+                'depth': Integer(1, 16),
+                'learning_rate': Real(0.01, 0.3, 'log-uniform'),
+                'bagging_temperature': Real(0.0, 1.0),
+                'border_count': Integer(1, 255),             
+                'l2_leaf_reg': Integer(2, 30)
+            }
+    
+    optimizer = BayesSearchCV(
+                estimator = CatBoostRegressor(random_seed=SEED, loss_function='RMSE', verbose=False), 
+                search_spaces = params,
+                scoring = make_scorer(mean_squared_error, greater_is_better=False, needs_threshold=False),
+                cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=0),
+                n_jobs=5, 
+                n_iter=100,
+                return_train_score=False,
+                refit=True,
+                random_state = SEED)
+
+    optimizer.fit(train_df[all_columns], train_df['SalePrice'])
+
+    print("====================================================================================")
+    print("Best Score: ", optimizer.best_score_)
+    pp.pprint(optimizer.cv_results_)
+    pp.pprint(optimizer.best_params_)
+
+    exit()
+    
+    
 model = CatBoostRegressor(random_seed=SEED, loss_function='RMSE', verbose=False)
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
@@ -124,3 +159,5 @@ if False:
 
 
 test_df[['Id', 'SalePrice']].to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
+
+
