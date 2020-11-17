@@ -135,7 +135,11 @@ model = LGBMRegressor(objective='regression',
                                        feature_fraction=0.2,
                                        feature_fraction_seed=7)
 '''
-model = LGBMRegressor(random_seed=SEED, metric = 'rmse')
+#model = LGBMRegressor(random_seed=SEED, 
+#                      objective='regression', 
+#                      metric = 'rmse', boosting = 'goss')
+
+model = LGBMRegressor(random_seed=SEED, objective='regression', metric = 'rmse')
     
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
