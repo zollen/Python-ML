@@ -74,6 +74,12 @@ for val in range(0, 15500, 500):
     train_df.loc[(train_df['MiscVal'] >= last) & (train_df['MiscVal'] < val), 'MiscValP'] = val
     test_df.loc[(test_df['MiscVal'] >= last) & (test_df['MiscVal'] < val), 'MiscValP'] = val
     last = val
+
+last = 0
+for val in range(0, 222000, 1000):
+    train_df.loc[(train_df['LotArea'] >= last) & (train_df['LotArea'] < val), 'LotAreaP'] = val
+    test_df.loc[(test_df['LotArea'] >= last) & (test_df['LotArea'] < val), 'LotAreaP'] = val
+    last = val
     
 all_df = pd.concat([ train_df, test_df ]) 
 
@@ -286,127 +292,36 @@ Fill LotFrontage
 '''          
 def fillLotFrontage(df1, df2):
     
-    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP',
-                           'WoodDeckSFP', 'OpenPorchSFP', 'EnclosedPorchP', '3SsnPorchP', 
-                           'ScreenPorchP', 'MiscValP'])['LotFrontage'].median()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['LotFrontage'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['OverallCond'] == index[1]) &
-                 (df['MSSubClass'] == index[2]) & 
-                 (df['PoolAreaP'] == index[3]) &
-                 (df['WoodDeckSFP'] == index[4]) &
-                 (df['OpenPorchSFP'] == index[5]) &
-                 (df['EnclosedPorchP'] == index[6]) &
-                 (df['3SsnPorchP'] == index[7]) &
-                 (df['ScreenPorchP'] == index[8]) &
-                 (df['MiscValP'] == index[9]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4], index[5], index[6], index[7], index[8], index[9]]
+    print(len(train_df[train_df['LotFrontage'].isna() == True]), len(test_df[test_df['LotFrontage'].isna() == True]))
     
-    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP',
-                           'WoodDeckSFP', 'OpenPorchSFP', 'EnclosedPorchP', '3SsnPorchP', 
-                           'ScreenPorchP'])['LotFrontage'].median()
+    grps = all_df.groupby(['OverallQual', 'LotAreaP', 
+                           'LotConfig'])['LotFrontage'].median()
     for index, _ in grps.items():
         for df in  [ df1, df2 ]:
             df.loc[(df['LotFrontage'].isna() == True) &
                  (df['OverallQual'] == index[0]) &
-                 (df['OverallCond'] == index[1]) &
-                 (df['MSSubClass'] == index[2]) & 
-                 (df['PoolAreaP'] == index[3]) &
-                 (df['WoodDeckSFP'] == index[4]) &
-                 (df['OpenPorchSFP'] == index[5]) &
-                 (df['EnclosedPorchP'] == index[6]) &
-                 (df['3SsnPorchP'] == index[7]) &
-                 (df['ScreenPorchP'] == index[8]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4], index[5], index[6], index[7], index[8]]
+                 (df['LotAreaP'] == index[1]) &
+                 (df['LotConfig'] == index[2]), 'LotFrontage'] = grps[index[0], index[1], index[2]]
     
-    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP',
-                           'WoodDeckSFP', 'OpenPorchSFP', 'EnclosedPorchP', '3SsnPorchP' 
-                           ])['LotFrontage'].median()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['LotFrontage'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['OverallCond'] == index[1]) &
-                 (df['MSSubClass'] == index[2]) & 
-                 (df['PoolAreaP'] == index[3]) &
-                 (df['WoodDeckSFP'] == index[4]) &
-                 (df['OpenPorchSFP'] == index[5]) &
-                 (df['EnclosedPorchP'] == index[6]) &
-                 (df['3SsnPorchP'] == index[7]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4], index[5], index[6], index[7]]
+    print(len(train_df[train_df['LotFrontage'].isna() == True]), len(test_df[test_df['LotFrontage'].isna() == True]))
     
-    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP',
-                           'WoodDeckSFP', 'OpenPorchSFP', 'EnclosedPorchP'
-                           ])['LotFrontage'].median()
+    grps = all_df.groupby(['OverallQual', 'LotAreaP'])['LotFrontage'].median()
     for index, _ in grps.items():
         for df in  [ df1, df2 ]:
             df.loc[(df['LotFrontage'].isna() == True) &
                  (df['OverallQual'] == index[0]) &
-                 (df['OverallCond'] == index[1]) &
-                 (df['MSSubClass'] == index[2]) & 
-                 (df['PoolAreaP'] == index[3]) &
-                 (df['WoodDeckSFP'] == index[4]) &
-                 (df['OpenPorchSFP'] == index[5]) &
-                 (df['EnclosedPorchP'] == index[6]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4], index[5], index[6]]
-                 
-    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP',
-                           'WoodDeckSFP', 'OpenPorchSFP'
-                           ])['LotFrontage'].median()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['LotFrontage'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['OverallCond'] == index[1]) &
-                 (df['MSSubClass'] == index[2]) & 
-                 (df['PoolAreaP'] == index[3]) &
-                 (df['WoodDeckSFP'] == index[4]) &
-                 (df['OpenPorchSFP'] == index[5]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4], index[5]]
-                 
-    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP',
-                           'WoodDeckSFP'])['LotFrontage'].median()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['LotFrontage'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['OverallCond'] == index[1]) &
-                 (df['MSSubClass'] == index[2]) & 
-                 (df['PoolAreaP'] == index[3]) &
-                 (df['WoodDeckSFP'] == index[4]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3], index[4]]
-                 
-    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass', 'PoolAreaP'
-                           ])['LotFrontage'].median()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['LotFrontage'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['OverallCond'] == index[1]) &
-                 (df['MSSubClass'] == index[2]) & 
-                 (df['PoolAreaP'] == index[3]), 'LotFrontage'] = grps[index[0], index[1], index[2], index[3]]
-                 
-    grps = all_df.groupby(['OverallQual', 'OverallCond', 'MSSubClass'
-                           ])['LotFrontage'].median()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['LotFrontage'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['OverallCond'] == index[1]) &
-                 (df['MSSubClass'] == index[2]), 'LotFrontage'] = grps[index[0], index[1], index[2]]
-                 
-    grps = all_df.groupby(['OverallQual', 'OverallCond'
-                           ])['LotFrontage'].median()
-    for index, _ in grps.items():
-        for df in  [ df1, df2 ]:
-            df.loc[(df['LotFrontage'].isna() == True) &
-                 (df['OverallQual'] == index[0]) &
-                 (df['OverallCond'] == index[1]), 'LotFrontage'] = grps[index[0], index[1]]
-                 
+                 (df['LotAreaP'] == index[1]), 'LotFrontage'] = grps[index[0], index[1]]
+    
+    print(len(train_df[train_df['LotFrontage'].isna() == True]), len(test_df[test_df['LotFrontage'].isna() == True]))             
+      
     grps = all_df.groupby(['OverallQual'])['LotFrontage'].median()
     for index, _ in grps.items():
         for df in  [ df1, df2 ]:
             df.loc[(df['LotFrontage'].isna() == True) &
                  (df['OverallQual'] == index), 'LotFrontage'] = grps[index]
                  
-      
-    
+    print(len(train_df[train_df['LotFrontage'].isna() == True]), len(test_df[test_df['LotFrontage'].isna() == True]))             
+                 
 fillLotFrontage(train_df, test_df)  
 
        
@@ -497,10 +412,10 @@ Add Questionable features
 Remove support features
 '''
 train_df.drop(columns = ['WoodDeckSFP', 'OpenPorchSFP',
-                         'EnclosedPorchP', '3SsnPorchP', 
+                         'EnclosedPorchP', '3SsnPorchP', 'LotAreaP',
                          'ScreenPorchP', 'PoolAreaP', 'MiscValP'], inplace = True)
 test_df.drop(columns = ['WoodDeckSFP', 'OpenPorchSFP', 
-                        'EnclosedPorchP', '3SsnPorchP', 
+                        'EnclosedPorchP', '3SsnPorchP', 'LotAreaP',
                         'ScreenPorchP', 'PoolAreaP', 'MiscValP'], inplace = True)
 
 
