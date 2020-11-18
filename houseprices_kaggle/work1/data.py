@@ -545,7 +545,7 @@ for name in numeric_columns:
         test_df[name] = boxcox1p(test_df[name], cb_lambda).values
             
   
-  
+train_df['SalePrice'] = train_df['SalePrice'].apply(lambda x : np.log1p(x))  
   
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_data.csv'), index = False)
