@@ -144,8 +144,12 @@ model = LGBMRegressor(random_seed=SEED, objective='regression', metric = 'rmse')
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
 
-train_df['Prediction'] = model.predict(train_df[all_columns]).round(0).astype('int64')
-test_df['SalePrice'] = model.predict(test_df[all_columns]).round(0).astype('int64')
+train_df['Prediction'] = model.predict(train_df[all_columns])
+test_df['SalePrice'] = model.predict(test_df[all_columns])
+
+train_df['Prediction'] = train_df['Prediction'].apply(lambda x : np.expm1(x))  
+train_df['SalePrice'] = train_df['SalePrice'].apply(lambda x : np.expm1(x))  
+test_df['SalePrice'] = test_df['SalePrice'].apply(lambda x : np.expm1(x))
 
 
 print("======================================================")
