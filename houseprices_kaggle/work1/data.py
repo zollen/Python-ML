@@ -32,48 +32,6 @@ test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
 train_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = True)
 test_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = True)
 
-      
-last = 0
-for val in range(0, 2000, 200):
-    train_df.loc[(train_df['WoodDeckSF'] >= last) & (train_df['WoodDeckSF'] < val), 'WoodDeckSFP'] = val
-    test_df.loc[(test_df['WoodDeckSF'] >= last) & (test_df['WoodDeckSF'] < val), 'WoodDeckSFP'] = val
-    last = val       
-    
-last = 0
-for val in range(0, 2000, 200):
-    train_df.loc[(train_df['OpenPorchSF'] >= last) & (train_df['OpenPorchSF'] < val), 'OpenPorchSFP'] = val
-    test_df.loc[(test_df['OpenPorchSF'] >= last) & (test_df['OpenPorchSF'] < val), 'OpenPorchSFP'] = val
-    last = val
-
-last = 0
-for val in range(0, 800, 50):
-    train_df.loc[(train_df['EnclosedPorch'] >= last) & (train_df['EnclosedPorch'] < val), 'EnclosedPorchP'] = val
-    test_df.loc[(test_df['EnclosedPorch'] >= last) & (test_df['EnclosedPorch'] < val), 'EnclosedPorchP'] = val
-    last = val
-    
-last = 0
-for val in range(0, 550, 50):
-    train_df.loc[(train_df['3SsnPorch'] >= last) & (train_df['3SsnPorch'] < val), '3SsnPorchP'] = val
-    test_df.loc[(test_df['3SsnPorch'] >= last) & (test_df['3SsnPorch'] < val), '3SsnPorchP'] = val
-    last = val
-    
-last = 0
-for val in range(0, 800, 50):
-    train_df.loc[(train_df['ScreenPorch'] >= last) & (train_df['ScreenPorch'] < val), 'ScreenPorchP'] = val
-    test_df.loc[(test_df['ScreenPorch'] >= last) & (test_df['ScreenPorch'] < val), 'ScreenPorchP'] = val
-    last = val
-    
-last = 0
-for val in range(0, 800, 50):
-    train_df.loc[(train_df['PoolArea'] >= last) & (train_df['PoolArea'] < val), 'PoolAreaP'] = val
-    test_df.loc[(test_df['PoolArea'] >= last) & (test_df['PoolArea'] < val), 'PoolAreaP'] = val
-    last = val
-    
-last = 0
-for val in range(0, 15500, 500):
-    train_df.loc[(train_df['MiscVal'] >= last) & (train_df['MiscVal'] < val), 'MiscValP'] = val
-    test_df.loc[(test_df['MiscVal'] >= last) & (test_df['MiscVal'] < val), 'MiscValP'] = val
-    last = val
 
 last = 0
 for val in range(0, 222000, 1000):
@@ -405,12 +363,8 @@ Add Questionable features
 '''
 Remove support features
 '''
-train_df.drop(columns = ['WoodDeckSFP', 'OpenPorchSFP',
-                         'EnclosedPorchP', '3SsnPorchP', 'LotAreaP',
-                         'ScreenPorchP', 'PoolAreaP', 'MiscValP'], inplace = True)
-test_df.drop(columns = ['WoodDeckSFP', 'OpenPorchSFP', 
-                        'EnclosedPorchP', '3SsnPorchP', 'LotAreaP',
-                        'ScreenPorchP', 'PoolAreaP', 'MiscValP'], inplace = True)
+train_df.drop(columns = ['LotAreaP'], inplace = True)
+test_df.drop(columns = ['LotAreaP'], inplace = True)
 
 
 

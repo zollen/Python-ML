@@ -15,9 +15,8 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
 from catboost import CatBoostRegressor
 from sklearn.metrics import make_scorer
-from sklearn.model_selection import StratifiedKFold
 from skopt import BayesSearchCV
-from skopt.space.space import Integer, Real
+from skopt.space.space import Integer
 import warnings
 
 SEED = 87
@@ -127,13 +126,11 @@ if False:
     optimizer = BayesSearchCV(
                 estimator = CatBoostRegressor(random_seed=SEED, 
                                               loss_function='RMSE', 
-                                              verbose=False,
-                                              task_type = "GPU", 
-                                              devices='0:1'), 
+                                              verbose=False), 
                 search_spaces = params,
                 scoring = make_scorer(mean_squared_error, greater_is_better=False, needs_threshold=False),
-                cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=0),
-                n_jobs=5, 
+                cv = KFold(n_splits=5, shuffle=True, random_state=0),
+                n_jobs=20, 
                 n_iter=100,
                 return_train_score=False,
                 refit=True,
