@@ -292,8 +292,6 @@ Fill LotFrontage
 '''          
 def fillLotFrontage(df1, df2):
     
-    print(len(train_df[train_df['LotFrontage'].isna() == True]), len(test_df[test_df['LotFrontage'].isna() == True]))
-    
     grps = all_df.groupby(['OverallQual', 'LotAreaP', 
                            'LotConfig'])['LotFrontage'].median()
     for index, _ in grps.items():
@@ -302,17 +300,13 @@ def fillLotFrontage(df1, df2):
                  (df['OverallQual'] == index[0]) &
                  (df['LotAreaP'] == index[1]) &
                  (df['LotConfig'] == index[2]), 'LotFrontage'] = grps[index[0], index[1], index[2]]
-    
-    print(len(train_df[train_df['LotFrontage'].isna() == True]), len(test_df[test_df['LotFrontage'].isna() == True]))
-    
+      
     grps = all_df.groupby(['OverallQual', 'LotAreaP'])['LotFrontage'].median()
     for index, _ in grps.items():
         for df in  [ df1, df2 ]:
             df.loc[(df['LotFrontage'].isna() == True) &
                  (df['OverallQual'] == index[0]) &
                  (df['LotAreaP'] == index[1]), 'LotFrontage'] = grps[index[0], index[1]]
-    
-    print(len(train_df[train_df['LotFrontage'].isna() == True]), len(test_df[test_df['LotFrontage'].isna() == True]))             
       
     grps = all_df.groupby(['OverallQual'])['LotFrontage'].median()
     for index, _ in grps.items():
@@ -320,7 +314,7 @@ def fillLotFrontage(df1, df2):
             df.loc[(df['LotFrontage'].isna() == True) &
                  (df['OverallQual'] == index), 'LotFrontage'] = grps[index]
                  
-    print(len(train_df[train_df['LotFrontage'].isna() == True]), len(test_df[test_df['LotFrontage'].isna() == True]))             
+    
                  
 fillLotFrontage(train_df, test_df)  
 
