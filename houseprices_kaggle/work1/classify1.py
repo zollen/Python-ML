@@ -111,18 +111,25 @@ from sklearn.decomposition import PCA
 #ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
 #ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
-if False:
+if True:
     params = {
-                'iterations': Integer(100, 1000),
+                'iterations': [ 150, 200, 250, 300, 350, 400, 450, 
+                               500, 550, 600, 650 ],
                 'depth': Integer(1, 16),
-                'learning_rate': Real(0.01, 0.3, 'log-uniform'),
-                'bagging_temperature': Real(0.0, 1.0),
-                'border_count': Integer(1, 255),             
+                'learning_rate': [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 
+                                  0.01, 0.02, 0.03, 0.04, 0.05, 0.06 ],
+                'bagging_temperature': [0.0, 0.1, 0.2, 0.03, 0.4, 0.5, 
+                                        0.6, 0.7, 0.8, 0.9, 1.0],
+                'border_count': Integer(1, 128),             
                 'l2_leaf_reg': Integer(2, 30)
             }
     
     optimizer = BayesSearchCV(
-                estimator = CatBoostRegressor(random_seed=SEED, loss_function='RMSE', verbose=False), 
+                estimator = CatBoostRegressor(random_seed=SEED, 
+                                              loss_function='RMSE', 
+                                              verbose=False,
+                                              task_type = "GPU", 
+                                              devices='0:1'), 
                 search_spaces = params,
                 scoring = make_scorer(mean_squared_error, greater_is_better=False, needs_threshold=False),
                 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=0),
