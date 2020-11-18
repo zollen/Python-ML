@@ -145,6 +145,13 @@ if False:
 
     exit()
     
+#model = CatBoostRegressor(random_seed=SEED, 
+#                          loss_function='RMSE', 
+#                          verbose=False,
+#                          bagging_temperature = 1.0,
+#                          depth = 7,
+#                          iterations = 550,
+#                          learning_rate = 0.04)
     
 model = CatBoostRegressor(random_seed=SEED, loss_function='RMSE', verbose=False)
 model.fit(train_df[all_columns], train_df['SalePrice'])
