@@ -150,9 +150,9 @@ if False:
 #                          verbose=False,
 #                          bagging_temperature = 1.0,
 #                          depth = 7,
-#                          iterations = 550,
-#                          learning_rate = 0.04,
-#                          border_count = 113,
+#                          iterations = 580,
+#                          learning_rate = 0.035,
+#                          border_count = 128,
 #                          l2_leaf_reg = 2)
     
 model = CatBoostRegressor(random_seed=SEED, loss_function='RMSE', verbose=False)
