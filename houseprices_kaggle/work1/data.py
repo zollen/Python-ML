@@ -67,16 +67,7 @@ test_df.loc[(test_df['BsmtFinType2'].isna() == True) &
 test_df.loc[(test_df['BsmtExposure'].isna() == True) &
             (test_df['TotalBsmtSF'] == 0), 'BsmtExposure'] = 'None'
                
-all_df.loc[(all_df['BsmtCond'].isna() == True) &
-            (all_df['TotalBsmtSF'] == 0), 'BsmtCond'] = 'None'
-all_df.loc[(all_df['BsmtQual'].isna() == True) &
-            (all_df['TotalBsmtSF'] == 0), 'BsmtQual'] = 'None'
-all_df.loc[(all_df['BsmtFinType1'].isna() == True) &
-            (all_df['TotalBsmtSF'] == 0), 'BsmtFinType1'] = 'None'
-all_df.loc[(all_df['BsmtFinType2'].isna() == True) &
-            (all_df['TotalBsmtSF'] == 0), 'BsmtFinType2'] = 'None'
-all_df.loc[(all_df['BsmtExposure'].isna() == True) &
-            (all_df['TotalBsmtSF'] == 0), 'BsmtExposure'] = 'None'
+
              
 # OverallQual(8), OverallCond(9), BsmtQual(Gd), TotalBsmtSF(1426), BsmtExposure(Mn), BsmtCond(Nan)
 test_df.loc[test_df['Id'] == 2041, 'BsmtCond'] = 'TA'
@@ -285,7 +276,7 @@ Fill FireplaceQu
 '''
 train_df.loc[train_df['Fireplaces'] == 0, 'FireplaceQu'] = 'None'
 test_df.loc[test_df['Fireplaces'] == 0, 'FireplaceQu'] = 'None'
-all_df.loc[all_df['Fireplaces'] == 0, 'FireplaceQu'] = 'None'
+
 
 
 
@@ -304,7 +295,7 @@ Fill Utilities
 '''
 train_df.loc[train_df['Utilities'].isna() == True, 'Utilities'] = 'AllPub'
 test_df.loc[test_df['Utilities'].isna() == True, 'Utilities'] = 'AllPub'
-all_df.loc[all_df['Utilities'].isna() == True, 'Utilities'] = 'AllPub'
+
     
     
 
