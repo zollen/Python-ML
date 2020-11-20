@@ -343,6 +343,8 @@ Add Questionable features
 '''
 #train_df['HasPool'] = train_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
 #test_df['HasPool'] = test_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
+#train_df['Has2ndFlr'] = train_df['2ndFlrSF'].apply(lambda x: 1 if x > 0 else 0)
+#test_df['Has2ndFlr'] = test_df['2ndFlrSF'].apply(lambda x: 1 if x > 0 else 0)
 #train_df['HasGarage'] = train_df['GarageArea'].apply(lambda x: 1 if x > 0 else 0)
 #test_df['HasGarage'] = test_df['GarageArea'].apply(lambda x: 1 if x > 0 else 0)
 #train_df['HasBsmt'] = train_df['TotalBsmtSF'].apply(lambda x: 1 if x > 0 else 0)
