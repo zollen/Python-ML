@@ -124,16 +124,30 @@ if False:
 
 '''
 model = LGBMRegressor(objective='regression', 
-                                       metric = 'rmse',
-                                       num_leaves=4,
-                                       learning_rate=0.01, 
-                                       n_estimators=5000,
-                                       max_bin=200, 
-                                       bagging_fraction=0.75,
-                                       bagging_freq=5, 
-                                       bagging_seed=7,
-                                       feature_fraction=0.2,
-                                       feature_fraction_seed=7)
+                       metric = 'rmse',
+                       num_leaves=4,
+                       learning_rate=0.01, 
+                       n_estimators=5000,
+                       max_bin=200, 
+                       bagging_fraction=0.75,
+                       bagging_freq=5, 
+                       bagging_seed=7,
+                       feature_fraction=0.2,
+                       feature_fraction_seed=7)
+                                       
+model = LGBMRegressor(objective='regression', 
+                       num_leaves=6,
+                       learning_rate=0.01, 
+                       n_estimators=7000,
+                       max_bin=200, 
+                       bagging_fraction=0.8,
+                       bagging_freq=4, 
+                       bagging_seed=8,
+                       feature_fraction=0.2,
+                       feature_fraction_seed=8,
+                       min_sum_hessian_in_leaf = 11,
+                       verbose=-1,
+                       random_state=42)
 '''
 #model = LGBMRegressor(random_seed=SEED, 
 #                      objective='regression', 
