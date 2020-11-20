@@ -154,6 +154,16 @@ if False:
 #                          learning_rate = 0.035,
 #                          border_count = 128,
 #                          l2_leaf_reg = 2)
+
+#model = CatBoostRegressor(random_seed=SEED, 
+#                          loss_function='RMSE', 
+#                          verbose=False,
+#                          bagging_temperature = 1.0,
+#                          depth = 6,
+#                          iterations = 585,
+#                          learning_rate = 0.031,
+#                          border_count = 129,
+#                          l2_leaf_reg = 1)
     
 model = CatBoostRegressor(random_seed=SEED, loss_function='RMSE', verbose=False)
 model.fit(train_df[all_columns], train_df['SalePrice'])
