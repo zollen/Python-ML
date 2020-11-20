@@ -33,6 +33,9 @@ train_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = T
 test_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = True)
 
 
+#train_df.drop(columns = ['Utilities', 'Street'], inplace = True)
+#test_df.drop(columns = ['Utilities', 'Street'], inplace = True)
+
 last = 0
 for val in range(0, 222000, 1000):
     train_df.loc[(train_df['LotArea'] >= last) & (train_df['LotArea'] < val), 'LotAreaP'] = val
@@ -341,6 +344,17 @@ test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2nd
 '''
 Add Questionable features
 '''
+#train_df['YrBltAndRemod'] = train_df['YearBuilt']+train_df['YearRemodAdd']
+#test_df['YrBltAndRemod'] = test_df['YearBuilt']+test_df['YearRemodAdd']
+#train_df['TotalSF'] = train_df['TotalBsmtSF'] + train_df['1stFlrSF'] + train_df['2ndFlrSF']
+#test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2ndFlrSF']
+#train_df['TotalSqrfootage'] = (train_df['BsmtFinSF1'] + train_df['BsmtFinSF2'] + train_df['1stFlrSF'] + train_df['2ndFlrSF'])
+#test_df['TotalSqrfootage'] = (test_df['BsmtFinSF1'] + test_df['BsmtFinSF2'] + test_df['1stFlrSF'] + train_df['2ndFlrSF'])
+#train_df['TotalBathrooms'] = (train_df['FullBath'] + (0.5 * train_df['HalfBath']) + train_df['BsmtFullBath'] + (0.5 * train_df['BsmtHalfBath']))
+#test_df['TotalBathrooms'] = (test_df['FullBath'] + (0.5 * test_df['HalfBath']) + test_df['BsmtFullBath'] + (0.5 * test_df['BsmtHalfBath']))
+#train_df['TotalPorchSF'] = (train_df['OpenPorchSF'] + train_df['3SsnPorch'] + train_df['EnclosedPorch'] + train_df['ScreenPorch'] + train_df['WoodDeckSF'])
+#test_df['TotalPorchSF'] = (test_df['OpenPorchSF'] + test_df['3SsnPorch'] + test_df['EnclosedPorch'] + test_df['ScreenPorch'] + test_df['WoodDeckSF'])
+
 #train_df['HasPool'] = train_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
 #test_df['HasPool'] = test_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
 #train_df['Has2ndFlr'] = train_df['2ndFlrSF'].apply(lambda x: 1 if x > 0 else 0)
