@@ -341,15 +341,6 @@ test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2nd
 
 
 
-'''
-Add IsNew flag
-'''
-train_df['IsNew'] = train_df['YearRemodAdd'].apply(lambda x : 1 if x >= 2015 else 0)
-test_df['IsNew'] = test_df['YearRemodAdd'].apply(lambda x : 1 if x >= 2015 else 0)
-train_df['IsNew'] = train_df['IsNew'].astype('object')
-test_df['IsNew'] = test_df['IsNew'].astype('object')
-
-
 
 
 '''
