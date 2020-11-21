@@ -342,7 +342,18 @@ test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2nd
 
 
 '''
-Add Questionable features
+Add IsNew flag
+'''
+train_df['IsNew'] = train_df['YearRemodAdd'].apply(lambda x : 1 if x >= 2015 else 0)
+test_df['IsNew'] = test_df['YearRemodAdd'].apply(lambda x : 1 if x >= 2015 else 0)
+train_df['IsNew'] = train_df['IsNew'].astype('object')
+test_df['IsNew'] = test_df['IsNew'].astype('object')
+
+
+
+
+'''
+Add Potiental features
 '''
 #train_df['YrBltAndRemod'] = train_df['YearBuilt']+train_df['YearRemodAdd']
 #test_df['YrBltAndRemod'] = test_df['YearBuilt']+test_df['YearRemodAdd']
@@ -370,6 +381,9 @@ Add Questionable features
 #test_df['HasFireplace'] = test_df['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
 
 
+
+
+
 '''
 Remove support features
 '''
@@ -390,6 +404,7 @@ for col in col_types:
 
 numeric_columns.remove('Id')
 numeric_columns.remove('SalePrice')
+
 
    
 for name in numeric_columns:
