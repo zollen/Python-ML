@@ -355,6 +355,9 @@ Add Questionable features
 #train_df['TotalPorchSF'] = (train_df['OpenPorchSF'] + train_df['3SsnPorch'] + train_df['EnclosedPorch'] + train_df['ScreenPorch'] + train_df['WoodDeckSF'])
 #test_df['TotalPorchSF'] = (test_df['OpenPorchSF'] + test_df['3SsnPorch'] + test_df['EnclosedPorch'] + test_df['ScreenPorch'] + test_df['WoodDeckSF'])
 
+#train_df['TotalHomeQuality'] = train_df['OverallQual'] + train_df['OverallCond']
+#test_df['TotalHomeQuality'] = test_df['OverallQual'] + test_df['OverallCond']
+
 #train_df['HasPool'] = train_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
 #test_df['HasPool'] = test_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
 #train_df['Has2ndFlr'] = train_df['2ndFlrSF'].apply(lambda x: 1 if x > 0 else 0)
