@@ -180,7 +180,7 @@ test_df['SalePrice'] = test_df['SalePrice'].apply(lambda x : np.expm1(x))
 
 print("======================================================")
 print("RMSE   : %0.4f" % np.sqrt(mean_squared_error(train_df['SalePrice'], train_df['Prediction'])))
-if False:
+if True:
     print("CV RMSE: %0.4f" % rmse_cv(train_df[all_columns], train_df['Prediction'], 5))
 
 
