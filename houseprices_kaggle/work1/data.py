@@ -342,6 +342,28 @@ test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2nd
 
 
 
+'''
+Merge YrSold and MoSold
+'''
+def mergeSold(rec):
+    yrSold = rec['YrSold']
+    moSold = rec['MoSold']
+    
+    years = {2006: 0, 2007: 1, 2008: 2, 2009: 3, 2010: 4}
+    
+    return round(years[yrSold] + (moSold / 12), 2)
+   
+    
+train_df['YrSold'] = train_df.apply(mergeSold, axis = 1)
+test_df['YrSold'] = test_df.apply(mergeSold, axis = 1)
+
+train_df.drop(columns = ['MoSold'], inplace = True)
+test_df.drop(columns = ['MoSold'], inplace = True)
+
+
+
+
+
 
 '''
 Add Potiental features
