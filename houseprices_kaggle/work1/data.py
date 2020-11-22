@@ -344,6 +344,9 @@ test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2nd
 
 '''
 Merge YrSold and MoSold
+RMSE   : 7639.0560
+CV RMSE: 20208.7261
+Site   : 0.12014
 '''
 def mergeSold(rec):
     yrSold = rec['YrSold']
