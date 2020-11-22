@@ -197,13 +197,27 @@ train_df['TotalSF'] = train_df['TotalBsmtSF'] + train_df['1stFlrSF'] + train_df[
 
 
 
+'''
+Merge YrSold and MoSold
+'''
+def mergeSold(rec):
+    yrSold = rec['YrSold']
+    moSold = rec['MoSold']
+    
+    years = {2006: 0, 2007: 1, 2008: 2, 2009: 3, 2010: 4}
+    
+    return round(years[yrSold] + (moSold / 12), 2)
+      
+train_df['YrSold'] = train_df.apply(mergeSold, axis = 1)
+
+
 
 
 
 '''
 Remove support features
 '''
-train_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence', 'LotAreaP'], inplace = True)
+train_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence', 'MoSold', 'LotAreaP'], inplace = True)
 
 
 
