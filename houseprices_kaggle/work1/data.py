@@ -341,33 +341,6 @@ test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2nd
 
 
 
-
-'''
-Merge YrSold and MoSold
-RMSE   : 7639.0560
-CV RMSE: 20208.7261
-Site   : 0.12014
-'''
-def mergeSold(rec):
-    yrSold = rec['YrSold']
-    moSold = rec['MoSold']
-    
-    years = {2006: 0, 2007: 1, 2008: 2, 2009: 3, 2010: 4}
-    
-    return round(years[yrSold] + (moSold / 12), 2)
-   
-    
-train_df['YrSold'] = train_df.apply(mergeSold, axis = 1)
-test_df['YrSold'] = test_df.apply(mergeSold, axis = 1)
-
-train_df.drop(columns = ['MoSold'], inplace = True)
-test_df.drop(columns = ['MoSold'], inplace = True)
-
-
-
-
-
-
 '''
 Add Potiental features
 '''
@@ -414,6 +387,41 @@ Add Potiental features
 #    + test_df["KitchenAbvGr"]
 #)
 
+#train_df["BuiltAge"] = train_df["YrSold"] - train_df["YearBuilt"]
+#train_df["RemodAge"] = train_df["YrSold"] - train_df["YearRemodAdd"]
+#train_df["Remodeled"] = train_df["YearBuilt"] != train_df["YearRemodAdd"]
+#train_df["BuiltAge"] = train_df["BuiltAge"].apply(lambda x: 0 if x < 0 else x)
+#train_df["RemodAge"] = train_df["RemodAge"].apply(lambda x: 0 if x < 0 else x)
+
+#test_df["BuiltAge"] = test_df["YrSold"] - test_df["YearBuilt"]
+#test_df["RemodAge"] = test_df["YrSold"] - test_df["YearRemodAdd"]
+#test_df["Remodeled"] = test_df["YearBuilt"] != test_df["YearRemodAdd"]
+#test_df["BuiltAge"] = test_df["BuiltAge"].apply(lambda x: 0 if x < 0 else x)
+#test_df["RemodAge"] = test_df["RemodAge"].apply(lambda x: 0 if x < 0 else x)
+
+
+
+
+'''
+Merge YrSold and MoSold
+RMSE   : 7639.0560
+CV RMSE: 20208.7261
+Site   : 0.12014
+'''
+def mergeSold(rec):
+    yrSold = rec['YrSold']
+    moSold = rec['MoSold']
+    
+    years = {2006: 0, 2007: 1, 2008: 2, 2009: 3, 2010: 4}
+    
+    return round(years[yrSold] + (moSold / 12), 2)
+   
+    
+train_df['YrSold'] = train_df.apply(mergeSold, axis = 1)
+test_df['YrSold'] = test_df.apply(mergeSold, axis = 1)
+
+train_df.drop(columns = ['MoSold'], inplace = True)
+test_df.drop(columns = ['MoSold'], inplace = True)
 
 
 '''
