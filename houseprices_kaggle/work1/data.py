@@ -396,7 +396,23 @@ Add Potiental features
 #train_df['HasFireplace'] = train_df['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
 #test_df['HasFireplace'] = test_df['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
 
+#train_df['OtherRoom'] = train_df["TotRmsAbvGrd"] - train_df['KitchenAbvGr'] - train_df['Bedroom']
+#test_df['OtherRoom'] = test_df["TotRmsAbvGrd"] - test_df['KitchenAbvGr'] - test_df['Bedroom']
 
+
+#train_df["SqFtPerRoom"] = train_df["GrLivArea"] / (
+#    train_df["TotRmsAbvGrd"]
+#    + train_df["FullBath"]
+#    + train_df["HalfBath"]
+#    + train_df["KitchenAbvGr"]
+#)
+
+#test_df["SqFtPerRoom"] = test_df["GrLivArea"] / (
+#    test_df["TotRmsAbvGrd"]
+#    + test_df["FullBath"]
+#    + test_df["HalfBath"]
+#    + test_df["KitchenAbvGr"]
+#)
 
 
 
