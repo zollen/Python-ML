@@ -494,7 +494,7 @@ kk['Name'] = names
 kk['Mean'] = means
 kk['Median'] = medians
 kk['Mode'] = modes
-kk['Overall'] = (kk['Mean'] + kk['Mode'] + kk['Mode']) / 3
+kk['Overall'] = (kk['Mean'] + kk['Mode']) / 2
     
 kk.sort_values('Overall', ascending = True, inplace = True)
 print(kk)
