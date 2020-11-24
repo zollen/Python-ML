@@ -478,7 +478,7 @@ for name in numeric_columns:
 train_df['SalePrice'] = train_df['SalePrice'].apply(lambda x : np.log1p(x))  
 
 
-KEY = 'RoofStyle'
+KEY = 'Neighborhood'
 print(KEY, " ==> ", train_df[KEY].unique())
 kk = pd.DataFrame()
 means = []
@@ -494,9 +494,8 @@ kk['Name'] = names
 kk['Mean'] = means
 kk['Median'] = medians
 kk['Mode'] = modes
-kk['Overall'] = (kk['Mean'] + kk['Mode']) / 2
     
-kk.sort_values('Overall', ascending = True, inplace = True)
+kk.sort_values('Median', ascending = True, inplace = True)
 print(kk)
 
 
