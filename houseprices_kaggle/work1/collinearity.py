@@ -39,7 +39,13 @@ def calc_vif(X):
     return(vif)
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
-train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'houseprices_kaggle/data/train.csv'))
+train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
+
+train_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = True)
+
+
+#train_df.drop(columns = ['Utilities', 'Street'], inplace = True)
+#test_df.drop(columns = ['Utilities', 'Street'], inplace = True)
 
 last = 0
 for val in range(0, 222000, 1000):
@@ -62,15 +68,15 @@ train_df.loc[(train_df['BsmtFinType2'].isna() == True) &
             (train_df['TotalBsmtSF'] == 0), 'BsmtFinType2'] = 'None'
 train_df.loc[(train_df['BsmtExposure'].isna() == True) &
             (train_df['TotalBsmtSF'] == 0), 'BsmtExposure'] = 'None'
+            
 
-
+            
 
 # OverallQual(8), OverallCond(5), TotalBsmtSF(3206), BsmtQual(Gd), BsmtCond(TA), BsmtExposure(No), BsmtFinType2(NaN)
 train_df.loc[train_df['Id'] == 333, 'BsmtFinType2'] = 'BLQ'
 
 # OverallQual(7), OverallCond(5), TotalBsmtSF(936), BsmtQual(Gd)  BsmtCond(TA) BsmtExposure(NaN)
 train_df.loc[train_df['Id'] == 949, 'BsmtExposure'] = 'No'
-
 
 
 train_df.loc[(train_df['GarageFinish'].isna() == True) & 
@@ -86,8 +92,6 @@ train_df.loc[(train_df['GarageYrBlt'].isna() == True) &
 
 
              
-
-
 
 
 '''
@@ -124,6 +128,7 @@ train_df.loc[train_df['Id'] == 978, 'MasVnrArea'] = 140
 train_df.loc[train_df['Id'] == 1244, 'MasVnrArea'] = 333
 train_df.loc[train_df['Id'] == 1279, 'MasVnrArea'] = 220
 
+
        
        
 '''
@@ -155,8 +160,7 @@ def fillLotFrontage(df1):
                  
     
                  
-fillLotFrontage(train_df)  
-
+fillLotFrontage(train_df)
        
        
 
@@ -172,8 +176,6 @@ train_df.loc[train_df['Fireplaces'] == 0, 'FireplaceQu'] = 'None'
 
 
 
-
-
 '''
 Fill Utilities
 '''
@@ -181,10 +183,7 @@ train_df.loc[train_df['Utilities'].isna() == True, 'Utilities'] = 'AllPub'
 
 
     
-   
-
-
-
+    
 
 
 
@@ -197,8 +196,16 @@ train_df['TotalSF'] = train_df['TotalBsmtSF'] + train_df['1stFlrSF'] + train_df[
 
 
 
+
+
+
+
+
 '''
 Merge YrSold and MoSold
+RMSE   : 7639.0560
+CV RMSE: 20208.7261
+Site   : 0.12014
 '''
 def mergeSold(rec):
     yrSold = rec['YrSold']
@@ -207,33 +214,19 @@ def mergeSold(rec):
     years = {2006: 0, 2007: 1, 2008: 2, 2009: 3, 2010: 4}
     
     return round(years[yrSold] + (moSold / 12), 2)
-      
+   
+    
 train_df['YrSold'] = train_df.apply(mergeSold, axis = 1)
-
-
+train_df.drop(columns = ['MoSold'], inplace = True)
 
 
 
 '''
 Remove support features
 '''
-train_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence', 'MoSold', 'LotAreaP'], inplace = True)
-
-
-
-
-
-col_types = train_df.columns.to_series().groupby(train_df.dtypes)
+train_df.drop(columns = ['LotAreaP'], inplace = True)
 numeric_columns = []
-       
-for col in col_types:
-    if col[0] != 'object':
-        numeric_columns += col[1].unique().tolist()
-
-numeric_columns.remove('Id')
-numeric_columns.remove('SalePrice')
-
-
+categorical_columns = []
 col_types = train_df.columns.to_series().groupby(train_df.dtypes)
 numeric_columns = []
 for col in col_types:
@@ -241,8 +234,7 @@ for col in col_types:
         categorical_columns = col[1].unique().tolist()
     else:
         numeric_columns += col[1].unique().tolist()
-
-
+        
 for name in categorical_columns:   
     keys = train_df[name].unique().tolist()
         
@@ -252,14 +244,7 @@ for name in categorical_columns:
     vals = [ i  for i in range(0, len(keys))]
     labs = dict(zip(keys, vals))
     train_df[name] = train_df[name].map(labs)
-
+    
 numeric_columns.remove('Id')
 numeric_columns.remove('SalePrice')
-
-
-
-all_columns = numeric_columns + categorical_columns
-print(all_columns)
-print(train_df[all_columns].head())
-
-print(calc_vif(train_df[all_columns]))
+print(calc_vif(train_df[numeric_columns + categorical_columns]))
