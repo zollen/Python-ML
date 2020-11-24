@@ -478,7 +478,7 @@ for name in numeric_columns:
 train_df['SalePrice'] = train_df['SalePrice'].apply(lambda x : np.log1p(x))  
 
 
-KEY = 'Neighborhood'
+KEY = 'GarageCond'
 print(KEY, " ==> ", train_df[KEY].unique())
 kk = pd.DataFrame()
 prices = []
@@ -514,7 +514,7 @@ print(kk)
     'BldgType': { '2fmCon': 0, 'Duplex': 1, 'Twnhs': 2, '1Fam': 3, 'TwnhsE': 4 },
     'HouseStyle': { '1.5Unf': 0, '1.5Fin': 1, '2.5Unf': 2, 'SFoyer': 3, '1Story': 4, 'SLvl': 5,
             '2Story': 6, '2.5Fin': 7 },
-    'RoofStyle': { 'Gambrel': 0, 'Gambrel': 1, 'Mansard': 2, 'Hip': 3, 'Flat': 4, 'Shed': 5 },
+    'RoofStyle': { 'Gambrel': 0, 'Gable': 1, 'Mansard': 2, 'Hip': 3, 'Flat': 4, 'Shed': 5 },
     'RoofMatl': { 'Roll': 0, 'ClyTile': 1, 'CompShg': 2, 'Tar&Grv': 3, 'Metal': 4, 'Membran': 5,
             'WdShake': 6, 'WdShngl': 7 },
     'Exterior1st': { 'BrkComm': 0, 'AsphShn': 1, 'CBlock': 2, 'AsbShng': 3, 'WdShing': 4,
@@ -541,9 +541,9 @@ print(kk)
     'Functional': { 'Maj2': 0, 'Sev': 1, 'Mod': 2, 'Min1': 3, 'Min2': 4, 'Maj1': 5, 'Typ': 6 },
     'FireplaceQu': { 'Po': 0, 'None': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5 },
     'GarageType': { 'None': 0, 'CarPort': 1, 'Detchd': 2, 'Basment': 3, '2Types': 4, 'Attchd': 5, 'BuiltIn': 6 },
-    'GarageFinish': { 'None': 0, 'Unf': 1, 'Rfn': 2, 'Fin': 3 },
+    'GarageFinish': { 'None': 0, 'Unf': 1, 'RFn': 2, 'Fin': 3 },
     'GarageQual': { 'Po': 0, 'None': 1, 'Fa': 2, 'Ex': 3, 'TA': 4, 'Gd': 5 },
-    'GarageCond': { 'Po': 0, 'Fa': 1, 'Ex': 2, 'Gd': 3, 'TA': 4 },
+    'GarageCond': { 'None': 0, 'Po': 1, 'Fa': 2, 'Ex': 3, 'Gd': 4, 'TA': 5 },
     'PavedDrive': { 'N': 0, 'P': 1, 'Y': 2 },
     'SaleType': { 'Oth': 0, 'ConLI': 1, 'COD': 2, 'ConLD': 3, 'ConLw': 4, 'WD': 5, 'CWD': 6, 'New': 7, 'Con': 8 },
     'SaleCondition': { 'AdjLand': 0, 'Abnorml': 1, 'Family': 2, 'Alloca': 3, 'Normal': 4, 'Partial': 5 }
