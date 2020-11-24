@@ -478,16 +478,22 @@ for name in numeric_columns:
 train_df['SalePrice'] = train_df['SalePrice'].apply(lambda x : np.log1p(x))  
 
 
-KEY = 'GarageCond'
+KEY = 'RoofStyle'
 print(KEY, " ==> ", train_df[KEY].unique())
 kk = pd.DataFrame()
-prices = []
+means = []
+medians = []
+modes = []
 names = train_df[KEY].unique()
 for val in names:
-    prices.append(train_df.loc[train_df[KEY] == val, 'SalePrice'].median())
+    means.append(train_df.loc[train_df[KEY] == val, 'SalePrice'].mean())
+    medians.append(train_df.loc[train_df[KEY] == val, 'SalePrice'].median())
+    modes.append(train_df.loc[train_df[KEY] == val, 'SalePrice'].mode()[0])
     
 kk['Name'] = names
-kk['Median'] = prices
+kk['Mean'] = means
+kk['Median'] = medians
+kk['Mode'] = modes
     
 kk.sort_values('Median', ascending = True, inplace = True)
 print(kk)
