@@ -168,9 +168,18 @@ def deskew(df):
               (name, smallest, nums[0], nums[1], nums[2], nums[3], nums[4]))
             
 
-for fid in [235, 530, 651, 937, 974, 978, 1244, 1279, 1692, 1707, 1883, 1993, 2005, 2042, 2312, 2326, 2341, 2350, 2369, 2593, 2611, 2658, 2687, 2863]:
-    fillValue('MasVnrType', fid)
 
+
+fillValue('GarageArea', 2577)
+
+fillValue('Electrical', 1380)
+    
+fillValue('GarageFinish', 2127)
+fillValue('GarageYrBlt', 2127)
+fillValue('GarageFinish', 2577)
+fillValue('GarageYrBlt', 2577)
+
+    
 '''
 Strong Correlation
 TotalBsmtSF <- 1stFlrSF
