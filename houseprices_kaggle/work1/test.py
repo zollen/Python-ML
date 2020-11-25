@@ -10,7 +10,7 @@ import pandas as pd
 import pprint
 import math
 import warnings
-from sklearn.impute import SimpleImputer
+from sklearn.impute import KNNImputer
 from catboost import CatBoostClassifier, CatBoostRegressor
 from scipy.stats import norm, skew, boxcox_normmax
 from scipy.special import boxcox1p
@@ -74,7 +74,7 @@ def fillValue(name, fid):
         all_ddf[colnam] = all_ddf[colnam].map(labs)
             
     
-    imputer = SimpleImputer()
+    imputer = KNNImputer(n_neighbors = 5)
     all_ddf[categorical_columns + numeric_columns] = imputer.fit_transform(all_ddf[categorical_columns + numeric_columns])
     all_ddf[categorical_columns + numeric_columns] = all_ddf[categorical_columns + numeric_columns].round(0).astype('int64')
     
@@ -168,7 +168,8 @@ def deskew(df):
               (name, smallest, nums[0], nums[1], nums[2], nums[3], nums[4]))
             
 
-
+for fid in [235, 530, 651, 937, 974, 978, 1244, 1279, 1692, 1707, 1883, 1993, 2005, 2042, 2312, 2326, 2341, 2350, 2369, 2593, 2611, 2658, 2687, 2863]:
+    fillValue('MasVnrType', fid)
 
 '''
 Strong Correlation
