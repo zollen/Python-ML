@@ -220,6 +220,17 @@ train_df['YrSold'] = train_df.apply(mergeSold, axis = 1)
 train_df.drop(columns = ['MoSold'], inplace = True)
 
 
+'''
+Merge OverallQual and OverallCond, then remove OverallCond
+RMSE   : 7449.3618
+CV RMSE: 20180.7130
+Site   : 0.11984
+'''
+train_df['OverallQual'] = train_df['OverallQual'] * train_df['OverallCond']
+train_df.drop(columns = ['OverallCond'], inplace = True)
+
+
+
 
 '''
 Remove support features
