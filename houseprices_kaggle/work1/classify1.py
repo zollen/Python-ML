@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pprint
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import RobustScaler
 from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
@@ -83,8 +83,7 @@ test_df[categorical_columns] = all_df.loc[all_df['Id'].isin(test_df['Id']), cate
 
 all_columns = numeric_columns + categorical_columns
 
-
-scaler = MinMaxScaler()
+scaler = RobustScaler()
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
