@@ -184,6 +184,10 @@ train_df.loc[train_df['Electrical'].isna() == True, 'Electrical'] = 'Mix'
 
 '''
 Fill MasVnrType
+KNNImputer(5) + CatBoostRegressor
+RMSE   : 7665.5659
+CV RMSE: 20564.9616
+Site   : 0.11965
 '''
 train_df.loc[train_df['Id'] == 235, 'MasVnrType'] = 'BrkFace'
 train_df.loc[train_df['Id'] == 530, 'MasVnrType'] = 'BrkFace'
