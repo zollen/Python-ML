@@ -401,6 +401,19 @@ Add Potiental features
 
 
 
+'''
+Merge OverallQual and OverallCond, then remove OverallCond
+RMSE   : 7449.3618
+CV RMSE: 20180.7130
+Site   : 0.11984
+'''
+train_df['OverallQual'] = train_df['OverallQual'] * train_df['OverallCond']
+test_df['OverallQual'] = test_df['OverallQual'] * test_df['OverallCond']
+
+train_df.drop(columns = ['OverallCond'], inplace = True)
+test_df.drop(columns = ['OverallCond'], inplace = True)
+
+
 
 '''
 Merge YrSold and MoSold
@@ -474,7 +487,9 @@ for name in numeric_columns:
             
   
 train_df['SalePrice'] = train_df['SalePrice'].apply(lambda x : np.log1p(x))  
-  
+
+
+
 
 train_df.to_csv(os.path.join(PROJECT_DIR, 'data/train_data.csv'), index = False)
 test_df.to_csv(os.path.join(PROJECT_DIR, 'data/test_data.csv'), index = False)
