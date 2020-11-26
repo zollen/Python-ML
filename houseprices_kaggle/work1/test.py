@@ -8,12 +8,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pprint
-import math
 import warnings
-from sklearn.impute import KNNImputer
+from missingpy import MissForest
 from catboost import CatBoostClassifier, CatBoostRegressor
-from scipy.stats import norm, skew, boxcox_normmax
-from scipy.special import boxcox1p
+
 
 
 
@@ -73,8 +71,10 @@ def fillValue(name, fid):
         labs = dict(zip(keys, vals))
         all_ddf[colnam] = all_ddf[colnam].map(labs)
             
-    
-    imputer = KNNImputer(n_neighbors = 5)
+    '''
+    https://pypi.org/project/missingpy/
+    '''
+    imputer = MissForest()
     all_ddf[categorical_columns + numeric_columns] = imputer.fit_transform(all_ddf[categorical_columns + numeric_columns])
     all_ddf[categorical_columns + numeric_columns] = all_ddf[categorical_columns + numeric_columns].round(0).astype('int64')
     
@@ -117,57 +117,6 @@ def fillValue(name, fid):
         kk.append(np.round(prediction[0], 0))
 
         
-col_types = all_df.columns.to_series().groupby(all_df.dtypes)
-numeric_columns = []
-       
-for col in col_types:
-    if col[0] != 'object':
-        numeric_columns += col[1].unique().tolist()
-
-numeric_columns.remove('Id')
-numeric_columns.remove('SalePrice')
-
-def deskew(df):
-    
-    for name in numeric_columns:
-        col_df = pd.DataFrame()
-    
-        all_df_na = all_df.loc[all_df[name].isna() == False, name]
-        df_na = df.loc[df[name].isna() == False, name]
-
-        col_df['NORM'] = df_na.values
-        col_df['LOG1P'] = df_na.apply(lambda x : np.log1p(x)).values
-        col_df['CB'] = boxcox1p(df_na, boxcox_normmax(df_na + 1)).values
-        col_df['MLE'] = boxcox1p(df_na, boxcox_normmax(df_na + 1, method = 'mle')).values
-        col_df['CBA'] = boxcox1p(df_na, boxcox_normmax(all_df_na + 1)).values
-    
-        nums = []
-    
-        nums.append(np.abs(skew(col_df['NORM'])))
-        nums.append(np.abs(skew(col_df['LOG1P'])))
-        nums.append(np.abs(skew(col_df['CB'])))
-        nums.append(np.abs(skew(col_df['MLE'])))
-        nums.append(np.abs(skew(col_df['CBA'])))
-    
-        nums  = [999 if math.isnan(x) else x for x in nums]
-        
-    
-        smallest = nums.index(min(nums))
-        if smallest == 0:
-            df.loc[df[name].isna() == False, name] = col_df['NORM']
-        elif smallest == 1:
-            df.loc[df[name].isna() == False, name] = col_df['LOG1P']
-        elif smallest == 2:
-            df.loc[df[name].isna() == False, name] = col_df['CB']
-        elif smallest == 3:
-            df.loc[df[name].isna() == False, name] = col_df['MLE']
-        else:
-            df.loc[df[name].isna() == False, name] = col_df['CBA']
-            
-        print("[%s] [%d]:  %0.4f, %0.4f, %0.4f, %0.4f, %0.4f" % 
-              (name, smallest, nums[0], nums[1], nums[2], nums[3], nums[4]))
-            
-
 
 
 fillValue('GarageArea', 2577)
