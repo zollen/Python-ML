@@ -100,7 +100,7 @@ def fillValue(df, name):
         model = LGBMRegressor()
     
     
-    model.fit(learn_df[columns], learn_df[name])
+    model.fit(learn_df[columns], learn_df[name].astype('int64'))
     predict_df['Prediction'] = model.predict(predict_df[columns])
     
     if catEncoder == None:
