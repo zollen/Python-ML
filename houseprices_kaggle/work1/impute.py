@@ -66,6 +66,9 @@ def fillValue(df, name):
             catEncoder = encoder 
         work_df.loc[work_df[col].isna() == False, col] = encoder.fit_transform(work_df.loc[work_df[col].isna() == False, col])
 
+    work_df[num_columns + cat_columns] = work_df[num_columns + cat_columns].astype('float64')
+    
+    
     if catEncoder != None:
         cat_columns.remove(name)
     else:
@@ -77,12 +80,14 @@ def fillValue(df, name):
         scaler = RobustScaler()
         work_df.loc[work_df[col].isna() == False, col] = scaler.fit_transform(work_df.loc[work_df[col].isna() == False, col].values.reshape(-1, 1))
     
-    
+   
     '''
     https://pypi.org/project/missingpy/
     '''
     imputer = MissForest()
     work_df[columns] = imputer.fit_transform(work_df[columns])
+    
+    
 
     learn_df = work_df[work_df[name].isna() == False]
     predict_df = work_df[work_df[name].isna() == True]
@@ -92,7 +97,7 @@ def fillValue(df, name):
     else:
         model = LGBMRegressor()
     
-    learn_df[name] = learn_df[name].astype('int64')
+    
     model.fit(learn_df[columns], learn_df[name])
     predict_df['Prediction'] = model.predict(predict_df[columns])
     
