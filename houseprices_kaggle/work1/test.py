@@ -9,7 +9,10 @@ import numpy as np
 import pandas as pd
 import pprint
 import warnings
+from sklearn.preprocessing import RobustScaler, LabelEncoder
+from sklearn.impute import KNNImputer
 from missingpy import MissForest
+from lightgbm import LGBMClassifier, LGBMRegressor
 from catboost import CatBoostClassifier, CatBoostRegressor
 
 
@@ -31,37 +34,42 @@ test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
 train_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = True)
 test_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = True)
 
-
-
 all_df = pd.concat([ train_df, test_df ]) 
+
+col_types = all_df.columns.to_series().groupby(all_df.dtypes)
+categorical_columns = []
+numeric_columns = []
+       
+for col in col_types:
+    if col[0] == 'object':
+        categorical_columns = col[1].unique().tolist()
+    else:
+        numeric_columns += col[1].unique().tolist()
+
+
+numeric_columns.remove('Id')
+numeric_columns.remove('SalePrice')
+
+
+
 
 kk = []
 def fillValue(name, fid):
     
     global all_df
     
-    col_types = all_df.columns.to_series().groupby(all_df.dtypes)
-    categorical_columns = []
-    numeric_columns = []
-       
-    for col in col_types:
-        if col[0] == 'object':
-            categorical_columns = col[1].unique().tolist()
-        else:
-            numeric_columns += col[1].unique().tolist()
+    num_columns = numeric_columns.copy()
+    cat_columns = categorical_columns.copy()
             
-    if name in numeric_columns:
-        numeric_columns.remove(name)
+    if name in num_columns:
+        num_columns.remove(name)
         
-    if name in categorical_columns:
-        categorical_columns.remove(name)
-        
-    numeric_columns.remove('Id')
-    numeric_columns.remove('SalePrice')
+    if name in cat_columns:
+        cat_columns.remove(name)
     
     all_ddf = all_df.copy()
     
-    for colnam in categorical_columns:
+    for colnam in cat_columns:
         keys = all_df[colnam].unique()
         
         if np.nan in keys:
@@ -70,23 +78,25 @@ def fillValue(name, fid):
         vals = [ i  for i in range(0, len(keys))]
         labs = dict(zip(keys, vals))
         all_ddf[colnam] = all_ddf[colnam].map(labs)
+        
+    all_columns = num_columns + cat_columns
             
     '''
     https://pypi.org/project/missingpy/
     '''
     imputer = MissForest()
-    all_ddf[categorical_columns + numeric_columns] = imputer.fit_transform(all_ddf[categorical_columns + numeric_columns])
-    all_ddf[categorical_columns + numeric_columns] = all_ddf[categorical_columns + numeric_columns].round(0).astype('int64')
+    all_ddf[all_columns] = imputer.fit_transform(all_ddf[all_columns])
+    all_ddf[all_columns] = all_ddf[all_columns].round(0).astype('int64')
     
 
-    all_ddf = pd.get_dummies(all_ddf, columns = categorical_columns) 
+    all_ddf = pd.get_dummies(all_ddf, columns = cat_columns) 
     single_df = all_ddf[all_ddf['Id'] == fid]  
     all_ddf = all_ddf[all_ddf[name].isna() == False]
     
 
-    categorical_columns = list(set(all_ddf.columns).symmetric_difference(numeric_columns + ['Id', 'SalePrice', name]))
-    categorical_columns.sort(reverse = True)
-    all_columns = numeric_columns + categorical_columns
+    cat_columns = list(set(all_ddf.columns).symmetric_difference(num_columns + ['Id', 'SalePrice', name]))
+    cat_columns.sort(reverse = True)
+    all_columns = num_columns + cat_columns
     
     if all_df[name].dtypes == 'object':
         keys = all_ddf[name].unique().tolist()
@@ -117,6 +127,51 @@ def fillValue(name, fid):
         kk.append(np.round(prediction[0], 0))
 
         
+def fillValue2(df, name):
+    work_df = df.copy()
+    cat_columns = categorical_columns.copy()
+    num_columns = numeric_columns.copy()
+    catEncoder = None
+        
+    for col in cat_columns:
+        encoder = LabelEncoder()
+        if col == name:
+            catEncoder = encoder 
+        work_df.loc[work_df[col].isna() == False, col] = encoder.fit_transform(work_df.loc[work_df[col].isna() == False, col])
+
+    if catEncoder != None:
+        cat_columns.remove(name)
+    else:
+        num_columns.remove(name)
+    
+    columns = num_columns + cat_columns
+    
+    for col in columns:
+        scaler = RobustScaler()
+        work_df.loc[work_df[col].isna() == False, col] = scaler.fit_transform(work_df.loc[work_df[col].isna() == False, col].values.reshape(-1, 1))
+    
+    
+    imputer = KNNImputer()
+    work_df[columns] = imputer.fit_transform(work_df[columns])
+
+    learn_df = work_df[work_df[name].isna() == False]
+    predict_df = work_df[work_df[name].isna() == True]
+
+    if catEncoder != None:
+        model = LGBMClassifier()
+    else:
+        model = LGBMRegressor()
+    
+    learn_df[name] = learn_df[name].astype('int64')
+    model.fit(learn_df[columns], learn_df[name])
+    predict_df['Prediction'] = model.predict(predict_df[columns])
+    
+    if catEncoder == None:
+        df.loc[df[name].isna() == True, name] = predict_df.loc[predict_df['Id'].isin(df['Id']), 'Prediction']
+    else:
+        df.loc[df[name].isna() == True, name] = catEncoder.inverse_transform(predict_df.loc[predict_df['Id'].isin(df['Id']), 'Prediction'])
+    
+
 
 
 fillValue('GarageArea', 2577)
