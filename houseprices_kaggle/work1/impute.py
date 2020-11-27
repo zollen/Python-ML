@@ -135,7 +135,7 @@ print(all_df.isnull().sum())
 
 all_df.to_csv(os.path.join(PROJECT_DIR, 'data/all.csv'), index = False)
 
-
+print("DONE")
     
 '''
 Strong Correlation
