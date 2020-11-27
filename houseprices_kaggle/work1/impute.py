@@ -66,15 +66,17 @@ def fillValue(df, name):
             catEncoder = encoder 
         work_df.loc[work_df[col].isna() == False, col] = encoder.fit_transform(work_df.loc[work_df[col].isna() == False, col])
 
-    work_df[num_columns + cat_columns] = work_df[num_columns + cat_columns].astype('float64')
     
-    
+
     if catEncoder != None:
         cat_columns.remove(name)
     else:
         num_columns.remove(name)
     
     columns = num_columns + cat_columns
+    work_df[columns] = work_df[columns].astype('float64')
+    
+    
     
     for col in columns:
         scaler = RobustScaler()
