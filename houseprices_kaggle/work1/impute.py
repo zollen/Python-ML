@@ -68,7 +68,6 @@ def fillValue(df, name):
             work_df.loc[work_df[col].isna() == False, col])
 
     
-    print(name)
     if catEncoder != None:
         cat_columns.remove(name)
     else:
