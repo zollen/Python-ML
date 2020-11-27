@@ -167,9 +167,9 @@ def fillValue2(df, name):
     predict_df['Prediction'] = model.predict(predict_df[columns])
     
     if catEncoder == None:
-        df.loc[df[name].isna() == True, name] = predict_df.loc[predict_df['Id'].isin(df['Id']), 'Prediction']
+        df.loc[df['Id'].isin(predict_df['Id']), name] = predict_df['Prediction']
     else:
-        df.loc[df[name].isna() == True, name] = catEncoder.inverse_transform(predict_df.loc[predict_df['Id'].isin(df['Id']), 'Prediction'])
+        df.loc[df['Id'].isin(predict_df['Id']), name] = catEncoder.inverse_transform(predict_df['Prediction'])
     
 
 
