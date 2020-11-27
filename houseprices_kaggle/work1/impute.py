@@ -64,23 +64,24 @@ def fillValue(df, name):
         encoder = LabelEncoder()
         if col == name:
             catEncoder = encoder 
-        work_df.loc[work_df[col].isna() == False, col] = encoder.fit_transform(work_df.loc[work_df[col].isna() == False, col])
+        work_df.loc[work_df[col].isna() == False, col] = encoder.fit_transform(
+            work_df.loc[work_df[col].isna() == False, col])
 
     
-
+    print(name)
     if catEncoder != None:
         cat_columns.remove(name)
     else:
         num_columns.remove(name)
     
     columns = num_columns + cat_columns
-    work_df[columns] = work_df[columns].astype('float64')
-    
+   
     
     
     for col in columns:
         scaler = RobustScaler()
-        work_df.loc[work_df[col].isna() == False, col] = scaler.fit_transform(work_df.loc[work_df[col].isna() == False, col].values.reshape(-1, 1))
+        work_df.loc[work_df[col].isna() == False, col] = scaler.fit_transform(
+            work_df.loc[work_df[col].isna() == False, col].values.reshape(-1, 1)).astype('float64')
     
    
     '''
@@ -124,6 +125,7 @@ damn_df = damn_df[damn_df['Nulls'] > 0]
 damn_df.sort_values('Nulls', ascending = True, inplace = True)
 
 labels = damn_df['Name'].tolist()
+labels.remove('SalePrice')
 
 
 # features sorted by the least number of missing values to the largest number of missing values    
