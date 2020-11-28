@@ -9,13 +9,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pprint
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import RobustScaler
+from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import cross_val_score
 from lightgbm import LGBMRegressor
 from sklearn.metrics import make_scorer
-from sklearn.model_selection import KFold
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import StratifiedKFold
 from skopt import BayesSearchCV
 from skopt.space.space import Integer
 import warnings
@@ -32,9 +31,10 @@ pp = pprint.PrettyPrinter(indent=3)
 
 def rmse_cv(data, label, n_folds):
     kf = KFold(n_folds, shuffle=True, random_state=SEED).get_n_splits(data.values)
-    rmse = np.sqrt(-1 * cross_val_score(LGBMRegressor(random_seed=SEED, metric = 'rmse'), 
+    rmse = np.sqrt(-1 * cross_val_score(LGBMRegressor(random_seed=SEED), 
                                   data.values, label, scoring="neg_mean_squared_error", cv = kf))
     return np.mean(rmse)
+
 
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
@@ -83,30 +83,51 @@ test_df[categorical_columns] = all_df.loc[all_df['Id'].isin(test_df['Id']), cate
 
 all_columns = numeric_columns + categorical_columns
 
-
-scaler = MinMaxScaler()
+scaler = RobustScaler()
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
+'''
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import Ridge
+from sklearn.linear_model import Lasso
+from sklearn.linear_model import ElasticNet
+from sklearn.linear_model import Huber
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import ExtraTreeRegressor
+from sklearn.svm import SVR
+from sklearn.ensemble import RandomForestRegressor
+from lightgbm import LGBMRegressor
+from xgboost import XGBRegressor
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import AdaBoostRegressor
+from catboost import CatBoostRegressor
+from sklearn.decomposition import PCA
+'''
 
+#pca = PCA(n_components = 5)
+#ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
+#ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
 if False:
     params = {
-                'num_leaves': Integer(6, 50), 
-                'max_bin': Integer(2, 50),
-                'learning_rate': [0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06],
-#                'min_child_samples': Integer(100, 500), 
-                'min_child_weight': [1e-5, 1e-3, 1e-2, 1e-1, 1, 1e1, 1e2, 1e3, 1e4],
-                'reg_alpha': [0, 1e-1, 1, 2, 5, 7, 10, 50, 100],
-                'reg_lambda': [0, 1e-1, 1, 5, 10, 20, 50, 100]
+                'iterations': [ 150, 200, 250, 300, 350, 400, 450, 
+                               500, 550, 600, 650 ],
+                'depth': Integer(1, 16),
+                'learning_rate': [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 
+                                  0.01, 0.02, 0.03, 0.04, 0.05, 0.06 ],
+                'bagging_temperature': [0.0, 0.1, 0.2, 0.03, 0.4, 0.5, 
+                                        0.6, 0.7, 0.8, 0.9, 1.0],
+                'border_count': Integer(1, 128),             
+                'l2_leaf_reg': Integer(2, 30)
             }
     
     optimizer = BayesSearchCV(
-                estimator = LGBMRegressor(random_seed=SEED, metric = 'rmse'), 
+                estimator = LGBMRegressor(random_seed=SEED), 
                 search_spaces = params,
                 scoring = make_scorer(mean_squared_error, greater_is_better=False, needs_threshold=False),
-                cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=0),
-                n_jobs=5, 
+                cv = KFold(n_splits=5, shuffle=True, random_state=0),
+                n_jobs=20, 
                 n_iter=100,
                 return_train_score=False,
                 refit=True,
@@ -121,41 +142,29 @@ if False:
 
     exit()
     
+#model = CatBoostRegressor(random_seed=SEED, 
+#                          loss_function='RMSE', 
+#                          verbose=False,
+#                          bagging_temperature = 1.0,
+#                          depth = 7,
+#                          iterations = 580,
+#                          learning_rate = 0.035,
+#                          border_count = 128,
+#                          l2_leaf_reg = 2)
 
-'''
-model = LGBMRegressor(objective='regression', 
-                       metric = 'rmse',
-                       num_leaves=4,
-                       learning_rate=0.01, 
-                       n_estimators=5000,
-                       max_bin=200, 
-                       bagging_fraction=0.75,
-                       bagging_freq=5, 
-                       bagging_seed=7,
-                       feature_fraction=0.2,
-                       feature_fraction_seed=7)
-                                       
-model = LGBMRegressor(objective='regression', 
-                       num_leaves=6,
-                       learning_rate=0.01, 
-                       n_estimators=7000,
-                       max_bin=200, 
-                       bagging_fraction=0.8,
-                       bagging_freq=4, 
-                       bagging_seed=8,
-                       feature_fraction=0.2,
-                       feature_fraction_seed=8,
-                       min_sum_hessian_in_leaf = 11,
-                       verbose=-1,
-                       random_state=42)
-'''
-#model = LGBMRegressor(random_seed=SEED, 
-#                      objective='regression', 
-#                      metric = 'rmse', boosting = 'goss')
-
-model = LGBMRegressor(random_seed=SEED, objective='regression', metric = 'rmse')
+#model = CatBoostRegressor(random_seed=SEED, 
+#                          loss_function='RMSE', 
+#                          verbose=False,
+#                          bagging_temperature = 1.0,
+#                          depth = 6,
+#                          iterations = 585,
+#                          learning_rate = 0.031,
+#                          border_count = 129,
+#                          l2_leaf_reg = 1)
     
+model = LGBMRegressor(random_seed=SEED)
 model.fit(train_df[all_columns], train_df['SalePrice'])
+
 
 
 train_df['Prediction'] = model.predict(train_df[all_columns])
@@ -169,6 +178,7 @@ test_df['SalePrice'] = test_df['SalePrice'].apply(lambda x : np.expm1(x))
 print("======================================================")
 print("RMSE   : %0.4f" % np.sqrt(mean_squared_error(train_df['SalePrice'], train_df['Prediction'])))
 print("CV RMSE: %0.4f" % rmse_cv(train_df[all_columns], train_df['Prediction'], 5))
+
 
 test_df[['Id', 'SalePrice']].to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
 
