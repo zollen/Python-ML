@@ -191,7 +191,7 @@ train_df.loc[train_df['Utilities'].isna() == True, 'Utilities'] = 'AllPub'
 '''
 Add TotalSF
 '''
-train_df['TotalSF'] = train_df['TotalBsmtSF'] + train_df['1stFlrSF'] + train_df['2ndFlrSF']
+train_df['TotalSF'] = train_df['TotalBsmtSF'] + train_df['1stFlrSF'] + train_df['2ndFlrSF'] + train_df['OpenPorchSF']
 
 
 
