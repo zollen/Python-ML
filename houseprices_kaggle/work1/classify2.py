@@ -16,7 +16,6 @@ from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import Lasso
 from sklearn.metrics import make_scorer
 from skopt import BayesSearchCV
-from skopt.space.space import Integer
 import warnings
 
 SEED = 87
@@ -125,12 +124,12 @@ if False:
             }
     
     optimizer = BayesSearchCV(
-                estimator = Lasso(alpha=0.0005,max_iter=10000), 
+                estimator = Lasso(), 
                 search_spaces = params,
                 scoring = make_scorer(mean_squared_error, greater_is_better=False, needs_threshold=False),
                 cv = KFold(n_splits=5, shuffle=True, random_state=0),
                 n_jobs=20, 
-                n_iter=100,
+                n_iter=200,
                 return_train_score=False,
                 refit=True,
                 random_state = SEED)
@@ -146,7 +145,8 @@ if False:
     
 
     
-model = Lasso(alpha=0.0005,max_iter=10000)
+#model = Lasso(alpha=0.0005,max_iter=10000)
+model = Lasso(alpha=0.0006,max_iter=10100, random_state = 17)
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
 
