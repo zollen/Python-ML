@@ -96,25 +96,6 @@ scaler = RobustScaler()
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
-'''
-from sklearn.linear_model import LinearRegression
-from sklearn.linear_model import Ridge
-from sklearn.linear_model import Lasso
-from sklearn.linear_model import ElasticNet
-from sklearn.linear_model import Huber
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.tree import ExtraTreeRegressor
-from sklearn.svm import SVR
-from sklearn.ensemble import RandomForestRegressor
-from lightgbm import LGBMRegressor
-from xgboost import XGBRegressor
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.ensemble import AdaBoostRegressor
-from catboost import CatBoostRegressor
-from sklearn.decomposition import PCA
-'''
-
-
 
 if False:
     params = {
@@ -144,8 +125,7 @@ if False:
     exit()
     
 
-    
-#model = Lasso(alpha=0.0005,max_iter=10000)
+
 model = Lasso(alpha=0.0006,max_iter=10100, random_state = 17)
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
