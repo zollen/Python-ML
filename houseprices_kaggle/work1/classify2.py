@@ -97,7 +97,7 @@ train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
 
-if True:
+if False:
     params = {
                 'alpha': [  0.0005, 0.0006, 0.0007, 0.0008, 0.001, 0.002, 0.003 ],
                 'max_iter': [ 10070, 10080, 10090, 10100, 10110, 10120 ],
