@@ -97,11 +97,11 @@ train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
 
-if False:
+if True:
     params = {
-                'alpha': [ 0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.0009 ],
-                'max_iter': [ 9950, 10000, 10050, 10100, 10150, 10200 ],
-                'random_state': [0, 1, 3, 5, 7, 11, 13, 17, 19, 23, 27, 29, 31, 37, 41 ]
+                'alpha': [  0.0005, 0.0006, 0.0007, 0.0008, 0.001, 0.002, 0.003 ],
+                'max_iter': [ 10070, 10080, 10090, 10100, 10110, 10120 ],
+                'random_state': [ 13, 17, 41, 87 ]
             }
     
     optimizer = BayesSearchCV(
@@ -125,7 +125,7 @@ if False:
     exit()
     
 
-
+# model = Lasso(alpha=0.0006,max_iter=10080, random_state = 41)
 model = Lasso(alpha=0.0006,max_iter=10100, random_state = 17)
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
