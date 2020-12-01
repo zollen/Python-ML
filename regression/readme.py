@@ -37,7 +37,8 @@ Eleastic Net Regression = Least Square Regression + ridge penalty + lasso penalt
 Now we have the best of both world
 
 ridge penalty and lasso penalty each has their own lambda value
-
+Elastic-Net *groups* and *shinks* the parameters assoicated with the correlated vairables and 
+leaves them in equations or removes them all at once.
 
 
 
