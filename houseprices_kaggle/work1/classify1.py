@@ -17,6 +17,7 @@ from catboost import CatBoostRegressor
 from sklearn.metrics import make_scorer
 from skopt import BayesSearchCV
 from skopt.space.space import Integer
+import houseprices_kaggle.lib.house_lib as hb
 import warnings
 
 SEED = 87
@@ -41,6 +42,33 @@ PROJECT_DIR=str(Path(__file__).parent.parent)
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_data.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test_data.csv'))
 
+
+'''
+Merge OverallQual and OverallCond, then remove OverallCond
+RMSE   : 7449.3618
+CV RMSE: 20180.7130
+Site   : 0.11984
+'''
+train_df['OverallQual'] = train_df['OverallQual'] * train_df['OverallCond']
+test_df['OverallQual'] = test_df['OverallQual'] * test_df['OverallCond']
+
+train_df.drop(columns = ['OverallCond'], inplace = True)
+test_df.drop(columns = ['OverallCond'], inplace = True)
+
+
+'''
+DeSkew numerical features
+'''
+col_types = train_df.columns.to_series().groupby(train_df.dtypes)
+numeric_columns = []
+       
+for col in col_types:
+    if col[0] != 'object':
+        numeric_columns += col[1].unique().tolist()
+
+numeric_columns.remove('Id')
+numeric_columns.remove('SalePrice')
+hb.deSkew(train_df, test_df, numeric_columns) 
 
 
 
