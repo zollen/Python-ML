@@ -332,14 +332,6 @@ test_df.loc[test_df['SaleType'].isna() == True, 'SaleType'] = 'WD'
 
 
 
-'''
-Add TotalSF
-RMSE   : 7448.4014
-CV RMSE: 20357.3227
-Site   : 0.11950
-'''
-train_df['TotalSF'] = train_df['TotalBsmtSF'] + train_df['1stFlrSF'] + train_df['2ndFlrSF'] + train_df['OpenPorchSF']
-test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2ndFlrSF'] + test_df['OpenPorchSF']
 
 
 

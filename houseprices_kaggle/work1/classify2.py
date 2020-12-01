@@ -60,6 +60,16 @@ test_df["BuiltAge"] = test_df["BuiltAge"].apply(lambda x: 0 if x < 0 else x)
 test_df["RemodAge"] = test_df["RemodAge"].apply(lambda x: 0 if x < 0 else x)
 
 
+'''
+Add TotalSF
+RMSE   : 22911.4003
+CV RMSE: 12273.8919
+Site   : 0.12092
+'''
+train_df['TotalSF'] = train_df['TotalBsmtSF'] + train_df['1stFlrSF'] + train_df['2ndFlrSF']
+test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2ndFlrSF']
+
+
 
 
 '''
