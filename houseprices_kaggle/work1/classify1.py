@@ -57,6 +57,29 @@ test_df.drop(columns = ['OverallCond'], inplace = True)
 
 
 '''
+Merge YrSold and MoSold
+RMSE   : 7639.0560
+CV RMSE: 20208.7261
+Site   : 0.12014
+'''
+def mergeSold(rec):
+    yrSold = rec['YrSold']
+    moSold = rec['MoSold']
+    
+    years = {2006: 0, 2007: 1, 2008: 2, 2009: 3, 2010: 4}
+    
+    return round(years[yrSold] + (moSold / 12), 2)
+   
+    
+train_df['YrSold'] = train_df.apply(mergeSold, axis = 1)
+test_df['YrSold'] = test_df.apply(mergeSold, axis = 1)
+
+train_df.drop(columns = ['MoSold'], inplace = True)
+test_df.drop(columns = ['MoSold'], inplace = True)
+
+
+
+'''
 DeSkew numerical features
 '''
 col_types = train_df.columns.to_series().groupby(train_df.dtypes)

@@ -16,6 +16,7 @@ from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import Lasso
 from sklearn.metrics import make_scorer
 from skopt import BayesSearchCV
+import houseprices_kaggle.lib.house_lib as hb
 import warnings
 
 SEED = 87
@@ -40,6 +41,12 @@ PROJECT_DIR=str(Path(__file__).parent.parent)
 train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_data.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test_data.csv'))
 
+'''
+Adding BuiltAge, RemodAge and Remodeled
+RMSE   : 22924.8292
+CV RMSE: 12419.2189
+Site   : 0.12107
+'''
 train_df["BuiltAge"] = train_df["YrSold"] - train_df["YearBuilt"]
 train_df["RemodAge"] = train_df["YrSold"] - train_df["YearRemodAdd"]
 train_df["Remodeled"] = train_df["YearBuilt"] != train_df["YearRemodAdd"]
@@ -52,6 +59,22 @@ test_df["Remodeled"] = test_df["YearBuilt"] != test_df["YearRemodAdd"]
 test_df["BuiltAge"] = test_df["BuiltAge"].apply(lambda x: 0 if x < 0 else x)
 test_df["RemodAge"] = test_df["RemodAge"].apply(lambda x: 0 if x < 0 else x)
 
+
+
+
+'''
+DeSkew numerical features
+'''
+col_types = train_df.columns.to_series().groupby(train_df.dtypes)
+numeric_columns = []
+       
+for col in col_types:
+    if col[0] != 'object':
+        numeric_columns += col[1].unique().tolist()
+
+numeric_columns.remove('Id')
+numeric_columns.remove('SalePrice')
+hb.deSkew(train_df, test_df, numeric_columns) 
 
 
 col_types = train_df.columns.to_series().groupby(train_df.dtypes)
