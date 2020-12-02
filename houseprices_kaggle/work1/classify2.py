@@ -70,6 +70,25 @@ train_df['TotalSF'] = train_df['TotalBsmtSF'] + train_df['1stFlrSF'] + train_df[
 test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2ndFlrSF']
 
 
+'''
+Add SqFtPerRoom
+RMSE   : 22881.0458
+CV RMSE: 12150.3098
+Site   : 0.12091
+'''
+train_df["SqFtPerRoom"] = train_df["GrLivArea"] / (
+    train_df["TotRmsAbvGrd"]
+    + train_df["FullBath"]
+    + train_df["HalfBath"]
+    + train_df["KitchenAbvGr"]
+)
+
+test_df["SqFtPerRoom"] = test_df["GrLivArea"] / (
+    test_df["TotRmsAbvGrd"]
+    + test_df["FullBath"]
+    + test_df["HalfBath"]
+    + test_df["KitchenAbvGr"]
+)
 
 
 '''
