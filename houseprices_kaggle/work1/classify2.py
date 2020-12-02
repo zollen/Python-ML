@@ -109,6 +109,16 @@ train_df['HasFireplace'] = train_df['Fireplaces'].apply(lambda x: 1 if x > 0 els
 test_df['HasFireplace'] = test_df['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
 
 
+'''
+Add OtherRoom
+RMSE   : 22814.8221
+CV RMSE: 12090.8070
+Site   : 0.12073
+'''
+train_df['OtherRoom'] = train_df["TotRmsAbvGrd"] - train_df['KitchenAbvGr'] - train_df['BedroomAbvGr']
+test_df['OtherRoom'] = test_df["TotRmsAbvGrd"] - test_df['KitchenAbvGr'] - test_df['BedroomAbvGr']
+
+
 
 '''
 DeSkew numerical features
