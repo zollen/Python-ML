@@ -92,6 +92,25 @@ test_df["SqFtPerRoom"] = test_df["GrLivArea"] / (
 
 
 '''
+Add SqFtPerRoom
+RMSE   : 22874.7657
+CV RMSE: 11951.6143
+Site   : 0.12089
+'''
+train_df['HasPool'] = train_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
+test_df['HasPool'] = test_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
+train_df['Has2ndFlr'] = train_df['2ndFlrSF'].apply(lambda x: 1 if x > 0 else 0)
+test_df['Has2ndFlr'] = test_df['2ndFlrSF'].apply(lambda x: 1 if x > 0 else 0)
+train_df['HasGarage'] = train_df['GarageArea'].apply(lambda x: 1 if x > 0 else 0)
+test_df['HasGarage'] = test_df['GarageArea'].apply(lambda x: 1 if x > 0 else 0)
+train_df['HasBsmt'] = train_df['TotalBsmtSF'].apply(lambda x: 1 if x > 0 else 0)
+test_df['HasBsmt'] = test_df['TotalBsmtSF'].apply(lambda x: 1 if x > 0 else 0)
+train_df['HasFireplace'] = train_df['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
+test_df['HasFireplace'] = test_df['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
+
+
+
+'''
 DeSkew numerical features
 '''
 col_types = train_df.columns.to_series().groupby(train_df.dtypes)
