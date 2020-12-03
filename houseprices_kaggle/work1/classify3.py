@@ -13,7 +13,7 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import Lasso
+from sklearn.linear_model import ElasticNet
 from sklearn.metrics import make_scorer
 from skopt import BayesSearchCV
 import houseprices_kaggle.lib.house_lib as hb
@@ -31,7 +31,7 @@ pp = pprint.PrettyPrinter(indent=3)
 
 def rmse_cv(data, label, n_folds):
     kf = KFold(n_folds, shuffle=True, random_state=SEED).get_n_splits(data.values)
-    rmse = np.sqrt(-1 * cross_val_score(Lasso(alpha=0.0005,max_iter=10000), 
+    rmse = np.sqrt(-1 * cross_val_score(ElasticNet(), 
                                   data.values, label, scoring="neg_mean_squared_error", cv = kf))
     return np.mean(rmse)
 
@@ -181,15 +181,16 @@ test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
 #ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
 #ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
-if False:
+if True:
     params = {
-                'alpha': [  0.0005, 0.0006, 0.0007, 0.0008, 0.001, 0.002, 0.003 ],
-                'max_iter': [ 10070, 10080, 10090, 10100, 10110, 10120 ],
-                'random_state': [ 13, 17, 41, 87 ]
+                'alpha': [  0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.001, 0.002, 0.003 ],
+                'l1_ratio': [ 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 ],
+                'max_iter': [ 10060, 10070, 10080, 10090, 10100, 10110, 10120, 10130 ],
+                'random_state': [ 13, 17, 41, 87, 123 ]
             }
     
     optimizer = BayesSearchCV(
-                estimator = Lasso(), 
+                estimator = ElasticNet(), 
                 search_spaces = params,
                 scoring = make_scorer(mean_squared_error, greater_is_better=False, needs_threshold=False),
                 cv = KFold(n_splits=5, shuffle=True, random_state=0),
@@ -207,10 +208,12 @@ if False:
     pp.pprint(optimizer.best_params_)
 
     exit()
-    
 
-# model = Lasso(alpha=0.0006,max_iter=10080, random_state = 41)
-model = Lasso(alpha=0.0006,max_iter=10100, random_state = 17)
+'''    
+RMSE   : 78269.5626
+CV RMSE: 1.8734
+'''
+model = ElasticNet()
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
 
