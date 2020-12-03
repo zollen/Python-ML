@@ -31,7 +31,7 @@ pp = pprint.PrettyPrinter(indent=3)
 
 def rmse_cv(data, label, n_folds):
     kf = KFold(n_folds, shuffle=True, random_state=SEED).get_n_splits(data.values)
-    rmse = np.sqrt(-1 * cross_val_score(Lasso(alpha=0.0005,max_iter=10000), 
+    rmse = np.sqrt(-1 * cross_val_score(Lasso(alpha=0.0006,max_iter=10100, random_state = 17), 
                                   data.values, label, scoring="neg_mean_squared_error", cv = kf))
     return np.mean(rmse)
 
