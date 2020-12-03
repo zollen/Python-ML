@@ -183,9 +183,9 @@ test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
 
 if False:
     params = {
-                'alpha': [  0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.001, 0.002, 0.003 ],
+                'alpha': [ 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.01 ],
                 'l1_ratio': [ 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 ],
-                'max_iter': [ 10000, 15000, 20000, 25000, 30000 ],
+                'max_iter': [ 10000, 11000, 12000, 13000, 14000, 15000 ],
                 'random_state': [ 13, 17, 41, 87, 123 ]
             }
     
@@ -210,10 +210,11 @@ if False:
     exit()
 
 '''    
-RMSE   : 78269.5626
-CV RMSE: 1.8734
+RMSE   : 24285.0861
+CV RMSE: 20361.9457
 '''
-model = ElasticNet()
+#model = ElasticNet(alpha=0.001, l1_ratio=0.5, max_iter=11000, random_state = 41)
+model = ElasticNet(alpha=0.005, l1_ratio=0.08, max_iter=10000)
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
 
