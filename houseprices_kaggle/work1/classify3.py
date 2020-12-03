@@ -181,11 +181,11 @@ test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
 #ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
 #ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
-if True:
+if False:
     params = {
                 'alpha': [  0.0001, 0.0002, 0.0003, 0.0004, 0.0005, 0.0006, 0.0007, 0.0008, 0.001, 0.002, 0.003 ],
                 'l1_ratio': [ 0.1, 0.2, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 ],
-                'max_iter': [ 10060, 10070, 10080, 10090, 10100, 10110, 10120, 10130 ],
+                'max_iter': [ 10000, 15000, 20000, 25000, 30000 ],
                 'random_state': [ 13, 17, 41, 87, 123 ]
             }
     

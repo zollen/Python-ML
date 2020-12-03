@@ -209,7 +209,6 @@ if False:
     exit()
     
 
-# model = Lasso(alpha=0.0006,max_iter=10080, random_state = 41)
 model = Lasso(alpha=0.0006,max_iter=10100, random_state = 17)
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
