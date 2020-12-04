@@ -183,9 +183,9 @@ test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
 
 if False:
     params = {
-                'alpha': [ 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.0005, 0.0006, 0.0007, 0.0008 ],
-                'epsilon': [ 1.05, 1.10, 1.15, 1.20, 1.25, 1.30, 1.35, 1.4, 1.45, 1.50 ],
-                'max_iter': [ 10000, 14000, 18000, 22000, 24000, 26000, 50000 ]
+                'alpha': [ 0.005, 0.006, 0.007, 0.008 ],
+                'epsilon': [ 1.34, 1.35, 1.36, 1.37, 1.38 ],
+                'max_iter': [ 17950, 17960, 17970, 17980, 17990, 18000, 18010, 18020 ]
             }
     
     optimizer = BayesSearchCV(
@@ -212,7 +212,7 @@ if False:
 RMSE   : 26658.2844
 CV RMSE: 24905.2267
 '''
-model = HuberRegressor(alpha = 0.006, epsilon = 1.35, max_iter = 18000)
+model = HuberRegressor(alpha = 0.006, epsilon = 1.35, max_iter = 17960)
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
 
