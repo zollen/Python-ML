@@ -185,7 +185,7 @@ if False:
     params = {
                 'alpha': [ 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.007, 0.008, 0.009, 0.0005, 0.0006, 0.0007, 0.0008 ],
                 'epsilon': [ 1.05, 1.10, 1.15, 1.20, 1.25, 1.30, 1.35, 1.4, 1.45, 1.50 ],
-                'max_iter': [ 10000, 14000, 18000, 22000, 24000, 26000 ]
+                'max_iter': [ 10000, 14000, 18000, 22000, 24000, 26000, 50000 ]
             }
     
     optimizer = BayesSearchCV(
@@ -209,10 +209,10 @@ if False:
     exit()
 
 '''    
-RMSE   : 66619.2158
-CV RMSE: 44839.3572
+RMSE   : 26658.2844
+CV RMSE: 24905.2267
 '''
-model = HuberRegressor()
+model = HuberRegressor(alpha = 0.006, epsilon = 1.35, max_iter = 18000)
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
 
