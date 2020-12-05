@@ -212,6 +212,7 @@ if False:
 '''    
 RMSE   : 24285.0861
 CV RMSE: 20361.9457
+Site   : 12016
 '''
 model = ElasticNet(alpha=0.005, l1_ratio=0.08, max_iter=10000)
 model.fit(train_df[all_columns], train_df['SalePrice'])
