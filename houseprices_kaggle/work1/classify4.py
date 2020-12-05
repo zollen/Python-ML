@@ -211,6 +211,7 @@ if False:
 '''    
 RMSE   : 26658.2844
 CV RMSE: 24905.2267
+Site   : 0.13044
 '''
 model = HuberRegressor(alpha = 0.006, epsilon = 1.35, max_iter = 17960)
 model.fit(train_df[all_columns], train_df['SalePrice'])
