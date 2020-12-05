@@ -213,9 +213,9 @@ if False:
 
 '''
 New regressor
-RMSE   : 18753.9926
-CV RMSE: 16599.1279
-Site   : 0.12860
+RMSE   : 18280.3060
+CV RMSE: 16549.4193
+Site   : 0.12813
 '''
 model = ARDRegression(alpha_1 = 2e-06, alpha_2 = 4e-05, 
                       lambda_1 = 4e-05, lambda_2 = 4e-05,
