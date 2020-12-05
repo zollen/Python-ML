@@ -90,7 +90,7 @@ test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2nd
 
 
 '''
-Add TotalSF
+Merge ExtraQual and ExtraCond
 RMSE   : 7747.1504
 CV RMSE: 20033.3224
 Site   : 0.11947
