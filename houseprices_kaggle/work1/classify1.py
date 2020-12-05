@@ -89,6 +89,27 @@ test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2nd
 
 
 
+'''
+Add TotalSF
+RMSE   : 7747.1504
+CV RMSE: 20033.3224
+Site   : 0.11947
+'''
+train_df['ExterQual'] = train_df['ExterQual'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
+test_df['ExterQual'] = test_df['ExterQual'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
+train_df['ExterCond'] = train_df['ExterCond'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
+test_df['ExterCond'] = test_df['ExterCond'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
+
+train_df['ExterQual'] = train_df['ExterQual'] * train_df['ExterCond']
+test_df['ExterQual'] = test_df['ExterQual'] * test_df['ExterCond']
+
+train_df.drop(columns = ['ExterCond'], inplace = True)
+test_df.drop(columns = ['ExterCond'], inplace = True)
+
+
+
+
+
 
 '''
 DeSkew numerical features
