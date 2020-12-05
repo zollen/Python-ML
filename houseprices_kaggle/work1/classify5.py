@@ -188,7 +188,7 @@ if False:
                 'alpha_2': [ 5e-6, 6e-6, 7e-6, 8e-6, 9e-6, 10e-6, 11e-6, 12e-6, 13e-6 ],
                 'lambda_1': [ 5e-6, 6e-6, 7e-6, 8e-6, 9e-6, 10e-6, 11e-6, 12e-6, 13e-6 ],
                 'lambda_2': [ 5e-6, 6e-6, 7e-6, 8e-6, 9e-6, 10e-6, 11e-6, 12e-6, 13e-6 ],
-                'threshold_lambda': [ 10000, 10100, 10200, 10300 ]
+                'threshold_lambda': [ 9900, 10000, 10100, 10200, 10300 ]
             }
     
     optimizer = BayesSearchCV(
@@ -217,9 +217,9 @@ RMSE   : 18753.9926
 CV RMSE: 16599.1279
 Site   : 0.12860
 '''
-model = ARDRegression(alpha_1 = 3e-05, alpha_2 = 9e-06, 
-                      lambda_1 = 9e-06, lambda_2 = 7e-06,
-                      n_iter = 290, threshold_lambda = 10000)
+model = ARDRegression(alpha_1 = 2e-06, alpha_2 = 4e-05, 
+                      lambda_1 = 4e-05, lambda_2 = 4e-05,
+                      n_iter = 350, threshold_lambda = 10100)
 #model = ARDRegression()
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
