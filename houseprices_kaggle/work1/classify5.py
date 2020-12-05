@@ -183,9 +183,13 @@ test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
 
 if False:
     params = {
-                'alpha': [ 0.005, 0.006, 0.007, 0.008 ],
+                'n_iter': [290, 300, 350, 400, 450, 500, 550, 600 ],
+                'alpha_1': [ 1e-6, 2e-6, 3e-6, 4e-6, 1e-5, 2e-5, 3e-5, 4e-5 ],
+                'alpha_2': [ 1e-6, 2e-6, 3e-6, 4e-6, 1e-5, 2e-5, 3e-5, 4e-5 ],
+                'lambda_1': [ 1e-6, 2e-6, 3e-6, 4e-6, 1e-5, 2e-5, 3e-5, 4e-5 ],
+                'lambda_2': [ 1e-6, 2e-6, 3e-6, 4e-6, 1e-5, 2e-5, 3e-5, 4e-5 ],
                 'epsilon': [ 1.34, 1.35, 1.36, 1.37, 1.38 ],
-                'max_iter': [ 17950, 17960, 17970, 17980, 17990, 18000, 18010, 18020 ]
+                'threshold_lambda': [ 10000, 10100, 10200, 10300 ]
             }
     
     optimizer = BayesSearchCV(
