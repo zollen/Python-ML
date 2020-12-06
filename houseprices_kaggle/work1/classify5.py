@@ -183,12 +183,12 @@ test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
 
 if False:
     params = {
-                'n_iter': [270, 280, 290, 300, 350, 400, 450 ],
-                'alpha_1': [ 1e-6, 2e-6, 3e-6, 4e-6, 5e-6 ],
-                'alpha_2': [ 3e-5, 4e-5, 5e-5, 6e-5, 7e-5, 8e-5, 9e-5, 10e-5, 11e-5, 12e-5, 13e-5 ],
-                'lambda_1': [ 3e-5, 4e-5, 5e-5, 6e-5, 7e-5, 8e-5, 9e-5, 10e-5, 11e-5, 12e-5, 13e-5 ],
-                'lambda_2': [ 3e-5, 4e-5, 5e-5, 6e-5, 7e-5, 8e-5, 9e-5, 10e-5, 11e-5, 12e-5, 13e-5 ],
-                'threshold_lambda': [ 9900, 10000, 10100, 10200, 10300 ]
+                'n_iter': [270, 280, 290, 300, 350, 400, 450, 500, 550, 600 ],
+                'alpha_1': [ 1e-6, 2e-6, 3e-6, 9e-6, 10e-6, 11e-6, 12e-6  ],
+                'alpha_2': [  3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4.0 ],
+                'lambda_1': [ 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7 ],
+                'lambda_2': [ 7e-5, 8e-5, 9e-5, 10e-5, 11e-5, 12e-5, 13e-5 ],
+                'threshold_lambda': [9700, 9800, 9900, 10000, 11000, 12000, 13000, 14000 ]
             }
     
     optimizer = BayesSearchCV(
@@ -211,17 +211,17 @@ if False:
 
     exit()
 
+
 '''
-New regressor
-RMSE   : 18280.3060
-CV RMSE: 16549.4193
-Site   : 0.12813
+RMSE   : 19363.7528
+CV RMSE: 15177.1470
+Site   : 0.12480
 '''
-model = ARDRegression(alpha_1 = 2e-06, alpha_2 = 4e-05, 
-                      lambda_1 = 4e-05, lambda_2 = 4e-05,
-                      n_iter = 350, threshold_lambda = 10100)
-#model = ARDRegression()
-model.fit(train_df[all_columns], train_df['SalePrice'])
+model = ARDRegression(alpha_1 = 2e-06, alpha_2 = 6.4, 
+                      lambda_1 = 0.4, lambda_2 = 8e-05,
+                      n_iter = 400, threshold_lambda = 9900)
+
+
 
 
 
