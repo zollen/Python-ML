@@ -13,7 +13,7 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import ARDRegression
+from sklearn.linear_model import TweedieRegressor
 from sklearn.metrics import make_scorer
 from skopt import BayesSearchCV
 import houseprices_kaggle.lib.house_lib as hb
@@ -31,7 +31,7 @@ pp = pprint.PrettyPrinter(indent=3)
 
 def rmse_cv(data, label, n_folds):
     kf = KFold(n_folds, shuffle=True, random_state=SEED).get_n_splits(data.values)
-    rmse = np.sqrt(-1 * cross_val_score(ARDRegression(), 
+    rmse = np.sqrt(-1 * cross_val_score(TweedieRegressor(), 
                                   data.values, label, scoring="neg_mean_squared_error", cv = kf))
     return np.mean(rmse)
 
@@ -192,7 +192,7 @@ if False:
             }
     
     optimizer = BayesSearchCV(
-                estimator = ARDRegression(), 
+                estimator = TweedieRegressor(), 
                 search_spaces = params,
                 scoring = make_scorer(mean_squared_error, greater_is_better=False, needs_threshold=False),
                 cv = KFold(n_splits=5, shuffle=True, random_state=0),
@@ -213,15 +213,13 @@ if False:
 
 
 '''
-RMSE   : 19363.7528
-CV RMSE: 15177.1470
-Site   : 0.12480
+RMSE   : 
+CV RMSE: 
+Site   : 
 '''
-model = ARDRegression(alpha_1 = 2e-06, alpha_2 = 6.4, 
-                      lambda_1 = 0.4, lambda_2 = 8e-05,
-                      n_iter = 400, threshold_lambda = 9900)
-
+model = TweedieRegressor()
 model.fit(train_df[all_columns], train_df['SalePrice'])
+
 
 
 
