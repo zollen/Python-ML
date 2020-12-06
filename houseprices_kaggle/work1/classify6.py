@@ -213,9 +213,9 @@ if False:
 
 
 '''
-RMSE   : 
-CV RMSE: 
-Site   : 
+RMSE   : 37241.0210
+CV RMSE: 14070.1177
+Site   : 0.12504
 '''
 model = TweedieRegressor()
 model.fit(train_df[all_columns], train_df['SalePrice'])
