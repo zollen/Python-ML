@@ -183,12 +183,10 @@ test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])
 
 if False:
     params = {
-                'n_iter': [270, 280, 290, 300, 350, 400, 450, 500, 550, 600 ],
-                'alpha_1': [ 1e-6, 2e-6, 3e-6, 9e-6, 10e-6, 11e-6, 12e-6  ],
-                'alpha_2': [  3.0, 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4.0 ],
-                'lambda_1': [ 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7 ],
-                'lambda_2': [ 7e-5, 8e-5, 9e-5, 10e-5, 11e-5, 12e-5, 13e-5 ],
-                'threshold_lambda': [9700, 9800, 9900, 10000, 11000, 12000, 13000, 14000 ]
+                'max_iter': [ 90, 100, 120, 140, 160, 180, 200, 250, 500, 1000, 9000 ],
+                'link': [ 'auto'],
+                'alpha': [ 50, 80, 100, 120, 150, 160, 170, 180, 190, 200],
+                'power': [ 0 ]
             }
     
     optimizer = BayesSearchCV(
@@ -217,7 +215,7 @@ RMSE   : 37241.0210
 CV RMSE: 14070.1177
 Site   : 0.12504
 '''
-model = TweedieRegressor()
+model = TweedieRegressor(power = 0, alpha = 1, link = 'auto')
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
 
