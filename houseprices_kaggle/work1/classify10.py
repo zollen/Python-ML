@@ -13,7 +13,7 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
-from catboost import CatBoostRegressor
+from xgboost import XGBRegressor
 from sklearn.metrics import make_scorer
 from skopt import BayesSearchCV
 from skopt.space.space import Integer
@@ -32,8 +32,13 @@ pp = pprint.PrettyPrinter(indent=3)
 
 def rmse_cv(data, label, n_folds):
     kf = KFold(n_folds, shuffle=True, random_state=SEED).get_n_splits(data.values)
-    rmse = np.sqrt(-1 * cross_val_score(CatBoostRegressor(random_seed=SEED, loss_function='RMSE', verbose = False), 
-                                  data.values, label, scoring="neg_mean_squared_error", cv = kf))
+    rmse = np.sqrt(-1 * cross_val_score(XGBRegressor(colsample_bytree=0.4603, gamma=0.0468, 
+                             learning_rate=0.05, max_depth=3, 
+                             min_child_weight=1.7817, n_estimators=2200,
+                             reg_alpha=0.4640, reg_lambda=0.8571,
+                             subsample=0.5213, silent=1,
+                             random_state =7, nthread = -1), 
+                            data.values, label, scoring="neg_mean_squared_error", cv = kf))
     return np.mean(rmse)
 
 
@@ -206,9 +211,12 @@ if False:
             }
     
     optimizer = BayesSearchCV(
-                estimator = CatBoostRegressor(random_seed=SEED, 
-                                              loss_function='RMSE', 
-                                              verbose=False), 
+                estimator = XGBRegressor(colsample_bytree=0.4603, gamma=0.0468, 
+                             learning_rate=0.05, max_depth=3, 
+                             min_child_weight=1.7817, n_estimators=2200,
+                             reg_alpha=0.4640, reg_lambda=0.8571,
+                             subsample=0.5213, silent=1,
+                             random_state =7, nthread = -1), 
                 search_spaces = params,
                 scoring = make_scorer(mean_squared_error, greater_is_better=False, needs_threshold=False),
                 cv = KFold(n_splits=5, shuffle=True, random_state=0),
@@ -227,32 +235,18 @@ if False:
 
     exit()
     
-#model = CatBoostRegressor(random_seed=SEED, 
-#                          loss_function='RMSE', 
-#                          verbose=False,
-#                          bagging_temperature = 1.0,
-#                          depth = 7,
-#                          iterations = 580,
-#                          learning_rate = 0.035,
-#                          border_count = 128,
-#                          l2_leaf_reg = 2)
-
-#model = CatBoostRegressor(random_seed=SEED, 
-#                          loss_function='RMSE', 
-#                          verbose=False,
-#                          bagging_temperature = 1.0,
-#                          depth = 6,
-#                          iterations = 585,
-#                          learning_rate = 0.031,
-#                          border_count = 129,
-#                          l2_leaf_reg = 1)
 
 '''
-RMSE   : 7747.1504
-CV RMSE: 20033.3224
-Site   : 0.11947
-'''     
-model = CatBoostRegressor(random_seed=SEED, loss_function='RMSE', verbose=False)
+RMSE   : 15896.5402
+CV RMSE: 12749.3916
+Site   : 0.11950
+'''    
+model = XGBRegressor(colsample_bytree=0.4603, gamma=0.0468, 
+                             learning_rate=0.05, max_depth=3, 
+                             min_child_weight=1.7817, n_estimators=2200,
+                             reg_alpha=0.4640, reg_lambda=0.8571,
+                             subsample=0.5213, silent=1,
+                             random_state =7, nthread = -1)
 model.fit(train_df[all_columns], train_df['SalePrice'])
 
 
