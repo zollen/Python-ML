@@ -13,7 +13,7 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import PassiveAggressiveRegressor
+from sklearn.linear_model import LinearRegression
 from sklearn.metrics import make_scorer
 from skopt import BayesSearchCV
 from skopt.space.space import Real
@@ -32,7 +32,7 @@ pp = pprint.PrettyPrinter(indent=3)
 
 def rmse_cv(data, label, n_folds):
     kf = KFold(n_folds, shuffle=True, random_state=SEED).get_n_splits(data.values)
-    rmse = np.sqrt(-1 * cross_val_score(PassiveAggressiveRegressor(), 
+    rmse = np.sqrt(-1 * cross_val_score(LinearRegression(), 
                                   data.values, label, scoring="neg_mean_squared_error", cv = kf))
     return np.mean(rmse)
 
@@ -184,9 +184,10 @@ scaler = RobustScaler()
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
-#pca = PCA(n_components = 100)
-#ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
-#ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
+from sklearn.decomposition import PCA
+pca = PCA(n_components = 100)
+ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
+ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
 if False:
     params = {
@@ -198,7 +199,7 @@ if False:
             }
     
     optimizer = BayesSearchCV(
-                estimator = PassiveAggressiveRegressor(), 
+                estimator = LinearRegression(), 
                 search_spaces = params,
                 scoring = make_scorer(mean_squared_error, greater_is_better=False, needs_threshold=False),
                 cv = KFold(n_splits=5, shuffle=True, random_state=0),
@@ -219,18 +220,18 @@ if False:
 
 
 '''
-RMSE   : 
-CV RMSE: 
-Site   : 
+RMSE   : 26355.5255
+CV RMSE: 12416.1179
+Site   : 0.12430
 '''
-model = PassiveAggressiveRegressor()
-model.fit(train_df[all_columns], train_df['SalePrice'])
+model = LinearRegression()
+model.fit(ttrain_df, train_df['SalePrice'])
 
 
 
 
-train_df['Prediction'] = model.predict(train_df[all_columns])
-test_df['SalePrice'] = model.predict(test_df[all_columns])
+train_df['Prediction'] = model.predict(ttrain_df)
+test_df['SalePrice'] = model.predict(ttest_df)
 
 train_df['Prediction'] = train_df['Prediction'].apply(lambda x : np.expm1(x))  
 train_df['SalePrice'] = train_df['SalePrice'].apply(lambda x : np.expm1(x))  
@@ -239,7 +240,7 @@ test_df['SalePrice'] = test_df['SalePrice'].apply(lambda x : np.expm1(x))
 
 print("======================================================")
 print("RMSE   : %0.4f" % np.sqrt(mean_squared_error(train_df['SalePrice'], train_df['Prediction'])))
-print("CV RMSE: %0.4f" % rmse_cv(train_df[all_columns], train_df['Prediction'], 5))
+print("CV RMSE: %0.4f" % rmse_cv(ttrain_df, train_df['Prediction'], 5))
 
 
 test_df[['Id', 'SalePrice']].to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
