@@ -13,6 +13,7 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
+from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import make_scorer
 from skopt import BayesSearchCV
@@ -184,8 +185,8 @@ scaler = RobustScaler()
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
-from sklearn.decomposition import PCA
-pca = PCA(n_components = 100)
+
+pca = PCA(n_components = 153)
 ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
 ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
