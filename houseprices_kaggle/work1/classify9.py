@@ -190,40 +190,12 @@ pca = PCA(n_components = 153)
 ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
 ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
-if False:
-    params = {
-                'C': Real(0.2, 500000, 'log-uniform'),
-                'max_iter': [ 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600 ],
-                'random_state': [ 17 ],
-                'average': [ True ],
-                'loss' : [ 'squared_epsilon_insensitive'  ]
-            }
-    
-    optimizer = BayesSearchCV(
-                estimator = LinearRegression(), 
-                search_spaces = params,
-                scoring = make_scorer(mean_squared_error, greater_is_better=False, needs_threshold=False),
-                cv = KFold(n_splits=5, shuffle=True, random_state=0),
-                n_jobs=20, 
-                n_iter=200,
-                return_train_score=False,
-                refit=True,
-                random_state = SEED)
-
-    optimizer.fit(train_df[all_columns], train_df['SalePrice'])
-
-    print("====================================================================================")
-    print("Best Score: ", optimizer.best_score_)
-    pp.pprint(optimizer.cv_results_)
-    pp.pprint(optimizer.best_params_)
-
-    exit()
 
 
 '''
-RMSE   : 26355.5255
-CV RMSE: 12416.1179
-Site   : 0.12430
+RMSE   : 23791.0339
+CV RMSE: 11696.9244
+Site   : 0.12315
 '''
 model = LinearRegression()
 model.fit(ttrain_df, train_df['SalePrice'])
