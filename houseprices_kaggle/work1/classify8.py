@@ -104,10 +104,6 @@ scaler = RobustScaler()
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
-#pca = PCA(n_components = 100)
-#ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
-#ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
-
 if False:
     params = {
                 'C': Real(0.2, 500000, 'log-uniform'),
