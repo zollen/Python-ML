@@ -33,15 +33,23 @@ PASSAGG:  0.19055
 LINEAR:   0.12315
 SVM:      
 '''
-FILES = [ 
-            'cat.csv', 'xgb.csv', 'lasso.csv', 'eleasticnet.csv', 
-            'huber.csv', 'ada.csv', 'pass_agg.csv', 'sgd.csv', 
-            'tweedie.csv', 'linear.csv'
-        ]
+FILES = { 
+            'cat.csv': [ 1.0 ], 
+            'xgb.csv': [ 1.0 ], 
+            'lasso.csv': [ 1.0 ], 
+            'eleasticnet.csv': [ 1.0 ], 
+            'huber.csv': [ 1.0 ], 
+            'ada.csv': [ 1.0 ], 
+            'pass_agg.csv': [ 1.0 ], 
+            'sgd.csv': [ 1.0 ], 
+            'tweedie.csv': [ 1.0 ], 
+            'linear.csv': [ 1.0 ],
+            'svm.csv': [1.0 ]
+        }
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
 
-all_df = []
+
 for name in FILES:
-    all_df.append(pd.read_csv(os.path.join(PROJECT_DIR, 'data/models/', name)))
+    FILES[name].append(pd.read_csv(os.path.join(PROJECT_DIR, 'data/models/', name)))
               
