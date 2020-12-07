@@ -132,3 +132,10 @@ def deSkew(df1, df2, numeric_columns):
             
     if 'SalePrice' in df2:
             df2['SalePrice'] = df2['SalePrice'].apply(lambda x : np.log1p(x))  
+            
+def write_result(name, df1, df2):
+    
+    df1['SalePrice'] = df1['Prediction']
+    all_df = pd.concat([df1[['Id', 'SalePrice']], df2[['Id', 'SalePrice']]], ignore_index=True)
+    
+    all_df.to_csv(name, index = False)

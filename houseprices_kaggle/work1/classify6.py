@@ -151,6 +151,8 @@ print("CV RMSE: %0.4f" % hb.rmse_cv(TweedieRegressor(power = 0, alpha = 1, link 
                                     train_df[all_columns], train_df['Prediction'], 5))
 
 
-test_df[['Id', 'SalePrice']].to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
-
+if False:
+    test_df[['Id', 'SalePrice']].to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
+else:
+    hb.write_result(os.path.join(PROJECT_DIR, 'data/models/tweedie.csv'), train_df, test_df)
 

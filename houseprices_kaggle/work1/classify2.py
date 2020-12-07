@@ -146,7 +146,8 @@ print("RMSE   : %0.4f" % np.sqrt(mean_squared_error(train_df['SalePrice'], train
 print("CV RMSE: %0.4f" % hb.rmse_cv(Lasso(alpha=0.0006,max_iter=10100, random_state = 17),
                                     train_df[all_columns], train_df['Prediction'], 5))
 
-
-test_df[['Id', 'SalePrice']].to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
-
+if False:
+    test_df[['Id', 'SalePrice']].to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
+else:
+    hb.write_result(os.path.join(PROJECT_DIR, 'data/models/lasso.csv'), train_df, test_df)
 
