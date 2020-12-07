@@ -10,9 +10,7 @@ import numpy as np
 import pandas as pd
 import pprint
 from sklearn.preprocessing import RobustScaler 
-from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import cross_val_score
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression
 import houseprices_kaggle.lib.house_lib as hb
@@ -28,11 +26,7 @@ np.random.seed(SEED)
 
 pp = pprint.PrettyPrinter(indent=3) 
 
-def rmse_cv(data, label, n_folds):
-    kf = KFold(n_folds, shuffle=True, random_state=SEED).get_n_splits(data.values)
-    rmse = np.sqrt(-1 * cross_val_score(LinearRegression(), 
-                                  data.values, label, scoring="neg_mean_squared_error", cv = kf))
-    return np.mean(rmse)
+
 
 
 
@@ -210,7 +204,7 @@ test_df['SalePrice'] = test_df['SalePrice'].apply(lambda x : np.expm1(x))
 
 print("======================================================")
 print("RMSE   : %0.4f" % np.sqrt(mean_squared_error(train_df['SalePrice'], train_df['Prediction'])))
-print("CV RMSE: %0.4f" % rmse_cv(ttrain_df, train_df['Prediction'], 5))
+print("CV RMSE: %0.4f" % hb.rmse_cv(LinearRegression(), ttrain_df, train_df['Prediction'], 5))
 
 
 test_df[['Id', 'SalePrice']].to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)

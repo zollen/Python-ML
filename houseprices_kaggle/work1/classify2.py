@@ -12,7 +12,6 @@ import pprint
 from sklearn.preprocessing import RobustScaler
 from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import Lasso
 from sklearn.metrics import make_scorer
 from skopt import BayesSearchCV
@@ -28,13 +27,6 @@ pd.set_option('display.width', 1000)
 np.random.seed(SEED)
 
 pp = pprint.PrettyPrinter(indent=3) 
-
-def rmse_cv(data, label, n_folds):
-    kf = KFold(n_folds, shuffle=True, random_state=SEED).get_n_splits(data.values)
-    rmse = np.sqrt(-1 * cross_val_score(Lasso(alpha=0.0006,max_iter=10100, random_state = 17), 
-                                  data.values, label, scoring="neg_mean_squared_error", cv = kf))
-    return np.mean(rmse)
-
 
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
@@ -224,7 +216,8 @@ test_df['SalePrice'] = test_df['SalePrice'].apply(lambda x : np.expm1(x))
 
 print("======================================================")
 print("RMSE   : %0.4f" % np.sqrt(mean_squared_error(train_df['SalePrice'], train_df['Prediction'])))
-print("CV RMSE: %0.4f" % rmse_cv(train_df[all_columns], train_df['Prediction'], 5))
+print("CV RMSE: %0.4f" % hb.rmse_cv(Lasso(alpha=0.0006,max_iter=10100, random_state = 17),
+                                    train_df[all_columns], train_df['Prediction'], 5))
 
 
 test_df[['Id', 'SalePrice']].to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)

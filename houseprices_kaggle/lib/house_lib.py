@@ -7,8 +7,16 @@ Created on Nov. 30, 2020
 import pandas as pd
 import numpy as np
 import math
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
 from scipy.stats import skew, boxcox_normmax
 from scipy.special import boxcox1p
+
+def rmse_cv(model, data, label, n_folds):
+    kf = KFold(n_folds, shuffle=True, random_state=23).get_n_splits(data.values)
+    rmse = np.sqrt(-1 * cross_val_score(model, 
+                                  data.values, label, scoring="neg_mean_squared_error", cv = kf))
+    return np.mean(rmse)
 
 
 def deSkew(df1, df2, numeric_columns):
