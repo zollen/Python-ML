@@ -15,9 +15,6 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
 from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import make_scorer
-from skopt import BayesSearchCV
-from skopt.space.space import Real
 import houseprices_kaggle.lib.house_lib as hb
 import warnings
 
