@@ -34,22 +34,23 @@ LINEAR:   0.12315
 SVM:      
 '''
 FILES = { 
-            'cat.csv': [ 1.0 ], 
-            'xgb.csv': [ 1.0 ], 
-            'lasso.csv': [ 1.0 ], 
-            'eleasticnet.csv': [ 1.0 ], 
-            'huber.csv': [ 1.0 ], 
-            'ada.csv': [ 1.0 ], 
-            'pass_agg.csv': [ 1.0 ], 
-            'sgd.csv': [ 1.0 ], 
-            'tweedie.csv': [ 1.0 ], 
-            'linear.csv': [ 1.0 ],
-            'svm.csv': [1.0 ]
+            'cat.csv': 0.20 , 
+            'xgb.csv': 0.20 , 
+            'lasso.csv': 0.15 , 
+            'eleasticnet.csv': 0.15 , 
+            'linear.csv': 0.15,
+            'svm.csv': 0.15
         }
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
 
+result_df = pd.DataFrame()
 
 for name in FILES:
-    FILES[name].append(pd.read_csv(os.path.join(PROJECT_DIR, 'data/models/', name)))
-              
+    df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/models/', name))
+    df = df.loc[df['Id'] >= 1461, ['SalePrice']]
+    
+    if 'SalePrice' in result_df:
+        result_df['SalePrice'] = result_df['SalePrice'] + (FILES[name] * df['SalePrice'])
+    else:
+        result_df['SalePrice'] = FILES[name] * df['SalePrice']

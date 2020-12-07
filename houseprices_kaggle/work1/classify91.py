@@ -9,8 +9,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pprint
-from sklearn.preprocessing import RobustScaler 
+from skopt import BayesSearchCV
+from sklearn.model_selection import KFold
+from skopt.space.space import Integer, Real
+from sklearn.preprocessing import RobustScaler  
 from sklearn.metrics import mean_squared_error
+from sklearn.metrics import make_scorer
 from sklearn.decomposition import PCA
 from sklearn import svm
 import houseprices_kaggle.lib.house_lib as hb
@@ -93,7 +97,7 @@ test_df[categorical_columns] = all_df.loc[all_df['Id'].isin(test_df['Id']), cate
 all_columns = numeric_columns + categorical_columns
 
 
-scaler = RobustScaler()
+scaler = RobustScaler ()
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
@@ -103,14 +107,42 @@ ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
 ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
 
+if False:
+    params = {
+                'C': Integer(1, 25),
+                'gamma': Real(0.0001, 0.0010),
+                'epsilon': Real(0.001, 0.01)
+            }
+    
+    optimizer = BayesSearchCV(
+                estimator = svm.SVR(kernel = 'rbf'), 
+                search_spaces = params,
+                scoring = make_scorer(mean_squared_error, greater_is_better=False, needs_threshold=False),
+                cv = KFold(n_splits=5, shuffle=True, random_state=0),
+                n_jobs=20, 
+                n_iter=100,
+                return_train_score=False,
+                refit=True,
+                random_state = SEED)
 
+    optimizer.fit(train_df[all_columns], train_df['SalePrice'])
+
+    print("====================================================================================")
+    print("Best Score: ", optimizer.best_score_)
+    pp.pprint(optimizer.cv_results_)
+    pp.pprint(optimizer.best_params_)
+
+    exit()
+    
 
 '''
-RMSE   : 
-CV RMSE: 
+RMSE   : 79236.0907
+CV RMSE: 15298.5864
 Site   :
 '''
 model = svm.SVR()
+#model = svm.SVR(C = 3.0, epsilon = 0.01, gamma= 0.001)
+#model = svm.SVR(C = 20.0, epsilon = 0.008, gamma= 0.0003)
 model.fit(ttrain_df, train_df['SalePrice'])
 
 
