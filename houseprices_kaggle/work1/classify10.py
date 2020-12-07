@@ -10,12 +10,8 @@ import numpy as np
 import pandas as pd
 import pprint
 from sklearn.preprocessing import RobustScaler
-from sklearn.model_selection import KFold
 from sklearn.metrics import mean_squared_error
 from xgboost import XGBRegressor
-from sklearn.metrics import make_scorer
-from skopt import BayesSearchCV
-from skopt.space.space import Integer
 import houseprices_kaggle.lib.house_lib as hb
 import warnings
 
@@ -35,70 +31,9 @@ test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test_data.csv'))
 
 
 '''
-Merge OverallQual and OverallCond, then remove OverallCond
-RMSE   : 7449.3618
-CV RMSE: 20180.7130
-Site   : 0.11984
+feature engineering
 '''
-train_df['OverallQual'] = train_df['OverallQual'] * train_df['OverallCond']
-test_df['OverallQual'] = test_df['OverallQual'] * test_df['OverallCond']
-
-train_df.drop(columns = ['OverallCond'], inplace = True)
-test_df.drop(columns = ['OverallCond'], inplace = True)
-
-
-'''
-Merge YrSold and MoSold
-RMSE   : 7639.0560
-CV RMSE: 20208.7261
-Site   : 0.12014
-'''
-def mergeSold(rec):
-    yrSold = rec['YrSold']
-    moSold = rec['MoSold']
-    
-    years = {2006: 0, 2007: 1, 2008: 2, 2009: 3, 2010: 4}
-    
-    return round(years[yrSold] + (moSold / 12), 2)
-   
-    
-train_df['YrSold'] = train_df.apply(mergeSold, axis = 1)
-test_df['YrSold'] = test_df.apply(mergeSold, axis = 1)
-
-train_df.drop(columns = ['MoSold'], inplace = True)
-test_df.drop(columns = ['MoSold'], inplace = True)
-
-
-'''
-Add TotalSF
-RMSE   : 7448.4014
-CV RMSE: 20357.3227
-Site   : 0.11950
-'''
-train_df['TotalSF'] = train_df['TotalBsmtSF'] + train_df['1stFlrSF'] + train_df['2ndFlrSF'] + train_df['OpenPorchSF']
-test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2ndFlrSF'] + test_df['OpenPorchSF']
-
-
-
-'''
-Merge ExtraQual and ExtraCond
-RMSE   : 7747.1504
-CV RMSE: 20033.3224
-Site   : 0.11947
-'''
-train_df['ExterQual'] = train_df['ExterQual'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
-test_df['ExterQual'] = test_df['ExterQual'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
-train_df['ExterCond'] = train_df['ExterCond'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
-test_df['ExterCond'] = test_df['ExterCond'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
-
-train_df['ExterQual'] = train_df['ExterQual'] * train_df['ExterCond']
-test_df['ExterQual'] = test_df['ExterQual'] * test_df['ExterCond']
-
-train_df.drop(columns = ['ExterCond'], inplace = True)
-test_df.drop(columns = ['ExterCond'], inplace = True)
-
-
-
+hb.feature_engineering1(train_df, test_df)
 
 
 
@@ -161,65 +96,9 @@ scaler = RobustScaler()
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
-'''
-from sklearn.linear_model import LinearRegression
-from sklearn.linear_model import Ridge
-from sklearn.linear_model import Lasso
-from sklearn.linear_model import ElasticNet
-from sklearn.linear_model import Huber
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.tree import ExtraTreeRegressor
-from sklearn.svm import SVR
-from sklearn.ensemble import RandomForestRegressor
-from lightgbm import LGBMRegressor
-from xgboost import XGBRegressor
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.ensemble import AdaBoostRegressor
-from catboost import CatBoostRegressor
-from sklearn.decomposition import PCA
-'''
 
-#pca = PCA(n_components = 5)
-#ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
-#ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
-if False:
-    params = {
-                'iterations': [ 150, 200, 250, 300, 350, 400, 450, 
-                               500, 550, 600, 650 ],
-                'depth': Integer(1, 16),
-                'learning_rate': [0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 
-                                  0.01, 0.02, 0.03, 0.04, 0.05, 0.06 ],
-                'bagging_temperature': [0.0, 0.1, 0.2, 0.03, 0.4, 0.5, 
-                                        0.6, 0.7, 0.8, 0.9, 1.0],
-                'border_count': Integer(1, 128),             
-                'l2_leaf_reg': Integer(2, 30)
-            }
-    
-    optimizer = BayesSearchCV(
-                estimator = XGBRegressor(colsample_bytree=0.4603, gamma=0.0468, 
-                             learning_rate=0.05, max_depth=3, 
-                             min_child_weight=1.7817, n_estimators=2200,
-                             reg_alpha=0.4640, reg_lambda=0.8571,
-                             subsample=0.5213, silent=1,
-                             random_state =7, nthread = -1), 
-                search_spaces = params,
-                scoring = make_scorer(mean_squared_error, greater_is_better=False, needs_threshold=False),
-                cv = KFold(n_splits=5, shuffle=True, random_state=0),
-                n_jobs=20, 
-                n_iter=100,
-                return_train_score=False,
-                refit=True,
-                random_state = SEED)
 
-    optimizer.fit(train_df[all_columns], train_df['SalePrice'])
-
-    print("====================================================================================")
-    print("Best Score: ", optimizer.best_score_)
-    pp.pprint(optimizer.cv_results_)
-    pp.pprint(optimizer.best_params_)
-
-    exit()
     
 
 '''

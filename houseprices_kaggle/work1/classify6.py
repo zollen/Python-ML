@@ -34,81 +34,9 @@ train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train_data.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test_data.csv'))
 
 '''
-Adding BuiltAge, RemodAge and Remodeled
-RMSE   : 22924.8292
-CV RMSE: 12419.2189
-Site   : 0.12107
+feature engineering
 '''
-train_df["BuiltAge"] = train_df["YrSold"] - train_df["YearBuilt"]
-train_df["RemodAge"] = train_df["YrSold"] - train_df["YearRemodAdd"]
-train_df["Remodeled"] = train_df["YearBuilt"] != train_df["YearRemodAdd"]
-train_df["BuiltAge"] = train_df["BuiltAge"].apply(lambda x: 0 if x < 0 else x)
-train_df["RemodAge"] = train_df["RemodAge"].apply(lambda x: 0 if x < 0 else x)
-
-test_df["BuiltAge"] = test_df["YrSold"] - test_df["YearBuilt"]
-test_df["RemodAge"] = test_df["YrSold"] - test_df["YearRemodAdd"]
-test_df["Remodeled"] = test_df["YearBuilt"] != test_df["YearRemodAdd"]
-test_df["BuiltAge"] = test_df["BuiltAge"].apply(lambda x: 0 if x < 0 else x)
-test_df["RemodAge"] = test_df["RemodAge"].apply(lambda x: 0 if x < 0 else x)
-
-
-'''
-Add TotalSF
-RMSE   : 22911.4003
-CV RMSE: 12273.8919
-Site   : 0.12092
-'''
-train_df['TotalSF'] = train_df['TotalBsmtSF'] + train_df['1stFlrSF'] + train_df['2ndFlrSF']
-test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2ndFlrSF']
-
-
-'''
-Add SqFtPerRoom
-RMSE   : 22881.0458
-CV RMSE: 12150.3098
-Site   : 0.12091
-'''
-train_df["SqFtPerRoom"] = train_df["GrLivArea"] / (
-    train_df["TotRmsAbvGrd"]
-    + train_df["FullBath"]
-    + train_df["HalfBath"]
-    + train_df["KitchenAbvGr"]
-)
-
-test_df["SqFtPerRoom"] = test_df["GrLivArea"] / (
-    test_df["TotRmsAbvGrd"]
-    + test_df["FullBath"]
-    + test_df["HalfBath"]
-    + test_df["KitchenAbvGr"]
-)
-
-
-'''
-Add SqFtPerRoom
-RMSE   : 22874.7657
-CV RMSE: 11951.6143
-Site   : 0.12089
-'''
-train_df['HasPool'] = train_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
-test_df['HasPool'] = test_df['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
-train_df['Has2ndFlr'] = train_df['2ndFlrSF'].apply(lambda x: 1 if x > 0 else 0)
-test_df['Has2ndFlr'] = test_df['2ndFlrSF'].apply(lambda x: 1 if x > 0 else 0)
-train_df['HasGarage'] = train_df['GarageArea'].apply(lambda x: 1 if x > 0 else 0)
-test_df['HasGarage'] = test_df['GarageArea'].apply(lambda x: 1 if x > 0 else 0)
-train_df['HasBsmt'] = train_df['TotalBsmtSF'].apply(lambda x: 1 if x > 0 else 0)
-test_df['HasBsmt'] = test_df['TotalBsmtSF'].apply(lambda x: 1 if x > 0 else 0)
-train_df['HasFireplace'] = train_df['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
-test_df['HasFireplace'] = test_df['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
-
-
-'''
-Add OtherRoom
-RMSE   : 22814.8221
-CV RMSE: 12090.8070
-Site   : 0.12073
-'''
-train_df['OtherRoom'] = train_df["TotRmsAbvGrd"] - train_df['KitchenAbvGr'] - train_df['BedroomAbvGr']
-test_df['OtherRoom'] = test_df["TotRmsAbvGrd"] - test_df['KitchenAbvGr'] - test_df['BedroomAbvGr']
+hb.feature_engineering2(train_df, test_df)
 
 
 
@@ -168,10 +96,6 @@ all_columns = numeric_columns + categorical_columns
 scaler = RobustScaler()
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
-
-#pca = PCA(n_components = 100)
-#ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
-#ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
 if False:
     params = {

@@ -13,11 +13,93 @@ from scipy.stats import skew, boxcox_normmax
 from scipy.special import boxcox1p
 
 def rmse_cv(model, data, label, n_folds):
-    kf = KFold(n_folds, shuffle=True, random_state=23).get_n_splits(data.values)
+    kf = KFold(n_folds, shuffle=True, random_state=87).get_n_splits(data.values)
     rmse = np.sqrt(-1 * cross_val_score(model, 
                                   data.values, label, scoring="neg_mean_squared_error", cv = kf))
     return np.mean(rmse)
 
+
+def feature_engineering1(df1, df2):
+    
+    df1['OverallQual'] = df1['OverallQual'] * df1['OverallCond']
+    df2['OverallQual'] = df2['OverallQual'] * df2['OverallCond']
+
+    df1.drop(columns = ['OverallCond'], inplace = True)
+    df2.drop(columns = ['OverallCond'], inplace = True)
+
+    def mergeSold(rec):
+        yrSold = rec['YrSold']
+        moSold = rec['MoSold']
+    
+        years = {2006: 0, 2007: 1, 2008: 2, 2009: 3, 2010: 4}
+    
+        return round(years[yrSold] + (moSold / 12), 2)
+   
+    
+    df1['YrSold'] = df1.apply(mergeSold, axis = 1)
+    df2['YrSold'] = df2.apply(mergeSold, axis = 1)
+
+    df1.drop(columns = ['MoSold'], inplace = True)
+    df2.drop(columns = ['MoSold'], inplace = True)
+
+    df1['TotalSF'] = df1['TotalBsmtSF'] + df1['1stFlrSF'] + df1['2ndFlrSF'] + df1['OpenPorchSF']
+    df2['TotalSF'] = df2['TotalBsmtSF'] + df2['1stFlrSF'] + df2['2ndFlrSF'] + df2['OpenPorchSF']
+
+    df1['ExterQual'] = df1['ExterQual'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
+    df2['ExterQual'] = df2['ExterQual'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
+    df1['ExterCond'] = df1['ExterCond'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
+    df2['ExterCond'] = df2['ExterCond'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
+
+    df1['ExterQual'] = df1['ExterQual'] * df1['ExterCond']
+    df2['ExterQual'] = df2['ExterQual'] * df2['ExterCond']
+
+    df1.drop(columns = ['ExterCond'], inplace = True)
+    df2.drop(columns = ['ExterCond'], inplace = True)
+
+def feature_engineering2(df1, df2):
+
+    df1["BuiltAge"] = df1["YrSold"] - df1["YearBuilt"]
+    df1["RemodAge"] = df1["YrSold"] - df1["YearRemodAdd"]
+    df1["Remodeled"] = df1["YearBuilt"] != df1["YearRemodAdd"]
+    df1["BuiltAge"] = df1["BuiltAge"].apply(lambda x: 0 if x < 0 else x)
+    df1["RemodAge"] = df1["RemodAge"].apply(lambda x: 0 if x < 0 else x)
+
+    df2["BuiltAge"] = df2["YrSold"] - df2["YearBuilt"]
+    df2["RemodAge"] = df2["YrSold"] - df2["YearRemodAdd"]
+    df2["Remodeled"] = df2["YearBuilt"] != df2["YearRemodAdd"]
+    df2["BuiltAge"] = df2["BuiltAge"].apply(lambda x: 0 if x < 0 else x)
+    df2["RemodAge"] = df2["RemodAge"].apply(lambda x: 0 if x < 0 else x)
+
+    df1['TotalSF'] = df1['TotalBsmtSF'] + df1['1stFlrSF'] + df1['2ndFlrSF']
+    df2['TotalSF'] = df2['TotalBsmtSF'] + df2['1stFlrSF'] + df2['2ndFlrSF']
+
+    df1["SqFtPerRoom"] = df1["GrLivArea"] / (
+                                df1["TotRmsAbvGrd"]
+                                + df1["FullBath"]
+                                + df1["HalfBath"]
+                                + df1["KitchenAbvGr"]
+                                )
+
+    df2["SqFtPerRoom"] = df2["GrLivArea"] / (
+                            df2["TotRmsAbvGrd"]
+                            + df2["FullBath"]
+                            + df2["HalfBath"]
+                            + df2["KitchenAbvGr"]
+                            )
+
+    df1['HasPool'] = df1['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
+    df2['HasPool'] = df2['PoolArea'].apply(lambda x: 1 if x > 0 else 0)
+    df1['Has2ndFlr'] = df1['2ndFlrSF'].apply(lambda x: 1 if x > 0 else 0)
+    df2['Has2ndFlr'] = df2['2ndFlrSF'].apply(lambda x: 1 if x > 0 else 0)
+    df1['HasGarage'] = df1['GarageArea'].apply(lambda x: 1 if x > 0 else 0)
+    df2['HasGarage'] = df2['GarageArea'].apply(lambda x: 1 if x > 0 else 0)
+    df1['HasBsmt'] = df1['TotalBsmtSF'].apply(lambda x: 1 if x > 0 else 0)
+    df2['HasBsmt'] = df2['TotalBsmtSF'].apply(lambda x: 1 if x > 0 else 0)
+    df1['HasFireplace'] = df1['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
+    df2['HasFireplace'] = df2['Fireplaces'].apply(lambda x: 1 if x > 0 else 0)
+
+    df1['OtherRoom'] = df1["TotRmsAbvGrd"] - df1['KitchenAbvGr'] - df1['BedroomAbvGr']
+    df2['OtherRoom'] = df2["TotRmsAbvGrd"] - df2['KitchenAbvGr'] - df2['BedroomAbvGr']
 
 def deSkew(df1, df2, numeric_columns):
     for name in numeric_columns:

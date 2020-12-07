@@ -35,70 +35,9 @@ test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test_data.csv'))
 
 
 '''
-Merge OverallQual and OverallCond, then remove OverallCond
-RMSE   : 7449.3618
-CV RMSE: 20180.7130
-Site   : 0.11984
+feature engineering
 '''
-train_df['OverallQual'] = train_df['OverallQual'] * train_df['OverallCond']
-test_df['OverallQual'] = test_df['OverallQual'] * test_df['OverallCond']
-
-train_df.drop(columns = ['OverallCond'], inplace = True)
-test_df.drop(columns = ['OverallCond'], inplace = True)
-
-
-'''
-Merge YrSold and MoSold
-RMSE   : 7639.0560
-CV RMSE: 20208.7261
-Site   : 0.12014
-'''
-def mergeSold(rec):
-    yrSold = rec['YrSold']
-    moSold = rec['MoSold']
-    
-    years = {2006: 0, 2007: 1, 2008: 2, 2009: 3, 2010: 4}
-    
-    return round(years[yrSold] + (moSold / 12), 2)
-   
-    
-train_df['YrSold'] = train_df.apply(mergeSold, axis = 1)
-test_df['YrSold'] = test_df.apply(mergeSold, axis = 1)
-
-train_df.drop(columns = ['MoSold'], inplace = True)
-test_df.drop(columns = ['MoSold'], inplace = True)
-
-
-'''
-Add TotalSF
-RMSE   : 7448.4014
-CV RMSE: 20357.3227
-Site   : 0.11950
-'''
-train_df['TotalSF'] = train_df['TotalBsmtSF'] + train_df['1stFlrSF'] + train_df['2ndFlrSF'] + train_df['OpenPorchSF']
-test_df['TotalSF'] = test_df['TotalBsmtSF'] + test_df['1stFlrSF'] + test_df['2ndFlrSF'] + test_df['OpenPorchSF']
-
-
-
-'''
-Merge ExtraQual and ExtraCond
-RMSE   : 7747.1504
-CV RMSE: 20033.3224
-Site   : 0.11947
-'''
-train_df['ExterQual'] = train_df['ExterQual'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
-test_df['ExterQual'] = test_df['ExterQual'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
-train_df['ExterCond'] = train_df['ExterCond'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
-test_df['ExterCond'] = test_df['ExterCond'].map({'Po': 1, 'Fa': 2, 'TA': 3, 'Gd': 4, 'Ex': 5})
-
-train_df['ExterQual'] = train_df['ExterQual'] * train_df['ExterCond']
-test_df['ExterQual'] = test_df['ExterQual'] * test_df['ExterCond']
-
-train_df.drop(columns = ['ExterCond'], inplace = True)
-test_df.drop(columns = ['ExterCond'], inplace = True)
-
-
-
+hb.feature_engineering1(train_df, test_df)
 
 
 
@@ -161,27 +100,6 @@ scaler = RobustScaler()
 train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
-'''
-from sklearn.linear_model import LinearRegression
-from sklearn.linear_model import Ridge
-from sklearn.linear_model import Lasso
-from sklearn.linear_model import ElasticNet
-from sklearn.linear_model import Huber
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.tree import ExtraTreeRegressor
-from sklearn.svm import SVR
-from sklearn.ensemble import RandomForestRegressor
-from lightgbm import LGBMRegressor
-from xgboost import XGBRegressor
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.ensemble import AdaBoostRegressor
-from catboost import CatBoostRegressor
-from sklearn.decomposition import PCA
-'''
-
-#pca = PCA(n_components = 5)
-#ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
-#ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
 if False:
     params = {
@@ -218,25 +136,6 @@ if False:
 
     exit()
     
-#model = CatBoostRegressor(random_seed=SEED, 
-#                          loss_function='RMSE', 
-#                          verbose=False,
-#                          bagging_temperature = 1.0,
-#                          depth = 7,
-#                          iterations = 580,
-#                          learning_rate = 0.035,
-#                          border_count = 128,
-#                          l2_leaf_reg = 2)
-
-#model = CatBoostRegressor(random_seed=SEED, 
-#                          loss_function='RMSE', 
-#                          verbose=False,
-#                          bagging_temperature = 1.0,
-#                          depth = 6,
-#                          iterations = 585,
-#                          learning_rate = 0.031,
-#                          border_count = 129,
-#                          l2_leaf_reg = 1)
 
 '''
 RMSE   : 7747.1504
