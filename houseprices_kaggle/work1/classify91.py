@@ -159,7 +159,7 @@ print("RMSE   : %0.4f" % np.sqrt(mean_squared_error(train_df['SalePrice'], train
 print("CV RMSE: %0.4f" % hb.rmse_cv(svm.SVR(), ttrain_df, train_df['Prediction'], 5))
 
 
-if True:
+if False:
     test_df[['Id', 'SalePrice']].to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
 else:
     hb.write_result(os.path.join(PROJECT_DIR, 'data/models/svm.csv'), train_df, test_df)
