@@ -50,7 +50,7 @@ SEED = 23
 def evaluate(individual):
     test_df = pd.DataFrame()
     
-    for index, name in zip(range(1, len(FILES)), FILES):
+    for index, name in zip(range(1, 7), FILES):
         if index == 1:
             test_df['SalePrice'] = individual[0] + (all_df[name]['SalePrice'] * individual[index])
         else:
