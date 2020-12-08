@@ -31,7 +31,9 @@ TWEET:    0.12504
 SDG:      0.17630
 PASSAGG:  0.19055
 LINEAR:   0.12315
-SVM:      
+SVM:      0.12378
+=================
+BLENDING: 0.11582
 '''
 FILES = { 
             'cat.csv': 0.20, 
@@ -57,3 +59,5 @@ for name in FILES:
         result_df['SalePrice'] = FILES[name] * df['SalePrice']
 
 result_df.to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
+
+print("Done")
