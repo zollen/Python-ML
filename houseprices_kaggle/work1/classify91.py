@@ -102,7 +102,7 @@ train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
 
-pca = PCA(n_components = 30)
+pca = PCA(n_components = 153)
 ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
 ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
@@ -136,12 +136,11 @@ if False:
     
 
 '''
-RMSE   : 79236.0907
-CV RMSE: 15298.5864
-Site   :
+RMSE   : 27033.9014
+CV RMSE: 77247.9910
+Site   : 0.12378
 '''
-model = svm.SVR()
-#model = svm.SVR(C = 3.0, epsilon = 0.01, gamma= 0.001)
+model = svm.SVR(C = 3.0, epsilon = 0.01, gamma= 0.001)
 #model = svm.SVR(C = 20.0, epsilon = 0.008, gamma= 0.0003)
 model.fit(ttrain_df, train_df['SalePrice'])
 

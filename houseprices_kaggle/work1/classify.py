@@ -46,8 +46,6 @@ PROJECT_DIR=str(Path(__file__).parent.parent)
 
 result_df = pd.DataFrame()
 
-first_df = None
-
 for name in FILES:
     df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/models/', name))
     df = df.loc[df['Id'] >= 1461, ['Id', 'SalePrice']]
