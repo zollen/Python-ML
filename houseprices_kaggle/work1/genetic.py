@@ -40,9 +40,8 @@ for name in FILES:
     df = df.loc[df['Id'] < 1461, ['Id', 'SalePrice']]
     all_df[name] = df
  
-POPLUATION_SIZE = 2000
-TOURNAMENT_SIZE = 800
-TOTAL_GENERATIONS = 50
+POPLUATION_SIZE = 4000
+TOTAL_GENERATIONS = 100
 TOTAL_PARAMS = 7
 BEST = 10
 SEED = 23
@@ -52,7 +51,7 @@ def evaluate(individual):
     
     for index, name in zip(range(1, 7), FILES):
         if index == 1:
-            test_df['SalePrice'] = individual[0] + (all_df[name]['SalePrice'] * individual[index])
+            test_df['SalePrice'] = (individual[0] * 50000) + (all_df[name]['SalePrice'] * individual[index])
         else:
             test_df['SalePrice'] = test_df['SalePrice'] + (all_df[name]['SalePrice'] * individual[index])
     

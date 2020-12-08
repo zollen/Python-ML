@@ -60,7 +60,7 @@ for name in FILES:
         result_df['SalePrice'] = result_df['SalePrice'] + (FILES[name] * df['SalePrice'])
     else:
         result_df['Id'] = df['Id']
-        result_df['SalePrice'] = y_intercept + (FILES[name] * df['SalePrice'])
+        result_df['SalePrice'] = (y_intercept * 50000) + (FILES[name] * df['SalePrice'])
         
 
 result_df.to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
