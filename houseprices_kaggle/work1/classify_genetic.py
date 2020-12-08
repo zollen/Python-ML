@@ -33,15 +33,15 @@ PASSAGG:  0.19055
 LINEAR:   0.12315
 SVM:      0.12378
 =================
-BLENDING: 0.11582
+BLENDING: 0.12193
 '''
 FILES = { 
-            'cat.csv': 1.0761, 
-            'xgb.csv': 0.026, 
-            'lasso.csv': -0.0686, 
-            'eleasticnet.csv': 0.0208, 
-            'linear.csv': -0.0221,
-            'svm.csv': -0.0298
+            'cat.csv': 1.3265, 
+            'xgb.csv': -0.2836, 
+            'lasso.csv': -0.091, 
+            'eleasticnet.csv': -0.1578, 
+            'linear.csv': 0.1336,
+            'svm.csv': 0.0671
         }
 
 PROJECT_DIR=str(Path(__file__).parent.parent)  
@@ -49,7 +49,7 @@ PROJECT_DIR=str(Path(__file__).parent.parent)
 result_df = pd.DataFrame()
 
 
-y_intercept = 0.8881
+y_intercept = 0.0206
    
 
 for name in FILES:
