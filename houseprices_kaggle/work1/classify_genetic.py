@@ -57,10 +57,10 @@ for name in FILES:
     df = df.loc[df['Id'] >= 1461, ['Id', 'SalePrice']]
     
     if 'SalePrice' in result_df:
-        result_df['SalePrice'] = y_intercept + (FILES[name] * df['SalePrice'])
+        result_df['SalePrice'] = result_df['SalePrice'] + (FILES[name] * df['SalePrice'])
     else:
         result_df['Id'] = df['Id']
-        result_df['SalePrice'] = FILES[name] * df['SalePrice']
+        result_df['SalePrice'] = y_intercept + (FILES[name] * df['SalePrice'])
         
 
 result_df.to_csv(os.path.join(PROJECT_DIR, 'data/results.csv'), index = False)
