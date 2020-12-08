@@ -42,7 +42,7 @@ for name in FILES:
  
 POPLUATION_SIZE = 4000
 TOTAL_GENERATIONS = 150
-TOTAL_PARAMS = 6
+TOTAL_PARAMS = 7
 BEST = 10
 SEED = 23
 
@@ -78,7 +78,7 @@ toolbox.register("evaluate", evaluate)
 def main():
     pop = toolbox.population(n=POPLUATION_SIZE)
     avgfit = POPLUATION_SIZE
-    CXPB, MUTPB, NGEN = 0.8, 0.2, TOTAL_GENERATIONS
+    CXPB, MUTPB, NGEN = 0.6, 0.2, TOTAL_GENERATIONS
 
     # Evaluate the entire population
     fitnesses = map(toolbox.evaluate, pop)
