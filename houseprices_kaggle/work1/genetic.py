@@ -40,7 +40,8 @@ for name in FILES:
     df = df.loc[df['Id'] < 1461, ['Id', 'SalePrice']]
     all_df[name] = df
  
-POPLUATION_SIZE = 4000
+POPLUATION_SIZE = 500
+TOURMENT_SIZE = 50
 TOTAL_GENERATIONS = 150
 TOTAL_PARAMS = 7
 BEST = 10
@@ -67,10 +68,11 @@ toolbox.register("attribute", np.random.random)
 toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.attribute, n=TOTAL_PARAMS)
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
-
-toolbox.register("mate", tools.cxTwoPoint)
+ 
+    
+toolbox.register("mate", tools.cxTwoPoints)
 toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=0.1, indpb=0.1)
-toolbox.register("select", tools.selTournament, tournsize=POPLUATION_SIZE)
+toolbox.register("select", tools.selTournament, tournsize = TOURMENT_SIZE)
 
 toolbox.register("evaluate", evaluate)
 
@@ -92,12 +94,15 @@ def main():
         offsprings = toolbox.select(pop, len(pop))
         # Clone the selected individuals      
         offsprings = [toolbox.clone(ind) for ind in offsprings]
+                
+        np.random.shuffle(offsprings)
 
         # Apply crossover and mutation on the offspring
         for i in range(1, POPLUATION_SIZE, 2):
             if np.random.random() < CXPB:
                 toolbox.mate(offsprings[i - 1], offsprings[i])
-                del offsprings[i - 1].fitness.values, offsprings[i].fitness.values
+                del offsprings[i - 1].fitness.values
+                del offsprings[i].fitness.values
 
         for mutant in offsprings:
             if np.random.random() < MUTPB:
