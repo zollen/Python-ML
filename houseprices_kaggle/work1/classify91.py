@@ -141,7 +141,6 @@ CV RMSE: 77247.9910
 Site   : 0.12378
 '''
 model = svm.SVR(C = 3.0, epsilon = 0.01, gamma= 0.001)
-#model = svm.SVR(C = 20.0, epsilon = 0.008, gamma= 0.0003)
 model.fit(ttrain_df, train_df['SalePrice'])
 
 
