@@ -151,7 +151,8 @@ class AutoEncoder:
         pass
     
     def fit_transform(self, df):
-        col_types = df.columns.to_series().groupby(df.dtypes)
+        work_df = df.copy()
+        col_types = df.columns.to_series().groupby(work_df.dtypes)
         categorical_columns = []
         
         for col in col_types:
@@ -162,7 +163,7 @@ class AutoEncoder:
             res_df = pd.DataFrame()
             keys = []
             vals = []
-            grps = df.groupby([name])['SalePrice'].median()
+            grps = work_df.groupby([name])['SalePrice'].median()
             for index, _ in grps.items():
                 keys.append(index)
                 vals.append(grps[index])
@@ -177,7 +178,9 @@ class AutoEncoder:
             for index, label in zip(range(0, len(labels)), labels):
                 manifest[label] = index
                 
-            df[name] = df[name].map(manifest)
+            work_df[name] = work_df[name].map(manifest)
+            
+        return work_df
     
 
 class MultStageImputer:
