@@ -11,8 +11,6 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.preprocessing import LabelEncoder
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer, KNNImputer
-from sklearn.experimental import enable_hist_gradient_boosting 
-from sklearn.ensemble import HistGradientBoostingRegressor
 from lightgbm import LGBMClassifier, LGBMRegressor
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
