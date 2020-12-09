@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
+from sklearn.preprocessing import RobustScaler
 from sklearn.metrics import mean_squared_error
 from catboost import CatBoostRegressor
 import houseprices_kaggle.lib.house_lib as hb
@@ -56,6 +57,11 @@ train_df['SalePrice'] = orig_df['SalePrice']
 
 all_columns = FILES.copy()
 
+
+
+scaler = RobustScaler()
+train_df[all_columns] = scaler.fit_transform(train_df[all_columns])
+test_df[all_columns] = scaler.transform(test_df[all_columns])  
 
 '''
 RMSE   : 5074.4396
