@@ -51,8 +51,8 @@ print(train_df.isnull().sum())
 imputer1 = IterativeImputer(random_state = 0,
                             estimator = AdaBoostClassifier(random_state = 17, n_estimators = 100))
 
-result_df = imputer1.fit_transform(train_df[all_columns])
+train_df[all_columns] = imputer1.fit_transform(train_df[all_columns])
 
 print("==================================")
-print(result_df.isnull().sum())
+print(train_df.isnull().sum())
 
