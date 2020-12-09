@@ -11,7 +11,8 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.preprocessing import LabelEncoder
 from sklearn.experimental import enable_iterative_imputer
 from sklearn.impute import IterativeImputer, KNNImputer
-from sklearn.ensemble import ExtraTreesRegressor
+from sklearn.experimental import enable_hist_gradient_boosting 
+from sklearn.ensemble import HistGradientBoostingRegressor
 from lightgbm import LGBMClassifier, LGBMRegressor
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
@@ -177,7 +178,7 @@ def auto_encode(df):
         df[name] = df[name].map(manifest)
     
 
-class MutlStageImputer:
+class MultStageImputer:
     
     def __init__(self, ignore_fields):        
         self.ignoreFields = ignore_fields
@@ -250,9 +251,6 @@ class MutlStageImputer:
             
             
             imputer = KNNImputer(n_neighbors = 7)
-#            imputer = IterativeImputer(random_state = 0, 
-#                                       estimator = ExtraTreesRegressor(random_state = 17, 
-#                                                                       n_estimators = 100))
             
             tmp_df[all_columns] = imputer.fit_transform(tmp_df[all_columns])
             
@@ -261,10 +259,9 @@ class MutlStageImputer:
             
             if target in categorical_columns:
                 model = LGBMClassifier()
+                traindf[target] = traindf[target].astype('int64')
             elif target in numeric_columns:
                 model = LGBMRegressor()
-                
-            traindf[target] = traindf[target].astype('int64')
                 
             model.fit(traindf[all_columns], traindf[target])
             testdf[target] = model.predict(testdf[all_columns])

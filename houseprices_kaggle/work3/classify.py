@@ -28,7 +28,7 @@ test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
 all_df = pd.concat([ train_df, test_df ])
 
 
-model = hb.MutlStageImputer(['Id', 'SalePrice'])
+model = hb.MultStageImputer(['Id', 'SalePrice'])
 all_df = model.fit_transform(all_df)
 
 print(all_df)
