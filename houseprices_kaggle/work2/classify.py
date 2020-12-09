@@ -56,7 +56,7 @@ for name in FILES:
 train_df['SalePrice'] = orig_df['SalePrice']
 
 all_columns = FILES.copy()
-
+hb.deSkew(train_df, test_df, all_columns)
 
 
 scaler = RobustScaler()
@@ -73,6 +73,9 @@ model.fit(train_df[all_columns], train_df['SalePrice'])
 
 train_df['Prediction'] = model.predict(train_df[all_columns])
 test_df['SalePrice'] = model.predict(test_df[all_columns])
+
+train_df['Prediction'] = train_df['Prediction'].apply(lambda x : np.expm1(x))  
+train_df['SalePrice'] = train_df['SalePrice'].apply(lambda x : np.expm1(x))  
 
 
 print("======================================================")

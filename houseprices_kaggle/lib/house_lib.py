@@ -7,6 +7,12 @@ Created on Nov. 30, 2020
 import pandas as pd
 import numpy as np
 import math
+from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import LabelEncoder
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer, KNNImputer
+from sklearn.ensemble import ExtraTreesRegressor
+from lightgbm import LGBMClassifier, LGBMRegressor
 from sklearn.model_selection import KFold
 from sklearn.model_selection import cross_val_score
 from scipy.stats import skew, boxcox_normmax
@@ -170,4 +176,102 @@ def auto_encode(df):
             
         df[name] = df[name].map(manifest)
     
+
+class MutlStageImputer:
     
+    def __init__(self, ignore_fields):        
+        self.ignoreFields = ignore_fields
+
+    def types(self, df):
+        
+        col_types = df.columns.to_series().groupby(df.dtypes)
+        numeric_columns = []
+        categorical_columns = []
+        for col in col_types:
+            if col[0] == 'object':
+                categorical_columns = col[1].unique().tolist()
+            else:
+                numeric_columns += col[1].unique().tolist()
+                
+        return numeric_columns, categorical_columns
+    
+    def fit_transform(self, df):
+        
+        work_df = df.copy()
+        
+        numeric_columns, categorical_columns = self.types(work_df)
+        
+        for field in self.ignoreFields:
+            if field in numeric_columns:
+                numeric_columns.remove(field)
+            elif field in categorical_columns:
+                categorical_columns.remove(field)
+ 
+        missed = pd.DataFrame()
+        vals = []
+        allmissed = work_df.isnull().sum()
+        for num in allmissed:
+            vals.append(num)
+            
+        missed['Name'] = allmissed.index
+        missed['Missed'] =  vals
+        
+        missed = missed[missed['Missed'] > 0]
+        missed.sort_values('Missed', ascending = True, inplace = True)
+        helps = missed['Name'].tolist()
+        
+        for target in helps:
+            tmp_df = work_df.copy()
+            num_columns = numeric_columns.copy()
+            cat_columns = categorical_columns.copy()
+            target_encoder = None
+            
+            for name in categorical_columns:
+                encoder = LabelEncoder()
+                if target == name:
+                    target_encoder = encoder
+                    
+                tmp_df.loc[tmp_df[name].isna() == False, name] = encoder.fit_transform(
+                    tmp_df.loc[tmp_df[name].isna() == False, name])
+            
+            
+            if target in num_columns:
+                num_columns.remove(target)
+            elif target in cat_columns:
+                cat_columns.remove(target)
+
+            all_columns = num_columns + cat_columns
+            
+            
+            for name in numeric_columns:
+                scaler = RobustScaler()
+                tmp_df.loc[tmp_df[name].isna() == False, name] = scaler.fit_transform(
+                    tmp_df.loc[tmp_df[name].isna() == False, name].values.reshape(-1, 1))
+            
+            
+            imputer = KNNImputer(n_neighbors = 7)
+#            imputer = IterativeImputer(random_state = 0, 
+#                                       estimator = ExtraTreesRegressor(random_state = 17, 
+#                                                                       n_estimators = 100))
+            
+            tmp_df[all_columns] = imputer.fit_transform(tmp_df[all_columns])
+            
+            traindf = tmp_df[tmp_df[target].isna() == False]
+            testdf = tmp_df[tmp_df[target].isna() == True]
+            
+            if target in categorical_columns:
+                model = LGBMClassifier()
+            elif target in numeric_columns:
+                model = LGBMRegressor()
+                
+            traindf[target] = traindf[target].astype('int64')
+                
+            model.fit(traindf[all_columns], traindf[target])
+            testdf[target] = model.predict(testdf[all_columns])
+            
+            if target in categorical_columns:
+                testdf[target] = target_encoder.inverse_transform(testdf[target])
+                            
+            work_df.loc[work_df['Id'].isin(testdf['Id']), target] = testdf[target] 
+            
+        return work_df    
