@@ -145,35 +145,39 @@ def write_result(name, df1, df2):
     
     all_df.to_csv(name, index = False)
 
-def auto_encode(df):
+class AutoEncoder:
     
-    col_types = df.columns.to_series().groupby(df.dtypes)
-    categorical_columns = []
+    def __init__(self):
+        pass
     
-    for col in col_types:
-        if col[0] == 'object':
-            categorical_columns = col[1].unique().tolist()
-
-    for name in categorical_columns:
-        res_df = pd.DataFrame()
-        keys = []
-        vals = []
-        grps = df.groupby([name])['SalePrice'].median()
-        for index, _ in grps.items():
-            keys.append(index)
-            vals.append(grps[index])
+    def fit_transform(self, df):
+        col_types = df.columns.to_series().groupby(df.dtypes)
+        categorical_columns = []
         
-        res_df['Key'] = keys
-        res_df['Val'] = vals
-        
-        res_df.sort_values('Val', ascending = True, inplace = True)
-                
-        manifest = {}
-        labels = res_df['Key'].tolist()
-        for index, label in zip(range(0, len(labels)), labels):
-            manifest[label] = index
+        for col in col_types:
+            if col[0] == 'object':
+                categorical_columns = col[1].unique().tolist()
+    
+        for name in categorical_columns:
+            res_df = pd.DataFrame()
+            keys = []
+            vals = []
+            grps = df.groupby([name])['SalePrice'].median()
+            for index, _ in grps.items():
+                keys.append(index)
+                vals.append(grps[index])
             
-        df[name] = df[name].map(manifest)
+            res_df['Key'] = keys
+            res_df['Val'] = vals
+            
+            res_df.sort_values('Val', ascending = True, inplace = True)
+                    
+            manifest = {}
+            labels = res_df['Key'].tolist()
+            for index, label in zip(range(0, len(labels)), labels):
+                manifest[label] = index
+                
+            df[name] = df[name].map(manifest)
     
 
 class MultStageImputer:
