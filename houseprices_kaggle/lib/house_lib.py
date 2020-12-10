@@ -109,7 +109,7 @@ def feature_engineering2(df1, df2):
 def deSkew(df1, df2, numeric_columns):
     for name in numeric_columns:
         col_df = pd.DataFrame()
-    
+
         col_df['NORM'] = df1[name].values
         col_df['LOG1P'] = df1[name].apply(lambda x : np.log1p(x)).values
         cb_lambda = boxcox_normmax(df1[name] + 1)
@@ -270,9 +270,12 @@ class MultStageImputer:
                 
             model.fit(traindf[all_columns], traindf[target])
             testdf[target] = model.predict(testdf[all_columns])
+
             
             if target in categorical_columns:
                 testdf[target] = target_encoder.inverse_transform(testdf[target])
+            else:
+                testdf[target] = testdf[target].apply(lambda x : 0 if x < 0 else x)
                             
             work_df.loc[work_df['Id'].isin(testdf['Id']), target] = testdf[target] 
             
