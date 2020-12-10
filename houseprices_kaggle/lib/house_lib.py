@@ -145,6 +145,19 @@ def write_result(name, df1, df2):
     
     all_df.to_csv(name, index = False)
 
+def get_types(df):
+        
+    col_types = df.columns.to_series().groupby(df.dtypes)
+    numeric_columns = []
+    categorical_columns = []
+    for col in col_types:
+        if col[0] == 'object':
+            categorical_columns = col[1].unique().tolist()
+        else:
+            numeric_columns += col[1].unique().tolist()
+            
+    return numeric_columns, categorical_columns
+    
 class AutoEncoder:
     
     def __init__(self):
@@ -187,25 +200,12 @@ class MultStageImputer:
     
     def __init__(self, ignore_fields):        
         self.ignoreFields = ignore_fields
-
-    def types(self, df):
-        
-        col_types = df.columns.to_series().groupby(df.dtypes)
-        numeric_columns = []
-        categorical_columns = []
-        for col in col_types:
-            if col[0] == 'object':
-                categorical_columns = col[1].unique().tolist()
-            else:
-                numeric_columns += col[1].unique().tolist()
-                
-        return numeric_columns, categorical_columns
     
     def fit_transform(self, df):
         
         work_df = df.copy()
         
-        numeric_columns, categorical_columns = self.types(work_df)
+        numeric_columns, categorical_columns = get_types(work_df)
         
         for field in self.ignoreFields:
             if field in numeric_columns:

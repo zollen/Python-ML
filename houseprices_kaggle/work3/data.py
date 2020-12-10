@@ -73,7 +73,6 @@ for iid in [2121, 2189]:
 imputer = hb.MultStageImputer(ID_FIELD + LABEL_FIELD)
 all_df = imputer.fit_transform(all_df)
 
-
 train_df = all_df[all_df['Id'] < 1461]
 test_df = all_df[all_df['Id'] >= 1461]
 
