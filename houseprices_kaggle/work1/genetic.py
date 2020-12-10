@@ -15,7 +15,6 @@ from deap import base
 from deap import creator
 from deap import tools
 from sklearn.metrics import mean_squared_error
-import houseprices_kaggle.lib.house_lib as hb
 import warnings
 
 SEED = 87
@@ -98,9 +97,9 @@ toolbox.register("update", update, phi1=0.2, phi2=0.2)
 toolbox.register("evaluate", evaluate)
 
 def main():
-    pop = toolbox.population(n=5000)
+    pop = toolbox.population(n=6000)
 
-    GEN = 150
+    GEN = 200
     best = None
 
     for g in range(GEN):
