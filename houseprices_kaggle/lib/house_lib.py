@@ -106,6 +106,18 @@ def feature_engineering2(df1, df2):
     df1['OtherRoom'] = df1["TotRmsAbvGrd"] - df1['KitchenAbvGr'] - df1['BedroomAbvGr']
     df2['OtherRoom'] = df2["TotRmsAbvGrd"] - df2['KitchenAbvGr'] - df2['BedroomAbvGr']
 
+def feature_engineering3(df1, df2):
+    
+    feature_engineering2(df1, df2)
+    
+    df1['TotalBathrooms'] = (df1['FullBath'] + (0.5 * df1['HalfBath']) + df1['BsmtFullBath'] + (0.5 * df1['BsmtHalfBath']))
+    df2['TotalBathrooms'] = (df2['FullBath'] + (0.5 * df2['HalfBath']) + df2['BsmtFullBath'] + (0.5 * df2['BsmtHalfBath']))
+    df1['TotalPorchSF'] = (df1['OpenPorchSF'] + df1['3SsnPorch'] + df1['EnclosedPorch'] + df1['ScreenPorch'] + df1['WoodDeckSF'])
+    df2['TotalPorchSF'] = (df2['OpenPorchSF'] + df2['3SsnPorch'] + df2['EnclosedPorch'] + df2['ScreenPorch'] + df2['WoodDeckSF'])
+    
+    df1['TotalHomeQuality'] = df1['OverallQual'] + df1['OverallCond']
+    df2['TotalHomeQuality'] = df2['OverallQual'] + df2['OverallCond']
+    
 def deSkew(df1, df2, numeric_columns):
     for name in numeric_columns:
         col_df = pd.DataFrame()
