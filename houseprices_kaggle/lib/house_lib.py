@@ -249,7 +249,7 @@ class MultStageImputer:
             all_columns = num_columns + cat_columns
             
             
-            for name in numeric_columns:
+            for name in num_columns:
                 scaler = RobustScaler()
                 tmp_df.loc[tmp_df[name].isna() == False, name] = scaler.fit_transform(
                     tmp_df.loc[tmp_df[name].isna() == False, name].values.reshape(-1, 1))
