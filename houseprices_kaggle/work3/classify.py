@@ -53,7 +53,10 @@ all_columns.remove('SalePrice')
 train_df = all_df[all_df['Id'] < 1461]
 test_df = all_df[all_df['Id'] >= 1461]
 
-
+'''
+RMSE   : 33751.9688
+CV RMSE: 8494.2886
+'''
 model = ElasticNet()
 model.fit(train_df[all_columns], train_df['SalePrice'])
 train_df['Prediction'] = model.predict(train_df[all_columns])

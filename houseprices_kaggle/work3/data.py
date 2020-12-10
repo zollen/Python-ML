@@ -27,7 +27,48 @@ train_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/train.csv'))
 test_df = pd.read_csv(os.path.join(PROJECT_DIR, 'data/test.csv'))
 
 
+train_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = True)
+test_df.drop(columns = ['PoolQC', 'MiscFeature', 'Alley', 'Fence'], inplace = True)            
+
 all_df = pd.concat([ train_df, test_df ], ignore_index = True)
+
+all_df.loc[(all_df['BsmtCond'].isna() == True) &
+            (all_df['TotalBsmtSF'] == 0), 'BsmtCond'] = 'None'
+all_df.loc[(all_df['BsmtQual'].isna() == True) &
+            (all_df['TotalBsmtSF'] == 0), 'BsmtQual'] = 'None'
+all_df.loc[(all_df['BsmtFinType1'].isna() == True) &
+            (all_df['TotalBsmtSF'] == 0), 'BsmtFinType1'] = 'None'
+all_df.loc[(all_df['BsmtFinType2'].isna() == True) &
+            (all_df['TotalBsmtSF'] == 0), 'BsmtFinType2'] = 'None'
+all_df.loc[(all_df['BsmtExposure'].isna() == True) &
+            (all_df['TotalBsmtSF'] == 0), 'BsmtExposure'] = 'None'
+            
+all_df.loc[(all_df['GarageFinish'].isna() == True) & 
+             (all_df['GarageArea'] == 0), 'GarageFinish'] = 'None'
+all_df.loc[(all_df['GarageType'].isna() == True) & 
+             (all_df['GarageArea'] == 0), 'GarageType'] = 'None'
+all_df.loc[(all_df['GarageQual'].isna() == True) & 
+             (all_df['GarageArea'] == 0), 'GarageQual'] = 'None'    
+all_df.loc[(all_df['GarageCond'].isna() == True) & 
+             (all_df['GarageArea'] == 0), 'GarageCond'] = 'None'   
+all_df.loc[(all_df['GarageYrBlt'].isna() == True) & 
+             (all_df['GarageArea'] == 0), 'GarageYrBlt'] = 0
+
+for iid in [2121, 2189]:            
+    all_df.loc[all_df['Id'] == iid, 'BsmtExposure'] = 'None'
+    all_df.loc[all_df['Id'] == iid, 'BsmtQual'] = 'None'
+    all_df.loc[all_df['Id'] == iid, 'BsmtCond'] = 'None'
+    all_df.loc[all_df['Id'] == iid, 'BsmtFinType1'] = 'None'
+    all_df.loc[all_df['Id'] == iid, 'BsmtFinType2'] = 'None'
+    all_df.loc[all_df['Id'] == iid, 'BsmtFinSF1'] = 0
+    all_df.loc[all_df['Id'] == iid, 'BsmtFinSF2'] = 0
+    all_df.loc[all_df['Id'] == iid, 'BsmtUnfSF'] = 0
+    all_df.loc[all_df['Id'] == iid, 'TotalBsmtSF'] = 0
+    all_df.loc[all_df['Id'] == iid, 'BsmtFullBath'] = 0
+    all_df.loc[all_df['Id'] == iid, 'BsmtHalfBath'] = 0
+
+
+
 
 imputer = hb.MultStageImputer(ID_FIELD + LABEL_FIELD)
 all_df = imputer.fit_transform(all_df)
