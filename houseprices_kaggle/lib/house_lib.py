@@ -255,7 +255,7 @@ class MultStageImputer:
                     tmp_df.loc[tmp_df[name].isna() == False, name].values.reshape(-1, 1))
             
             
-            imputer = KNNImputer(n_neighbors = 7)
+            imputer = KNNImputer(n_neighbors = 10)
             
             tmp_df[all_columns] = imputer.fit_transform(tmp_df[all_columns])
             
