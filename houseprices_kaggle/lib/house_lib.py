@@ -108,6 +108,9 @@ def feature_engineering2(df1, df2):
 
 def deSkew(df1, df2, numeric_columns):
     for name in numeric_columns:
+        if name == 'YearBuilt':
+            continue
+        
         col_df = pd.DataFrame()
 
         col_df['NORM'] = df1[name].values
@@ -122,6 +125,12 @@ def deSkew(df1, df2, numeric_columns):
         nums.append(np.abs(skew(col_df['COXBOX'])))
     
         nums  = [999 if math.isnan(x) else x for x in nums]
+        
+        if name == 'YearBuilt':
+            print(nums)
+            print(col_df['NORM'].iloc[0])
+            print(col_df['LOG1P'].iloc[0])
+            print(col_df['COXBOX'].iloc[0])
         
     
         smallest = nums.index(min(nums))

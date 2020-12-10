@@ -36,6 +36,11 @@ num_columns.remove('Id')
 num_columns.remove('SalePrice')
 
 
+hb.deSkew(train_df, test_df, num_columns)
+
+
+
+
 all_df = pd.concat([ train_df, test_df ], ignore_index = True)
 
 encoder = hb.AutoEncoder()
@@ -56,15 +61,21 @@ all_columns.remove('SalePrice')
 train_df = all_df[all_df['Id'] < 1461]
 test_df = all_df[all_df['Id'] >= 1461]
 
+
 '''
-RMSE   : 33226.9638
-CV RMSE: 7205.5370
+RMSE   : 7266.3167
+CV RMSE: 31564.1877
 '''
-model = ElasticNet()
+#model = CatBoostRegressor(random_seed=SEED, loss_function='RMSE', verbose=False)
+model = ElasticNet(alpha=0.005, l1_ratio=0.08, max_iter=10000)
 model.fit(train_df[all_columns], train_df['SalePrice'])
 train_df['Prediction'] = model.predict(train_df[all_columns])
 test_df['SalePrice'] = model.predict(test_df[all_columns])
-           
+
+train_df['Prediction'] = train_df['Prediction'].apply(lambda x : np.expm1(x))  
+train_df['SalePrice'] = train_df['SalePrice'].apply(lambda x : np.expm1(x))  
+test_df['SalePrice'] = test_df['SalePrice'].apply(lambda x : np.expm1(x))
+          
 
 print("======================================================")
 print("RMSE   : %0.4f" % np.sqrt(mean_squared_error(train_df['SalePrice'], train_df['Prediction'])))
