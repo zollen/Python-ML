@@ -64,23 +64,15 @@ for col in col_types:
         numeric_columns += col[1].unique().tolist()
 
 
-for name in categorical_columns:   
-    keys = train_df[name].unique().tolist()
-        
-    if np.nan in keys:
-        keys.remove(np.nan)
-    
-    vals = [ i  for i in range(0, len(keys))]
-    labs = dict(zip(keys, vals))
-    train_df[name] = train_df[name].map(labs)
-    test_df[name] = test_df[name].map(labs)
-
 numeric_columns.remove('Id')
 numeric_columns.remove('SalePrice')
 
 all_columns = numeric_columns + categorical_columns
 
-all_df = pd.concat([ train_df, test_df ])     
+all_df = pd.concat([ train_df, test_df ])   
+
+encoder = hb.AutoEncoder()
+all_df = encoder.fit_transform(all_df)  
 
 all_df = pd.get_dummies(all_df, columns = categorical_columns)
 
@@ -125,9 +117,9 @@ if False:
     exit()
 
 '''    
-RMSE   : 26658.2844
-CV RMSE: 21195.3191
-Site   : 0.13044
+RMSE   : 25656.4708
+CV RMSE: 21259.2641
+Site   : 0.12914
 '''
 model = HuberRegressor(alpha = 0.006, epsilon = 1.35, max_iter = 17960)
 model.fit(train_df[all_columns], train_df['SalePrice'])
