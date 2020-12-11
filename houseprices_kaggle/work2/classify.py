@@ -62,9 +62,9 @@ train_df[all_columns] = scaler.fit_transform(train_df[all_columns])
 test_df[all_columns] = scaler.transform(test_df[all_columns])  
 
 '''
-RMSE   : 5074.4396
-CV RMSE: 8492.7761
-Site   : 0.11935
+RMSE   : 5063.6670
+CV RMSE: 8437.4120
+Site   : 0.11969
 '''    
 model = CatBoostRegressor(random_seed=SEED, loss_function='RMSE', verbose=False)
 model.fit(train_df[all_columns], train_df['SalePrice'])
