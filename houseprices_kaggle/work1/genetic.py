@@ -99,7 +99,7 @@ toolbox.register("evaluate", evaluate)
 def main():
     pop = toolbox.population(n=10000)
 
-    GEN = 30
+    GEN = 120
     best = None
 
     for g in range(GEN):
@@ -124,6 +124,8 @@ def main():
 '''
 array([ 0.2333,  1.3718, -0.3322, -0.2319,  0.0731,  0.0837,  0.0306])
 BEST RMSE: 6648.1234
+array([ 0.1355,  1.3787, -0.3565, -0.136 ,  0.0214,  0.0776,  0.0113])
+BEST RMSE: 6649.9119
 '''
 if __name__ == "__main__":
     main()    
