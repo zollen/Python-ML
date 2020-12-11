@@ -65,18 +65,6 @@ for col in col_types:
     else:
         numeric_columns += col[1].unique().tolist()
 
-
-for name in categorical_columns:   
-    keys = train_df[name].unique().tolist()
-        
-    if np.nan in keys:
-        keys.remove(np.nan)
-    
-    vals = [ i  for i in range(0, len(keys))]
-    labs = dict(zip(keys, vals))
-    train_df[name] = train_df[name].map(labs)
-    test_df[name] = test_df[name].map(labs)
-
 numeric_columns.remove('Id')
 numeric_columns.remove('SalePrice')
 
@@ -84,6 +72,8 @@ all_columns = numeric_columns + categorical_columns
 
 all_df = pd.concat([ train_df, test_df ])     
 
+encoder = hb.AutoEncoder()
+all_df = encoder.fit_transform(all_df)  
 
 all_df = pd.get_dummies(all_df, columns = categorical_columns)
 
@@ -102,7 +92,7 @@ train_df[numeric_columns] = scaler.fit_transform(train_df[numeric_columns])
 test_df[numeric_columns] = scaler.transform(test_df[numeric_columns])    
 
 
-pca = PCA(n_components = 153)
+pca = PCA(n_components = 149)
 ttrain_df = pd.DataFrame(pca.fit_transform(train_df[all_columns]))
 ttest_df = pd.DataFrame(pca.transform(test_df[all_columns]))
 
@@ -136,9 +126,9 @@ if False:
     
 
 '''
-RMSE   : 27033.9014
-CV RMSE: 77247.9910
-Site   : 0.12378
+RMSE   : 26961.4112
+CV RMSE: 77196.4116
+Site   : 0.12372
 '''
 model = svm.SVR(C = 3.0, epsilon = 0.01, gamma= 0.001)
 model.fit(ttrain_df, train_df['SalePrice'])
