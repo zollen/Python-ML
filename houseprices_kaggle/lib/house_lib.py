@@ -172,9 +172,9 @@ def get_types(df):
 class AutoEncoder:
     
     def __init__(self):
-        pass
+        self.manifest = {}
     
-    def fit_transform(self, df):
+    def fit(self, df):
         work_df = df.copy()
         col_types = df.columns.to_series().groupby(work_df.dtypes)
         categorical_columns = []
@@ -197,13 +197,31 @@ class AutoEncoder:
             
             res_df.sort_values('Val', ascending = True, inplace = True)
                     
-            manifest = {}
             labels = res_df['Key'].tolist()
             for index, label in zip(range(0, len(labels)), labels):
-                manifest[label] = index
+                self.manifest[name + '.' + label] = index
                 
-            work_df[name] = work_df[name].map(manifest)
             
+    def transform(self, df):
+        
+        def Converter(name):
+            def convert(val): 
+                return self.manifest[name + '.' + val]
+            
+            return convert
+            
+        work_df = df.copy()
+        col_types = df.columns.to_series().groupby(work_df.dtypes)
+        categorical_columns = []
+        
+        for col in col_types:
+            if col[0] == 'object':
+                categorical_columns = col[1].unique().tolist()
+    
+        for name in categorical_columns:
+            converter = Converter(name)
+            work_df[name] = work_df[name].apply(converter)
+                
         return work_df
     
 

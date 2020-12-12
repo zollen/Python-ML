@@ -93,8 +93,9 @@ hb.deSkew(train_df, test_df, num_columns)
 all_df = pd.concat([ train_df, test_df ], ignore_index = True)
 
 encoder = hb.AutoEncoder()
-all_df = encoder.fit_transform(all_df)
-
+encoder.fit(train_df)
+train_df = encoder.transform(train_df)
+test_df = encoder.transform(test_df)
 
 scaler = RobustScaler()
 all_df[num_columns] = scaler.fit_transform(all_df[num_columns])
