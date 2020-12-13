@@ -64,14 +64,14 @@ for col in col_types:
 
 numeric_columns.remove('Id')
 numeric_columns.remove('SalePrice')
-
-all_columns = numeric_columns + categorical_columns
-
-all_df = pd.concat([ train_df, test_df ])     
+   
 
 encoder = hb.AutoEncoder()
-all_df = encoder.fit_transform(all_df)
+encoder.fit(train_df)
+train_df = encoder.transform(train_df)
+test_df = encoder.transform(test_df)
 
+all_df = pd.concat([ train_df, test_df ]) 
 
 all_df = pd.get_dummies(all_df, columns = categorical_columns)
 
