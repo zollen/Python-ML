@@ -60,8 +60,11 @@ def markov_move(observation, configuration):
 
         for col in range(0, 2187):
             transitions[:, col] = 0 if transitions[:, col].sum() == 0 else transitions[:, col] / transitions[:, col].sum()
-
-        probs = np.matmul(np.linalg.matrix_power(transitions, numMoves - 6), initials)    
+        
+        '''
+        Critical bug fix numMoves - 5, not numMoves - 6
+        '''
+        probs = np.matmul(np.linalg.matrix_power(transitions, numMoves - 5), initials)    
          
         res = np.argwhere(probs == np.amax(probs)).ravel()
         
@@ -76,12 +79,12 @@ def markov_move(observation, configuration):
     
     
 
-moves = [ 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2, 2 ]
+moves = [ 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2 ]
 
 
 class observationCls:
     step = len(moves) + 1
-    lastOpponentAction = 1
+    lastOpponentAction = 2
 class configurationCls:
     signs = 3
    
