@@ -48,9 +48,12 @@ def markov_move(observation, configuration):
 
         for col in range(0, configuration.signs):
             transitions[:, col] = 0 if transitions[:, col].sum() == 0 else transitions[:, col] / transitions[:, col].sum()
-        
-        probs = np.matmul(np.linalg.matrix_power(transitions, numMoves), initials)    
 
+        probs = np.matmul(np.linalg.matrix_power(transitions, numMoves), initials)    
+        
+        print(transitions)
+        print(probs)
+        
         res = np.argwhere(probs == np.amax(probs)).ravel()
         
         '''
@@ -71,22 +74,20 @@ def markov_move(observation, configuration):
     
     
 
-TOTAL = 16
-for index in range(0, TOTAL):
-    moves.append(np.random.randint(0, 3))
+moves = [0, 0, 0, 1, 1, 1, 2, 2, 2, 0, 0, 0, 1, 1, 1, 2, 2, 2, 0, 0, 0]
 
-    print([ SIGNS[x] for x in moves])
+print("ALL: ", [ SIGNS[x] for x in moves])
 
-    class observationCls:
-        step = index + 1
-        lastOpponentAction = np.random.randint(0, 3)
-    class configurationCls:
-        signs = 3
-       
+class observationCls:
+    step = len(moves) + 1
+    lastOpponentAction = PAPER
+class configurationCls:
+    signs = 3
+   
 
-    observation = observationCls()
-    configuration = configurationCls()
-    print("MY NEXT MOVE: [%s]" % SIGNS[markov_move(observation, configuration)])   
+observation = observationCls()
+configuration = configurationCls()
+print("MY NEXT MOVE: [%s]" % SIGNS[markov_move(observation, configuration)])   
 
    
     
