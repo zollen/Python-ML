@@ -66,30 +66,35 @@ class GMarkov:
          
         for subindex in range(0, self.numMoves - 1):
             for row in range(0, self.dimen):
-                print(subindex, row)
                 self.transitions[subindex][row, :] = 0 if self.transitions[subindex][row, :].sum() == 0 else self.transitions[subindex][row, :] / self.transitions[subindex][row, :].sum()
                
-        
-        
-        submoves = self.moves[totalMoves - self.numMoves:totalMoves]
+   
+        submoves = self.moves[totalMoves - self.numMoves + 1:totalMoves]
+
         best_score = -99
         best_move = 0
         for target in range(0, self.states):
             prob = 0.0
-            for subindex in range(0, self.numMoves - 1):
+            for subindex in range(0, len(submoves)):
                 dest = target
                 src = int(submoves[subindex])
                 prob += self.transitions[subindex][src, dest] * self.lambdas[subindex] 
-            print(target, " ==> ", prob)
+ 
             if prob > best_score:
                 best_score = prob
                 best_move = target
             
         return best_move
         
-markov = GMarkov(3, 10)
+markov = GMarkov(3, 3)
 
-markov.add([ 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 ])
+markov.add([ 0, 1, 2, 0, 1, 2, 0, 1, 2 ])
+
+SIGNS = [ 'ROCK', 'PAPER', 'SCISSOR']
 
 print(markov.lambdas)
-print(markov.predict())
+t_start = time.perf_counter_ns()
+nextMove = markov.predict()
+t_end = time.perf_counter_ns()
+
+print("My Next Move: ", nextMove, SIGNS[nextMove], " ====> ", t_end - t_start)
