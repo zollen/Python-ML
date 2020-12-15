@@ -17,19 +17,6 @@ then flatten it into a pandas dataframe
 '''
 
 
-initials = np.array([1, 0, 0])
-transitions = []
-
-for index in range(0, 10):
-    transitions.append(np.array(
-                    [
-                        [0, 0, 0],
-                        [0, 0, 0],
-                        [0, 0, 0]
-                    ]).astype('float64'))
-                    
-
-
 class GMarkov:
     
     DEFALT_MIN_MOVES = 3
@@ -57,30 +44,31 @@ class GMarkov:
             return np.random.randint(0, self.states)
         
         for _ in range(0, self.numMoves - 1):
-            transitions.append(np.zeros((self.dimen, self.dimen)).astype('float64'))
+            self.transitions.append(np.zeros((self.dimen, self.dimen)).astype('float64'))
         
         for index in range(0, totalMoves - self.numMoves + 1):
             submoves = self.moves[index:index + self.numMoves]
             for subindex in range(0, self.numMoves - 1):
                 dest = int(submoves[self.numMoves - 1])
                 src = int(submoves[subindex])
-                transitions[subindex][src, dest] = transitions[subindex][src, dest] + 1
+                self.transitions[subindex][src, dest] = self.transitions[subindex][src, dest] + 1
          
         for subindex in range(0, self.numMoves):
             for row in range(0, self.dimen):
-                transitions[subindex][row, :] = 0 if transitions[subindex][row, :].sum() == 0 else transitions[subindex][row, :] / transitions[subindex][row, :].sum()
+                self.transitions[subindex][row, :] = 0 if self.transitions[subindex][row, :].sum() == 0 else self.transitions[subindex][row, :] / self.transitions[subindex][row, :].sum()
                
         prob = 0.0
         submoves = self.moves[totalMoves - self.numMoves:totalMoves]
+        print(submoves)
         for subindex in range(0, self.numMoves - 1):
             dest = int(submoves[self.numMoves - 1])
             src = int(submoves[subindex])
-            prob += transitions[subindex][src, dest] * self.lambdas[subindex] 
+            prob += self.transitions[subindex][src, dest] * self.lambdas[subindex] 
             
         return prob
         
 markov = GMarkov(3, 4)
 
-markov.add([ 1, 2, 0, 1, 0, 2, 2 ])
+markov.add([ 1, 2, 0, 1, 0, 2, 2, 1, 2, 0, 0, 1, 1 ])
 
 print(markov.predict())
