@@ -75,7 +75,6 @@ class GMarkov:
         for subindex in range(0, self.numMoves - 1):
             dest = int(submoves[self.numMoves - 1])
             src = int(submoves[subindex])
-            print(subindex, src, dest)
             prob += transitions[subindex][src, dest] * self.lambdas[subindex] 
             
         return prob
