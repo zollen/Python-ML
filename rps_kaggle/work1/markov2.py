@@ -43,8 +43,8 @@ def markov_move(observation, configuration):
             
         numMoves = len(moves)
 
-        initials = np.zeros(2187).astype('float64')
-        transitions = np.zeros((2187, 2187)).astype('float64')
+        initials = np.zeros(729).astype('float64')
+        transitions = np.zeros((729, 729)).astype('float64')
     
         initials[position(moves[0], moves[1], moves[2], moves[3], moves[4], 
                           moves[5])] = 1
@@ -58,7 +58,7 @@ def markov_move(observation, configuration):
                             moves[index - 3], moves[index - 2], moves[index - 1])
             transitions[dest, src] = transitions[dest, src] + 1
 
-        for col in range(0, 2187):
+        for col in range(0, 729):
             transitions[:, col] = 0 if transitions[:, col].sum() == 0 else transitions[:, col] / transitions[:, col].sum()
         
         '''
