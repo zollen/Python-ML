@@ -35,12 +35,12 @@ def markov_move(observation, configuration):
     
     
 
-moves = [ 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2 ]
+markov.add([ 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2, 2 ])
 
 
 class observationCls:
-    step = len(moves) + 1
-    lastOpponentAction = 2
+    step = 100
+    lastOpponentAction = 1
 class configurationCls:
     signs = 3
    
@@ -50,6 +50,7 @@ configuration = configurationCls()
 t_start = time.perf_counter_ns()
 result = markov_move(observation, configuration)
 t_end = time.perf_counter_ns()
+print(markov)
 print("MY NEXT MOVE: [%s] ==> %d ns" % (SIGNS[result], t_end - t_start))   
 
 
