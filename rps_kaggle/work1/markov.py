@@ -10,13 +10,11 @@ import time
 
 
 np.random.seed(int(round(time.time())))
-np.set_printoptions(precision=6)
+
 
 
 SIGNS = [ 'ROCK', 'PAPER', 'SCISSOR']
-ROCK = 0
-PAPER = 1
-SCISSOR = 2
+
 
 '''
 3 states - 0, 1, 2
