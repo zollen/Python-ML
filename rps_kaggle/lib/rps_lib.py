@@ -12,6 +12,7 @@ class NOrderMarkov:
         np.random.seed(int(round(time.time())))
         self.moves = np.array([])
         self.states = states
+        self.dimen = np.power(self.states, self.power)
         self.power = power
         
     def positions(self, vals):
@@ -30,16 +31,14 @@ class NOrderMarkov:
         return np.array2string(self.moves)
         
     def predict(self):
-        
-        dimen = np.power(self.states, self.power)
-        
+           
         totalMoves = len(self.moves)
         
         if totalMoves <= self.power:
             return np.random.randint(0, self.states)
         
-        initials = np.zeros(dimen).astype('float64')
-        transitions = np.zeros((dimen, dimen)).astype('float64')
+        initials = np.zeros(self.dimen).astype('float64')
+        transitions = np.zeros((self.dimen, self.dimen)).astype('float64')
         
         initials[self.positions(self.moves[0:self.power])] = 1
         for index in range(self.power, totalMoves):  
@@ -47,7 +46,7 @@ class NOrderMarkov:
             src = self.positions(self.moves[index - self.power:index])
             transitions[dest, src] = transitions[dest, src] + 1
         
-        for col in range(0, dimen):
+        for col in range(0, self.dimen):
             transitions[:, col] = 0 if transitions[:, col].sum() == 0 else transitions[:, col] / transitions[:, col].sum()
             
         probs = np.matmul(np.linalg.matrix_power(transitions, totalMoves - self.power + 1), initials)    
