@@ -33,12 +33,10 @@ def markov_move(observation, configuration):
     
     
 
-markov.add([ 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2, 2 ])
-
 
 class observationCls:
     step = 100
-    lastOpponentAction = 1
+    lastOpponentAction = [ 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2, 2 ]
 class configurationCls:
     signs = 3
    
