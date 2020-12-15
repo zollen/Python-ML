@@ -14,6 +14,9 @@ np.random.seed(int(round(time.time())))
 https://towardsdatascience.com/mixture-transition-distribution-model-e48b106e9560
 Borrowing the concept of generalized mixture transaction to capture sequence information
 then flatten it into a pandas dataframe
+
+https://math.stackexchange.com/questions/362412/generating-a-monotonically-decreasing-sequence-that-adds-to-1-for-any-length
+for generating decreasing sequence that adds up to 1
 '''
 
 
@@ -27,10 +30,17 @@ class GMarkov:
         self.states = states
         self.dimen = np.power(self.states, 1)
         self.numMoves = num_of_moves
-        self.lambdas = np.array([1.0, 1.0, 1.0, 1.0])
+        self.lambdas = self.priors()
         self.transitions = []
         
-
+    def priors(self):
+        
+        seq = []
+        for index in range(self.numMoves, 0, -1):
+            seq.append((2 * index - 1) / (self.numMoves * self.numMoves))
+            
+        return seq
+    
     def add(self, token):
         self.moves = np.append(self.moves, token)
         
@@ -41,7 +51,7 @@ class GMarkov:
         
         totalMoves = len(self.moves)
         
-        if totalMoves <= self.DEFALT_MIN_MOVES:
+        if totalMoves <= self.numMoves:
             return np.random.randint(0, self.states)
         
         for _ in range(0, self.numMoves - 1):
@@ -59,17 +69,27 @@ class GMarkov:
                 print(subindex, row)
                 self.transitions[subindex][row, :] = 0 if self.transitions[subindex][row, :].sum() == 0 else self.transitions[subindex][row, :] / self.transitions[subindex][row, :].sum()
                
-        prob = 0.0
-        submoves = self.moves[totalMoves - self.numMoves:totalMoves]
-        for subindex in range(0, self.numMoves - 1):
-            dest = int(submoves[self.numMoves - 1])
-            src = int(submoves[subindex])
-            prob += self.transitions[subindex][src, dest] * self.lambdas[subindex] 
-            
-        return prob
         
-markov = GMarkov(3, 4)
+        
+        submoves = self.moves[totalMoves - self.numMoves:totalMoves]
+        best_score = -99
+        best_move = 0
+        for target in range(0, self.states):
+            prob = 0.0
+            for subindex in range(0, self.numMoves - 1):
+                dest = target
+                src = int(submoves[subindex])
+                prob += self.transitions[subindex][src, dest] * self.lambdas[subindex] 
+            print(target, " ==> ", prob)
+            if prob > best_score:
+                best_score = prob
+                best_move = target
+            
+        return best_move
+        
+markov = GMarkov(3, 10)
 
-markov.add([ 1, 2, 0, 1, 0, 2, 2, 1, 2, 0, 0, 1, 1 ])
+markov.add([ 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 ])
 
+print(markov.lambdas)
 print(markov.predict())
