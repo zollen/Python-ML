@@ -12,8 +12,9 @@ class NOrderMarkov:
         np.random.seed(int(round(time.time())))
         self.moves = np.array([])
         self.states = states
-        self.dimen = np.power(self.states, self.power)
         self.power = power
+        self.dimen = np.power(self.states, self.power)
+
         
     def positions(self, vals):
         
