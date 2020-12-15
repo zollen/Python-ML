@@ -29,6 +29,7 @@ class GMarkov:
         self.numMoves = num_of_moves
         self.lambdas = np.array([1.0, 1.0, 1.0, 1.0])
         self.transitions = []
+        
 
     def add(self, token):
         self.moves = np.append(self.moves, token)
@@ -53,13 +54,13 @@ class GMarkov:
                 src = int(submoves[subindex])
                 self.transitions[subindex][src, dest] = self.transitions[subindex][src, dest] + 1
          
-        for subindex in range(0, self.numMoves):
+        for subindex in range(0, self.numMoves - 1):
             for row in range(0, self.dimen):
+                print(subindex, row)
                 self.transitions[subindex][row, :] = 0 if self.transitions[subindex][row, :].sum() == 0 else self.transitions[subindex][row, :] / self.transitions[subindex][row, :].sum()
                
         prob = 0.0
         submoves = self.moves[totalMoves - self.numMoves:totalMoves]
-        print(submoves)
         for subindex in range(0, self.numMoves - 1):
             dest = int(submoves[self.numMoves - 1])
             src = int(submoves[subindex])
