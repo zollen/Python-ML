@@ -6,7 +6,7 @@ Created on Dec. 15, 2020
 import numpy as np
 import time
 
-class NPowerMarkov:
+class NOrderMarkov:
     
     def __init__(self, states, power = 1):
         np.random.seed(int(round(time.time())))
