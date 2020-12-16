@@ -93,12 +93,13 @@ class GMarkov:
     
     DEFALT_MIN_MOVES = 3
     
-    def __init__(self, states, num_of_moves = DEFALT_MIN_MOVES):
+    def __init__(self, states, num_of_moves = DEFALT_MIN_MOVES, buff_win = False):
         np.random.seed(int(round(time.time())))
         self.moves = np.array([])
         self.states = states
         self.dimen = np.power(self.states, 1)
         self.numMoves = num_of_moves
+        self.buffWin = buff_win
         self.lambdas = self.priors()
         self.transitions = []
         
@@ -128,11 +129,19 @@ class GMarkov:
         
         for index in range(0, totalMoves - self.numMoves):
             submoves = self.moves[index:index + self.numMoves + 1]
+            submines = self.mines[index:index + self.numMoves + 1]
+            
             length = len(submoves)
             for subindex in range(0, length - 1):
                 dest = int(submoves[-1])
                 src = int(submoves[subindex])
                 self.transitions[subindex][src, dest] = self.transitions[subindex][src, dest] + 1
+            
+                if self.buffWin:
+                    res = submines[subindex] - submoves[subindex]
+                    if res == 1 or res == -2:
+                        self.transitions[subindex][src, dest] = self.transitions[subindex][src, dest] + 1
+        
          
         for subindex in range(0, self.numMoves):
             for row in range(0, self.dimen):
