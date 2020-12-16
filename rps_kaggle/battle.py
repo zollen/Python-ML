@@ -5,11 +5,10 @@ Created on Dec. 16, 2020
 '''
 
 import rps_kaggle.lib.rps_lib as rps
-import pprint
-import time
+
 
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
-pp = pprint.PrettyPrinter(indent=3) 
+
 
 player1 = rps.GMarkov(3, 6)
 player2 = rps.NOrderMarkov(3, 6)
