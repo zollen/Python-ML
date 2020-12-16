@@ -126,7 +126,7 @@ class GMarkov:
         for _ in range(0, self.numMoves):
             self.transitions.append(np.zeros((self.dimen, self.dimen)).astype('float64'))
         
-        for index in range(0, totalMoves - self.numMoves - 1):
+        for index in range(0, totalMoves - self.numMoves):
             submoves = self.moves[index:index + self.numMoves + 1]
             length = len(submoves)
             for subindex in range(0, length - 1):
