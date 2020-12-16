@@ -40,7 +40,7 @@ for _ in range(0, 1000):
         else:
             winner = player1
     
-    msg = "{:>8} {:>8}     {:^20}"
+    msg = "{:>8} | {:<8}  =>   {:^20}"
     print(msg.format(SIGNS[move1], SIGNS[move2], winner.__str__()))
     results.append(msg.format(SIGNS[move1], SIGNS[move2], winner.__str__()))
 
