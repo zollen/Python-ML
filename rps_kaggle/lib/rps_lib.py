@@ -96,6 +96,7 @@ class GMarkov:
     def __init__(self, states, num_of_moves = DEFALT_MIN_MOVES, buff_win = False):
         np.random.seed(int(round(time.time())))
         self.moves = np.array([])
+        self.mines = np.array([])
         self.states = states
         self.dimen = np.power(self.states, 1)
         self.numMoves = num_of_moves
@@ -114,6 +115,10 @@ class GMarkov:
     def add(self, token):
         self.moves = np.append(self.moves, token)
         
+    def submit(self, token):
+        self.mines = np.append(self.mines, token)
+        return token
+        
     def __str__(self):
         return "GMarkov(" + str(self.numMoves) + ")"
     
@@ -122,7 +127,7 @@ class GMarkov:
         totalMoves = len(self.moves)
         
         if totalMoves <= self.numMoves:
-            return np.random.randint(0, self.states)
+            return self.submit(np.random.randint(0, self.states))
 
         for _ in range(0, self.numMoves):
             self.transitions.append(np.zeros((self.dimen, self.dimen)).astype('float64'))
@@ -163,7 +168,7 @@ class GMarkov:
                 best_score = prob
                 best_move = target
             
-        return best_move
+        return self.submit(best_move)
     
     
 

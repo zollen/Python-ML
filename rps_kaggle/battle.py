@@ -10,7 +10,7 @@ import rps_kaggle.lib.rps_lib as rps
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 
 
-player1 = rps.GMarkov(3, 8)
+player1 = rps.GMarkov(3, 8, True)
 player2 = rps.NOrderMarkov(3, 6)
 #player2 = rps.Randomer()
 
