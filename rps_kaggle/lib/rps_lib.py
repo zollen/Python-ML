@@ -53,7 +53,7 @@ class NOrderMarkov:
         self.moves = np.append(self.moves, token)
         
     def __str__(self):
-        return "NOrderMarkov(" + str(self.power) + ")"
+        return "NMarkov(" + str(self.power) + ")"
         
     def predict(self):
            
