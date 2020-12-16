@@ -36,7 +36,7 @@ def markov_move(observation, configuration):
 
 class observationCls:
     step = 100
-    lastOpponentAction = [ 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2, 2, 1, 0, 2, 2 ]
+    lastOpponentAction = [ 2, 2, 2, 1, 1, 1, 0, 0, 0, 2, 2, 2, 1, 1, 1, 0, 0, 0 ]
 class configurationCls:
     signs = 3
    

@@ -86,9 +86,9 @@ class GMarkov:
             
         return best_move
         
-markov = GMarkov(3, 3)
+markov = GMarkov(3, 6)
 
-markov.add([ 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1 ])
+markov.add([ 2, 2, 2, 1, 1, 1, 0, 0, 0, 2, 2, 2, 1, 1, 1, 0, 0, 0])
 
 SIGNS = [ 'ROCK', 'PAPER', 'SCISSOR']
 
