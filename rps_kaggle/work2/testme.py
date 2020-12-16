@@ -88,7 +88,7 @@ class GMarkov:
         
 markov = GMarkov(3, 3)
 
-markov.add([ 0, 1, 2, 0, 1, 2, 0, 1, 2 ])
+markov.add([ 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1 ])
 
 SIGNS = [ 'ROCK', 'PAPER', 'SCISSOR']
 
@@ -97,4 +97,4 @@ t_start = time.perf_counter_ns()
 nextMove = markov.predict()
 t_end = time.perf_counter_ns()
 
-print("My Next Move: ", nextMove, SIGNS[nextMove], " ====> ", t_end - t_start)
+print("PREDICTED MOVE: [%s] ==> %d ns" % (SIGNS[nextMove], t_end - t_start))

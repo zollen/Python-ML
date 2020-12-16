@@ -54,9 +54,8 @@ class NOrderMarkov:
          
         res = np.argwhere(probs == np.amax(probs)).ravel()
         
-        nextMove = np.random.choice(res).item() % self.states
-                
-        return (nextMove + 1) % self.states
+        return np.random.choice(res).item() % self.states
+
     
     
 
