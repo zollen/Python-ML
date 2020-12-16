@@ -10,9 +10,9 @@ import rps_kaggle.lib.rps_lib as rps
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 
 
-player1 = rps.GMarkov(3, 6, False)
-player2 = rps.NOrderMarkov(3, 6)
-#player2 = rps.Randomer()
+player1 = rps.GMarkov(3, 20, 3)
+#player2 = rps.NOrderMarkov(3, 6)
+player2 = rps.Randomer()
 
 results = []
 win1 = 0
@@ -60,5 +60,5 @@ elif win1 > win2:
     print("PLAYER1 {}, PLAYER2 {}  RATIO {:2.4f}".format(win1, win2, win1 / win2))
     print("Player1: [{}] WON!!!!!".format(player1))
 else:
-    print("PLAYER1 {}, PLAYER2 {} RATIO {:2.4f}".format(win1, win2, win2 / win1))
-    print("Player2: [{}] WON!!!!!".format(player2))
+    print("PLAYER1 {}, PLAYER2 {} RATIO {:2.4f}".format(win1, win2, win1 / win2))
+    print("Player1: [{}] LOST!!!!!".format(player2))
