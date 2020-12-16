@@ -20,7 +20,7 @@ markov.add([ 2, 2, 2, 1, 1, 1, 0, 0, 0, 2, 2, 2, 1, 1, 1, 0, 0, 0 ])
 
 SIGNS = [ 'ROCK', 'PAPER', 'SCISSOR']
 
-print(markov.lambdas)
+
 t_start = time.perf_counter_ns()
 nextMove = markov.predict()
 t_end = time.perf_counter_ns()

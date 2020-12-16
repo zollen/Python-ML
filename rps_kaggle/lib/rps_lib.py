@@ -33,7 +33,7 @@ class NOrderMarkov:
         self.moves = np.append(self.moves, token)
         
     def __str__(self):
-        return np.array2string(self.moves)
+        return "NOrderMarkov(" + self.power + ")"
         
     def predict(self):
            
@@ -94,7 +94,7 @@ class GMarkov:
         self.moves = np.append(self.moves, token)
         
     def __str__(self):
-        return np.array2string(self.moves)
+        return "GMarkov(" + self.numMoves + ")"
     
     def predict(self):
         
