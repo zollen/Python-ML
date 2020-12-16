@@ -57,8 +57,8 @@ print("====================================================================")
 if win1 == win2:
     print("BOTH TIE!!")
 elif win1 > win2:
-    print("PLAYER1 {}, PLAYER2 {}" % (win1, win2))
+    print("PLAYER1 {}, PLAYER2 {}".format(win1, win2))
     print(player1.__str__() + " WON!!")
 else:
-    print("PLAYER1 {}, PLAYER2 {}" % (win1, win2))
+    print("PLAYER1 {}, PLAYER2 {}".format(win1, win2))
     print(player2.__str__() + " WON!!")
