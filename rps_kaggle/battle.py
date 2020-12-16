@@ -53,9 +53,12 @@ for _ in range(0, 1000):
     print(msg.format(SIGNS[move1], SIGNS[move2], winner.__str__()))
     results.append(msg.format(SIGNS[move1], SIGNS[move2], winner.__str__()))
 
+print("====================================================================")
 if win1 == win2:
     print("BOTH TIE!!")
 elif win1 > win2:
+    print("PLAYER1 {}, PLAYER2 {}" % (win1, win2))
     print(player1.__str__() + " WON!!")
 else:
+    print("PLAYER1 {}, PLAYER2 {}" % (win1, win2))
     print(player2.__str__() + " WON!!")
