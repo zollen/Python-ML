@@ -11,7 +11,8 @@ SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 
 
 player1 = rps.GMarkov(3, 6)
-player2 = rps.NOrderMarkov(3, 6)
+#player2 = rps.NOrderMarkov(3, 6
+player2 = rps.Randomer()
 
 results = []
 win1 = 0

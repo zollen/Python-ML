@@ -6,6 +6,26 @@ Created on Dec. 15, 2020
 import numpy as np
 import time
 
+
+class Randomer:
+    
+    def __init__(self):
+        np.random.seed(int(round(time.time())))
+        pass
+    
+    def add(self, token):
+        pass
+        
+    def __str__(self):
+        return "Randomer()"
+    
+    def predict(self):
+        return np.random.randint(0, 3)
+        
+    
+    
+    
+    
 '''
 High order Markov. It holds a sequence of transitions (as oppose to just a single transition 
 in the transition matrix
