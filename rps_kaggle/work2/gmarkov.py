@@ -5,7 +5,6 @@ Created on Dec. 14, 2020
 '''
 
 import rps_kaggle.lib.rps_lib as rps
-import numpy as np
 import time
 
 

@@ -7,7 +7,7 @@ import numpy as np
 import time
 
 '''
-High order Markov. It holds a sequence of transitions (as oppose to just a single  transition 
+High order Markov. It holds a sequence of transitions (as oppose to just a single transition 
 in the transition matrix
 '''
 class NOrderMarkov:
