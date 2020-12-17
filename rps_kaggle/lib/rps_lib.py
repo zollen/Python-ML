@@ -30,7 +30,7 @@ class Randomer:
 High order Markov. It holds a sequence of transitions (as oppose to just a single transition 
 in the transition matrix
 '''
-class NOrderMarkov:
+class NMarkov:
     
     def __init__(self, states, power = 1):
         np.random.seed(int(round(time.time())))

@@ -20,7 +20,7 @@ SIGNS = [ 'ROCK', 'PAPER', 'SCISSOR']
 3 states - 0, 1, 2
 6 orders - keeping track of the transition probabilties of six moves
 '''
-markov = rps.NOrderMarkov(3, 6)
+markov = rps.NMarkov(3, 6)
 
 def markov_move(observation, configuration):
 
