@@ -13,7 +13,7 @@ warnings.filterwarnings('ignore')
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 
 
-player1 = rps.Classifier(XGBClassifier(random_state = 17, eval_metric = 'logloss'))
+player1 = rps.Classifier(XGBClassifier(random_state = 17, eval_metric = 'logloss'), window = 6)
 #player2 = rps.NMarkov(3, 6)
 player2 = rps.Randomer()
 
@@ -64,4 +64,4 @@ elif win1 > win2:
     print("Player1: [{}] WON!!!!!".format(player1))
 else:
     print("PLAYER1 {}, PLAYER2 {} RATIO {:2.4f}".format(win1, win2, win1 / win2))
-    print("Player1: [{}] LOST!!!!!".format(player2))
+    print("Player1: [{}] LOST!!!!!".format(player1))
