@@ -6,8 +6,6 @@ Created on Dec. 16, 2020
 import numpy as np
 import time
 from xgboost import XGBClassifier
-import traceback
-import sys
 import warnings
 
 warnings.filterwarnings('ignore')
