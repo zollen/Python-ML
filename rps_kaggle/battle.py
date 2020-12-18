@@ -4,13 +4,16 @@ Created on Dec. 16, 2020
 @author: zollen
 '''
 
+from xgboost import XGBClassifier
 import rps_kaggle.lib.rps_lib as rps
+import warnings
 
+warnings.filterwarnings('ignore')
 
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 
 
-player1 = rps.GMarkov(3, 6, 3)
+player1 = rps.Classifier(XGBClassifier(random_state = 17, eval_metric = 'logloss'))
 #player2 = rps.NMarkov(3, 6)
 player2 = rps.Randomer()
 
@@ -18,7 +21,7 @@ results = []
 win1 = 0
 win2 = 0
 
-for _ in range(0, 1000):
+for rnd in range(0, 1000):
 
     move1 = player1.predict()
     move1 = (move1 + 1) % 3
@@ -49,9 +52,9 @@ for _ in range(0, 1000):
         win2 = win2 + 1
 
 
-    msg = "{:>8} | {:<8} => {:^20}"
-    print(msg.format(SIGNS[move1], SIGNS[move2], winner.__str__()))
-    results.append(msg.format(SIGNS[move1], SIGNS[move2], winner.__str__()))
+    msg = "[{:<4}]   {:>8} | {:<8} => {:^20}"
+    print(msg.format(rnd + 1, SIGNS[move1], SIGNS[move2], winner.__str__()))
+
 
 print("====================================================================")
 if win1 == win2:
