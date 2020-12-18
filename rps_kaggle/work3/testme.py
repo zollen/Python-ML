@@ -49,38 +49,21 @@ class Classifier:
 
     
     def predict(self):
-        
-        try:
 
-            length = len(self.opponent)
+        length = len(self.opponent)
         
-            if length < self.window:    
-                return self.submit(self.random())
-        
-            if length >= self.window + 1: 
-                self.buildrow() 
-     
-            if length > self.window + self.delayProcess + 1:
-                if length > 998:
-                    print("MINE: ", len(self.mines), "OPP: ", len(self.opponent))
-                    
-                self.classifier.fit(self.data[:self.row], self.results)  
-                test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)   
-                
-                if length > 998:
-                    print("TEST: ", len(test))
-                    
-                choice = self.classifier.predict(test)
-                
-                if length > 998:
-                    print("Choice: ", type(choice), choice)
-                    
-                choice = int(choice.item())
-                return self.submit(choice)
-            
+        if length < self.window:    
             return self.submit(self.random())
-        except:
-            traceback.print_exc(file=sys.stderr)
+        
+        if length >= self.window + 1: 
+            self.buildrow() 
+     
+        if length > self.window + self.delayProcess + 1:
+            self.classifier.fit(self.data[:self.row], self.results)  
+            test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)   
+            return self.submit(int(self.classifier.predict(test).item()))
+            
+        return self.submit(self.random())
         
     
     
