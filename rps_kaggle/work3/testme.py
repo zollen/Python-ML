@@ -4,11 +4,11 @@ Created on Dec. 16, 2020
 @author: zollen
 '''
 import numpy as np
-import pandas as pd
 import time
 from xgboost import XGBClassifier
+import traceback
+import sys
 import warnings
-
 
 warnings.filterwarnings('ignore')
 
@@ -23,11 +23,8 @@ class Classifier:
         self.results = np.array([])
         self.delayProcess = delay_process
         self.row = 0
-        self.data = np.zeros(shape = (1000, self.window * 2))
-        self.values = {'00': 0, '01': 1, '02': 2, 
-                       '10': 3, '11': 4, '12': 5,
-                       '20': 6, '21': 7, '22': 8
-            }
+        self.data = np.zeros(shape = (1100, self.window * 2))
+      
    
     def add(self, token):
         self.opponent = np.append(self.opponent, token)
@@ -43,42 +40,83 @@ class Classifier:
         return np.random.randint(0, 3)
     
     def __str__(self):
-        return "XGBoost()"
+        return self.classifier.__class__.__name__
     
     def buildrow(self):
-        print("UDPATE: ", self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist())
         self.data[self.row] = self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist()
         self.results = np.append(self.results, self.opponent[-1])    
         self.row = self.row + 1
 
     
     def predict(self):
-
-        length = len(self.opponent)
         
-        if length < self.window:    
+        try:
+
+            length = len(self.opponent)
+        
+            if length < self.window:    
+                return self.submit(self.random())
+        
+            if length >= self.window + 1: 
+                self.buildrow() 
+     
+            if length > self.window + self.delayProcess + 1:
+                if length > 998:
+                    print("MINE: ", len(self.mines), "OPP: ", len(self.opponent))
+                    
+                self.classifier.fit(self.data[:self.row], self.results)  
+                test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)   
+                
+                if length > 998:
+                    print("TEST: ", len(test))
+                    
+                choice = self.classifier.predict(test)
+                
+                if length > 998:
+                    print("Choice: ", type(choice), choice)
+                    
+                choice = int(choice.item())
+                return self.submit(choice)
+            
             return self.submit(self.random())
+        except:
+            traceback.print_exc(file=sys.stderr)
         
-        if length >= self.window + 1: 
-            self.buildrow() 
-        
-        print(self.mines, self.opponent, self.results)
-        print("DATA: ", self.data[:self.row])
-        
-        if length > self.window + self.delayProcess + 1:
-            self.classifier.fit(self.data[:self.row], self.results)  
-            test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)   
-            return self.submit(int(self.classifier.predict(test).item()))
-        
-        
-        return self.submit(self.random())
     
-moves = []
-for _ in range(0, 1000):
-    moves.append(np.random.randint(0, 3))
+    
 
-xgb = Classifier(XGBClassifier(random_state = 17, eval_metric = 'logloss'))
-for index in range(0, len(moves)):
-    print("MY PREDICTED MOVE: ", xgb.predict()) 
-    xgb.add(moves[index])
+clr = Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)
+
+def classifier_move(observation, configuration):
+
+    global clr
+    
+    if observation.step > 0:
+        clr.add(observation.lastOpponentAction)
+        
+    return (clr.predict() + 1) % configuration.signs
+
+
+class observationCls:
+    step = 0
+    lastOpponentAction = 0
+class configurationCls:
+    signs = 3
+    
+observation = observationCls()
+configuration = configurationCls()
+
+for rnd in range(0, 1000):
+    
+    choice = None
+    observation.step = rnd
+    observation.lastOpponentAction = np.random.randint(0, 3)
+    
+    t_start = time.perf_counter_ns()
+    choice = classifier_move(observation, configuration)
+    t_end = time.perf_counter_ns()
+    
+    print("Round {} Choice: {}, Elapse Time: {}".format(rnd + 1, choice, t_end - t_start))
+
+
     

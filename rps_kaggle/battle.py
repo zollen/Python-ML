@@ -12,10 +12,16 @@ warnings.filterwarnings('ignore')
 
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 
-
-player1 = rps.Classifier(XGBClassifier(random_state = 17, eval_metric = 'logloss'), window = 6)
-#player2 = rps.NMarkov(3, 6)
-player2 = rps.Randomer()
+'''
+BASIC
+6:  3.5455, 2.417, 2.365
+10: 2.8632, 3.989, 2.7547
+20: 2.5351, 2.472, 2.3583
+50: 3.0556, 2.588, 2.4592 
+'''
+player1 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)
+player2 = rps.NMarkov(3, 6)
+#player2 = rps.Randomer()
 
 results = []
 win1 = 0
