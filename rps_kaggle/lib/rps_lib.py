@@ -147,9 +147,7 @@ for generating decreasing sequence that adds up to 1
 '''
 class GMarkov(BaseAgent):
     
-    DEFALT_MIN_MOVES = 3
-    
-    def __init__(self, states, window = DEFALT_MIN_MOVES, buff_win = 0):
+    def __init__(self, states, window = 3, buff_win = 0):
         super().__init__(states, window)     
         self.dimen = np.power(self.states, 1)
         self.buffWin = buff_win
