@@ -9,10 +9,11 @@ import time
 
 class Classifier:
     
-    def __init__(self, classifier, window = 3, delay_process = 5):
+    def __init__(self, classifier, states = 3, window = 3, delay_process = 5):
         np.random.seed(int(round(time.time())))
         self.classifier = classifier
         self.window = window
+        self.states = states
         self.opponent = np.array([])
         self.mines = np.array([])
         self.results = np.array([])
@@ -35,7 +36,7 @@ class Classifier:
         return self.values[str(src) + str(dest)]
     
     def random(self):
-        return np.random.randint(0, 3)
+        return np.random.randint(0, self.states)
     
     def __str__(self):
         return self.classifier.__class__.__name__
@@ -51,7 +52,7 @@ class Classifier:
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
             test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)   
-            return self.submit(int(self.classifier.predict(test).item()))
+            return self.submit((int(self.classifier.predict(test).item()) + 1) % self.states)
             
         return self.submit(self.random())
     
@@ -126,7 +127,7 @@ class NMarkov:
          
         res = np.argwhere(probs == np.amax(probs)).ravel()
         
-        return np.random.choice(res).item() % self.states
+        return (np.random.choice(res).item() + 1) % self.states
 
 
 '''
@@ -215,7 +216,7 @@ class GMarkov:
                 best_score = prob
                 best_move = target
             
-        return self.submit(best_move)
+        return self.submit((best_move + 1) % self.states)
     
     
 

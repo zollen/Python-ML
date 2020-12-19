@@ -38,9 +38,7 @@ win2 = 0
 for rnd in range(0, 1000):
 
     move1 = player1.predict()
-    move1 = (move1 + 1) % 3
     move2 = player2.predict()
-    move2 = (move2 + 1) % 3
     
     player1.add(move2)
     player2.add(move1)
