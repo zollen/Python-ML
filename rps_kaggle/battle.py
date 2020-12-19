@@ -26,9 +26,9 @@ LGBM
 '''
 #player1 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)
 player1 = rps.Classifier(LGBMClassifier(random_state = 23, n_estimators = 10), window = 6)
-#player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)
+player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)
 
-player2 = rps.NMarkov(3, 6)
+#player2 = rps.NMarkov(3, 6)
 #player2 = rps.Randomer()
 
 results = []

@@ -35,7 +35,7 @@ class BaseAgent:
 class Classifier(BaseAgent):
     
     def __init__(self, classifier, states = 3, window = 3, delay_process = 5):
-        BaseAgent.__init__(self, states, window)
+        super().__init__(states, window)
         self.classifier = classifier
         self.delayProcess = delay_process
         self.row = 0
@@ -71,7 +71,7 @@ class Classifier(BaseAgent):
 class Randomer(BaseAgent):
     
     def __init__(self):
-        BaseAgent.__int__(self)
+        super().__int__()
         pass
     
     def add(self, token):
@@ -92,7 +92,7 @@ in the transition matrix
 class NMarkov(BaseAgent):
     
     def __init__(self, states = 3, power = 1):
-        BaseAgent.__init__(self, states, power)
+        super().__init__(states, power)
         self.power = power
         self.dimen = np.power(self.states, self.power)
 
@@ -148,7 +148,7 @@ class GMarkov(BaseAgent):
     DEFALT_MIN_MOVES = 3
     
     def __init__(self, states, window = DEFALT_MIN_MOVES, buff_win = 0):
-        BaseAgent.__init__(self, states, window)     
+        super().__init__(states, window)     
         self.dimen = np.power(self.states, 1)
         self.buffWin = buff_win
         self.lambdas = self.priors()
