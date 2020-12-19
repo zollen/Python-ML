@@ -63,9 +63,7 @@ class Classifier(BaseAgent):
 
     
     def predict(self):
-        
-        print(self.mines, self.opponent)
-        
+     
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
             test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)   
@@ -73,28 +71,6 @@ class Classifier(BaseAgent):
             
         return self.submit(self.random())
         
-
-class DecisionMaker:
-    
-    def __init__(self, states = 3, interval = 5):
-        self.states = states
-        self.interval = interval
-
-    def predict(self, agent):
-        
-        self.interval = self.interval - 1
-        
-        choice = agent.predict()
-        
-        if np.random.choice([True, False]) == True:
-            print("Double Step")
-            return (choice + 2) % self.states
-        print("Random Remain")
-        remain = list(range(self.states))
-        remain.remove(choice)
-        return np.random.choice(remain)
-            
-
 
 
 #clr = Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)
