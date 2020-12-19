@@ -7,6 +7,7 @@ import numpy as np
 import time
 
 class BaseAgent:
+    
     def __init__(self, states = 3, window = 3):
         np.random.seed(int(round(time.time())))
         self.mines = np.array([])
