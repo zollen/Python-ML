@@ -73,8 +73,29 @@ class Classifier(BaseAgent):
             
         return self.submit(self.random())
         
+
+class DecisionMaker:
     
-    
+    def __init__(self, states = 3, interval = 5):
+        self.states = states
+        self.interval = interval
+
+    def predict(self, agent):
+        
+        self.interval = self.interval - 1
+        
+        choice = agent.predict()
+        
+        if np.random.choice([True, False]) == True:
+            print("Double Step")
+            return (choice + 2) % self.states
+        print("Random Remain")
+        remain = list(range(self.states))
+        remain.remove(choice)
+        return np.random.choice(remain)
+            
+
+
 
 #clr = Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)
 clr = Classifier(LGBMClassifier(random_state = 17, n_estimators = 10), window = 6)

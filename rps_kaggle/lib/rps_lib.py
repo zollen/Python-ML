@@ -32,6 +32,7 @@ class BaseAgent:
         pass
 
 
+    
 class Classifier(BaseAgent):
     
     def __init__(self, classifier, states = 3, window = 3, delay_process = 5):
@@ -61,7 +62,7 @@ class Classifier(BaseAgent):
         
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
-            test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)   
+            test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)
             return self.submit((int(self.classifier.predict(test).item()) + 1) % self.states)
             
         return self.submit(self.random())
@@ -114,7 +115,7 @@ class NMarkov(BaseAgent):
         totalMoves = len(self.opponent)
         
         if totalMoves <= self.power:
-            return self.random()
+            return self.submit(self.random())
         
         initials = np.zeros(self.dimen).astype('float64')
         transitions = np.zeros((self.dimen, self.dimen)).astype('float64')
@@ -132,7 +133,7 @@ class NMarkov(BaseAgent):
          
         res = np.argwhere(probs == np.amax(probs)).ravel()
         
-        return (np.random.choice(res).item() + 1) % self.states
+        return self.submit((np.random.choice(res).item() + 1) % self.states)
 
 
 '''
