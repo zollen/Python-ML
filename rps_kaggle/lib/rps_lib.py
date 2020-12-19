@@ -91,9 +91,9 @@ in the transition matrix
 '''
 class NMarkov(BaseAgent):
     
-    def __init__(self, states = 3, power = 1):
-        super().__init__(states, power)
-        self.power = power
+    def __init__(self, states = 3, window = 1):
+        super().__init__(states, window)
+        self.power = window
         self.dimen = np.power(self.states, self.power)
 
         
