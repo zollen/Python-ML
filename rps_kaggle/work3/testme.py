@@ -5,6 +5,7 @@ Created on Dec. 16, 2020
 '''
 import numpy as np
 import time
+from lightgbm import LGBMClassifier 
 from xgboost import XGBClassifier
 import warnings
 
@@ -66,7 +67,9 @@ class Classifier:
     
     
 
-clr = Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)
+#clr = Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)
+clr = Classifier(LGBMClassifier(random_state = 17, n_estimators = 10), window = 6)
+
 
 def classifier_move(observation, configuration):
 
