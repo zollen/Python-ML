@@ -5,13 +5,13 @@ Created on Dec. 16, 2020
 '''
 import numpy as np
 import time
-from lightgbm import LGBMClassifier 
-from xgboost import XGBClassifier
+from sklearn.ensemble import RandomForestClassifier
 import warnings
 
 warnings.filterwarnings('ignore')
 
 class BaseAgent:
+    
     def __init__(self, states = 3, window = 3):
         np.random.seed(int(round(time.time())))
         self.mines = np.array([])
@@ -37,6 +37,7 @@ class BaseAgent:
         pass
 
 
+    
 class Classifier(BaseAgent):
     
     def __init__(self, classifier, states = 3, window = 3, delay_process = 5):
@@ -48,7 +49,7 @@ class Classifier(BaseAgent):
       
    
     def add(self, token):
-        BaseAgent.add(self, token)
+        super().add(token)
         
         if len(self.opponent) >= self.window + 1: 
             self.buildrow() 
@@ -63,18 +64,17 @@ class Classifier(BaseAgent):
 
     
     def predict(self):
-     
+        
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
-            test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)   
+            test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)
             return self.submit((int(self.classifier.predict(test).item()) + 1) % self.states)
             
         return self.submit(self.random())
         
 
 
-#clr = Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)
-clr = Classifier(LGBMClassifier(random_state = 17, n_estimators = 10), window = 6)
+clr = Classifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 6)
 
 
 def classifier_move(observation, configuration):
