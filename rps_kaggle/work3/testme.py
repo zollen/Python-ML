@@ -12,7 +12,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 class BaseAgent:
-    def __int__(self, states = 3, window = 3):
+    def __init__(self, states = 3, window = 3):
         np.random.seed(int(round(time.time())))
         self.mines = np.array([])
         self.opponent = np.array([])
@@ -40,7 +40,7 @@ class BaseAgent:
 class Classifier(BaseAgent):
     
     def __init__(self, classifier, states = 3, window = 3, delay_process = 5):
-        BaseAgent.__int__(self, states, window)
+        super().__init__(states, window)
         self.classifier = classifier
         self.delayProcess = delay_process
         self.row = 0
