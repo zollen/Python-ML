@@ -44,7 +44,7 @@ class Classifier(BaseAgent):
       
    
     def add(self, token):
-        BaseAgent.add(self, token)
+        super().add(token)
         
         if len(self.opponent) >= self.window + 1: 
             self.buildrow() 
