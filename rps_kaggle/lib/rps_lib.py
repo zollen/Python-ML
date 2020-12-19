@@ -24,12 +24,7 @@ class Classifier:
     def add(self, token):
         self.opponent = np.append(self.opponent, token)
         
-        length = len(self.opponent)
-        
-        if length < self.window:    
-            return self.submit(self.random())
-        
-        if length >= self.window + 1: 
+        if len(self.opponent) >= self.window + 1: 
             self.buildrow() 
     
     def submit(self, token):

@@ -28,12 +28,7 @@ class Classifier:
     def add(self, token):
         self.opponent = np.append(self.opponent, token)
         
-        length = len(self.opponent)
-        
-        if length < self.window:    
-            return self.submit(self.random())
-        
-        if length >= self.window + 1: 
+        if len(self.opponent) >= self.window + 1: 
             self.buildrow() 
     
     def submit(self, token):
@@ -56,7 +51,7 @@ class Classifier:
 
     
     def predict(self):
-        
+          
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
             test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)   
