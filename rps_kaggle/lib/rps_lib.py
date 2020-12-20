@@ -8,27 +8,36 @@ import time
 
 class BaseAgent:
     
-    def __init__(self, states = 3, window = 3, counter = None):
+    def __init__(self, states = 3, window = 3, prefix = None, counter = None):
         np.random.seed(int(round(time.time())))
         self.mines = np.array([])
         self.opponent = np.array([])
         self.results = np.array([])
         self.states = states
         self.window = window
+        self.prefix = prefix
         self.counter = counter
         
     def add(self, token):
         self.opponent = np.append(self.opponent, token)
         
     def submit(self, token):
+        if self.counter != None and len(self.opponent) > self.window + 2:
+            token = self.counter.predict(token)
+            
         self.mines = np.append(self.mines, token)
+        
         return token
     
     def random(self):
         return np.random.randint(0, self.states)
         
     def __str__(self):
-        return "BaseAgent(" + str(self.window) + ")"
+        if self.prefix == None:
+            name = self.classifier.__class__.__name__
+        else:
+            name = self.classifier.__class__.__name__ + "(" + self.prefix + ")"
+        return name
     
     def predict(self):
         pass
@@ -102,25 +111,19 @@ class RandomCounterMover:
       
         if self.wincounter <= 0 and self.won(-1) < 0 and self.won(-2) < 0:
             self.wincounter = np.random.randint(1, self.interval + 1)
-            
-        if self.evencounter <= 0 and self.won(-1) == 0 and self.won(-2) == 0:
-            self.evencounter = np.random.randint(1, self.interval + 1)
                 
         if self.wincounter > 0:
             self.wincounter = self.wincounter - 1
-            choices = [0, 1, 2]
-            choices.remove(token)
-            return np.random.choice(choices)
-            
-        if self.evencounter > 0:
-            self.evencounter = self.evencounter - 1
-            choices = [0, 1, 2]
-            choices.remove((token + 2) % self.states)
-            return np.random.choice(choices)
+            if np.random.choice([True, False]) == True:
+                return (token + 2) % self.states
+            else:
+                choices = [0, 1, 2]
+                choices.remove(token)
+                return np.random.choice(choices)
 
         return token    
 
-class CounterMover:
+class StandardCounterMover:
     
     def __init__(self, agent, states = 3, interval = 5):
         self.states = states
@@ -156,8 +159,8 @@ class CounterMover:
         
 class Classifier(BaseAgent):
     
-    def __init__(self, classifier, states = 3, window = 3, delay_process = 5, counter = None):
-        super().__init__(states, window, counter)
+    def __init__(self, classifier, states = 3, window = 3, delay_process = 5, prefix = None, counter = None):
+        super().__init__(states, window, prefix, counter)
         self.classifier = classifier
         self.delayProcess = delay_process
         self.row = 0
@@ -169,27 +172,17 @@ class Classifier(BaseAgent):
         if len(self.opponent) >= self.window + 1: 
             self.buildrow() 
     
-    def __str__(self):
-        return self.classifier.__class__.__name__
-    
     def buildrow(self):
         self.data[self.row] = self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist()
         self.results = np.append(self.results, self.opponent[-1])    
         self.row = self.row + 1
-
-    
+  
     def predict(self):
         
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
             test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)
-            
-            choice = (int(self.classifier.predict(test).item()) + 1) % self.states
-            
-            if self.counter == None:
-                return self.submit(choice)
-            
-            return self.submit(self.counter.predict(choice))
+            return self.submit((int(self.classifier.predict(test).item()) + 1) % self.states)
             
         return self.submit(self.random())
     
@@ -203,9 +196,6 @@ class Randomer(BaseAgent):
     
     def add(self, token):
         pass
-        
-    def __str__(self):
-        return "Randomer()"
     
     def predict(self):
         return self.random()
@@ -218,8 +208,8 @@ in the transition matrix
 '''
 class NMarkov(BaseAgent):
     
-    def __init__(self, states = 3, window = 1):
-        super().__init__(states, window)
+    def __init__(self, states = 3, window = 1, prefix = None, counter = None):
+        super().__init__(states, window, prefix, counter)
         self.power = window
         self.dimen = np.power(self.states, self.power)
 
@@ -232,9 +222,6 @@ class NMarkov(BaseAgent):
             total = total + vals[index] * np.power(self.states, self.power - index - 1)
 
         return int(total.item())
-    
-    def __str__(self):
-        return "NMarkov(" + str(self.power) + ")"
         
     def predict(self):
            
@@ -272,8 +259,8 @@ for generating decreasing sequence that adds up to 1
 '''
 class GMarkov(BaseAgent):
     
-    def __init__(self, states, window = 3, buff_win = 0):
-        super().__init__(states, window)     
+    def __init__(self, states, window = 3, buff_win = 0, prefix = None, counter = None):
+        super().__init__(states, window, prefix, counter)     
         self.dimen = np.power(self.states, 1)
         self.buffWin = buff_win
         self.lambdas = self.priors()
@@ -293,9 +280,6 @@ class GMarkov(BaseAgent):
     def submit(self, token):
         self.mines = np.append(self.mines, token)
         return token
-        
-    def __str__(self):
-        return "GMarkov(" + str(self.window) + ")"
     
     def predict(self):
         
