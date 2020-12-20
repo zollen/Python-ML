@@ -5,7 +5,7 @@ Created on Dec. 16, 2020
 '''
 import numpy as np
 import time
-from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -38,7 +38,7 @@ class BaseAgent:
 
 
     
-class Classifier(BaseAgent):
+class MClassifier(BaseAgent):
     
     def __init__(self, classifier, states = 3, window = 3, delay_process = 5):
         super().__init__(states, window)
@@ -51,21 +51,21 @@ class Classifier(BaseAgent):
     def add(self, token):
         super().add(token)
         
-        if len(self.opponent) >= self.window + 1: 
+        if len(self.opponent) >= self.window + 2: 
             self.buildrow() 
     
     def __str__(self):
         return self.classifier.__class__.__name__
     
     def buildrow(self):
+        print(self.mines, self.opponent)
         self.data[self.row] = self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist()
         self.results = np.append(self.results, self.opponent[-1])    
         self.row = self.row + 1
-
-    
+  
     def predict(self):
         
-        if len(self.opponent) > self.window + self.delayProcess + 1:
+        if len(self.opponent) > self.window + self.delayProcess + 2:
             self.classifier.fit(self.data[:self.row], self.results)  
             test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)
             return self.submit((int(self.classifier.predict(test).item()) + 1) % self.states)
@@ -74,7 +74,7 @@ class Classifier(BaseAgent):
         
 
 
-clr = Classifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 6)
+clr = MClassifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 3)
 
 
 def classifier_move(observation, configuration):
