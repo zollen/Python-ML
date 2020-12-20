@@ -20,16 +20,17 @@ XGBoost
 50: 3.0556, 2.588, 2.4592 
 '''
 '''
-XGBoost with Counter
-WON : 5
-LOST: 2
+Counter vs AgrssiveCounter
+WON : 2
+LOST: 0
 '''
 #player1 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)
 player1 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                          window = 6)
-player1.counter = rps.CounterMover(player1)
+player1.counter = rps.AgressiveCounterMover(player1)
 player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                          window = 6)
+player2.counter = rps.RandomCounterMover(player2)
 
 #player2 = rps.NMarkov(3, 6)
 #player2 = rps.Randomer()
