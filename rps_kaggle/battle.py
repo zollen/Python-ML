@@ -4,7 +4,6 @@ Created on Dec. 16, 2020
 @author: zollen
 '''
 
-from lightgbm import LGBMClassifier 
 from xgboost import XGBClassifier
 import rps_kaggle.lib.rps_lib as rps
 import warnings
@@ -22,7 +21,7 @@ XGBoost
 '''
 '''
 XGBoost with Counter
-WON : 8
+WON : 5
 LOST: 2
 '''
 #player1 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)

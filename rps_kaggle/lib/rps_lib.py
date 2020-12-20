@@ -8,13 +8,14 @@ import time
 
 class BaseAgent:
     
-    def __init__(self, states = 3, window = 3):
+    def __init__(self, states = 3, window = 3, counter = None):
         np.random.seed(int(round(time.time())))
         self.mines = np.array([])
         self.opponent = np.array([])
         self.results = np.array([])
         self.states = states
         self.window = window
+        self.counter = counter
         
     def add(self, token):
         self.opponent = np.append(self.opponent, token)
@@ -32,6 +33,41 @@ class BaseAgent:
     def predict(self):
         pass
 
+
+class AgressiveCounterMover:
+    
+    def __init__(self, agent, states = 3, interval = 5):
+        self.states = states
+        self.interval = interval
+        self.agent = agent
+        self.enable = 0
+        
+    def won(self, index):
+        
+        res = self.agent.mines[index] - self.agent.opponent[index]  
+        if res == 0:
+            return 0
+        elif res == 1:
+            return 1
+        elif res == -1:
+            return -1
+        elif res == 2:
+            return -1
+        else:             
+            return 1
+        
+    def predict(self, token):
+      
+        if self.enable <= 0 and self.won(-1) < 0 and self.won(-2) < 0:
+            self.enable = np.random.randint(1, self.interval + 1)
+                
+        if self.enable > 0:
+            self.enable = self.enable - 1
+            return (token + 2) % self.states
+
+        return token
+    
+    
 
 class CounterMover:
     
@@ -70,13 +106,11 @@ class CounterMover:
 class Classifier(BaseAgent):
     
     def __init__(self, classifier, states = 3, window = 3, delay_process = 5, counter = None):
-        super().__init__(states, window)
+        super().__init__(states, window, counter)
         self.classifier = classifier
         self.delayProcess = delay_process
         self.row = 0
         self.data = np.zeros(shape = (1100, self.window * 2))
-        self.counter = counter
-      
    
     def add(self, token):
         super().add(token)
