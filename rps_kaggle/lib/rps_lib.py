@@ -8,15 +8,21 @@ import time
 
 class BaseAgent:
     
-    def __init__(self, states = 3, window = 3, prefix = None, counter = None):
+    def __init__(self, states = 3, window = 3, counter = None):
         np.random.seed(int(round(time.time())))
         self.mines = np.array([])
         self.opponent = np.array([])
         self.results = np.array([])
         self.states = states
         self.window = window
-        self.prefix = prefix
         self.counter = counter
+        
+    def __str__(self):
+        if self.counter == None:
+            name = self.__class__.__name__
+        else:
+            name = self.__class__.__name__ + "(" + self.counter.__class__.__name__ + ")"
+        return name
         
     def add(self, token):
         self.opponent = np.append(self.opponent, token)
@@ -32,13 +38,6 @@ class BaseAgent:
     def random(self):
         return np.random.randint(0, self.states)
         
-    def __str__(self):
-        if self.prefix == None:
-            name = self.classifier.__class__.__name__
-        else:
-            name = self.classifier.__class__.__name__ + "(" + self.prefix + ")"
-        return name
-    
     def predict(self):
         pass
 
@@ -159,12 +158,19 @@ class StandardCounterMover:
         
 class Classifier(BaseAgent):
     
-    def __init__(self, classifier, states = 3, window = 3, delay_process = 5, prefix = None, counter = None):
-        super().__init__(states, window, prefix, counter)
+    def __init__(self, classifier, states = 3, window = 3, delay_process = 5, counter = None):
+        super().__init__(states, window, counter)
         self.classifier = classifier
         self.delayProcess = delay_process
         self.row = 0
         self.data = np.zeros(shape = (1100, self.window * 2))
+        
+    def __str__(self):
+        if self.counter == None:
+            name = self.classifier.__class__.__name__
+        else:
+            name = self.classifier.__class__.__name__ + "(" + self.counter.__class__.__name__ + ")"
+        return name
    
     def add(self, token):
         super().add(token)
@@ -208,8 +214,8 @@ in the transition matrix
 '''
 class NMarkov(BaseAgent):
     
-    def __init__(self, states = 3, window = 1, prefix = None, counter = None):
-        super().__init__(states, window, prefix, counter)
+    def __init__(self, states = 3, window = 1, counter = None):
+        super().__init__(states, window, counter)
         self.power = window
         self.dimen = np.power(self.states, self.power)
 
@@ -259,13 +265,13 @@ for generating decreasing sequence that adds up to 1
 '''
 class GMarkov(BaseAgent):
     
-    def __init__(self, states, window = 3, buff_win = 0, prefix = None, counter = None):
-        super().__init__(states, window, prefix, counter)     
+    def __init__(self, states, window = 3, buff_win = 0, counter = None):
+        super().__init__(states, window, counter)     
         self.dimen = np.power(self.states, 1)
         self.buffWin = buff_win
         self.lambdas = self.priors()
         self.transitions = []
-        
+            
     def priors(self):
         
         seq = []
