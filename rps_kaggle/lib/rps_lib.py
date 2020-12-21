@@ -113,7 +113,7 @@ class RandomCounterMover:
                 
         if self.wincounter > 0:
             self.wincounter = self.wincounter - 1
-            if np.random.choice([True, False]) == True:
+            if np.random.randint(0, 2) == 0:
                 return (token + 2) % self.states
             else:
                 choices = [0, 1, 2]
@@ -155,7 +155,21 @@ class StandardCounterMover:
 
         return token
     
+class ClassifierHolder:
+    
+    def __init__(self, classifiers):
+        self.classifiers = classifiers
+        self.current = None
         
+    def fit(self, X, y):
+        self.current = self.classifiers[np.random.randint(0, len(self.classifiers))]
+        self.current.fit(X, y)
+        
+    def predict(self, X):
+        return self.current.predict(X)
+
+
+            
 class Classifier(BaseAgent):
     
     def __init__(self, classifier, states = 3, window = 3, delay_process = 5, counter = None):

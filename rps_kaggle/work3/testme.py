@@ -6,14 +6,27 @@ Created on Dec. 16, 2020
 import numpy as np
 import time
 from xgboost import XGBClassifier
+from sklearn.ensemble import RandomForestClassifier
 import rps_kaggle.lib.rps_lib as rps
 import warnings
+from rps_kaggle.lib.rps_lib import StandardCounterMover
 
 warnings.filterwarnings('ignore')
 
 
 
-clr = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 3)
+
+
+
+clrs = rps.ClassifierHolder(
+        [
+            XGBClassifier(random_state = 47, n_estimators = 10, eval_metric = 'logloss'),
+            RandomForestClassifier(random_state = 23, n_estimators = 10)
+        ]
+    )
+
+clr = rps.Classifier(clrs, window = 3)
+clr.counter = StandardCounterMover(clr)
 
 
 
