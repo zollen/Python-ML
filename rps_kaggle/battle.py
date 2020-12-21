@@ -13,18 +13,7 @@ warnings.filterwarnings('ignore')
 
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 
-'''
-XGBoost
-6:  3.5455, 2.417, 2.365
-10: 2.8632, 3.989, 2.7547
-20: 2.5351, 2.472, 2.3583
-50: 3.0556, 2.588, 2.4592 
-'''
-'''
-ClassifierHolder vs XGBoost
-WON : 6
-LOST: 5
-'''        
+      
 #player1 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)
 clrs = rps.ClassifierHolder(
         [
@@ -34,10 +23,10 @@ clrs = rps.ClassifierHolder(
     )
 player1 = rps.Classifier(clrs, 
                          window = 6)
-player1.counter = rps.AgressiveCounterMover(player1)
+player1.counter = rps.StandardCounterMover(player1)
 player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                          window = 6)
-player2.counter = rps.AgressiveCounterMover(player2)
+
 
 #player2 = rps.NMarkov(3, 6)
 #player2 = rps.Randomer()
