@@ -169,7 +169,7 @@ class ClassifierHolder:
         return self.current.predict(X)
 
 
-            
+         
 class Classifier(BaseAgent):
     
     def __init__(self, classifier, states = 3, window = 3, delay_process = 5, counter = None):
@@ -190,9 +190,9 @@ class Classifier(BaseAgent):
         super().add(token)
         
         if len(self.opponent) >= self.window + 1: 
-            self.buildrow() 
+            self.buildtrain() 
     
-    def buildrow(self):
+    def buildtrain(self):
         self.data[self.row] = self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist()
         self.results = np.append(self.results, self.opponent[-1])    
         self.row = self.row + 1
@@ -209,20 +209,29 @@ class Classifier(BaseAgent):
         return self.submit(self.random())
     
     
+class MClassifier(Classifier):
     
+    def __init__(self, classifier, states = 3, window = 3, delay_process = 5, counter = None):
+        super().__init(classifier, states, window, delay_process, counter)
+        
+    def buildtrain(self):
+        pass
+    
+    def buildtest(self):
+        pass
+    
+        
+        
 class Randomer(BaseAgent):
     
     def __init__(self):
         super().__int__()
         pass
-    
-    def add(self, token):
-        pass
-    
+        
     def predict(self):
         return self.random()
         
-   
+
     
 '''
 High order Markov. It holds a sequence of transitions (as oppose to just a single transition 
@@ -295,13 +304,6 @@ class GMarkov(BaseAgent):
             seq.append((2 * index - 1) / (self.window * self.window))
             
         return seq
-    
-    def add(self, token):
-        self.opponent = np.append(self.opponent, token)
-        
-    def submit(self, token):
-        self.mines = np.append(self.mines, token)
-        return token
     
     def predict(self):
         
