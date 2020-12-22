@@ -22,7 +22,7 @@ clrs = rps.ClassifierHolder(
     )
 
 clr = rps.SClassifier(clrs, window = 9)
-clr.counter = StandardCounterMover(clr)
+clr.counter = rps.RandomCounterMover(clr)
 
 
 

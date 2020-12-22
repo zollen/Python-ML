@@ -14,10 +14,11 @@ warnings.filterwarnings('ignore')
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 '''
 WON : 4
-LOST: 2
+LOST: 4
 '''   
 player1 = rps.SClassifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                          window = 6)
+player1.counter = rps.RandomCounterMover(player1)
 player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                          window = 6)
 

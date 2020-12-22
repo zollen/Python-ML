@@ -28,8 +28,13 @@ class BaseAgent:
         self.opponent = np.append(self.opponent, token)
         
     def submit(self, token):
+        bak = token
+        
         if self.counter != None and len(self.opponent) > self.window + 2:
             token = self.counter.predict(token)
+        
+        if token is None:
+            token = bak
             
         self.mines = np.append(self.mines, token)
         
@@ -43,8 +48,7 @@ class BaseAgent:
 
 
 
-
-class AgressiveCounterMover:
+class BaseCounterMover:
     
     def __init__(self, agent, states = 3, interval = 5):
         self.states = states
@@ -66,6 +70,18 @@ class AgressiveCounterMover:
             return -1
         else:             
             return 1
+        
+    def random(self):
+        return np.random.randint(0, self.states)
+        
+    def predict(self, token):
+        return self.random()
+        
+    
+class AgressiveCounterMover(BaseCounterMover):
+    
+    def __init__(self, agent, states = 3, interval = 5):
+        super().__init__(agent, states, interval)
         
     def predict(self, token):
       
@@ -85,33 +101,18 @@ class AgressiveCounterMover:
 
         return token
     
-class RandomCounterMover:
+class RandomCounterMover(BaseCounterMover):
     
     def __init__(self, agent, states = 3, interval = 5):
-        self.states = states
-        self.interval = interval
-        self.agent = agent
-        self.wincounter = 0
-        self.evencounter = 0
-        
-    def won(self, index):
-        
-        res = self.agent.mines[index] - self.agent.opponent[index]  
-        if res == 0:
-            return 0
-        elif res == 1:
-            return 1
-        elif res == -1:
-            return -1
-        elif res == 2:
-            return -1
-        else:             
-            return 1
+        super().__init__(agent, states, interval)
         
     def predict(self, token):
       
         if self.wincounter <= 0 and self.won(-1) < 0 and self.won(-2) < 0:
             self.wincounter = np.random.randint(1, self.interval + 1)
+            
+        if self.evencounter <= 0 and self.won(-1) == 0 and self.won(-2) == 0:
+            self.evencounter = np.random.randint(1, self.interval + 1)
                 
         if self.wincounter > 0:
             self.wincounter = self.wincounter - 1
@@ -120,39 +121,32 @@ class RandomCounterMover:
             else:
                 choices = [0, 1, 2]
                 choices.remove(token)
-                return np.random.choice(choices)
+                return choices[np.random.randint(0, 2)]
+            
+        if self.evencounter > 0:
+            self.evencounter = self.evencounter - 1
+            if np.random.randint(0, 2) == 0:
+                return (token + 1) % self.states
+            else:
+                choices = [0, 1, 2]
+                choices.remove((token + 2) % self.states)
+                return choices[np.random.randint(0, 2)]
+            
 
         return token    
 
-class StandardCounterMover:
+class StandardCounterMover(BaseCounterMover):
     
     def __init__(self, agent, states = 3, interval = 5):
-        self.states = states
-        self.interval = interval
-        self.agent = agent
-        self.enable = 0
-        
-    def won(self, index):
-        
-        res = self.agent.mines[index] - self.agent.opponent[index]  
-        if res == 0:
-            return 0
-        elif res == 1:
-            return 1
-        elif res == -1:
-            return -1
-        elif res == 2:
-            return -1
-        else:             
-            return 1
+        super().__init__(agent, states, interval)
         
     def predict(self, token):
       
-        if self.enable <= 0 and self.won(-1) < 0 and self.won(-2) < 0:
-            self.enable = np.random.randint(1, self.interval + 1)
+        if self.wincounter <= 0 and self.won(-1) < 0 and self.won(-2) < 0:
+            self.wincounter = np.random.randint(1, self.interval + 1)
                 
-        if self.enable > 0:
-            self.enable = self.enable - 1
+        if self.wincounter > 0:
+            self.wincounter = self.wincounter - 1
             return (token + 2) % self.states
 
         return token

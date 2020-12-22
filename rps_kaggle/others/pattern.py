@@ -2,6 +2,7 @@
 Created on Dec. 19, 2020
 
 @author: zollen
+@url: https://www.kaggle.com/ilialar/multi-armed-bandit-vs-deterministic-agents
 '''
 import numpy as np
 
@@ -37,8 +38,6 @@ class pattern_matching(agent):
             return self.initial_step()
         
         next_step_count = np.zeros(3) + self.init_value
-        print(type(self.steps), self.steps)
-        print(type(self.step_type), self.step_type)
         pattern = [history[i][self.step_type] for i in range(- self.steps, 0)]
         
         for i in range(len(history) - self.steps):
@@ -75,9 +74,15 @@ def multi_armed_bandit_agent (observation, configuration):
     if observation.step == 0:
         pass
     else:
-        history = np.append(history, observation.lastOpponentAction)
+        history[-1]['competitorStep'] = int(observation.lastOpponentAction)
         
     step = agent.step(history)
+    
+    if step is None:
+        step = np.random.randint(3)
+    if history is None:
+        history = []
+    history.append({'step': step, 'competitorStep': None})
     
     return step
 
@@ -94,7 +99,7 @@ class Configuration:
 observation = Observation()
 configuration = Configuration()
 
-for rnd in range(0, 20):
+for rnd in range(0, 100):
     observation.step = rnd
     observation.lastOpponentAction = np.random.randint(0, 3)  
-    print("MY PREDICTED MOVE: ", multi_armed_bandit_agent(observation, configuration))
+    print("Round [%d] MY PREDICTED MOVE: [%d]" %(rnd + 1, multi_armed_bandit_agent(observation, configuration)))
