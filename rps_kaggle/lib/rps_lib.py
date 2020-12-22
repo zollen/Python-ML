@@ -229,7 +229,7 @@ class MClassifier(Classifier):
         for ch in buf:
             arr.extend(manifest[ch])
     
-        return np.array(arr)
+        return np.array(arr).astype('int64')
         
 
 
@@ -262,7 +262,7 @@ class SClassifier(Classifier):
         for index in range(self.states + 1, len(buf)):
             arr.extend(self.MANIFEST[encode(buf[index - 1], buf[index])])
 
-        return np.array(arr)
+        return np.array(arr).astype('int64')
 
 
     
