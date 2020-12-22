@@ -42,6 +42,8 @@ class BaseAgent:
         pass
 
 
+
+
 class AgressiveCounterMover:
     
     def __init__(self, agent, states = 3, interval = 5):
@@ -154,6 +156,8 @@ class StandardCounterMover:
             return (token + 2) % self.states
 
         return token
+
+
     
 class ClassifierHolder:
     
@@ -198,10 +202,10 @@ class Classifier(BaseAgent):
         self.row = self.row + 1
         
     def buildtest(self):
-        return self.convert(np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1))
+        return self.convert(np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist())).reshape(1, -1)
   
     def predict(self):
-        
+                
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
             return self.submit((int(self.classifier.predict(self.buildtest()).item()) + 1) % self.states)
@@ -211,14 +215,23 @@ class Classifier(BaseAgent):
     def convert(self, buf):
         return buf
     
+
     
 class MClassifier(Classifier):
     
     def __init__(self, classifier, states = 3, window = 3, delay_process = 5, counter = None):
         super().__init__(classifier, states, window, delay_process, counter)
+        self.data = np.zeros(shape = (1100, self.window * 2 * 2))
         
-    def convert(self, buf):
-        return None
+    def convert(self, buf):  
+        arr = []
+        manifest = [[0, 0], [0, 1], [1, 0]]
+        for ch in buf:
+            arr.extend(manifest[int(ch)])
+    
+        return np.array(arr)
+        
+        
         
         
 class Randomer(BaseAgent):

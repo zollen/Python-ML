@@ -14,10 +14,6 @@ from rps_kaggle.lib.rps_lib import StandardCounterMover
 warnings.filterwarnings('ignore')
 
 
-
-
-
-
 clrs = rps.ClassifierHolder(
         [
             XGBClassifier(random_state = 47, n_estimators = 10, eval_metric = 'logloss'),
@@ -25,7 +21,7 @@ clrs = rps.ClassifierHolder(
         ]
     )
 
-clr = rps.Classifier(clrs, window = 3)
+clr = rps.MClassifier(clrs, window = 10)
 clr.counter = StandardCounterMover(clr)
 
 
