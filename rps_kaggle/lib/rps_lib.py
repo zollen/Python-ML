@@ -193,12 +193,12 @@ class Classifier(BaseAgent):
             self.buildtrain() 
     
     def buildtrain(self):
-        self.data[self.row] = self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist()
+        self.data[self.row] = self.convert(self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist())
         self.results = np.append(self.results, self.opponent[-1])    
         self.row = self.row + 1
         
     def buildtest(self):
-        return np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)
+        return self.convert(np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1))
   
     def predict(self):
         
@@ -208,21 +208,17 @@ class Classifier(BaseAgent):
             
         return self.submit(self.random())
     
+    def convert(self, buf):
+        return buf
+    
     
 class MClassifier(Classifier):
     
     def __init__(self, classifier, states = 3, window = 3, delay_process = 5, counter = None):
         super().__init__(classifier, states, window, delay_process, counter)
         
-    def buildtrain(self):
-        self.data[self.row] = self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist()
-        self.results = np.append(self.results, self.opponent[-1])    
-        self.row = self.row + 1
-    
-    def buildtest(self):
-        return np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)
-  
-    
+    def convert(self, buf):
+        return None
         
         
 class Randomer(BaseAgent):
