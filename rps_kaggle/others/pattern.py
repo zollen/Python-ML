@@ -6,6 +6,7 @@ Created on Dec. 19, 2020
 import numpy as np
 
 class agent():
+    
     def initial_step(self):
         return np.random.randint(3)
     
@@ -19,6 +20,7 @@ class agent():
             return int(self.history_step(history))
         
 class pattern_matching(agent):
+    
     def __init__(self, steps = 3, deterministic = False, counter_strategy = False, init_value = 0.1, decay = 1):
         self.deterministic = deterministic
         self.counter_strategy = counter_strategy
@@ -57,3 +59,40 @@ class pattern_matching(agent):
         else:
             # we just predict competitors step and beat it
             return (step + 1) % 3
+        
+
+        
+history = []
+agent = pattern_matching(3, True, False, decay = 1.001)
+    
+def multi_armed_bandit_agent (observation, configuration):
+    
+    global history
+        
+    # load history
+    if observation.step == 0:
+        pass
+    else:
+        history = np.append(history, observation.lastOpponentAction)
+        
+    step = agent.step(history)
+    
+    return step
+
+
+class Observation:
+    def __init__(self):
+        self.step = 0
+        self.lastOpponentAction = 0
+        
+class Configuration:
+    def __init__(self):
+        self.signs = 3
+        
+observation = Observation()
+configuration = Configuration()
+
+for rnd in range(0, 20):
+    observation.step = rnd
+    observation.lastOpponentAction = np.random.randint(0, 3)  
+    print("MY PREDICTED MOVE: ", multi_armed_bandit_agent(observation, configuration))

@@ -12,20 +12,14 @@ import warnings
 warnings.filterwarnings('ignore')
 
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
-
-      
-#player1 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 6)
-clrs = rps.ClassifierHolder(
-        [
-            XGBClassifier(random_state = 47, n_estimators = 10, eval_metric = 'logloss'),
-            RandomForestClassifier(random_state = 23, n_estimators = 10)
-        ]
-    )
-player1 = rps.Classifier(clrs, 
-                         window = 6)
-player1.counter = rps.StandardCounterMover(player1)
+'''
+WON : 5
+LOST: 5
+'''   
+player1 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
+                         window = 11)
 player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
-                         window = 6)
+                         window = 10)
 
 
 #player2 = rps.NMarkov(3, 6)

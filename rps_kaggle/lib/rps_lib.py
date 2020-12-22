@@ -196,13 +196,15 @@ class Classifier(BaseAgent):
         self.data[self.row] = self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist()
         self.results = np.append(self.results, self.opponent[-1])    
         self.row = self.row + 1
+        
+    def buildtest(self):
+        return np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)
   
     def predict(self):
         
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
-            test = np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist()).reshape(1, -1)
-            return self.submit((int(self.classifier.predict(test).item()) + 1) % self.states)
+            return self.submit((int(self.classifier.predict(self.buildtest()).item()) + 1) % self.states)
             
         return self.submit(self.random())
     
