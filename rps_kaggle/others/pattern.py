@@ -37,6 +37,8 @@ class pattern_matching(agent):
             return self.initial_step()
         
         next_step_count = np.zeros(3) + self.init_value
+        print(type(self.steps), self.steps)
+        print(type(self.step_type), self.step_type)
         pattern = [history[i][self.step_type] for i in range(- self.steps, 0)]
         
         for i in range(len(history) - self.steps):

@@ -10,9 +10,9 @@ class BaseAgent:
     
     def __init__(self, states = 3, window = 3, counter = None):
         np.random.seed(int(round(time.time())))
-        self.mines = np.array([])
-        self.opponent = np.array([])
-        self.results = np.array([])
+        self.mines = np.array([]).astype('int64')
+        self.opponent = np.array([]).astype('int64')
+        self.results = np.array([]).astype('int64')
         self.states = states
         self.window = window
         self.counter = counter
@@ -181,7 +181,7 @@ class Classifier(BaseAgent):
         self.classifier = classifier
         self.delayProcess = delay_process
         self.row = 0
-        self.data = np.zeros(shape = (1100, self.window * 2))
+        self.data = np.zeros(shape = (1100, self.window * 2)).astype('int64')
         
     def __str__(self):
         if self.counter == None:
@@ -221,18 +221,51 @@ class MClassifier(Classifier):
     
     def __init__(self, classifier, states = 3, window = 3, delay_process = 5, counter = None):
         super().__init__(classifier, states, window, delay_process, counter)
-        self.data = np.zeros(shape = (1100, self.window * 2 * 2))
+        self.data = np.zeros(shape = (1100, self.window * 2 * 2)).astype('int64')
         
     def convert(self, buf):  
         arr = []
         manifest = [[0, 0], [0, 1], [1, 0]]
         for ch in buf:
-            arr.extend(manifest[int(ch)])
+            arr.extend(manifest[ch])
     
         return np.array(arr)
         
+
+
+
+class SClassifier(Classifier):
+    
+    MANIFEST = [ [0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 1],
+                 [0, 0, 0, 0, 0, 0, 1, 0],
+                 [0, 0, 0, 0, 0, 1, 0, 0],
+                 [0, 0, 0, 0, 1, 0, 0, 0],
+                 [0, 0, 0, 1, 0, 0, 0, 0],
+                 [0, 0, 1, 0, 0, 0, 0, 0],
+                 [0, 1, 0, 0, 0, 0, 0, 0],
+                 [1, 0, 0, 0, 0, 0, 0, 0]
+                ]
+    
+    def __init__(self, classifier, states = 3, window = 3, delay_process = 5, counter = None):
+        super().__init__(classifier, states, window, delay_process, counter)
+        self.data = np.zeros(shape = (1100, (self.window - 1) * 2 * 8)).astype('int64')
         
+    def convert(self, buf):
+        def encode(last, curr):
+            return last * self.states + curr
+      
+        arr = []
+        for index in range(1, self.states):
+            arr.extend(self.MANIFEST[encode(buf[index - 1], buf[index])])
         
+        for index in range(self.states + 1, len(buf)):
+            arr.extend(self.MANIFEST[encode(buf[index - 1], buf[index])])
+
+        return np.array(arr)
+
+
+    
         
 class Randomer(BaseAgent):
     

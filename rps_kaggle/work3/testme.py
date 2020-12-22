@@ -21,7 +21,7 @@ clrs = rps.ClassifierHolder(
         ]
     )
 
-clr = rps.MClassifier(clrs, window = 10)
+clr = rps.SClassifier(clrs, window = 10)
 clr.counter = StandardCounterMover(clr)
 
 
