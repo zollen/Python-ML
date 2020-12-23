@@ -37,6 +37,9 @@ class pattern_matching(agent):
         if len(history) < self.steps + 1:
             return self.initial_step()
 
+        '''
+        initialize probablitiy array of 0, 1, 2
+        '''
         next_step_count = np.zeros(3) + self.init_value
         
         
@@ -54,7 +57,8 @@ class pattern_matching(agent):
             current_pattern = [history[j][self.step_type] for j in range(i, i + self.steps)]
             if np.sum([pattern[j] == current_pattern[j] for j in range(self.steps)]) == self.steps:
                 '''
-                Increase the odd of the predicted move
+                If the current pattern matches with the last three opponent moves, 
+                then increase the odd of the predicted move
                 '''
                 next_step_count[history[i + self.steps][self.step_type]] += 1
 
