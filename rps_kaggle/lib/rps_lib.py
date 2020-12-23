@@ -31,7 +31,7 @@ class BaseAgent:
         bak = token
         
         if self.counter != None and len(self.opponent) > self.window + 2:
-            token = self.counter.predict(token)
+            token = self.counter.decide(token)
         
         if token is None:
             token = bak
@@ -43,7 +43,7 @@ class BaseAgent:
     def random(self):
         return np.random.randint(0, self.states)
         
-    def predict(self):
+    def decide(self):
         pass
 
 
@@ -74,7 +74,7 @@ class BaseCounterMover:
     def random(self):
         return np.random.randint(0, self.states)
         
-    def predict(self, token):
+    def decide(self, token):
         return self.random()
         
     
@@ -83,7 +83,7 @@ class AgressiveCounterMover(BaseCounterMover):
     def __init__(self, agent, states = 3, interval = 5):
         super().__init__(agent, states, interval)
         
-    def predict(self, token):
+    def decide(self, token):
       
         if self.wincounter <= 0 and self.won(-1) < 0 and self.won(-2) < 0:
             self.wincounter = np.random.randint(1, self.interval + 1)
@@ -106,7 +106,7 @@ class RandomCounterMover(BaseCounterMover):
     def __init__(self, agent, states = 3, interval = 5):
         super().__init__(agent, states, interval)
         
-    def predict(self, token):
+    def decide(self, token):
       
         if self.wincounter <= 0 and self.won(-1) < 0 and self.won(-2) < 0:
             self.wincounter = np.random.randint(1, self.interval + 1)
@@ -140,7 +140,7 @@ class StandardCounterMover(BaseCounterMover):
     def __init__(self, agent, states = 3, interval = 5):
         super().__init__(agent, states, interval)
         
-    def predict(self, token):
+    def decide(self, token):
       
         if self.wincounter <= 0 and self.won(-1) < 0 and self.won(-2) < 0:
             self.wincounter = np.random.randint(1, self.interval + 1)
@@ -188,21 +188,21 @@ class Classifier(BaseAgent):
         super().add(token)
         
         if len(self.opponent) >= self.window + 1: 
-            self.buildtrain() 
+            self.train() 
     
-    def buildtrain(self):
+    def train(self):
         self.data[self.row] = self.convert(self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist())
         self.results = np.append(self.results, self.opponent[-1])    
         self.row = self.row + 1
         
-    def buildtest(self):
+    def test(self):
         return self.convert(np.array(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist())).reshape(1, -1)
   
-    def predict(self):
+    def decide(self):
                 
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
-            return self.submit((int(self.classifier.predict(self.buildtest()).item()) + 1) % self.states)
+            return self.submit((int(self.classifier.predict(self.test()).item()) + 1) % self.states)
             
         return self.submit(self.random())
     
@@ -267,7 +267,7 @@ class Randomer(BaseAgent):
         super().__int__()
         pass
         
-    def predict(self):
+    def decide(self):
         return self.random()
         
 
@@ -293,7 +293,7 @@ class NMarkov(BaseAgent):
 
         return int(total.item())
         
-    def predict(self):
+    def decide(self):
            
         totalMoves = len(self.opponent)
         
@@ -344,7 +344,7 @@ class GMarkov(BaseAgent):
             
         return seq
     
-    def predict(self):
+    def decide(self):
         
         totalMoves = len(self.opponent)
         

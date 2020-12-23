@@ -36,9 +36,15 @@ class pattern_matching(agent):
     def history_step(self, history):
         if len(history) < self.steps + 1:
             return self.initial_step()
-        
+
         next_step_count = np.zeros(3) + self.init_value
+        
+        
+        '''
+        return the last three opponent moves
+        '''
         pattern = [history[i][self.step_type] for i in range(- self.steps, 0)]
+
         
         for i in range(len(history) - self.steps):
             next_step_count = (next_step_count - self.init_value)/self.decay + self.init_value

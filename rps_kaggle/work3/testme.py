@@ -34,7 +34,7 @@ def classifier_move(observation, configuration):
     if observation.step > 0:
         clr.add(observation.lastOpponentAction)
         
-    return clr.predict()
+    return clr.decide()
 
 
 class observationCls:

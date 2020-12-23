@@ -13,8 +13,8 @@ warnings.filterwarnings('ignore')
 
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 '''
-WON : 4
-LOST: 4
+WON : 0
+LOST: 0
 '''   
 player1 = rps.SClassifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                          window = 6)
@@ -32,8 +32,8 @@ win2 = 0
 
 for rnd in range(0, 1000):
 
-    move1 = player1.predict()
-    move2 = player2.predict()
+    move1 = player1.decide()
+    move2 = player2.decide()
     
     player1.add(move2)
     player2.add(move1)
