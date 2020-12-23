@@ -16,7 +16,7 @@ SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 '''
 KNeighborsClassifier(), window = 10
 '''   
-player1 = rps.Army()
+player1 = rps.Agency()
 player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                          window = 10)
 

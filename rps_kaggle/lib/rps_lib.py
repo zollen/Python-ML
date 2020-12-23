@@ -198,9 +198,9 @@ class Classifier(BaseAgent):
         super().add(token)
         
         if len(self.opponent) >= self.window + 1: 
-            self.train() 
+            self.prepare() 
     
-    def train(self):
+    def prepare(self):
         self.data[self.row] = self.convert(self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist())
         self.results = np.append(self.results, self.opponent[-1])    
         self.row = self.row + 1
@@ -462,7 +462,7 @@ agent12.counter = RandomCounterMover(agent12)
 
 
 
-class Army:
+class Agency:
     
     def __init__(self, cycle = 3):
         self.cycle = cycle
