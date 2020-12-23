@@ -6,6 +6,7 @@ Created on Dec. 16, 2020
 import numpy as np
 import time
 from xgboost import XGBClassifier
+from sklearn.ensemble import AdaBoostClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 import rps_kaggle.lib.rps_lib as rps
@@ -16,8 +17,8 @@ warnings.filterwarnings('ignore')
 
 
 
-clr = rps.Classifier(SVC(kernel='rbf'), window = 10)
-clr.counter = rps.RandomCounterMover(clr)
+clr = rps.Classifier(AdaBoostClassifier(n_estimators = 10), window = 10)
+#clr.counter = rps.RandomCounterMover(clr)
 
 
 

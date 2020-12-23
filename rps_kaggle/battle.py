@@ -5,7 +5,8 @@ Created on Dec. 16, 2020
 '''
 
 from xgboost import XGBClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 import rps_kaggle.lib.rps_lib as rps
 import warnings
 
@@ -13,16 +14,14 @@ warnings.filterwarnings('ignore')
 
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 '''
-WON : 0
-LOST: 0
+KNeighborsClassifier(), window = 10
 '''   
-player1 = rps.SClassifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
-                         window = 6)
-player1.counter = rps.RandomCounterMover(player1)
+player1 = rps.Army()
 player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
-                         window = 6)
+                         window = 10)
 
 
+#player2 = rps.MirrorSelfDecider(ahead = 2)
 #player2 = rps.NMarkov(3, 6)
 #player2 = rps.Randomer()
 
