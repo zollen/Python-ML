@@ -48,9 +48,16 @@ class pattern_matching(agent):
         
         for i in range(len(history) - self.steps):
             next_step_count = (next_step_count - self.init_value)/self.decay + self.init_value
+            '''
+            Get three opponent moves from the the beginning to (len(history) - self.steps)
+            '''
             current_pattern = [history[j][self.step_type] for j in range(i, i + self.steps)]
             if np.sum([pattern[j] == current_pattern[j] for j in range(self.steps)]) == self.steps:
+                '''
+                Increase the odd of the predicted move
+                '''
                 next_step_count[history[i + self.steps][self.step_type]] += 1
+
         
         if next_step_count.max() == self.init_value:
             return self.initial_step()
