@@ -3,6 +3,9 @@ Created on Dec. 21, 2020
 
 @author: zollen
 '''
+import numpy as np
+
+
 max_limit = 23  # can be modified
 add_rotations = True
 
@@ -48,6 +51,11 @@ def myagent(observation, configuration):
     input = "RPS"[observation.lastOpponentAction]
 
     # threat of opponent
+    '''
+    outcome = (we won) - (we lost)
+    outcome = 1 if we won
+    outcome = -1 if we lost
+    '''
     outcome = (beat[input]==output) - (input==beat[output])
     threat = 0.9*threat - 0.1*outcome
     
@@ -56,8 +64,22 @@ def myagent(observation, configuration):
         pp = p[i]
         bpp = beat[pp]
         bbpp = beat[bpp]
+        
+        '''
+        if enemy move = predefined move then +1
+        if enemy move = predefined counter move then -1
+        if enemy move = neither then 0
+        '''
         pScore[0][i] = 0.9*pScore[0][i] + 0.1*((input==pp)-(input==bbpp))
+        
+        '''
+        if my move = predefined move then +1
+        if my move = predefined counter move then -1
+        if my move = neither then 0
+        '''
         pScore[1][i] = 0.9*pScore[1][i] + 0.1*((output==pp)-(output==bbpp))
+        
+        
         pScore[2][i] = 0.8*pScore[2][i] + 0.3*((input==pp)-(input==bbpp)) + \
                         0.1*(length % 3 - 1)
         pScore[3][i] = 0.8*pScore[3][i] + 0.3*((output==pp)-(output==bbpp)) + \
@@ -111,3 +133,22 @@ def myagent(observation, configuration):
         output = beat[beat[output]]
 
     return {'R':0, 'P':1, 'S':2}[output]
+
+
+
+class Observation:
+    def __init__(self):
+        self.step = 0
+        self.lastOpponentAction = 0
+        
+class Configuration:
+    def __init__(self):
+        self.signs = 3
+        
+observation = Observation()
+configuration = Configuration()
+
+for rnd in range(0, 10):
+    observation.step = rnd
+    observation.lastOpponentAction = np.random.randint(0, 3)  
+    print("Round [%d] MY PREDICTED MOVE: [%d]" %(rnd + 1, myagent(observation, configuration)))
