@@ -430,75 +430,21 @@ class GMarkov(BaseAgent):
     
 
 
-from xgboost import XGBClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
-
-agent0 = Randomer()
-agent1 = MirrorOpponentDecider(ahead = 0)
-agent2 = MirrorOpponentDecider(ahead = 1)
-agent3 = MirrorOpponentDecider(ahead = 2)
-agent4 = MirrorSelfDecider(ahead = 0)
-agent5 = MirrorSelfDecider(ahead = 1)
-agent6 = MirrorSelfDecider(ahead = 2)
-agent7 = Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 9)
-agent8 = Classifier(ClassifierHolder([
-                            XGBClassifier(random_state = 47, n_estimators = 10, eval_metric = 'logloss'),
-                            RandomForestClassifier(random_state = 23, n_estimators = 10)
-                        ]), window = 10)
-#agent8.counter = StandardCounterMover(agent8)
-agent9 = Classifier(RandomForestClassifier(random_state = 29, n_estimators = 10), window = 10)
-agent10 = Classifier(SVC(kernel='rbf', random_state = 31), window = 10)
-#agent10.counter = AgressiveCounterMover(agent10)
-agent11 = Classifier(KNeighborsClassifier(), window = 10)
-#agent11.counter = StandardCounterMover(agent11)
-agent12 = Classifier(AdaBoostClassifier(random_state = 37), window = 10)
-agent12.counter = RandomCounterMover(agent12)
-
-
-
-
 
 
 class Agency:
     
-    def __init__(self, cycle = 3):
-        self.cycle = cycle
-        self.cyclecounter = 0
-        self.agent = None
-        self.agents = [
-              agent0, agent1, agent2, agent3, 
-              agent4, agent5, agent6, agent7, 
-              agent8, agent9, agent10, agent11,
-              agent12           
-            ]
+    def __init__(self, manager):
+        self.manager = manager
     
     def add(self, token):
- 
-        for agent in self.agents:
-            agent.add(token)
+        self.manager.add(token)
     
     def submit(self, token):
-        
-        for agent in self.agents:
-            agent.mines = np.append(agent.mines, token)
-            
-        return token
+        return self.manager.submit(token)
     
     def __str__(self):
-        if self.agent != None:
-            return "Army(" + self.agent.__str__() + ")"
-        
-        return "Army"
+        return self.manager.__str__()
     
-    def decide(self):
-        
-        if self.cyclecounter <= 0 or self.agent == None:
-            self.agent = self.agents[np.random.randint(0, len(self.agents))]
-            self.cyclecounter = self.cycle
-            
-        self.cyclecounter = self.cyclecounter - 1
-            
-        return self.submit(self.agent.decide())
+    def decide(self):    
+        return self.manager.decide()
