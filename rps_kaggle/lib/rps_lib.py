@@ -263,13 +263,24 @@ class SClassifier(Classifier):
         
 class Randomer(BaseAgent):
     
-    def __init__(self):
-        super().__int__()
-        pass
+    def __init__(self,states = 3, window = 0, counter = None):
+        super().__int__(states, window, counter)
         
     def decide(self):
-        return self.random()
+        return self.submit(self.random())
+
+
+ 
+class MirrorOpponentDecider(BaseAgent):
+    
+    def __init__(self,states = 3, window = 0, counter = None, ahead = 0):
+        super().__int__(states, window, counter)
+        self.ahead = ahead
         
+    def decide(self):
+        return self.submit((self.opponent[-1] + self.ahead) % self.states)
+    
+
 
     
 '''

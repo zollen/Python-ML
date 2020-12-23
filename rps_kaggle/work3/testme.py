@@ -6,7 +6,8 @@ Created on Dec. 16, 2020
 import numpy as np
 import time
 from xgboost import XGBClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 import rps_kaggle.lib.rps_lib as rps
 import warnings
 from rps_kaggle.lib.rps_lib import StandardCounterMover
@@ -14,14 +15,8 @@ from rps_kaggle.lib.rps_lib import StandardCounterMover
 warnings.filterwarnings('ignore')
 
 
-clrs = rps.ClassifierHolder(
-        [
-            XGBClassifier(random_state = 47, n_estimators = 10, eval_metric = 'logloss'),
-            RandomForestClassifier(random_state = 23, n_estimators = 10)
-        ]
-    )
 
-clr = rps.SClassifier(clrs, window = 9)
+clr = rps.Classifier(SVC(kernel='rbf'), window = 10)
 clr.counter = rps.RandomCounterMover(clr)
 
 
