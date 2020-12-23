@@ -264,7 +264,7 @@ class SClassifier(Classifier):
 class Randomer(BaseAgent):
     
     def __init__(self, states = 3, window = 0, counter = None):
-        super().__int__(states, window, counter)
+        super().__init__(states, window, counter)
         
     def decide(self):
         return self.submit(self.random())
@@ -274,10 +274,14 @@ class Randomer(BaseAgent):
 class MirrorOpponentDecider(BaseAgent):
     
     def __init__(self, states = 3, window = 0, counter = None, ahead = 0):
-        super().__int__(states, window, counter)
+        super().__init__(states, window, counter)
         self.ahead = ahead
         
     def decide(self):
+        
+        if len(self.opponent) <= 0:
+            return self.submit(self.random())
+            
         return self.submit((self.opponent[-1] + self.ahead) % self.states)
     
 
@@ -403,3 +407,17 @@ class GMarkov(BaseAgent):
         return self.submit((best_move + 1) % self.states)
     
 
+
+class Army:
+    
+    def __init__(self):
+        pass
+    
+    def add(self, token):
+        pass
+    
+    def submit(self, token):
+        pass
+    
+    def decide(self):
+        pass
