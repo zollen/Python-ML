@@ -291,7 +291,7 @@ class OClassifier(Classifier):
                 
         arr = []
         for index in range(self.window):
-            arr.append(self.won(buf[index], buf[index + self.states]))
+            arr.append(self.won(buf[index], buf[index + self.window]))
         
         return np.array(buf + arr).astype('int64')
     

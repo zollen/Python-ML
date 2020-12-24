@@ -17,7 +17,7 @@ from rps_kaggle.lib.rps_lib import StandardCounterMover
 warnings.filterwarnings('ignore')
 
 
-clr = rps.OClassifier(AdaBoostClassifier(n_estimators = 10), window = 4)
+clr = rps.OClassifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 10)
 #clr.counter = rps.RandomCounterMover(clr)
 
 
