@@ -5,6 +5,7 @@ Created on Dec. 16, 2020
 '''
 
 from xgboost import XGBClassifier
+from sklearn.ensemble import AdaBoostClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 import rps_kaggle.lib.rps_lib as rps
@@ -14,9 +15,11 @@ warnings.filterwarnings('ignore')
 
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 '''
-KNeighborsClassifier(), window = 10
+WON : 2 
+LOST: 0
 '''   
-player1 = rps.Agency()
+player1 = rps.OClassifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
+                          window = 10)
 player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                          window = 10)
 

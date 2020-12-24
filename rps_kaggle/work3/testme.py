@@ -8,6 +8,7 @@ import time
 from xgboost import XGBClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 import rps_kaggle.lib.rps_lib as rps
 import warnings
@@ -16,8 +17,7 @@ from rps_kaggle.lib.rps_lib import StandardCounterMover
 warnings.filterwarnings('ignore')
 
 
-
-clr = rps.Classifier(AdaBoostClassifier(n_estimators = 10), window = 10)
+clr = rps.OClassifier(AdaBoostClassifier(n_estimators = 10), window = 4)
 #clr.counter = rps.RandomCounterMover(clr)
 
 
