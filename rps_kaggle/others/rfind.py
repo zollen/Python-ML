@@ -167,8 +167,7 @@ class HighPerformer:
     def __str__(self):
         return "HighPerformer"
     
-    def add(self, rnd, move):
-        observation.step = rnd
+    def add(self, move):
         observation.lastOpponentAction = move 
       
     def decide(self, observation, configuration):
@@ -186,14 +185,15 @@ configuration = Configuration()
 
 for rnd in range(0, 1000):
     
+    observation.step = rnd
+    
     t_start = time.perf_counter_ns()
     move1 = player1.decide(observation, configuration)
     t_end = time.perf_counter_ns()
     
-    observation.step = rnd
     move2 = player2.decide()
     
-    player1.add(rnd, move2)
+    player1.add(move2)
     player2.add(move1)
     
     res = move1 - move2
