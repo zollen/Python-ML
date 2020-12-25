@@ -191,8 +191,8 @@ class Classifier(BaseAgent):
         self.data = np.zeros(shape = (1100, self.window * 2)).astype('int64')
         
     def __str__(self):
+        clsName = self.classifier.__class__.__name__
         if self.counter == None:
-            clsName = self.classifier.__class__.__name__
             if isinstance(self.classifier, ClassifierHolder): 
                 clsName = self.classifier.__str__()
             name = self.__class__.__name__ + "(" + clsName+ ")"
