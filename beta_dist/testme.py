@@ -14,7 +14,8 @@ It return a random number based on the probabilty distrution of (a)lpha and (b)e
 
 The probabilty distrubtion would be concentrated mostly on alpha / (alpha + beta) 
 
-For Example: If you know the average probabilty of outcomes is about 0.27
+For Example: If you know from experience an average probabilty of outcomes is 
+    about 0.27 (prior expectation)
 One might use alpha = 81 and beta = 270
 so the *mean* is 81 / (81 + 219) = 0.27, 
 Then majority of the probilities will be centered around 0.2 and 0.35
