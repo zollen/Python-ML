@@ -465,21 +465,3 @@ class GMarkov(BaseAgent):
     
 
 
-
-
-class Agency:
-    
-    def __init__(self, manager):
-        self.manager = manager
-    
-    def add(self, token):
-        self.manager.add(token)
-    
-    def submit(self, token):
-        return self.manager.submit(token)
-    
-    def __str__(self):
-        return self.manager.__str__()
-    
-    def decide(self):    
-        return self.manager.decide()

@@ -23,10 +23,12 @@ warnings.filterwarnings('ignore')
 
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 
-forest = rps.OClassifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 10)
-#ada.counter = StandardCounterMover(ada)
-xgb = rps.OClassifier(XGBClassifier(random_state = 23, n_estimators = 10, eval_metric = 'logloss'), window = 10)
-#xgb.counter = StandardCounterMover(xgb)
+forest1 = rps.Classifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 10)
+xgb1 = rps.Classifier(XGBClassifier(random_state = 26, n_estimators = 10, eval_metric = 'logloss'), window = 10)
+forest2 = rps.Classifier(RandomForestClassifier(random_state = 37, n_estimators = 10), window = 10, beat = 2)
+xgb2 = rps.Classifier(XGBClassifier(random_state = 43, n_estimators = 10, eval_metric = 'logloss'), window = 10, beat = 2)
+forest3 = rps.Classifier(RandomForestClassifier(random_state = 51, n_estimators = 10), window = 10, beat = 0)
+xgb3 = rps.Classifier(XGBClassifier(random_state = 53, n_estimators = 10, eval_metric = 'logloss'), window = 10, beat = 0)
 
 agents = {
     rps.Randomer(): [1, 1],
@@ -36,11 +38,15 @@ agents = {
     rps.MirrorSelfDecider(ahead = 0): [1, 1],
     rps.MirrorSelfDecider(ahead = 1): [1, 1],
     rps.MirrorSelfDecider(ahead = 2): [1, 1],
-    forest: [1, 1],
-    xgb: [1, 1]
+    forest1: [1, 1],
+    xgb1: [1, 1],
+    forest2: [1, 1],
+    xgb2: [1, 1],
+    forest3: [1, 1],
+    xgb3: [1, 1]
     }
 
-class Agency:
+class BetaAgency:
     
     def __init__(self, agents):
         self.agents = agents
@@ -126,7 +132,7 @@ OClassifier(XGBClassifier) window = 14
 WIN : 0
 LOST: 0
 '''
-player1 = Agency(agents)
+player1 = BetaAgency(agents)
 player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                          window = 10)
 
