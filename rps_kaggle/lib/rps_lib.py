@@ -169,6 +169,9 @@ class ClassifierHolder:
         self.classifiers = classifiers
         self.current = None
         
+    def __str__(self):
+        return "[" + self.current.__class__.__name__ + "]"
+        
     def fit(self, X, y):
         self.current = self.classifiers[np.random.randint(0, len(self.classifiers))]
         self.current.fit(X, y)
@@ -189,9 +192,12 @@ class Classifier(BaseAgent):
         
     def __str__(self):
         if self.counter == None:
-            name = self.__class__.__name__ + "(" + self.classifier.__class__.__name__ + ")"
+            clsName = self.classifier.__class__.__name__
+            if isinstance(self.classifier, ClassifierHolder): 
+                clsName = self.classifier.__str__()
+            name = self.__class__.__name__ + "(" + clsName+ ")"
         else:
-            name = self.__class__.__name__ + "(" + self.classifier.__class__.__name__ + "(" + self.counter.__class__.__name__ + "))"
+            name = self.__class__.__name__ + "(" + clsName + "(" + self.counter.__class__.__name__ + "))"
         return name
    
     def add(self, token):
