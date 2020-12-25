@@ -19,4 +19,4 @@ Then majority of the probilities will be centered around 0.2 and 0.35
 
 '''
 for _ in range(0, 100):
-    print(np.random.beta(50, 50))
+    print(np.random.beta(81, 270))
