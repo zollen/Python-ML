@@ -130,9 +130,9 @@ class BaseAgent:
         
     def __str__(self):
         if self.counter == None:
-            name = self.__class__.__name__
+            name = self.__class__.__name__ + "{" + str(self.beat) + "}"
         else:
-            name = self.__class__.__name__ + "(" + self.counter.__class__.__name__ + ")"
+            name = self.__class__.__name__ + "(" + self.counter.__class__.__name__ + "){" + str(self.beat) + "}"
         return name
         
     def add(self, token):
