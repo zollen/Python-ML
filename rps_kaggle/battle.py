@@ -31,19 +31,19 @@ forest3 = rps.Classifier(RandomForestClassifier(random_state = 51, n_estimators 
 xgb3 = rps.Classifier(XGBClassifier(random_state = 53, n_estimators = 10, eval_metric = 'logloss'), window = 10, beat = 0)
 
 agents = [
-            [ rps.Randomer(), [1, 1]],
-            [ rps.MirrorOpponentDecider(beat = 0), [1, 1]],
-            [ rps.MirrorOpponentDecider(beat = 1), [1, 1]],
-            [ rps.MirrorOpponentDecider(beat = 2), [1, 1]],
-            [ rps.MirrorSelfDecider(beat = 0), [1, 1]],
-            [ rps.MirrorSelfDecider(beat = 1), [1, 1]],
-            [ rps.MirrorSelfDecider(beat = 2), [1, 1]],
-            [ forest1, [1, 1]],
-            [ xgb1, [1, 1]],
-            [ forest2, [1, 1]],
-            [ xgb2, [1, 1]],
-            [ forest3, [1, 1]],
-            [ xgb3, [1, 1]]
+            [ rps.Randomer(), [1, 1] ],
+            [ rps.MirrorOpponentDecider(beat = 0), [1, 1] ],
+            [ rps.MirrorOpponentDecider(beat = 1), [1, 1] ],
+            [ rps.MirrorOpponentDecider(beat = 2), [1, 1] ],
+            [ rps.MirrorSelfDecider(beat = 0), [1, 1] ],
+            [ rps.MirrorSelfDecider(beat = 1), [1, 1] ],
+            [ rps.MirrorSelfDecider(beat = 2), [1, 1] ],
+            [ forest1, [1, 1] ],
+            [ xgb1, [1, 1] ],
+            [ forest2, [1, 1] ],
+            [ xgb2, [1, 1] ],
+            [ forest3, [1, 1] ],
+            [ xgb3, [1, 1] ]
         ]
 
 class BetaAgency:
