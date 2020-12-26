@@ -158,7 +158,7 @@ class BaseAgent:
     def random(self):
         return np.random.randint(0, self.states)
         
-    def decide(self):
+    def decide(self, submit = True):
         pass
 
 
@@ -216,13 +216,20 @@ class Classifier(BaseAgent):
     def test(self):
         return np.array(self.convert(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist())).reshape(1, -1)
   
-    def decide(self):
+    def decide(self, submit = True):
     
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
-            return self.submit((int(self.classifier.predict(self.test()).item()) + self.beat) % self.states)
             
-        return self.submit(self.random())
+            choice = (int(self.classifier.predict(self.test()).item()) + self.beat) % self.states
+            if submit == True:
+                return self.submit(choice)
+            return choice
+        
+        choice = self.random()    
+        if submit == True:
+            return self.submit(self.random())
+        return choice
     
     def convert(self, buf):
         return buf
@@ -312,8 +319,11 @@ class Randomer(BaseAgent):
     def __init__(self, states = 3, window = 0, beat = 0, counter = None):
         super().__init__(states, window, beat, counter)
         
-    def decide(self):
-        return self.submit(self.random())
+    def decide(self, submit = True):
+        choice = self.random()
+        if submit == True:
+            return self.submit(choice)
+        return choice
 
 
  
@@ -322,24 +332,36 @@ class MirrorOpponentDecider(BaseAgent):
     def __init__(self, states = 3, window = 0, beat = 0, counter = None):
         super().__init__(states, window, beat, counter)
         
-    def decide(self):
+    def decide(self, submit = True):
         
         if len(self.opponent) <= 0:
-            return self.submit(self.random())
-            
-        return self.submit((self.opponent[-1].item() + self.beat) % self.states)
+            choice = self.random()
+            if submit == True:
+                return self.submit(choice)
+            return choice
+        
+        choice = (self.opponent[-1].item() + self.beat) % self.states
+        if submit == True:
+            return self.submit(choice)
+        return choice
     
 class MirrorSelfDecider(BaseAgent):
     
     def __init__(self, states = 3, window = 0, beat = 0, counter = None, ahead = 0):
         super().__init__(states, window, beat, counter)
         
-    def decide(self):
+    def decide(self, submit = True):
         
         if len(self.mines) <= 0:
-            return self.submit(self.random())
-            
-        return self.submit((self.mines[-1].item() + self.beat) % self.states)
+            choice = self.random()
+            if submit == True:
+                return self.submit(choice)
+            return choice
+        
+        choice = (self.mines[-1].item() + self.beat) % self.states
+        if submit == True:
+            return self.submit(choice)
+        return choice
     
 
     
@@ -364,12 +386,15 @@ class NMarkov(BaseAgent):
 
         return int(total.item())
         
-    def decide(self):
+    def decide(self, submit = True):
            
         totalMoves = len(self.opponent)
         
         if totalMoves <= self.power:
-            return self.submit(self.random())
+            choice = self.random()
+            if submit == True:
+                return self.submit(choice)
+            return choice
         
         initials = np.zeros(self.dimen).astype('float64')
         transitions = np.zeros((self.dimen, self.dimen)).astype('float64')
@@ -387,7 +412,10 @@ class NMarkov(BaseAgent):
          
         res = np.argwhere(probs == np.amax(probs)).ravel()
         
-        return self.submit((np.random.choice(res).item() + 1) % self.states)
+        choice = (np.random.choice(res).item() + 1) % self.states
+        if submit == True:
+            return self.submit(choice)
+        return choice
 
 
 '''
@@ -415,12 +443,15 @@ class GMarkov(BaseAgent):
             
         return seq
     
-    def decide(self):
+    def decide(self, submit = True):
         
         totalMoves = len(self.opponent)
         
         if totalMoves <= self.window:
-            return self.submit(self.random())
+            choice = self.random()
+            if submit == True:
+                return self.submit(choice)
+            return choice
 
         for _ in range(0, self.window):
             self.transitions.append(np.zeros((self.dimen, self.dimen)).astype('float64'))
@@ -459,8 +490,72 @@ class GMarkov(BaseAgent):
             if prob > best_score:
                 best_score = prob
                 best_move = target
-            
-        return self.submit((best_move + 1) % self.states)
+        
+        choice = (best_move + 1) % self.states
+        if submit == True: 
+            return self.submit(choice)
+        return choice
     
 
 
+class BetaAgency:
+    
+    def __init__(self, agents):
+        self.agents = agents
+        self.mines = []
+        self.opponent = []
+        self.executor = None
+    
+    def __str__(self):
+        return "Agency(" + self.executor.__str__() + ")"
+    
+    def add(self, token):
+        for agent, _ in self.agents:
+            agent.add(token)
+    
+    def lastgame(self, agent):
+        if len(agent.mines) <= 0 or len(agent.opponent) <= 0:
+            return 0
+        
+        res = (agent.mines[-1] - agent.opponent[-1]) % 3
+        if res == 1:
+            return 1
+        elif res == 2:
+            return -1
+        
+        return 0
+        
+          
+    def decide(self):
+        for agent, scores in self.agents:
+            scores[0] = (scores[0] - 1) / 1.05 + 1
+            scores[1] = (scores[1] - 1) / 1.05 + 1
+          
+            outcome = self.lastgame(agent)
+            if outcome > 0:
+                scores[0] += 3
+            elif outcome < 0:
+                scores[1] += 3
+            else:
+                scores[0] = scores[0] + 3/2
+                scores[1] = scores[1] + 3/2
+        
+        
+        best_prob = -1
+        best_agent = None
+        best_move = None
+        for agent, scores in self.agents:
+            prob = np.random.beta(scores[0], scores[1])
+            move = agent.decide(False)
+            if prob > best_prob:
+                best_prob = prob
+                best_agent = agent
+                best_move = move
+        
+        self.executor = best_agent
+        
+        for agent, _ in self.agents:
+            agent.mines = np.append(agent.mines, best_move)
+               
+        return best_move
+    

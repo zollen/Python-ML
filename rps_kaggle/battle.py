@@ -7,21 +7,53 @@ Created on Dec. 16, 2020
 import numpy as np
 import time
 from xgboost import XGBClassifier
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
 import rps_kaggle.lib.rps_lib as rps
 import warnings
-from rps_kaggle.lib.rps_lib import StandardCounterMover
-
-
-
 
 
 warnings.filterwarnings('ignore')
 
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
+
+'''
+class ShellClassifier:
+    
+    def __init__(self, classifier, beat = 1):
+        self.classifier = classifier
+        self.mines = 0
+        self.opponent = 0
+        self.beat = beat
+        
+    def __str__(self):
+        return "Shell(" +self.classifier.__str__() + "){" + self.beat + "}"
+        
+    def add(self, token):
+        self.opponent += 1
+        if len(self.classifier.opponent) < self.opponent:
+            self.classifier.add(token)
+    
+    def submit(self, token):
+        self.mines += 1
+        if len(self.classifer.mines) < self.mines:
+            self.classifier.submit(token)
+        return token
+    
+    def decide(self):
+        if len(self.classifier.mines) > self.mines:
+            return self.submit((self.classifier.mines[-1].item() + self.beat) % self.states)
+       
+        return self.submit((int(self.classifier.predict(self.test()).item()) + self.beat) % self.states)
+    
+    
+
+
+
+
+
+
+exit()
+'''
 
 forest1 = rps.Classifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 10)
 xgb1 = rps.Classifier(XGBClassifier(random_state = 26, n_estimators = 10, eval_metric = 'logloss'), window = 10)
@@ -45,71 +77,6 @@ agents = [
             [ forest3, [1, 1]                             ],
             [ xgb3, [1, 1]                                ]
         ]
-
-class BetaAgency:
-    
-    def __init__(self, agents):
-        self.agents = agents
-        self.mines = []
-        self.opponent = []
-        self.executor = None
-    
-    def __str__(self):
-        return "Agency(" + self.executor.__str__() + ")"
-    
-    def add(self, token):
-        for agent, _ in self.agents:
-            agent.add(token)
-            
-    def submit(self, token):
-        for agent, _ in self.agents:
-            if self.executor != agent:
-                agent.submit(token)
-            
-        return token
-    
-    def lastgame(self, agent):
-        if len(agent.mines) <= 0 or len(agent.opponent) <= 0:
-            return 0
-        
-        res = (agent.mines[-1] - agent.opponent[-1]) % 3
-        if res == 1:
-            return 1
-        elif res == 2:
-            return -1
-        
-        return 0
-        
-          
-    def decide(self):
-        for agent, scores in self.agents:
-            scores[0] = (scores[0] - 1) / 1.05 + 1
-            scores[1] = (scores[1] - 1) / 1.05 + 1
-          
-            outcome = self.lastgame(agent)
-            if outcome > 0:
-                scores[0] += 3
-            elif outcome < 0:
-                scores[1] += 3
-            else:
-                scores[0] = scores[0] + 3/2
-                scores[1] = scores[1] + 3/2
-        
-        
-        best_prob = -1
-        best_agent = None
-        best_move = None
-        for agent, scores in self.agents:
-            prob = np.random.beta(scores[0], scores[1])
-            move = agent.decide()
-            if prob > best_prob:
-                best_prob = prob
-                best_agent = agent
-                best_move = move
-        
-        self.executor = best_agent
-               
-        return best_move
     
 
 '''
@@ -119,7 +86,7 @@ OClassifier(XGBClassifier) window = 14
 WIN : 0
 LOST: 0
 '''
-player1 = BetaAgency(agents)
+player1 = rps.BetaAgency(agents)
 player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                          window = 10)
 
