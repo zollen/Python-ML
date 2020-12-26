@@ -5,11 +5,13 @@ Created on Dec. 17, 2020
 '''
 
 import numpy as np
+import time
 from sklearn.tree import DecisionTreeClassifier
 
 def construct_local_features(rollouts):
-    features = np.array([[step % k for step in rollouts['steps']] for k in (2, 3, 5)])
-    features = np.append(features, rollouts['steps'])
+    step_mode_features = np.array([[step % k for step in rollouts['steps']] for k in (2, 3, 5)])
+    step_div_features = np.array([[step // k for step in rollouts['steps']] for k in (100, 150, 250)])
+    features = np.concatenate([step_mode_features, step_div_features])
     features = np.append(features, rollouts['actions'])
     features = np.append(features, rollouts['opp-actions'])
     return features
@@ -20,7 +22,6 @@ def construct_global_features(rollouts):
         for i in range(3):
             actions_count = np.mean([r == i for r in rollouts[key]])
             features.append(actions_count)
-    
     return np.array(features)
 
 def construct_features(short_stat_rollouts, long_stat_rollouts):
@@ -89,3 +90,25 @@ def agent(observation, configuration):
     action = int((next_opp_action_pred + 1) % 3)
     last_move = {'step': observation.step, 'action': action}
     return action
+
+
+class observationCls:
+    step = 0
+    lastOpponentAction = 0
+class configurationCls:
+    signs = 3
+    
+observation = observationCls()
+configuration = configurationCls()
+
+for rnd in range(0, 1000):
+    
+    choice = None
+    observation.step = rnd
+    observation.lastOpponentAction = np.random.randint(0, 3)
+    
+    t_start = time.perf_counter_ns()
+    choice = agent(observation, configuration)
+    t_end = time.perf_counter_ns()
+    
+    print("Round {} Choice: {}, Elapse Time: {}".format(rnd + 1, choice, t_end - t_start))
