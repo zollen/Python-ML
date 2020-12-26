@@ -327,7 +327,7 @@ class MirrorOpponentDecider(BaseAgent):
         if len(self.opponent) <= 0:
             return self.submit(self.random())
             
-        return self.submit((self.opponent[-1] + self.beat) % self.states)
+        return self.submit((self.opponent[-1].item() + self.beat) % self.states)
     
 class MirrorSelfDecider(BaseAgent):
     
@@ -339,7 +339,7 @@ class MirrorSelfDecider(BaseAgent):
         if len(self.mines) <= 0:
             return self.submit(self.random())
             
-        return self.submit((self.mines[-1] + self.beat) % self.states)
+        return self.submit((self.mines[-1].item() + self.beat) % self.states)
     
 
     
