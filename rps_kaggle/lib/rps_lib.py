@@ -118,13 +118,14 @@ class StandardCounterMover(BaseCounterMover):
 
 class BaseAgent:
     
-    def __init__(self, states = 3, window = 3, counter = None):
+    def __init__(self, states = 3, window = 3, beat = 1, counter = None):
         np.random.seed(int(round(time.time())))
         self.mines = np.array([]).astype('int64')
         self.opponent = np.array([]).astype('int64')
         self.results = np.array([]).astype('int64')
         self.states = states
         self.window = window
+        self.beat = beat
         self.counter = counter
         
     def __str__(self):
@@ -184,11 +185,10 @@ class ClassifierHolder:
 class Classifier(BaseAgent):
     
     def __init__(self, classifier, states = 3, window = 3, beat = 1, delay_process = 5, counter = None):
-        super().__init__(states, window, counter)
+        super().__init__(states, window, beat, counter)
         self.classifier = classifier
         self.delayProcess = delay_process
         self.row = 0
-        self.beat = beat
         self.data = np.zeros(shape = (1100, self.window * 2)).astype('int64')
         
     def __str__(self):
@@ -308,8 +308,8 @@ class OClassifier(Classifier):
             
 class Randomer(BaseAgent):
     
-    def __init__(self, states = 3, window = 0, counter = None):
-        super().__init__(states, window, counter)
+    def __init__(self, states = 3, window = 0, beat = 0, counter = None):
+        super().__init__(states, window, beat, counter)
         
     def decide(self):
         return self.submit(self.random())
@@ -318,29 +318,27 @@ class Randomer(BaseAgent):
  
 class MirrorOpponentDecider(BaseAgent):
     
-    def __init__(self, states = 3, window = 0, counter = None, ahead = 0):
-        super().__init__(states, window, counter)
-        self.ahead = ahead
+    def __init__(self, states = 3, window = 0, beat = 0, counter = None):
+        super().__init__(states, window, beat, counter)
         
     def decide(self):
         
         if len(self.opponent) <= 0:
             return self.submit(self.random())
             
-        return self.submit((self.opponent[-1] + self.ahead) % self.states)
+        return self.submit((self.opponent[-1] + self.beat) % self.states)
     
 class MirrorSelfDecider(BaseAgent):
     
-    def __init__(self, states = 3, window = 0, counter = None, ahead = 0):
-        super().__init__(states, window, counter)
-        self.ahead = ahead
+    def __init__(self, states = 3, window = 0, beat = 0, counter = None, ahead = 0):
+        super().__init__(states, window, beat, counter)
         
     def decide(self):
         
         if len(self.mines) <= 0:
             return self.submit(self.random())
             
-        return self.submit((self.mines[-1] + self.ahead) % self.states)
+        return self.submit((self.mines[-1] + self.beat) % self.states)
     
 
     

@@ -32,12 +32,12 @@ xgb3 = rps.Classifier(XGBClassifier(random_state = 53, n_estimators = 10, eval_m
 
 agents = {
     rps.Randomer(): [1, 1],
-    rps.MirrorOpponentDecider(ahead = 0): [1, 1],
-    rps.MirrorOpponentDecider(ahead = 1): [1, 1],
-    rps.MirrorOpponentDecider(ahead = 2): [1, 1],
-    rps.MirrorSelfDecider(ahead = 0): [1, 1],
-    rps.MirrorSelfDecider(ahead = 1): [1, 1],
-    rps.MirrorSelfDecider(ahead = 2): [1, 1],
+    rps.MirrorOpponentDecider(beat = 0): [1, 1],
+    rps.MirrorOpponentDecider(beat = 1): [1, 1],
+    rps.MirrorOpponentDecider(beat = 2): [1, 1],
+    rps.MirrorSelfDecider(beat = 0): [1, 1],
+    rps.MirrorSelfDecider(beat = 1): [1, 1],
+    rps.MirrorSelfDecider(beat = 2): [1, 1],
     forest1: [1, 1],
     xgb1: [1, 1],
     forest2: [1, 1],
