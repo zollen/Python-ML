@@ -164,7 +164,7 @@ class BaseAgent:
 
 
     
-class ClassifierHolder:
+class RandomHolder:
     
     def __init__(self, classifiers):
         self.classifiers = classifiers
@@ -179,7 +179,8 @@ class ClassifierHolder:
         
     def predict(self, X):
         return self.current.predict(X)
-
+        
+        
 
          
 class Classifier(BaseAgent):
@@ -194,7 +195,7 @@ class Classifier(BaseAgent):
     def __str__(self):
         clsName = self.classifier.__class__.__name__
         if self.counter == None:
-            if isinstance(self.classifier, ClassifierHolder): 
+            if isinstance(self.classifier, RandomHolder): 
                 clsName = self.classifier.__str__()
             name = self.__class__.__name__ + "(" + clsName + "){" + str(self.beat) + "}"
         else:
