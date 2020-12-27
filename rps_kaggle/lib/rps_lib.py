@@ -520,8 +520,6 @@ class ShareClassifier:
     
     def __init__(self, classifier, states = 3, beat = 0):
         self.classifier = classifier
-        self.mines = 0
-        self.opponent = 0
         self.states = states
         self.beat = beat
         
@@ -538,12 +536,10 @@ class ShareClassifier:
         self.classifier.reset()
     
     def deposit(self, token):
-        self.mines = np.append(self.mines, token)
         if self.classifier.last == None:
             self.classifier.deposit(token)
         
     def add(self, token):
-        self.opponent += 1
         if self.classifier.last == None:
             self.classifier.add(token)
     
