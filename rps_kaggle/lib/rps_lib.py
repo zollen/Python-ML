@@ -539,11 +539,12 @@ class ShareClassifier:
     
     def deposit(self, token):
         self.mines = np.append(self.mines, token)
-        self.classifier.deposit(token)
+        if self.classifier.last == None:
+            self.classifier.deposit(token)
         
     def add(self, token):
         self.opponent += 1
-        if len(self.classifier.opponent) < self.opponent:
+        if self.classifier.last == None:
             self.classifier.add(token)
     
     def decide(self, submit = False):
@@ -587,6 +588,7 @@ class BetaAgency:
           
     def decide(self):
         for agent, scores in self.agents:
+            
             agent.reset()
             
             scores[0] = (scores[0] - 1) / self.decay + 1
