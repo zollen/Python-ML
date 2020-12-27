@@ -203,6 +203,10 @@ class Classifier(BaseAgent):
         else:
             name = self.__class__.__name__ + "(" + clsName + "(" + self.counter.__class__.__name__ + ")){" + str(self.beat) + "}"
         return name
+    
+    def reset(self):
+        self.last = None
+        super().reset()
    
     def add(self, token):
         super().add(token)
@@ -502,10 +506,12 @@ class GMarkov(BaseAgent):
 
 class BetaAgency:
     
-    def __init__(self, agents):
+    def __init__(self, agents, step_size = 3, decay = 1.05):
         self.agents = agents
         self.mines = []
         self.opponent = []
+        self.stepSize = step_size
+        self.decay = decay
         self.executor = None
     
     def __str__(self):
@@ -530,17 +536,19 @@ class BetaAgency:
           
     def decide(self):
         for agent, scores in self.agents:
-            scores[0] = (scores[0] - 1) / 1.05 + 1
-            scores[1] = (scores[1] - 1) / 1.05 + 1
+            agent.reset()
+            
+            scores[0] = (scores[0] - 1) / self.decay + 1
+            scores[1] = (scores[1] - 1) / self.decay + 1
           
             outcome = self.lastgame(agent)
             if outcome > 0:
-                scores[0] += 3
+                scores[0] += self.stepSize
             elif outcome < 0:
-                scores[1] += 3
+                scores[1] += self.stepSize
             else:
-                scores[0] = scores[0] + 3/2
-                scores[1] = scores[1] + 3/2
+                scores[0] = scores[0] + self.stepSize / 2
+                scores[1] = scores[1] + self.stepSize / 2
         
         
         best_prob = -1

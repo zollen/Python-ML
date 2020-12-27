@@ -29,6 +29,9 @@ class ShellClassifier:
     def __str__(self):
         return "<" +self.classifier.__str__() + ">{" + self.beat + "}"
     
+    def reset(self):
+        self.classifier.reset()
+    
     def deposit(self, token):
         self.mines = np.append(self.mines, token)
         self.classifier.deposit(token)
@@ -39,10 +42,10 @@ class ShellClassifier:
             self.classifier.add(token)
     
     def decide(self):
-        if len(self.classifier.mines) > self.mines:
+        if self.classifier.last != None:
             return (self.classifier.last + self.beat) % self.states
        
-        return int(self.classifier.decide(False) + self.beat) % self.states
+        return (self.classifier.decide(False) + self.beat) % self.states
     
     
 
@@ -51,7 +54,7 @@ class ShellClassifier:
 
 
 
-
+exit()
 
 forest1 = rps.Classifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 10)
 xgb1 = rps.Classifier(XGBClassifier(random_state = 26, n_estimators = 10, eval_metric = 'logloss'), window = 10)
