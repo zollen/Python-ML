@@ -128,6 +128,18 @@ class BaseAgent:
         self.beat = beat
         self.counter = counter
         
+    def myQueue(self, index = None):
+        if index == None:
+            return self.mines
+        
+        return self.mines[index]
+    
+    def opQueue(self, index = None):
+        if index == None:
+            return self.opponent
+        
+        return self.opponent[index]
+        
     def __str__(self):
         if self.counter == None:
             name = self.__class__.__name__ + "{" + str(self.beat) + "}"
@@ -504,6 +516,45 @@ class GMarkov(BaseAgent):
     
 
 
+class ShareClassifier:
+    
+    def __init__(self, classifier, states = 3, beat = 0):
+        self.classifier = classifier
+        self.mines = 0
+        self.opponent = 0
+        self.states = states
+        self.beat = beat
+        
+    def __str__(self):
+        return "<" +self.classifier.__str__() + ">{" + str(self.beat) + "}"
+    
+    def myQueue(self, index = None):
+        return self.classifier.myQueue(index)
+    
+    def opQueue(self, index = None):
+        return self.classifier.opQueue(index)
+    
+    def reset(self):
+        self.classifier.reset()
+    
+    def deposit(self, token):
+        self.mines = np.append(self.mines, token)
+        self.classifier.deposit(token)
+        
+    def add(self, token):
+        self.opponent += 1
+        if len(self.classifier.opponent) < self.opponent:
+            self.classifier.add(token)
+    
+    def decide(self, submit = False):
+        if self.classifier.last != None:
+            return (self.classifier.last + self.beat) % self.states
+
+        return (self.classifier.decide(False) + self.beat) % self.states
+    
+    
+    
+    
 class BetaAgency:
     
     def __init__(self, agents, step_size = 3, decay = 1.05):
@@ -522,10 +573,10 @@ class BetaAgency:
             agent.add(token)
     
     def lastgame(self, agent):
-        if len(agent.mines) <= 0 or len(agent.opponent) <= 0:
+        if len(agent.myQueue()) <= 0 or len(agent.opQueue()) <= 0:
             return 0
         
-        res = (agent.mines[-1] - agent.opponent[-1]) % 3
+        res = (agent.myQueue(-1) - agent.opQueue(-1)) % 3
         if res == 1:
             return 1
         elif res == 2:

@@ -17,51 +17,12 @@ warnings.filterwarnings('ignore')
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 
 
-class ShellClassifier:
-    
-    def __init__(self, classifier, states = 3, beat = 1):
-        self.classifier = classifier
-        self.mines = 0
-        self.opponent = 0
-        self.states = states
-        self.beat = beat
-        
-    def __str__(self):
-        return "<" +self.classifier.__str__() + ">{" + self.beat + "}"
-    
-    def reset(self):
-        self.classifier.reset()
-    
-    def deposit(self, token):
-        self.mines = np.append(self.mines, token)
-        self.classifier.deposit(token)
-        
-    def add(self, token):
-        self.opponent += 1
-        if len(self.classifier.opponent) < self.opponent:
-            self.classifier.add(token)
-    
-    def decide(self):
-        if self.classifier.last != None:
-            return (self.classifier.last + self.beat) % self.states
-       
-        return (self.classifier.decide(False) + self.beat) % self.states
-    
-    
-
-
-
-
-
-
-exit()
-
 forest1 = rps.Classifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 10)
+forest2 = rps.ShareClassifier(forest1, beat = 1)
+forest3 = rps.ShareClassifier(forest1, beat = 2)
 xgb1 = rps.Classifier(XGBClassifier(random_state = 26, n_estimators = 10, eval_metric = 'logloss'), window = 10)
-forest2 = rps.Classifier(RandomForestClassifier(random_state = 37, n_estimators = 10), window = 10, beat = 2)
-xgb2 = rps.Classifier(XGBClassifier(random_state = 43, n_estimators = 10, eval_metric = 'logloss'), window = 10, beat = 2)
-forest3 = rps.Classifier(RandomForestClassifier(random_state = 51, n_estimators = 10), window = 10, beat = 0)
-xgb3 = rps.Classifier(XGBClassifier(random_state = 53, n_estimators = 10, eval_metric = 'logloss'), window = 10, beat = 0)
+xgb2 = rps.ShareClassifier(xgb1, beat = 1)
+xgb3 = rps.ShareClassifier(xgb1, beat = 2)
 
 agents = [
             [ rps.Randomer(), [1, 1]                      ],
