@@ -138,6 +138,9 @@ class BaseAgent:
     def add(self, token):
         self.opponent = np.append(self.opponent, token)
         
+    def deposit(self, token):
+        self.mines = np.append(self.mines, token)
+        
     def submit(self, token):
         bak = token
         
@@ -147,7 +150,7 @@ class BaseAgent:
         if token is None:
             token = bak
             
-        self.mines = np.append(self.mines, token)
+        self.deposit(token)
         
         return token
     
@@ -191,6 +194,7 @@ class Classifier(BaseAgent):
         self.delayProcess = delay_process
         self.row = 0
         self.data = np.zeros(shape = (1100, self.window * 2)).astype('int64')
+        self.last = 0
         
     def __str__(self):
         clsName = self.classifier.__class__.__name__
@@ -219,12 +223,12 @@ class Classifier(BaseAgent):
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
             
-            choice = (int(self.classifier.predict(self.test()).item()) + self.beat) % self.states
+            self.last = choice = (int(self.classifier.predict(self.test()).item()) + self.beat) % self.states
             if submit == True:
                 return self.submit(choice)
             return choice
         
-        choice = self.random()    
+        self.last = choice = self.random()    
         if submit == True:
             return self.submit(self.random())
         return choice
@@ -553,7 +557,7 @@ class BetaAgency:
         self.executor = best_agent
         
         for agent, _ in self.agents:
-            agent.mines = np.append(agent.mines, best_move)
+            agent.deposit(best_move)
                
         return best_move
     

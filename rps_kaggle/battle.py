@@ -16,34 +16,33 @@ warnings.filterwarnings('ignore')
 
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 
-'''
+
 class ShellClassifier:
     
-    def __init__(self, classifier, beat = 1):
+    def __init__(self, classifier, states = 3, beat = 1):
         self.classifier = classifier
         self.mines = 0
         self.opponent = 0
+        self.states = states
         self.beat = beat
         
     def __str__(self):
-        return "Shell(" +self.classifier.__str__() + "){" + self.beat + "}"
+        return "<" +self.classifier.__str__() + ">{" + self.beat + "}"
+    
+    def deposit(self, token):
+        self.mines = np.append(self.mines, token)
+        self.classifier.deposit(token)
         
     def add(self, token):
         self.opponent += 1
         if len(self.classifier.opponent) < self.opponent:
             self.classifier.add(token)
     
-    def submit(self, token):
-        self.mines += 1
-        if len(self.classifer.mines) < self.mines:
-            self.classifier.submit(token)
-        return token
-    
     def decide(self):
         if len(self.classifier.mines) > self.mines:
-            return self.submit((self.classifier.mines[-1].item() + self.beat) % self.states)
+            return (self.classifier.last + self.beat) % self.states
        
-        return self.submit((int(self.classifier.predict(self.test()).item()) + self.beat) % self.states)
+        return int(self.classifier.decide(False) + self.beat) % self.states
     
     
 
@@ -52,8 +51,7 @@ class ShellClassifier:
 
 
 
-exit()
-'''
+
 
 forest1 = rps.Classifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 10)
 xgb1 = rps.Classifier(XGBClassifier(random_state = 26, n_estimators = 10, eval_metric = 'logloss'), window = 10)
