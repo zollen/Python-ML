@@ -573,7 +573,7 @@ class BetaAgency:
             agent.add(token)
     
     def lastgame(self, agent):
-        if len(agent.myQueue()) <= 0 or len(agent.opQueue()) <= 0:
+        if agent.myQueue().size <= 0 or agent.opQueue().size <= 0:
             return 0
         
         res = (agent.myQueue(-1) - agent.opQueue(-1)) % 3
