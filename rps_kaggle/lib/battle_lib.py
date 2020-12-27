@@ -9,7 +9,7 @@ import time
 
 SIGNS = ['ROCK', 'PAPER', 'SCISSORS']
 
-def battleground(player1, player2, rnd = 1, verbose = True):
+def battleground(player1, player2, verbose = True):
     
     win1 = 0
     win2 = 0

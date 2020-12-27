@@ -39,21 +39,32 @@ agents = [
             [ xgb3, [1, 1]                                ]
         ]
     
-
-'''
-OClassifier(XGBClassifier) window = 14
-'''
-'''
-WIN : 0
-LOST: 0
-'''
 player1 = rps.BetaAgency(agents)
 player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                          window = 10)
-
 
 #player2 = rps.MirrorSelfDecider(ahead = 2)
 #player2 = rps.NMarkov(3, 6)
 #player2 = rps.Randomer()
 
-bat.battleground(player1, player2)
+totalwin = 0
+totalloss = 0
+totaleven = 0
+totalratio = 0.0
+for rnd in range(3):
+   
+    player1.reboot()
+    player2.reboot()
+    
+    win1, win2 = bat.battleground(player1, player2, verbose = False)
+    if win1 > win2:
+        totalwin += 1
+        totalratio += win1 / win2
+    elif win1 < win2:
+        totalloss += 1
+    else:
+        totaleven += 1    
+    print("Match [{:<2}] WON [{}]  LOST [{}] RATIO [{:2.4f}]".format(rnd + 1, win1, win2, win1 / win2))
+ 
+print("=================== TOTAL =======================")    
+print("WON [{:<2}], LOST [{:<2}] EVEN [{:<2}] WINNING RATIO [{:2.4f}]".format(totalwin, totalloss, totaleven, totalratio / totalwin))
