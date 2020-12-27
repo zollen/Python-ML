@@ -195,8 +195,6 @@ class Classifier(BaseAgent):
     def __str__(self):
         clsName = self.classifier.__class__.__name__
         if self.counter == None:
-            if isinstance(self.classifier, RandomHolder): 
-                clsName = self.classifier.__str__()
             name = self.__class__.__name__ + "(" + clsName + "){" + str(self.beat) + "}"
         else:
             name = self.__class__.__name__ + "(" + clsName + "(" + self.counter.__class__.__name__ + ")){" + str(self.beat) + "}"
