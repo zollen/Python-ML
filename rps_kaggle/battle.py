@@ -4,8 +4,6 @@ Created on Dec. 16, 2020
 @author: zollen
 '''
 
-import numpy as np
-import time
 from xgboost import XGBClassifier
 from sklearn.ensemble import RandomForestClassifier
 import rps_kaggle.lib.rps_lib as rps
