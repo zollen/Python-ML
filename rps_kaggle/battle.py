@@ -16,6 +16,9 @@ warnings.filterwarnings('ignore')
 
 def setup():
     '''
+    forest15 Classifier
+    WON [17], LOST [3 ] EVEN [0 ] WINNING RATIO [1.0829]
+    
     forest10 Classifier
     WON [17], LOST [3 ] EVEN [0 ] WINNING RATIO [1.0766]
     
