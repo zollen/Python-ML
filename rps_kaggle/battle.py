@@ -15,6 +15,11 @@ warnings.filterwarnings('ignore')
 
 
 def setup():
+    '''
+    forest1, xgb1 Classifier
+    WON [12], LOST [8 ] EVEN [0 ] WINNING RATIO [1.0525]
+
+    '''
     
     forest1 = rps.Classifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 10)
     forest2 = rps.ShareClassifier(forest1, beat = 1)
@@ -56,7 +61,7 @@ totalwin = 0
 totalloss = 0
 totaleven = 0
 totalratio = 0.0
-for rnd in range(10):
+for rnd in range(20):
     
     player1, player2 = setup()
    
