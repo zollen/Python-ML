@@ -64,7 +64,7 @@ for rnd in range(3):
         totalloss += 1
     else:
         totaleven += 1    
-    print("Match [{:<2}] WON [{}]  LOST [{}] RATIO [{:2.4f}]".format(rnd + 1, win1, win2, win1 / win2))
+    print("Match [{:>2}] WON [{}]  LOST [{}] RATIO [{:2.4f}]".format(rnd + 1, win1, win2, win1 / win2))
  
 print("=================== TOTAL =======================")    
 print("WON [{:<2}], LOST [{:<2}] EVEN [{:<2}] WINNING RATIO [{:2.4f}]".format(totalwin, totalloss, totaleven, totalratio / totalwin))
