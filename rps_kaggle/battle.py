@@ -51,11 +51,8 @@ totalwin = 0
 totalloss = 0
 totaleven = 0
 totalratio = 0.0
-for rnd in range(3):
+for rnd in range(10):
    
-    player1.reboot()
-    player2.reboot()
-    
     win1, win2 = bat.battleground(player1, player2, verbose = False)
     if win1 > win2:
         totalwin += 1
@@ -63,7 +60,11 @@ for rnd in range(3):
     elif win1 < win2:
         totalloss += 1
     else:
-        totaleven += 1    
+        totaleven += 1   
+        
+    player1.reboot()
+    player2.reboot()
+     
     print("Match [{:>2}] WON [{}]  LOST [{}] RATIO [{:2.4f}]".format(rnd + 1, win1, win2, win1 / win2))
  
 print("=================== TOTAL =======================")    
