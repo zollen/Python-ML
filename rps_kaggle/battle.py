@@ -33,6 +33,9 @@ def setup():
     forest10, xgb10 Classifier
     WON [7 ], LOST [12] EVEN [1 ] WINNING RATIO [1.0565]
     
+    xgb4 Classifier
+    WON [7 ], LOST [13] EVEN [0 ] WINNING RATIO [1.0512]
+    
     xgb10 OClassifier
     
     
