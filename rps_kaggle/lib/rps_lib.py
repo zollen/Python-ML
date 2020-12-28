@@ -7,6 +7,7 @@ import numpy as np
 import time
 
 
+
 class BaseCounterMover:
     
     def __init__(self, agent, states = 3, interval = 5):
@@ -127,6 +128,7 @@ class BaseAgent:
         self.window = window
         self.beat = beat
         self.counter = counter
+        self.record = True
                
     def myQueue(self, index = None):
         if index == None:
@@ -152,7 +154,7 @@ class BaseAgent:
         
     def deposit(self, token):
         self.mines = np.append(self.mines, token)
-        
+            
     def submit(self, token):
         bak = token
         
@@ -161,8 +163,9 @@ class BaseAgent:
         
         if token is None:
             token = bak
-            
-        self.deposit(token)
+        
+        if self.record:    
+            self.deposit(token)
         
         return token
     
@@ -172,8 +175,12 @@ class BaseAgent:
     
     def random(self):
         return np.random.randint(0, self.states)
+    
+    def estimate(self):
+        self.record = False
+        return self.decide()
         
-    def decide(self, submit = True):
+    def decide(self):
         pass
 
 
@@ -234,20 +241,17 @@ class Classifier(BaseAgent):
     def test(self):
         return np.array(self.convert(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist())).reshape(1, -1)
   
-    def decide(self, submit = True):
+    def decide(self):
     
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
             
             self.last = choice = (int(self.classifier.predict(self.test()).item()) + self.beat) % self.states
-            if submit == True:
-                return self.submit(choice)
-            return choice
+            return self.submit(choice)
         
         self.last = choice = self.random()    
-        if submit == True:
-            return self.submit(self.random())
-        return choice
+        return self.submit(self.random())
+
     
     def convert(self, buf):
         return buf
@@ -337,11 +341,9 @@ class Randomer(BaseAgent):
     def __init__(self, states = 3, window = 0, beat = 0, counter = None):
         super().__init__(states, window, beat, counter)
         
-    def decide(self, submit = True):
-        choice = self.random()
-        if submit == True:
-            return self.submit(choice)
-        return choice
+    def decide(self):
+        return self.submit(self.random())
+
 
 
  
@@ -350,36 +352,26 @@ class MirrorOpponentDecider(BaseAgent):
     def __init__(self, states = 3, window = 0, beat = 0, counter = None):
         super().__init__(states, window, beat, counter)
         
-    def decide(self, submit = True):
+    def decide(self):
         
         if len(self.opponent) <= 0:
-            choice = self.random()
-            if submit == True:
-                return self.submit(choice)
-            return choice
-        
-        choice = (self.opponent[-1].item() + self.beat) % self.states
-        if submit == True:
-            return self.submit(choice)
-        return choice
+            return self.submit(self.random())
+ 
+        return self.submit((self.opponent[-1].item() + self.beat) % self.states)
+
     
 class MirrorSelfDecider(BaseAgent):
     
     def __init__(self, states = 3, window = 0, beat = 0, counter = None, ahead = 0):
         super().__init__(states, window, beat, counter)
         
-    def decide(self, submit = True):
+    def decide(self):
         
         if len(self.mines) <= 0:
-            choice = self.random()
-            if submit == True:
-                return self.submit(choice)
-            return choice
-        
-        choice = (self.mines[-1].item() + self.beat) % self.states
-        if submit == True:
-            return self.submit(choice)
-        return choice
+            return self.submit(self.random())
+
+        return self.submit((self.mines[-1].item() + self.beat) % self.states)
+
     
 
     
@@ -404,16 +396,13 @@ class NMarkov(BaseAgent):
 
         return int(total.item())
         
-    def decide(self, submit = True):
+    def decide(self):
            
         totalMoves = len(self.opponent)
         
         if totalMoves <= self.power:
-            choice = self.random()
-            if submit == True:
-                return self.submit(choice)
-            return choice
-        
+            return self.submit(self.random())
+
         initials = np.zeros(self.dimen).astype('float64')
         transitions = np.zeros((self.dimen, self.dimen)).astype('float64')
         
@@ -430,10 +419,8 @@ class NMarkov(BaseAgent):
          
         res = np.argwhere(probs == np.amax(probs)).ravel()
         
-        choice = (np.random.choice(res).item() + 1) % self.states
-        if submit == True:
-            return self.submit(choice)
-        return choice
+        return self.submit((np.random.choice(res).item() + 1) % self.states)
+
 
 
 '''
@@ -461,15 +448,12 @@ class GMarkov(BaseAgent):
             
         return seq
     
-    def decide(self, submit = True):
+    def decide(self):
         
         totalMoves = len(self.opponent)
         
         if totalMoves <= self.window:
-            choice = self.random()
-            if submit == True:
-                return self.submit(choice)
-            return choice
+            return self.submit(self.random())
 
         for _ in range(0, self.window):
             self.transitions.append(np.zeros((self.dimen, self.dimen)).astype('float64'))
@@ -509,14 +493,12 @@ class GMarkov(BaseAgent):
                 best_score = prob
                 best_move = target
         
-        choice = (best_move + 1) % self.states
-        if submit == True: 
-            return self.submit(choice)
-        return choice
+        return self.submit((best_move + 1) % self.states)
+
     
 
 
-class ShareClassifier:
+class Sharer:
     
     def __init__(self, classifier, states = 3, beat = 0):
         self.classifier = classifier
@@ -542,12 +524,15 @@ class ShareClassifier:
     def add(self, token):
         if self.classifier.last == None:
             self.classifier.add(token)
+            
+    def estimate(self):
+        return self.classifier.estimate()
     
-    def decide(self, submit = False):
+    def decide(self):
         if self.classifier.last != None:
             return (self.classifier.last + self.beat) % self.states
 
-        return (self.classifier.decide(False) + self.beat) % self.states
+        return (self.classifier.decide() + self.beat) % self.states
     
     
     
@@ -603,7 +588,7 @@ class BetaAgency:
         best_move = None
         for agent, scores in self.agents:
             prob = np.random.beta(scores[0], scores[1])
-            move = agent.decide(False)
+            move = agent.estimate()
             if prob > best_prob:
                 best_prob = prob
                 best_agent = agent

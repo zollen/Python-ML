@@ -21,14 +21,17 @@ def setup():
     
     xgb1 OClassifier
     WON [9 ], LOST [11] EVEN [0 ] WINNING RATIO [1.0679]
+    
+    forest OClassifier
+    ???
     '''
     
     forest1 = rps.Classifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 10)
-    forest2 = rps.ShareClassifier(forest1, beat = 1)
-    forest3 = rps.ShareClassifier(forest1, beat = 2)
+    forest2 = rps.Sharer(forest1, beat = 1)
+    forest3 = rps.Sharer(forest1, beat = 2)
     xgb1 = rps.Classifier(XGBClassifier(random_state = 26, n_estimators = 10, eval_metric = 'logloss'), window = 10)
-    xgb2 = rps.ShareClassifier(xgb1, beat = 1)
-    xgb3 = rps.ShareClassifier(xgb1, beat = 2)
+    xgb2 = rps.Sharer(xgb1, beat = 1)
+    xgb3 = rps.Sharer(xgb1, beat = 2)
     
     agents = [
                 [ rps.Randomer(), [1, 1]                      ],
