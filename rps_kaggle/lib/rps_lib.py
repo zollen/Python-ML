@@ -384,7 +384,6 @@ class MostCommonDecider(BaseAgent):
             return self.submit(self.random())
 
         counts = np.bincount(self.opponent)
-        print(">> ", counts)
         return self.submit((int(np.argmax(counts)) + self.beat) % self.states)   
 
 
@@ -400,7 +399,6 @@ class LeastCommonDecider(BaseAgent):
             return self.submit(self.random())
 
         counts = np.bincount(self.opponent)
-        print(">> ", counts)
         return self.submit((int(np.argmin(counts)) + self.beat) % self.states) 
     
     
