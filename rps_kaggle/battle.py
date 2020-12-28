@@ -17,22 +17,22 @@ warnings.filterwarnings('ignore')
 def setup():
     '''
     forest15 Classifier
-    WON [17], LOST [3 ] EVEN [0 ] WINNING RATIO [1.0829]
+    
     
     forest10 Classifier
-    WON [17], LOST [3 ] EVEN [0 ] WINNING RATIO [1.0766]
+    
     
     xgb10 Classifier
-    WON [13], LOST [6 ] EVEN [1 ] WINNING RATIO [1.0902]
+    WON [10], LOST [8 ] EVEN [2 ] WINNING RATIO [1.0451]
     
     forest10, xgb10 Classifier
-    WON [12], LOST [8 ] EVEN [0 ] WINNING RATIO [1.0525]
+    
     
     xgb10 OClassifier
-    WON [9 ], LOST [11] EVEN [0 ] WINNING RATIO [1.0679]
+    
     
     forest10 OClassifier
-    WON [16], LOST [4 ] EVEN [0 ] WINNING RATIO [1.0628]
+    
     '''
     
     forest1 = rps.Classifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 10)
