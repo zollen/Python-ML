@@ -16,13 +16,16 @@ warnings.filterwarnings('ignore')
 
 def setup():
     '''
-    forest1, xgb1 Classifier
+    xgb10 Classifier
+    WON [13], LOST [6 ] EVEN [1 ] WINNING RATIO [1.0902]
+    
+    forest10, xgb10 Classifier
     WON [12], LOST [8 ] EVEN [0 ] WINNING RATIO [1.0525]
     
-    xgb1 OClassifier
+    xgb10 OClassifier
     WON [9 ], LOST [11] EVEN [0 ] WINNING RATIO [1.0679]
     
-    forest OClassifier
+    forest10 OClassifier
     WON [16], LOST [4 ] EVEN [0 ] WINNING RATIO [1.0628]
     '''
     
