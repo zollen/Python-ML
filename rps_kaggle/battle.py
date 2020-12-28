@@ -24,6 +24,9 @@ def setup():
     xgb6 Classifier
     WON [13], LOST [7 ] EVEN [0 ] WINNING RATIO [1.0599]
     
+    xgb8 Classifier
+    WON [8 ], LOST [12] EVEN [0 ] WINNING RATIO [1.0502]
+    
     xgb10 Classifier
     WON [10], LOST [8 ] EVEN [2 ] WINNING RATIO [1.0451]
     
@@ -37,10 +40,10 @@ def setup():
     
     '''
     
-    forest1 = rps.Classifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 10)
+    forest1 = rps.Classifier(RandomForestClassifier(random_state = 17, n_estimators = 10), window = 10)
     forest2 = rps.Sharer(forest1, beat = 1)
     forest3 = rps.Sharer(forest1, beat = 2)
-    xgb1 = rps.Classifier(XGBClassifier(random_state = 26, n_estimators = 10, eval_metric = 'logloss'), window = 10)
+    xgb1 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 10)
     xgb2 = rps.Sharer(xgb1, beat = 1)
     xgb3 = rps.Sharer(xgb1, beat = 2)
     
