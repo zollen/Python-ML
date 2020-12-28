@@ -61,11 +61,12 @@ def myagent(observation, configuration):
     
     # refresh pScore
     for i in range(numPre):
-        pp = p[i]
-        bpp = beat[pp]
-        bbpp = beat[bpp]
+        pp = p[i]        ## P, P, P ... (initially)
+        bpp = beat[pp]   ## S, S, S ... (initially)
+        bbpp = beat[bpp] ## R, R, R ... (initially)
         
         '''
+        input <- enemy last move
         if enemy move = predefined move then +1
         if enemy move = predefined counter move then -1
         if enemy move = neither then 0
@@ -73,6 +74,7 @@ def myagent(observation, configuration):
         pScore[0][i] = 0.9*pScore[0][i] + 0.1*((input==pp)-(input==bbpp))
         
         '''
+        output <- my last move
         if my move = predefined move then +1
         if my move = predefined counter move then -1
         if my move = neither then 0
