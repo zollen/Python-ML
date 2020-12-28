@@ -526,15 +526,11 @@ class Sharer:
             self.classifier.add(token)
             
     def estimate(self):
-        return self.classifier.estimate()
-    
-    def decide(self):
         if self.classifier.last != None:
             return (self.classifier.last + self.beat) % self.states
+        return self.classifier.estimate()
+    
 
-        return (self.classifier.decide() + self.beat) % self.states
-    
-    
     
     
 class BetaAgency:
