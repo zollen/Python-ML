@@ -26,7 +26,7 @@ def setup():
     WON [16], LOST [4 ] EVEN [0 ] WINNING RATIO [1.0628]
     '''
     
-    forest1 = rps.OClassifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 10)
+    forest1 = rps.Classifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 10)
     forest2 = rps.Sharer(forest1, beat = 1)
     forest3 = rps.Sharer(forest1, beat = 2)
     xgb1 = rps.Classifier(XGBClassifier(random_state = 26, n_estimators = 10, eval_metric = 'logloss'), window = 10)
