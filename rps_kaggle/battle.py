@@ -68,9 +68,6 @@ for rnd in range(10):
         totalloss += 1
     else:
         totaleven += 1   
-        
-    player1.reboot()
-    player2.reboot()
      
     print("Match [{:>2}] WON [{}]  LOST [{}] RATIO [{:2.4f}]".format(rnd + 1, win1, win2, win1 / win2))
  

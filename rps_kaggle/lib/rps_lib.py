@@ -127,12 +127,7 @@ class BaseAgent:
         self.window = window
         self.beat = beat
         self.counter = counter
-        
-    def reboot(self):
-        self.mines = np.array([]).astype('int64')
-        self.opponent = np.array([]).astype('int64')
-        self.results = np.array([]).astype('int64')
-        
+               
     def myQueue(self, index = None):
         if index == None:
             return self.mines
@@ -212,14 +207,7 @@ class Classifier(BaseAgent):
         self.row = 0
         self.data = np.zeros(shape = (1100, self.window * 2)).astype('int64')
         self.last = None
-        
-    def reboot(self):
-        super().reboot()
-        self.row = 0
-        self.data = np.zeros(shape = (1100, self.window * 2)).astype('int64')
-        self.last = None
-        
-        
+             
     def __str__(self):
         clsName = self.classifier.__class__.__name__
         if self.counter == None:
@@ -272,10 +260,6 @@ class MClassifier(Classifier):
         super().__init__(classifier, states, window, beat, delay_process, counter)
         self.data = np.zeros(shape = (1100, self.window * 2 * 2)).astype('int64')
         
-    def reboot(self):
-        super().reboot()
-        self.data = np.zeros(shape = (1100, self.window * 2 * 2)).astype('int64')
-        
     def convert(self, buf):  
         arr = []
         manifest = [[0, 0], [0, 1], [1, 0]]
@@ -303,11 +287,7 @@ class SClassifier(Classifier):
     def __init__(self, classifier, states = 3, window = 3, beat = 1, delay_process = 5, counter = None):
         super().__init__(classifier, states, window, beat, delay_process, counter)
         self.data = np.zeros(shape = (1100, (self.window - 1) * 2 * 8)).astype('int64')
-        
-    def reboot(self):
-        super().reboot()
-        self.data = np.zeros(shape = (1100, (self.window - 1) * 2 * 8)).astype('int64')
-        
+         
     def convert(self, buf):
         def encode(last, curr):
             return last * self.states + curr
@@ -329,11 +309,7 @@ class OClassifier(Classifier):
     def __init__(self, classifier, states = 3, window = 3, beat = 1, delay_process = 5, counter = None):
         super().__init__(classifier, states, window, beat, delay_process, counter)
         self.data = np.zeros(shape = (1100, self.window * 3)).astype('int64')
-        
-    def reboot(self):
-        super().reboot()
-        self.data = np.zeros(shape = (1100, self.window * 3)).astype('int64')
-        
+            
     def won(self, me, opp):
         
         res = me - opp
@@ -476,10 +452,6 @@ class GMarkov(BaseAgent):
         self.buffWin = buff_win
         self.lambdas = self.priors()
         self.transitions = []
-        
-    def reboot(self):
-        super().reboot()
-        self.transitions = []
             
     def priors(self):
         
@@ -551,9 +523,6 @@ class ShareClassifier:
         self.states = states
         self.beat = beat
         
-    def reboot(self):
-        self.classifier.reboot()
-        
     def __str__(self):
         return "<" +self.classifier.__str__() + ">{" + str(self.beat) + "}"
     
@@ -591,13 +560,6 @@ class BetaAgency:
         self.decay = decay
         self.executor = None
         
-    def reboot(self):
-        self.executor = None
-        for agent, scores in self.agents:
-            scores[0] = scores[1] = 1
-            agent.reboot()
-            
-    
     def __str__(self):
         return "Agency(" + self.executor.__str__() + ")"
     
