@@ -58,6 +58,8 @@ def setup():
                 [ rps.MirrorSelfDecider(beat = 0),     [1, 1] ],
                 [ rps.MirrorSelfDecider(beat = 1),     [1, 1] ],
                 [ rps.MirrorSelfDecider(beat = 2),     [1, 1] ],
+                [ rps.MostCommonDecider(),             [1, 1] ],
+                [ rps.LeastCommonDecider(),            [1, 1] ],
                 [ forest1,                             [1, 1] ],
                 [ xgb1,                                [1, 1] ],
                 [ forest2,                             [1, 1] ],

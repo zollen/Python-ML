@@ -362,7 +362,7 @@ class MirrorOpponentDecider(BaseAgent):
     
 class MirrorSelfDecider(BaseAgent):
     
-    def __init__(self, states = 3, window = 0, beat = 0, counter = None, ahead = 0):
+    def __init__(self, states = 3, window = 0, beat = 0, counter = None):
         super().__init__(states, window, beat, counter)
         
     def decide(self):
@@ -372,9 +372,39 @@ class MirrorSelfDecider(BaseAgent):
 
         return self.submit((self.mines[-1].item() + self.beat) % self.states)
 
-    
 
+class MostCommonDecider(BaseAgent):
     
+    def __init__(self, states = 3, window = 0, beat = 1, counter = None):
+        super().__init__(states, window, beat, counter)
+        
+    def decide(self):
+        
+        if len(self.mines) <= 0:
+            return self.submit(self.random())
+
+        counts = np.bincount(self.opponent)
+        print(">> ", counts)
+        return self.submit((int(np.argmax(counts)) + self.beat) % self.states)   
+
+
+
+class LeastCommonDecider(BaseAgent):
+    
+    def __init__(self, states = 3, window = 0, beat = 1, counter = None):
+        super().__init__(states, window, beat, counter)
+        
+    def decide(self):
+        
+        if len(self.mines) <= 0:
+            return self.submit(self.random())
+
+        counts = np.bincount(self.opponent)
+        print(">> ", counts)
+        return self.submit((int(np.argmin(counts)) + self.beat) % self.states) 
+    
+    
+        
 '''
 High order Markov. It holds a sequence of transitions (as oppose to just a single transition 
 in the transition matrix
