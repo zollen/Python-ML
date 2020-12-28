@@ -18,7 +18,9 @@ def setup():
     '''
     forest1, xgb1 Classifier
     WON [12], LOST [8 ] EVEN [0 ] WINNING RATIO [1.0525]
-
+    
+    xgb1 OClassifier
+    WON [9 ], LOST [11] EVEN [0 ] WINNING RATIO [1.0679]
     '''
     
     forest1 = rps.Classifier(RandomForestClassifier(random_state = 23, n_estimators = 10), window = 10)
