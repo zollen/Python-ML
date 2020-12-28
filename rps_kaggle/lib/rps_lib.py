@@ -246,11 +246,11 @@ class Classifier(BaseAgent):
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
             
-            self.last = choice = (int(self.classifier.predict(self.test()).item()) + self.beat) % self.states
-            return self.submit(choice)
+            self.last = (int(self.classifier.predict(self.test()).item()) + self.beat) % self.states
+            return self.submit(self.last)
         
-        self.last = choice = self.random()    
-        return self.submit(self.random())
+        self.last = self.random()    
+        return self.submit(self.last)
 
     
     def convert(self, buf):
