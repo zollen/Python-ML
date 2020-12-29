@@ -24,6 +24,7 @@ def setup():
     xgb6 Classifier
     WON [13], LOST [7 ] EVEN [0 ] WINNING RATIO [1.0599]
     WON [11], LOST [8 ] EVEN [1 ] WINNING RATIO [1.0692]
+    WON [11], LOST [9 ] EVEN [0 ] WINNING RATIO [1.0543]
     
     xgb8 Classifier
     WON [8 ], LOST [12] EVEN [0 ] WINNING RATIO [1.0502]
