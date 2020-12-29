@@ -16,35 +16,24 @@ warnings.filterwarnings('ignore')
 
 def setup():
     '''
-    forest15 Classifier
     
-    
-    forest10 Classifier
-    
-    xgb10 Classifier with no randomizer
-    WON [14], LOST [6 ] EVEN [0 ] WINNING RATIO [1.0786]
-    
-    xgb6 Classifier
-    WON [13], LOST [7 ] EVEN [0 ] WINNING RATIO [1.0599]
-    WON [11], LOST [8 ] EVEN [1 ] WINNING RATIO [1.0692]
-    WON [11], LOST [9 ] EVEN [0 ] WINNING RATIO [1.0543]
-    
-    xgb8 Classifier
-    WON [8 ], LOST [12] EVEN [0 ] WINNING RATIO [1.0502]
+    xgb15 Classifier
+    WON [8 ], LOST [12] EVEN [0 ] WINNING RATIO [1.0713]
     
     xgb10 Classifier
-    WON [10], LOST [8 ] EVEN [2 ] WINNING RATIO [1.0451]
+    WON [9 ], LOST [11] EVEN [0 ] WINNING RATIO [1.0367] (random_state = 26)
+    WON [10], LOST [10] EVEN [0 ] WINNING RATIO [1.0440] (with everything)
+    WON [9 ], LOST [11] EVEN [0 ] WINNING RATIO [1.0601] (with no Most and Least)
+    
+    
+    xgb6 Classifier
+  
+    
+    xgb8 Classifier
+   
     
     forest10, xgb10 Classifier
-    WON [7 ], LOST [12] EVEN [1 ] WINNING RATIO [1.0565]
     
-    xgb4 Classifier
-    WON [7 ], LOST [13] EVEN [0 ] WINNING RATIO [1.0512]
-    
-    xgb10 OClassifier
-    
-    
-    forest10 OClassifier
     
     '''
     

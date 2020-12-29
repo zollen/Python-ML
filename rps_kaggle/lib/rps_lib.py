@@ -332,19 +332,6 @@ class OClassifier(Classifier):
         
         return np.array(buf + arr).astype('int64')
     
-    
-    
-    
-            
-class Randomer(BaseAgent):
-    
-    def __init__(self, states = 3, window = 0, beat = 0, counter = None):
-        super().__init__(states, window, beat, counter)
-        
-    def decide(self):
-        return self.submit(self.random())
-
-
 
  
 class MirrorOpponentDecider(BaseAgent):
