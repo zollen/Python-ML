@@ -33,7 +33,8 @@ def setup():
    
     
     forest10, xgb10 Classifier
-    
+    WON [13], LOST [6 ] EVEN [1 ] WINNING RATIO [1.0836]
+    WON [10], LOST [10] EVEN [0 ] WINNING RATIO [1.0754]
     
     '''
     
@@ -45,15 +46,12 @@ def setup():
     xgb3 = rps.Sharer(xgb1, beat = 2)
     
     agents = [
-                [ rps.Randomer(),                      [1, 1] ],
                 [ rps.MirrorOpponentDecider(beat = 0), [1, 1] ],
                 [ rps.MirrorOpponentDecider(beat = 1), [1, 1] ],
                 [ rps.MirrorOpponentDecider(beat = 2), [1, 1] ],
                 [ rps.MirrorSelfDecider(beat = 0),     [1, 1] ],
                 [ rps.MirrorSelfDecider(beat = 1),     [1, 1] ],
                 [ rps.MirrorSelfDecider(beat = 2),     [1, 1] ],
-                [ rps.MostCommonDecider(),             [1, 1] ],
-                [ rps.LeastCommonDecider(),            [1, 1] ],
                 [ forest1,                             [1, 1] ],
                 [ xgb1,                                [1, 1] ],
                 [ forest2,                             [1, 1] ],
