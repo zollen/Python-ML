@@ -39,19 +39,19 @@ def setup():
     '''
     
     forest1 = rps.Classifier(RandomForestClassifier(n_estimators = 10), window = 10)
-    forest2 = rps.Sharer(forest1, beat = 1)
-    forest3 = rps.Sharer(forest1, beat = 2)
+    forest2 = rps.Sharer(forest1, ahead = 1)
+    forest3 = rps.Sharer(forest1, ahead = 2)
     xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 10)
-    xgb2 = rps.Sharer(xgb1, beat = 1)
-    xgb3 = rps.Sharer(xgb1, beat = 2)
+    xgb2 = rps.Sharer(xgb1, ahead = 1)
+    xgb3 = rps.Sharer(xgb1, ahead = 2)
     
     agents = [
-                [ rps.MirrorOpponentDecider(beat = 0), [1, 1] ],
-                [ rps.MirrorOpponentDecider(beat = 1), [1, 1] ],
-                [ rps.MirrorOpponentDecider(beat = 2), [1, 1] ],
-                [ rps.MirrorSelfDecider(beat = 0),     [1, 1] ],
-                [ rps.MirrorSelfDecider(beat = 1),     [1, 1] ],
-                [ rps.MirrorSelfDecider(beat = 2),     [1, 1] ],
+                [ rps.MirrorOpponentDecider(ahead = 0), [1, 1] ],
+                [ rps.MirrorOpponentDecider(ahead = 1), [1, 1] ],
+                [ rps.MirrorOpponentDecider(ahead = 2), [1, 1] ],
+                [ rps.MirrorSelfDecider(ahead = 0),     [1, 1] ],
+                [ rps.MirrorSelfDecider(ahead = 1),     [1, 1] ],
+                [ rps.MirrorSelfDecider(ahead = 2),     [1, 1] ],
                 [ forest1,                             [1, 1] ],
                 [ xgb1,                                [1, 1] ],
                 [ forest2,                             [1, 1] ],

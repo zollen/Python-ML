@@ -119,14 +119,14 @@ class StandardCounterMover(BaseCounterMover):
 
 class BaseAgent:
     
-    def __init__(self, states = 3, window = 3, beat = 1, counter = None):
+    def __init__(self, states = 3, window = 3, ahead = 1, counter = None):
         np.random.seed(int(round(time.time())))
         self.mines = np.array([]).astype('int64')
         self.opponent = np.array([]).astype('int64')
         self.results = np.array([]).astype('int64')
         self.states = states
         self.window = window
-        self.beat = beat
+        self.ahead = ahead
         self.counter = counter
         self.record = True
                
@@ -144,9 +144,9 @@ class BaseAgent:
         
     def __str__(self):
         if self.counter == None:
-            name = self.__class__.__name__ + "{" + str(self.beat) + "}"
+            name = self.__class__.__name__ + "{" + str(self.ahead) + "}"
         else:
-            name = self.__class__.__name__ + "(" + self.counter.__class__.__name__ + "){" + str(self.beat) + "}"
+            name = self.__class__.__name__ + "(" + self.counter.__class__.__name__ + "){" + str(self.ahead) + "}"
         return name
         
     def add(self, token):
@@ -207,8 +207,8 @@ class RandomHolder:
          
 class Classifier(BaseAgent):
     
-    def __init__(self, classifier, states = 3, window = 3, beat = 1, delay_process = 5, counter = None):
-        super().__init__(states, window, beat, counter)
+    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, counter = None):
+        super().__init__(states, window, ahead, counter)
         self.classifier = classifier
         self.delayProcess = delay_process
         self.row = 0
@@ -218,9 +218,9 @@ class Classifier(BaseAgent):
     def __str__(self):
         clsName = self.classifier.__class__.__name__
         if self.counter == None:
-            name = self.__class__.__name__ + "(" + clsName + "){" + str(self.beat) + "}"
+            name = self.__class__.__name__ + "(" + clsName + "){" + str(self.ahead) + "}"
         else:
-            name = self.__class__.__name__ + "(" + clsName + "(" + self.counter.__class__.__name__ + ")){" + str(self.beat) + "}"
+            name = self.__class__.__name__ + "(" + clsName + "(" + self.counter.__class__.__name__ + ")){" + str(self.ahead) + "}"
         return name
     
     def reset(self):
@@ -246,7 +246,7 @@ class Classifier(BaseAgent):
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:self.row], self.results)  
             
-            self.last = (int(self.classifier.predict(self.test()).item()) + self.beat) % self.states
+            self.last = (int(self.classifier.predict(self.test()).item()) + self.ahead) % self.states
             return self.submit(self.last)
         
         self.last = self.random()    
@@ -260,8 +260,8 @@ class Classifier(BaseAgent):
     
 class MClassifier(Classifier):
     
-    def __init__(self, classifier, states = 3, window = 3, beat = 1, delay_process = 5, counter = None):
-        super().__init__(classifier, states, window, beat, delay_process, counter)
+    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, counter = None):
+        super().__init__(classifier, states, window, ahead, delay_process, counter)
         self.data = np.zeros(shape = (1100, self.window * 2 * 2)).astype('int64')
         
     def convert(self, buf):  
@@ -288,8 +288,8 @@ class SClassifier(Classifier):
                  [1, 0, 0, 0, 0, 0, 0, 0]
                 ]
     
-    def __init__(self, classifier, states = 3, window = 3, beat = 1, delay_process = 5, counter = None):
-        super().__init__(classifier, states, window, beat, delay_process, counter)
+    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, counter = None):
+        super().__init__(classifier, states, window, ahead, delay_process, counter)
         self.data = np.zeros(shape = (1100, (self.window - 1) * 2 * 8)).astype('int64')
          
     def convert(self, buf):
@@ -310,8 +310,8 @@ class SClassifier(Classifier):
 
 class OClassifier(Classifier):
     
-    def __init__(self, classifier, states = 3, window = 3, beat = 1, delay_process = 5, counter = None):
-        super().__init__(classifier, states, window, beat, delay_process, counter)
+    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, counter = None):
+        super().__init__(classifier, states, window, ahead, delay_process, counter)
         self.data = np.zeros(shape = (1100, self.window * 3)).astype('int64')
             
     def won(self, me, opp):
@@ -336,34 +336,34 @@ class OClassifier(Classifier):
  
 class MirrorOpponentDecider(BaseAgent):
     
-    def __init__(self, states = 3, window = 0, beat = 0, counter = None):
-        super().__init__(states, window, beat, counter)
+    def __init__(self, states = 3, window = 0, ahead = 0, counter = None):
+        super().__init__(states, window, ahead, counter)
         
     def decide(self):
         
         if len(self.opponent) <= 0:
             return self.submit(self.random())
  
-        return self.submit((self.opponent[-1].item() + self.beat) % self.states)
+        return self.submit((self.opponent[-1].item() + self.ahead) % self.states)
 
     
 class MirrorSelfDecider(BaseAgent):
     
-    def __init__(self, states = 3, window = 0, beat = 0, counter = None):
-        super().__init__(states, window, beat, counter)
+    def __init__(self, states = 3, window = 0, ahead = 0, counter = None):
+        super().__init__(states, window, ahead, counter)
         
     def decide(self):
         
         if len(self.mines) <= 0:
             return self.submit(self.random())
 
-        return self.submit((self.mines[-1].item() + self.beat) % self.states)
+        return self.submit((self.mines[-1].item() + self.ahead) % self.states)
 
 
 class MostCommonDecider(BaseAgent):
     
-    def __init__(self, states = 3, window = 0, beat = 1, counter = None):
-        super().__init__(states, window, beat, counter)
+    def __init__(self, states = 3, window = 0, ahead = 1, counter = None):
+        super().__init__(states, window, ahead, counter)
         
     def decide(self):
         
@@ -371,14 +371,14 @@ class MostCommonDecider(BaseAgent):
             return self.submit(self.random())
 
         counts = np.bincount(self.opponent)
-        return self.submit((int(np.argmax(counts)) + self.beat) % self.states)   
+        return self.submit((int(np.argmax(counts)) + self.ahead) % self.states)   
 
 
 
 class LeastCommonDecider(BaseAgent):
     
-    def __init__(self, states = 3, window = 0, beat = 1, counter = None):
-        super().__init__(states, window, beat, counter)
+    def __init__(self, states = 3, window = 0, ahead = 1, counter = None):
+        super().__init__(states, window, ahead, counter)
         
     def decide(self):
         
@@ -386,7 +386,7 @@ class LeastCommonDecider(BaseAgent):
             return self.submit(self.random())
 
         counts = np.bincount(self.opponent)
-        return self.submit((int(np.argmin(counts)) + self.beat) % self.states) 
+        return self.submit((int(np.argmin(counts)) + self.ahead) % self.states) 
     
     
         
@@ -515,13 +515,13 @@ class GMarkov(BaseAgent):
 
 class Sharer:
     
-    def __init__(self, classifier, states = 3, beat = 0):
+    def __init__(self, classifier, states = 3, ahead = 0):
         self.classifier = classifier
         self.states = states
-        self.beat = beat
+        self.ahead = ahead
         
     def __str__(self):
-        return "<" +self.classifier.__str__() + ">{" + str(self.beat) + "}"
+        return "<" +self.classifier.__str__() + ">{" + str(self.ahead) + "}"
     
     def myQueue(self, index = None):
         return self.classifier.myQueue(index)
@@ -542,7 +542,7 @@ class Sharer:
             
     def estimate(self):
         if self.classifier.last != None:
-            return (self.classifier.last + self.beat) % self.states
+            return (self.classifier.last + self.ahead) % self.states
         return self.classifier.estimate()
     
 
