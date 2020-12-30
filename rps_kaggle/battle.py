@@ -18,12 +18,9 @@ def setup():
     '''
     
     xgb15 Classifier
-    WON [8 ], LOST [12] EVEN [0 ] WINNING RATIO [1.0713]
     
     xgb10 Classifier
-    WON [9 ], LOST [11] EVEN [0 ] WINNING RATIO [1.0367] (random_state = 26)
-    WON [10], LOST [10] EVEN [0 ] WINNING RATIO [1.0440] (with everything)
-    WON [9 ], LOST [11] EVEN [0 ] WINNING RATIO [1.0601] (with no Most and Least)
+    WON [14], LOST [6 ] EVEN [0 ] WINNING RATIO [1.0943]
     
     
     xgb6 Classifier
@@ -31,36 +28,22 @@ def setup():
     
     xgb8 Classifier
    
-    
-    forest10, xgb10 Classifier
-    WON [13], LOST [6 ] EVEN [1 ] WINNING RATIO [1.0836]
-    WON [10], LOST [10] EVEN [0 ] WINNING RATIO [1.0754]
+   
     
     '''
     
     forest1 = rps.Classifier(RandomForestClassifier(n_estimators = 10), window = 10)
     forest2 = rps.Sharer(forest1, ahead = 1)
     forest3 = rps.Sharer(forest1, ahead = 2)
+    
     xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 10)
     xgb2 = rps.Sharer(xgb1, ahead = 1)
     xgb3 = rps.Sharer(xgb1, ahead = 2)
+    manager = XGBClassifier(n_estimators = 10, eval_metric = 'logloss')
     
-    agents = [
-                [ rps.MirrorOpponentDecider(ahead = 0), [1, 1] ],
-                [ rps.MirrorOpponentDecider(ahead = 1), [1, 1] ],
-                [ rps.MirrorOpponentDecider(ahead = 2), [1, 1] ],
-                [ rps.MirrorSelfDecider(ahead = 0),     [1, 1] ],
-                [ rps.MirrorSelfDecider(ahead = 1),     [1, 1] ],
-                [ rps.MirrorSelfDecider(ahead = 2),     [1, 1] ],
-                [ forest1,                             [1, 1] ],
-                [ xgb1,                                [1, 1] ],
-                [ forest2,                             [1, 1] ],
-                [ xgb2,                                [1, 1] ],
-                [ forest3,                             [1, 1] ],
-                [ xgb3,                                [1, 1] ]
-            ]
+    agents = [ xgb1, xgb2, xgb3 ]
         
-    player1 = rps.BetaAgency(agents)
+    player1 = rps.MetaAgency(manager, agents, window = 10)
     player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                              window = 10)
     

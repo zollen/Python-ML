@@ -3,7 +3,12 @@ Created on Dec. 21, 2020
 
 @author: zollen
 '''
-import numpy as np
+
+import rps_kaggle.lib.battle_lib as bat
+import warnings
+
+
+warnings.filterwarnings('ignore')
 
 
 max_limit = 23  # can be modified
@@ -170,65 +175,39 @@ class HighPerformer:
         return "HighPerformer"
     
     def add(self, move):
+        observation.step += 1
         observation.lastOpponentAction = move 
       
-    def decide(self, observation, configuration):
+    def decide(self):  
         return myagent(observation, configuration)
-        
-        
-player1 = HighPerformer()
-player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
-                         window = 10)
-results = []
-win1 = 0
-win2 = 0
-observation = Observation()
-configuration = Configuration()
-
-for rnd in range(0, 1000):
-    
-    observation.step = rnd
-    
-    t_start = time.perf_counter_ns()
-    move1 = player1.decide(observation, configuration)
-    t_end = time.perf_counter_ns()
-    
-    move2 = player2.decide()
-    
-    player1.add(move2)
-    player2.add(move1)
-    
-    res = move1 - move2
-    
-    winner = "TIE"
-    
-    if res ==  1 or res == -1:
-        if res > 0:
-            winner = player1
-        else:
-            winner = player2
-    elif res == 2 or res == -2:
-        if res > 0:
-            winner = player2
-        else:
-            winner = player1
-            
-    if winner == player1:
-        win1 = win1 + 1
-    elif winner == player2:
-        win2 = win2 + 1
 
 
-    msg = "[{:<4}]   {:>8} | {:<8} => {:>50}  {:>4}|{:<4} {}"
-    print(msg.format(rnd + 1, SIGNS[move1], SIGNS[move2], winner.__str__(), win1, win2, t_end - t_start))
+
+def setup():           
+    player1 = HighPerformer()
+    player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 10)
+    return player1, player2
 
 
-print("====================================================================")
-if win1 == win2:
-    print("BOTH TIE!!")
-elif win1 > win2:
-    print("PLAYER1 {}, PLAYER2 {}  RATIO {:2.4f}".format(win1, win2, win1 / win2))
-    print("Player1: [{}] WON!!!!!".format(player1))
-else:
-    print("PLAYER1 {}, PLAYER2 {} RATIO {:2.4f}".format(win1, win2, win1 / win2))
-    print("Player1: [{}] LOST!!!!!".format(player1))
+
+totalwin = 0
+totalloss = 0
+totaleven = 0
+totalratio = 0.0
+for rnd in range(20):
+    
+    player1, player2 = setup()
+   
+    win1, win2 = bat.battleground(player1, player2, verbose = False)
+    if win1 > win2:
+        totalwin += 1
+        totalratio += win1 / win2
+    elif win1 < win2:
+        totalloss += 1
+    else:
+        totaleven += 1   
+     
+    print("Match [{:>2}] WON [{}]  LOST [{}] RATIO [{:2.4f}]".format(rnd + 1, win1, win2, win1 / win2))
+ 
+print("=================== TOTAL =======================")    
+print("WON [{:<2}], LOST [{:<2}] EVEN [{:<2}] WINNING RATIO [{:2.4f}]".format(totalwin, totalloss, totaleven, 0 if totalwin == 0 else totalratio / totalwin))

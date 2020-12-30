@@ -7,7 +7,6 @@ import numpy as np
 import time
 
 
-
 class BaseCounterMover:
     
     def __init__(self, agent, states = 3, interval = 5):
@@ -546,6 +545,77 @@ class Sharer:
         return self.classifier.estimate()
     
 
+
+class MetaAgency(BaseAgent):
+    
+    def __init__(self, manager, agents, states = 3, window = 10):
+        super().__init__(states, window, 0, None)
+        self.manager = manager
+        self.agents = agents
+        self.data = np.zeros(shape = (1100, self.window)).astype('int64')
+        self.row = 0
+        self.executor = None
+        self.lastmoves = np.array([]).astype('int64')
+        self.testdata = np.array([]).astype('int64')
+        
+    def __str__(self):
+        return "MetaAgency(" + self.executor.__str__() + ")"
+    
+    def add(self, token):
+        self.opponent = np.append(self.opponent, token)
+        for agent in self.agents:
+            agent.add(token)
+            
+    def submit(self, token):
+        self.mines = np.append(self.mines, token)
+        return token
+            
+    def outcome(self, index):
+        res = (self.mines[index] - self.opponent[index]) % 3
+        if res == 1:
+            return 1
+        elif res == 2:
+            return -1
+        
+        return 0
+    
+    def decide(self):
+        
+        if self.mines.size > self.window and self.opponent.size > self.window:
+            outcomes = []
+            for index in range(self.row, self.row + self.window):
+                outcomes.append(self.outcome(index))
+                
+            self.data[self.row] = outcomes
+            self.row += 1
+            self.results = np.append(self.results, 
+                        np.where(self.lastmoves == (self.opponent[-1].item() + 1) % self.states))
+            
+            outcomes = []
+            for index in range(self.row, self.row + self.window):
+                outcomes.append(self.outcome(index))
+                
+            self.testdata = np.array(outcomes).astype('int64').reshape(1, -1)
+            
+        self.lastmoves = np.array([]).astype('int64')
+        
+        for agent in self.agents:
+            self.lastmoves = np.append(self.lastmoves, agent.estimate())
+            
+        self.executor = self.agents[0]
+        best_move = self.lastmoves[0]
+        
+        if self.testdata.size > 0:
+            self.manager.fit(self.data[:self.row], self.results)
+            best_agent = self.manager.predict(self.testdata)[0]
+            self.executor = self.agents[best_agent]
+            best_move = self.lastmoves[best_agent]
+                      
+        for agent in self.agents:
+            agent.deposit(best_move)
+        
+        return self.submit(best_move)
+    
     
     
 class BetaAgency:
@@ -557,7 +627,7 @@ class BetaAgency:
         self.executor = None
         
     def __str__(self):
-        return "Agency(" + self.executor.__str__() + ")"
+        return "BetaAgency(" + self.executor.__str__() + ")"
     
     def add(self, token):
         for agent, _ in self.agents:
@@ -573,8 +643,7 @@ class BetaAgency:
         elif res == 2:
             return -1
         
-        return 0
-        
+        return 0    
           
     def decide(self):
         for agent, scores in self.agents:
