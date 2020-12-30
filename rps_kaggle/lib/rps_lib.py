@@ -603,13 +603,13 @@ class MetaAgency(BaseAgent):
             self.lastmoves = np.append(self.lastmoves, agent.estimate())
             
         self.executor = self.agents[0]
-        best_move = self.lastmoves[0]
+        best_move = self.lastmoves[0].item()
         
         if self.testdata.size > 0:
             self.manager.fit(self.data[:self.row], self.results)
             best_agent = self.manager.predict(self.testdata)[0]
             self.executor = self.agents[best_agent]
-            best_move = self.lastmoves[best_agent]
+            best_move = self.lastmoves[best_agent].item()
                       
         for agent in self.agents:
             agent.deposit(best_move)
