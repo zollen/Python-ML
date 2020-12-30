@@ -571,7 +571,7 @@ class MetaAgency(BaseAgent):
         return token
             
     def outcome(self, index):
-        res = (self.mines[index] - self.opponent[index]) % 3
+        res = (self.mines[index] - self.opponent[index]) % self.states
         if res == 1:
             return 1
         elif res == 2:
