@@ -17,20 +17,25 @@ from rps_kaggle.lib.rps_lib import StandardCounterMover
 warnings.filterwarnings('ignore')
 
 
-clr = rps.OClassifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), window = 10)
-#clr.counter = rps.RandomCounterMover(clr)
+xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 10)
+xgb2 = rps.Sharer(xgb1, ahead = 1)
+xgb3 = rps.Sharer(xgb1, ahead = 2)
+manager = XGBClassifier(n_estimators = 10, eval_metric = 'logloss')
 
+agents = [ xgb1, xgb2, xgb3 ]
+    
+agency = rps.MetaAgency(manager, agents, window = 10)
 
 
 
 def classifier_move(observation, configuration):
 
-    global clr
+    global agency
     
     if observation.step > 0:
-        clr.add(observation.lastOpponentAction)
+        agency.add(observation.lastOpponentAction)
         
-    return clr.decide()
+    return agency.decide()
 
 
 class observationCls:

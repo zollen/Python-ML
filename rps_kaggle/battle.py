@@ -22,6 +22,8 @@ def setup():
     xgb10 Classifier
     WON [14], LOST [6 ] EVEN [0 ] WINNING RATIO [1.0943]
     WON [16], LOST [4 ] EVEN [0 ] WINNING RATIO [1.0769]
+    WON [11], LOST [8 ] EVEN [1 ] WINNING RATIO [1.0648]
+    WON [14], LOST [6 ] EVEN [0 ] WINNING RATIO [1.0774]
     
     xgb6 Classifier
   
@@ -43,7 +45,7 @@ def setup():
     
     agents = [ xgb1, xgb2, xgb3 ]
         
-    player1 = rps.MetaAgency(manager, agents, window = 10)
+    player1 = rps.MetaAgency(manager, agents, window = 12)
     player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                              window = 10)
     
