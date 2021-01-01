@@ -592,6 +592,8 @@ class MetaAgency(BaseAgent):
                 outcomes.append(self.encode(index))
                 
             self.data[self.row] = outcomes
+            self.results[self.row] = np.where(self.lastmoves == (self.opponent[-1].item() + 1) % self.states)[0][0]
+            
             
             if self.full == False:
                 if self.history > 0 and self.row + 1 >= self.history:
@@ -603,7 +605,8 @@ class MetaAgency(BaseAgent):
                 self.row += 1
             
             last = self.row if self.full == False else self.history
-            self.results[self.row] = np.where(self.lastmoves == (self.opponent[-1].item() + 1) % self.states)[0][0]
+            
+            
             
             outcomes = []
             for index in range(self.row, self.row + self.window):
