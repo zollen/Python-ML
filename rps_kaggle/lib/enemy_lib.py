@@ -3,7 +3,7 @@ Created on Jan. 1, 2021
 
 @author: zollen
 '''
-import pandas as pd
+
 import numpy as np
 
 
@@ -198,23 +198,22 @@ agents = {
 
 history = []
 bandit_state = {k:[1,1] for k in agents.keys()}
-    
+best_agent = None
 def multi_armed_bandit_agent (observation, configuration):
     
+    global best_agent
     # bandits' params
     step_size = 3 # how much we increase a and b 
     decay_rate = 1.05 # how much do we decay old historical data
     
     global history, bandit_state
     
-    def log_step(step = None, history = None, agent = None, competitorStep = None, file = 'history.csv'):
+    def log_step(step = None, history = None, agent = None, competitorStep = None):
         if step is None:
             step = np.random.randint(3)
         if history is None:
             history = []
         history.append({'step': step, 'competitorStep': competitorStep, 'agent': agent})
-        if file is not None:
-            pd.DataFrame(history).to_csv(file, index = False)
         return step
     
     def update_competitor_step(history, competitorStep):
@@ -254,7 +253,6 @@ def multi_armed_bandit_agent (observation, configuration):
             best_agent = k
         
     step = agents[best_agent].step(history)
-    
     return log_step(step, history, best_agent)
 
 class observationCls:
@@ -269,13 +267,16 @@ class MutliArmAgent:
         self.round = 0
         self.observation = observationCls()
         self.configuration = configurationCls()
+        self.bestAgent = None
         
     def __str__(self):
-        return "Mutli-Arm Agent"
+        return "Mutli-Arm Agent(" + self.bestAgent + ")"
     
     def add(self, token):
         self.observation.step += 1
         self.observation.lastOpponentAction = token
     
     def decide(self):
-        return multi_armed_bandit_agent(self.observation, self.configuration)
+        choice = multi_armed_bandit_agent(self.observation, self.configuration)
+        self.bestAgent = best_agent
+        return choice
