@@ -554,12 +554,15 @@ class MetaAgency(BaseAgent):
               "10": 6, "21": 7, "02": 8
             }
     
-    def __init__(self, manager, agents, states = 3, window = 10):
+    def __init__(self, manager, agents, states = 3, history = -1, window = 10):
         super().__init__(states, window, 0, None)
         self.manager = manager
         self.agents = agents
         self.data = np.zeros(shape = (1100, self.window)).astype('int64')
+        self.results = np.zeros(shape = (1100, )).astype('int64')
         self.row = 0
+        self.history = history
+        self.full = False
         self.executor = None
         self.lastmoves = np.array([]).astype('int64')
         self.testdata = np.array([]).astype('int64')
@@ -581,15 +584,26 @@ class MetaAgency(BaseAgent):
     
     def decide(self):
         
+        last = 0
+        
         if self.mines.size > self.window and self.opponent.size > self.window:
             outcomes = []
             for index in range(self.row, self.row + self.window):
                 outcomes.append(self.encode(index))
                 
             self.data[self.row] = outcomes
-            self.row += 1
-            self.results = np.append(self.results, 
-                        np.where(self.lastmoves == (self.opponent[-1].item() + 1) % self.states))
+            
+            if self.full == False:
+                if self.history > 0 and self.row + 1 >= self.history:
+                    self.full = True
+            
+            if self.history > 0:        
+                self.row = (self.row + 1) % self.history
+            else:
+                self.row += 1
+            
+            last = self.row if self.full == False else self.history
+            self.results[self.row] = np.where(self.lastmoves == (self.opponent[-1].item() + 1) % self.states)[0][0]
             
             outcomes = []
             for index in range(self.row, self.row + self.window):
@@ -606,7 +620,7 @@ class MetaAgency(BaseAgent):
         best_move = self.lastmoves[0].item()
         
         if self.testdata.size > 0:
-            self.manager.fit(self.data[:self.row], self.results)
+            self.manager.fit(self.data[:last], self.results[:last])
             best_agent = self.manager.predict(self.testdata)[0]
             self.executor = self.agents[best_agent]
             best_move = self.lastmoves[best_agent].item()
