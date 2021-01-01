@@ -24,7 +24,7 @@ manager = XGBClassifier(n_estimators = 10, eval_metric = 'logloss')
 
 agents = [ xgb1, xgb2, xgb3 ]
     
-agency = rps.MetaAgency(manager, agents, window = 4)
+agency = rps.MetaAgency(manager, agents, window = 20, history = 50)
 
 
 
@@ -51,7 +51,7 @@ for rnd in range(0, 1000):
     
     choice = None
     observation.step = rnd
-    observation.lastOpponentAction = rnd % 3
+    observation.lastOpponentAction = np.random.randint(3)
 
     t_start = time.perf_counter_ns()
     choice = classifier_move(observation, configuration)

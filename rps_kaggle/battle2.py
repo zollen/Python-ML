@@ -28,7 +28,7 @@ def setup():
     
     agents = [ xgb1, xgb2, xgb3 ]
         
-    player1 = rps.MetaAgency(manager, agents, window = 15, history = 50)
+    player1 = rps.MetaAgency(manager, agents, window = 20, history = 50)
    
     player2 = enm.MutliArmAgent()
     

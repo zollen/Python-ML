@@ -566,8 +566,14 @@ class MetaAgency(BaseAgent):
         self.executor = None
         self.lastmoves = np.array([]).astype('int64')
         self.testdata = np.array([]).astype('int64')
+        self.totalWin = 0
+        self.totalLoss = 0
+        self.crazy = False
         
     def __str__(self):
+        if self.crazy == True:
+            return "MetaAgency(Crazy)"
+        
         return "MetaAgency(" + self.executor.__str__() + ")"
     
     def add(self, token):
@@ -582,9 +588,24 @@ class MetaAgency(BaseAgent):
     def encode(self, index):
         return self.TABLE[str(self.mines[index]) + str(self.opponent[index])]
     
+    def lastmatch(self):
+        out = (self.mines[-1] - self.opponent[-1]) % self.states
+        if out == 1:
+            self.totalWin += 1
+        elif out == 2:
+            self.totalLoss += 1
+    
     def decide(self):
         
         last = 0
+        
+        if self.mines.size > 0 and self.opponent.size > 0:
+            self.lastmatch()
+            res = self.totalWin - self.totalLoss
+            if res >= 10:
+                self.crazy = True
+            elif res <= 0:
+                self.crazy = False
         
         if self.mines.size > self.window and self.opponent.size > self.window:
             outcomes = []
@@ -613,20 +634,24 @@ class MetaAgency(BaseAgent):
                 outcomes.append(self.encode(index))
                 
             self.testdata = np.array(outcomes).astype('int64').reshape(1, -1)
-            
-        self.lastmoves = np.array([]).astype('int64')
         
+      
+        self.lastmoves = np.array([]).astype('int64')
+            
         for agent in self.agents:
             self.lastmoves = np.append(self.lastmoves, agent.estimate())
             
-        self.executor = self.agents[0]
-        best_move = self.lastmoves[0].item()
-        
-        if self.testdata.size > 0:
-            self.manager.fit(self.data[:last], self.results[:last])
-            best_agent = self.manager.predict(self.testdata)[0]
-            self.executor = self.agents[best_agent]
-            best_move = self.lastmoves[best_agent].item()
+        if self.crazy == True:
+            best_move = self.random()
+        else:        
+            self.executor = self.agents[0]
+            best_move = self.lastmoves[0].item()
+            
+            if self.testdata.size > 0:
+                self.manager.fit(self.data[:last], self.results[:last])
+                best_agent = self.manager.predict(self.testdata)[0]
+                self.executor = self.agents[best_agent]
+                best_move = self.lastmoves[best_agent].item()
                       
         for agent in self.agents:
             agent.deposit(best_move)
