@@ -20,21 +20,13 @@ def setup():
     xgb15 Classifier
     
     xgb10 Classifier
-    WON [14], LOST [6 ] EVEN [0 ] WINNING RATIO [1.0943]
-    WON [16], LOST [4 ] EVEN [0 ] WINNING RATIO [1.0769]
-    WON [11], LOST [8 ] EVEN [1 ] WINNING RATIO [1.0648]
-    WON [14], LOST [6 ] EVEN [0 ] WINNING RATIO [1.0774]
+   
     
     xgb10 Classifier with meta window = 6
-    WON [15], LOST [5 ] EVEN [0 ] WINNING RATIO [1.0731]
-    WON [14], LOST [6 ] EVEN [0 ] WINNING RATIO [1.0679]
-    WON [16], LOST [4 ] EVEN [0 ] WINNING RATIO [1.1005]
-    WON [16], LOST [4 ] EVEN [0 ] WINNING RATIO [1.1061]
+   
     
     xgb10 Classifier with meta window = 20
-    WON [16], LOST [4 ] EVEN [0 ] WINNING RATIO [1.0647]
-    WON [13], LOST [7 ] EVEN [0 ] WINNING RATIO [1.1147]
-   
+    WON [18], LOST [2 ] EVEN [0 ] WINNING RATIO [1.1051]
     
     '''
     
