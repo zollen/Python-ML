@@ -609,7 +609,7 @@ class MetaAgency(BaseAgent):
             
             
             outcomes = []
-            for index in range(self.row, self.row + self.window):
+            for index in range(self.mines.size - self.window, self.mines.size):
                 outcomes.append(self.encode(index))
                 
             self.testdata = np.array(outcomes).astype('int64').reshape(1, -1)
