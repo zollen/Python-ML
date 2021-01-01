@@ -548,6 +548,12 @@ class Sharer:
 
 class MetaAgency(BaseAgent):
     
+    TABLE = { 
+              "01": 0, "12": 1, "20": 2,
+              "00": 3, "11": 4, "22": 5,
+              "10": 6, "21": 7, "02": 8
+            }
+    
     def __init__(self, manager, agents, states = 3, window = 10):
         super().__init__(states, window, 0, None)
         self.manager = manager
@@ -570,21 +576,15 @@ class MetaAgency(BaseAgent):
         self.mines = np.append(self.mines, token)
         return token
             
-    def outcome(self, index):
-        res = (self.mines[index] - self.opponent[index]) % self.states
-        if res == 1:
-            return 1
-        elif res == 2:
-            return -1
-        
-        return 0
+    def encode(self, index):
+        return self.TABLE[str(self.mines[index]) + str(self.opponent[index])]
     
     def decide(self):
         
         if self.mines.size > self.window and self.opponent.size > self.window:
             outcomes = []
             for index in range(self.row, self.row + self.window):
-                outcomes.append(self.outcome(index))
+                outcomes.append(self.encode(index))
                 
             self.data[self.row] = outcomes
             self.row += 1
@@ -593,7 +593,7 @@ class MetaAgency(BaseAgent):
             
             outcomes = []
             for index in range(self.row, self.row + self.window):
-                outcomes.append(self.outcome(index))
+                outcomes.append(self.encode(index))
                 
             self.testdata = np.array(outcomes).astype('int64').reshape(1, -1)
             
