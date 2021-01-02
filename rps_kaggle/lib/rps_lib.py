@@ -554,7 +554,7 @@ class MetaAgency(BaseAgent):
               "10": 6, "21": 7, "02": 8
             }
     
-    def __init__(self, manager, agents, states = 3, history = -1, randomness = 0, window = 10):
+    def __init__(self, manager, agents, states = 3, history = -1, randomness = 0, random_threshold = -20, window = 10):
         super().__init__(states, window, 0, None)
         self.manager = manager
         self.agents = agents
@@ -563,6 +563,7 @@ class MetaAgency(BaseAgent):
         self.row = 0
         self.history = history
         self.full = False
+        self.randomthreshold = random_threshold
         self.randomness = randomness
         self.lostcontrol = randomness
         self.executor = None
@@ -603,7 +604,7 @@ class MetaAgency(BaseAgent):
         if self.mines.size > 0 and self.opponent.size > 0:
             self.lastmatch()
             current = self.totalWin - self.totalLoss
-            if current < -20:
+            if current < self.randomthreshold:
                 ratio = 0.3 + abs(current) * 0.1
                 self.lostcontrol = ratio if ratio < 0.6 else 0.6
             else:
