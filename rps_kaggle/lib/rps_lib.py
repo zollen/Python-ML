@@ -602,8 +602,7 @@ class MetaAgency(BaseAgent):
       
         if self.mines.size > 0 and self.opponent.size > 0:
             self.lastmatch()
-            trend = self.totalWin - self.totalLoss
-            if trend < -20:
+            if self.totalWin - self.totalLoss < -20:
                 self.lostcontrol = 0.3
             else:
                 self.lostcontrol = self.randomness
