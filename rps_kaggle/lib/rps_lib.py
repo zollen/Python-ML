@@ -554,7 +554,7 @@ class MetaAgency(BaseAgent):
               "10": 6, "21": 7, "02": 8
             }
     
-    def __init__(self, manager, agents, states = 3, history = -1, randomless = 0, window = 10):
+    def __init__(self, manager, agents, states = 3, history = -1, randomness = 0, window = 10):
         super().__init__(states, window, 0, None)
         self.manager = manager
         self.agents = agents
@@ -563,8 +563,8 @@ class MetaAgency(BaseAgent):
         self.row = 0
         self.history = history
         self.full = False
-        self.randomless = randomless
-        self.lostcontrol = randomless
+        self.randomness = randomness
+        self.lostcontrol = randomness
         self.executor = None
         self.lastmoves = np.array([]).astype('int64')
         self.testdata = np.array([]).astype('int64')
@@ -606,7 +606,7 @@ class MetaAgency(BaseAgent):
             if trend < -20:
                 self.lostcontrol = 0.3
             else:
-                self.lostcontrol = self.randomless
+                self.lostcontrol = self.randomness
 
     
         if self.mines.size > self.window and self.opponent.size > self.window:
@@ -647,7 +647,7 @@ class MetaAgency(BaseAgent):
         self.executor = self.agents[0]
         best_move = self.lastmoves[0].item()
         
-        if self.randomless > 0 and np.random.uniform(0, 1) <= self.lostcontrol:
+        if self.randomness > 0 and np.random.uniform(0, 1) <= self.lostcontrol:
             self.crazy = True
             best_move = self.random()
         else:
