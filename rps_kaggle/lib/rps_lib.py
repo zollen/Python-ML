@@ -602,7 +602,7 @@ class MetaAgency(BaseAgent):
         if self.mines.size > 0 and self.opponent.size > 0:
             self.lastmatch()
             res = self.totalWin - self.totalLoss
-            if res >= 10:
+            if res >= 20:
                 self.crazy = True
             elif res <= 0:
                 self.crazy = False

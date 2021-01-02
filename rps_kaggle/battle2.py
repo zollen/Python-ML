@@ -14,6 +14,10 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
+'''
+PLAYER1 335, PLAYER2 325  RATIO 1.0308
+
+'''
 
 def setup():
     
@@ -21,14 +25,14 @@ def setup():
     forest2 = rps.Sharer(forest1, ahead = 1)
     forest3 = rps.Sharer(forest1, ahead = 2)
     
-    xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 10)
+    xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
     xgb2 = rps.Sharer(xgb1, ahead = 1)
     xgb3 = rps.Sharer(xgb1, ahead = 2)
     manager = XGBClassifier(n_estimators = 10, eval_metric = 'logloss')
     
     agents = [ xgb1, xgb2, xgb3 ]
         
-    player1 = rps.MetaAgency(manager, agents, window = 20, history = 50)
+    player1 = rps.MetaAgency(manager, agents, window = 20, history = 30)
    
     player2 = enm.MutliArmAgent()
     

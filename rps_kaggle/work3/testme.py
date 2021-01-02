@@ -24,7 +24,7 @@ manager = XGBClassifier(n_estimators = 10, eval_metric = 'logloss')
 
 agents = [ xgb1, xgb2, xgb3 ]
     
-agency = rps.MetaAgency(manager, agents, window = 20, history = 50)
+agency = rps.MetaAgency(manager, agents, window = 4, history = 50)
 
 
 

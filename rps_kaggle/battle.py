@@ -71,7 +71,7 @@ for rnd in range(20):
         totalloss += 1
     else:
         totaleven += 1   
-     
+          
     print("Match [{:>2}] WON [{}]  LOST [{}] RATIO [{:2.4f}]".format(rnd + 1, win1, win2, win1 / win2))
  
 print("=================== TOTAL =======================")    
