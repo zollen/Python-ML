@@ -564,6 +564,7 @@ class MetaAgency(BaseAgent):
         self.history = history
         self.full = False
         self.randomless = randomless
+        self.lostcontrol = randomless
         self.executor = None
         self.lastmoves = np.array([]).astype('int64')
         self.testdata = np.array([]).astype('int64')
@@ -598,11 +599,14 @@ class MetaAgency(BaseAgent):
     def decide(self):
         
         last = 0
-        trend = 0
-        
+      
         if self.mines.size > 0 and self.opponent.size > 0:
             self.lastmatch()
             trend = self.totalWin - self.totalLoss
+            if trend < -20:
+                self.lostcontrol = 0.3
+            else:
+                self.lostcontrol = self.randomless
 
     
         if self.mines.size > self.window and self.opponent.size > self.window:
@@ -643,7 +647,7 @@ class MetaAgency(BaseAgent):
         self.executor = self.agents[0]
         best_move = self.lastmoves[0].item()
         
-        if (self.randomless > 0 and np.random.uniform(0, 1) <= self.randomless) or trend <= -20:
+        if self.randomless > 0 and np.random.uniform(0, 1) <= self.lostcontrol:
             self.crazy = True
             best_move = self.random()
         else:
