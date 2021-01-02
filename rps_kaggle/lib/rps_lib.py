@@ -554,7 +554,7 @@ class MetaAgency(BaseAgent):
               "10": 6, "21": 7, "02": 8
             }
     
-    def __init__(self, manager, agents, states = 3, history = -1, window = 10):
+    def __init__(self, manager, agents, states = 3, history = -1, randomless = 0, window = 10):
         super().__init__(states, window, 0, None)
         self.manager = manager
         self.agents = agents
@@ -563,13 +563,17 @@ class MetaAgency(BaseAgent):
         self.row = 0
         self.history = history
         self.full = False
+        self.randomless = randomless
         self.executor = None
         self.lastmoves = np.array([]).astype('int64')
         self.testdata = np.array([]).astype('int64')
         self.totalWin = 0
         self.totalLoss = 0
+        self.crazy = False
         
     def __str__(self): 
+        if self.crazy:
+            return "MetaAgency(Crazy)"
         return "MetaAgency(" + self.executor.__str__() + ")"
     
     def add(self, token):
@@ -633,11 +637,17 @@ class MetaAgency(BaseAgent):
         self.executor = self.agents[0]
         best_move = self.lastmoves[0].item()
         
-        if self.testdata.size > 0:
-            self.manager.fit(self.data[:last], self.results[:last])
-            best_agent = self.manager.predict(self.testdata)[0]
-            self.executor = self.agents[best_agent]
-            best_move = self.lastmoves[best_agent].item()
+        if self.randomless > 0 and np.random.uniform(0, 1) <= self.randomless:
+            self.crazy = True
+            best_move = self.random()
+        else:
+            self.crazy = False
+            if self.testdata.size > 0:
+                self.manager.fit(self.data[:last], self.results[:last])
+                best_agent = self.manager.predict(self.testdata)[0]
+                self.executor = self.agents[best_agent]
+                best_move = self.lastmoves[best_agent].item()
+        
                       
         for agent in self.agents:
             agent.deposit(best_move)
