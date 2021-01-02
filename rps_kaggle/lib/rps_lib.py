@@ -568,12 +568,8 @@ class MetaAgency(BaseAgent):
         self.testdata = np.array([]).astype('int64')
         self.totalWin = 0
         self.totalLoss = 0
-        self.crazy = False
         
-    def __str__(self):
-        if self.crazy == True:
-            return "MetaAgency(Crazy)"
-        
+    def __str__(self): 
         return "MetaAgency(" + self.executor.__str__() + ")"
     
     def add(self, token):
@@ -598,15 +594,7 @@ class MetaAgency(BaseAgent):
     def decide(self):
         
         last = 0
-        
-        if self.mines.size > 0 and self.opponent.size > 0:
-            self.lastmatch()
-            res = self.totalWin - self.totalLoss
-            if res >= 20:
-                self.crazy = True
-            elif res <= 0:
-                self.crazy = False
-        
+    
         if self.mines.size > self.window and self.opponent.size > self.window:
             outcomes = []
             for index in range(self.row, self.row + self.window):
@@ -641,17 +629,15 @@ class MetaAgency(BaseAgent):
         for agent in self.agents:
             self.lastmoves = np.append(self.lastmoves, agent.estimate())
             
-        if self.crazy == True:
-            best_move = self.random()
-        else:        
-            self.executor = self.agents[0]
-            best_move = self.lastmoves[0].item()
-            
-            if self.testdata.size > 0:
-                self.manager.fit(self.data[:last], self.results[:last])
-                best_agent = self.manager.predict(self.testdata)[0]
-                self.executor = self.agents[best_agent]
-                best_move = self.lastmoves[best_agent].item()
+             
+        self.executor = self.agents[0]
+        best_move = self.lastmoves[0].item()
+        
+        if self.testdata.size > 0:
+            self.manager.fit(self.data[:last], self.results[:last])
+            best_agent = self.manager.predict(self.testdata)[0]
+            self.executor = self.agents[best_agent]
+            best_move = self.lastmoves[best_agent].item()
                       
         for agent in self.agents:
             agent.deposit(best_move)
