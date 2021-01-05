@@ -723,7 +723,7 @@ class MetaAgency(BaseAgent):
             best_move = self.random()
         else:
             self.crazy = False
-            if self.testdata.size > 0 and last > 5:
+            if self.testdata.size > 0 and last > 5 and np.unique(self.results).size > 1:
                 best_agent = self.choose(last)
                 self.executor = self.agents[best_agent]
                 best_move = self.lastmoves[best_agent].item()
