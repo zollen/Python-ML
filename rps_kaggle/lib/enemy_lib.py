@@ -270,7 +270,7 @@ class MutliArmAgent:
         self.bestAgent = None
         
     def __str__(self):
-        return "Mutli-Arm Agent(" + self.bestAgent + ")"
+        return "Mutli-Arm Bandit(" + self.bestAgent + ")"
     
     def add(self, token):
         self.observation.step += 1

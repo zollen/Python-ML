@@ -332,7 +332,41 @@ class OClassifier(Classifier):
         return np.array(buf + arr).astype('int64')
     
 
+
+
+class KClassifier(Classifier):
+    
+    TABLE = { 
+              "01": 0, "12": 1, "20": 2,
+              "00": 3, "11": 4, "22": 5,
+              "10": 6, "21": 7, "02": 8
+            }
+    
+    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, randomness = 0, counter = None):
+        super().__init__(classifier, states, window, ahead, delay_process, counter)
+        self.randomness = randomness
+        self.data = np.zeros(shape = (1100, self.window)).astype('int64')
+    
+    def encode(self, me, op):
+        return self.TABLE[str(me) + str(op)]
+        
+    def convert(self, buf):
+                
+        arr = []
+        for index in range(self.window):
+            arr.append(self.encode(buf[index], buf[index + self.window]))
+        
+        return np.array(arr).astype('int64')
+    
+    def decide(self):
+        
+        if np.random.uniform(0, 1) <= self.randomness:
+            return self.submit(self.random())
+        else:
+            return super().decide()
  
+
+
 class MirrorOpponentDecider(BaseAgent):
     
     def __init__(self, states = 3, window = 0, ahead = 0, counter = None):
@@ -554,9 +588,9 @@ class MetaAgency(BaseAgent):
               "10": 6, "21": 7, "02": 8
             }
     
-    def __init__(self, manager, agents, states = 3, history = -1, randomness = 0, random_threshold = -20, window = 10):
+    def __init__(self, managers, agents, states = 3, history = -1, randomness = 0, random_threshold = -20, window = 10):
         super().__init__(states, window, 0, None)
-        self.manager = manager
+        self.managers = managers
         self.agents = agents
         self.data = np.zeros(shape = (1100, self.window)).astype('int64')
         self.results = np.zeros(shape = (1100, )).astype('int64')
@@ -596,6 +630,41 @@ class MetaAgency(BaseAgent):
             self.totalWin += 1
         elif out == 2:
             self.totalLoss += 1
+            
+        for _, scores, result in self.managers:
+            
+            scores[0] = (scores[0] - 1) / 1.1 + 1
+            scores[1] = (scores[1] - 1) / 1.1 + 1
+            
+            res = (self.lastmoves[result[0]] - self.opponent[-1]) % self.states
+            if res == 1:
+                scores[0] += 3
+            elif res == 2:
+                scores[1] += 6
+            else:
+                scores[0] += 3 / 2
+                scores[1] += 3 / 2
+            
+            
+    def choose(self, last):
+   
+        probabilities = {}
+        for manager, scores, result in self.managers:
+            manager.fit(self.data[:last], self.results[:last])
+            result[0] = manager.predict(self.testdata)[0]
+            if result[0] not in probabilities:
+                probabilities[result[0]] = []
+            probabilities[result[0]].append(round(scores[0] / scores[1], 4))
+        
+        best_agent = -1
+        best_prob = -1
+        for key, val in probabilities.items():
+            mprob = np.median(val)
+            if mprob > best_prob:
+                best_prob = mprob
+                best_agent = key
+      
+        return best_agent
     
     def decide(self):
         
@@ -654,9 +723,8 @@ class MetaAgency(BaseAgent):
             best_move = self.random()
         else:
             self.crazy = False
-            if self.testdata.size > 0:
-                self.manager.fit(self.data[:last], self.results[:last])
-                best_agent = self.manager.predict(self.testdata)[0]
+            if self.testdata.size > 0 and last > 5:
+                best_agent = self.choose(last)
                 self.executor = self.agents[best_agent]
                 best_move = self.lastmoves[best_agent].item()
         

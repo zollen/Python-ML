@@ -5,7 +5,10 @@ Created on Dec. 16, 2020
 '''
 
 from xgboost import XGBClassifier
+from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.neighbors import KNeighborsClassifier
 import rps_kaggle.lib.rps_lib as rps
 import rps_kaggle.lib.battle_lib as bat
 import rps_kaggle.lib.enemy_lib as enm
@@ -15,25 +18,28 @@ import warnings
 warnings.filterwarnings('ignore')
 
 '''
-PLAYER1 335, PLAYER2 325  RATIO 1.0308
+XGB and FOREST
+PLAYER1 336, PLAYER2 335  RATIO 1.0030
+
+
 
 '''
 
 def setup():
-    
-    forest1 = rps.Classifier(RandomForestClassifier(n_estimators = 10), window = 10)
-    forest2 = rps.Sharer(forest1, ahead = 1)
-    forest3 = rps.Sharer(forest1, ahead = 2)
-    
+   
     xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
     xgb2 = rps.Sharer(xgb1, ahead = 1)
     xgb3 = rps.Sharer(xgb1, ahead = 2)
-    manager = XGBClassifier(n_estimators = 10, eval_metric = 'logloss')
+    managers = [
+                    [ XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), [0, 0], [0]],
+                    [ RandomForestClassifier(n_estimators = 10),                 [0, 0], [0]],
+                    [ KNeighborsClassifier(),                                    [0, 0], [0]],
+                    [ SVC(kernel = 'rbf'),                                       [0, 0], [0]]
+                ]
     
     agents = [ xgb1, xgb2, xgb3 ]
         
-    player1 = rps.MetaAgency(manager, agents, window = 25, history = 50, random_threshold = -5, randomness = 0.1)
-   
+    player1 = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -40, randomness = 0.1)
     player2 = enm.MutliArmAgent()
     
     return player1, player2

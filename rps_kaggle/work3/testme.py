@@ -12,7 +12,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 import rps_kaggle.lib.rps_lib as rps
 import warnings
-from rps_kaggle.lib.rps_lib import StandardCounterMover
+
 
 warnings.filterwarnings('ignore')
 
@@ -20,12 +20,16 @@ warnings.filterwarnings('ignore')
 xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
 xgb2 = rps.Sharer(xgb1, ahead = 1)
 xgb3 = rps.Sharer(xgb1, ahead = 2)
-manager = XGBClassifier(n_estimators = 10, eval_metric = 'logloss')
-
+managers = [
+                [ XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), [0, 0], [0]],
+                [ RandomForestClassifier(n_estimators = 10),                 [0, 0], [0]],
+                [ KNeighborsClassifier(),                                    [0, 0], [0]],
+                [ SVC(kernel = 'rbf'),                                       [0, 0], [0]]
+            ]
+            
 agents = [ xgb1, xgb2, xgb3 ]
     
-agency = rps.MetaAgency(manager, agents, window = 4, history = 50)
-
+agency = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -40, randomness = 0.1)
 
 
 def classifier_move(observation, configuration):
