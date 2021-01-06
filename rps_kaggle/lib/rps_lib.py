@@ -237,8 +237,6 @@ class Classifier(BaseAgent):
             self.prepare() 
     
     def prepare(self):
-        print("MINES: ", self.mines)
-        print("OPPT:  ", self.opponent)
         self.data[self.pos] = self.convert(self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist())
         self.results[self.pos] = self.opponent[-1]   
         self.row = self.row + 1
@@ -255,12 +253,7 @@ class Classifier(BaseAgent):
     def decide(self):
         
         lpos = self.pos if self.full == False else self.history
-        
-        print(self.pos, lpos, self.row)
-        print(self.mines[self.row:self.row+self.window])
-        print(self.results[:lpos])
-        print(self.data[:lpos])
-    
+
         if len(self.opponent) > self.window + self.delayProcess + 1:
             self.classifier.fit(self.data[:lpos], self.results[:lpos])  
             
@@ -599,16 +592,107 @@ class Sharer:
     
 
 
-class VoteAgency:
+class VoteAgency(BaseAgent):
     
-    def __init__(self, agents, states = 3, history = 100, randomness = 0, window = 10):
-        super().__init__(states, window, 0, None)
+    def __init__(self, agents, states = 3, randomness = 0):
+        super().__init__(states, 0, 0, None)
         self.agents = agents
-        self.history = history
+        self.randomness = randomness
         self.totalWin = 0
         self.totalLoss = 0
-
+        self.crazy = False
+        self.executor = None
+        
+    def __str__(self): 
+        if self.crazy:
+            return "VoteAgency(Crazy)"
+        return "VoteAgency(" + self.executor.__str__() + ")"
     
+    def add(self, token):
+        self.opponent = np.append(self.opponent, token)
+        for agent, _, _ in self.agents:
+            agent.add(token)
+            
+    def submit(self, token):
+        self.mines = np.append(self.mines, token)
+        return token
+
+    def lastmatch(self):
+        out = (self.mines[-1] - self.opponent[-1]) % self.states
+        if out == 1:
+            self.totalWin += 1
+        elif out == 2:
+            self.totalLoss += 1
+              
+        for agent, scores, result in self.agents:
+            
+            agent.reset()
+            
+            scores[0] = (scores[0] - 1) / 1.1 + 1
+            scores[1] = (scores[1] - 1) / 1.1 + 1
+            
+            res = (result[0] - self.opponent[-1]) % self.states
+            if res == 1:
+                scores[0] += 3
+            elif res == 2:
+                scores[1] += 5
+            else:
+                scores[0] += 3 / 2
+                scores[1] += 3 / 2
+            
+            
+    def choose(self):
+   
+        probabilities = {}
+        for agent, scores, result in self.agents:
+            if result[0] not in probabilities:
+                probabilities[result[0]] = [ agent ]
+            probabilities[result[0]].append(round(scores[0] / scores[1], 4))
+        
+        best_agent = None
+        best_move = -1
+        best_prob = -1
+        for key, val in probabilities.items():
+            mprob = np.median(val[1:])
+            if mprob > best_prob:
+                best_agent = val[0]
+                best_prob = mprob
+                best_move = key
+                
+        self.executor = best_agent
+      
+        return best_move
+    
+    def decide(self):
+                         
+        if self.mines.size > 0 and self.opponent.size > 0:
+            self.lastmatch()
+      
+        self.lastmoves = np.array([]).astype('int64')
+            
+        for agent, _, result in self.agents:
+            result[0] = agent.estimate()
+            
+             
+        self.executor = self.agents[0]
+        best_move = self.random()
+        
+        if self.randomness > 0 and np.random.uniform(0, 1) <= self.randomness:
+            self.crazy = True
+            best_move = self.random()
+        else:
+            self.crazy = False
+            if self.mines.size > 0 and self.opponent.size > 0:
+                best_move = self.choose()    
+                      
+        for agent, _, _ in self.agents:
+            agent.deposit(best_move)
+        
+        return self.submit(best_move)
+
+
+
+
      
 class MetaAgency(BaseAgent):
     
@@ -757,7 +841,7 @@ class MetaAgency(BaseAgent):
             best_move = self.random()
         else:
             self.crazy = False
-            if self.testdata.size > 0 and last > 5 and np.unique(self.results).size > 1:
+            if self.testdata.size > 0 and last > 5:
                 best_agent = self.choose(last)
                 self.executor = self.agents[best_agent]
                 best_move = self.lastmoves[best_agent].item()
