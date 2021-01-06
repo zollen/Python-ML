@@ -17,7 +17,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss', num_class = 3), history = 5, window = 5)
+xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss', num_class = 3), history =-1, window = 5)
 xgb2 = rps.Sharer(xgb1, ahead = 1)
 xgb3 = rps.Sharer(xgb1, ahead = 2)
 managers = [
@@ -29,8 +29,8 @@ managers = [
             
 agents = [ xgb1, xgb2, xgb3 ]
     
-#agency = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -40, randomness = 0.1)
-agency = xgb1
+agency = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -40, randomness = 0.1)
+
 
 
 def classifier_move(observation, configuration):
