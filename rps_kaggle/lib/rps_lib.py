@@ -271,8 +271,8 @@ class Classifier(BaseAgent):
     
 class MClassifier(Classifier):
     
-    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, counter = None):
-        super().__init__(classifier, states, window, ahead, delay_process, counter)
+    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, history = -1, counter = None):
+        super().__init__(classifier, states, window, ahead, delay_process, history, counter)
         self.data = np.zeros(shape = (1100, self.window * 2 * 2)).astype('int64')
         
     def convert(self, buf):  
@@ -299,8 +299,8 @@ class SClassifier(Classifier):
                  [1, 0, 0, 0, 0, 0, 0, 0]
                 ]
     
-    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, counter = None):
-        super().__init__(classifier, states, window, ahead, delay_process, counter)
+    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, history = -1, counter = None):
+        super().__init__(classifier, states, window, ahead, delay_process, history, counter)
         self.data = np.zeros(shape = (1100, (self.window - 1) * 2 * 8)).astype('int64')
          
     def convert(self, buf):
@@ -321,8 +321,8 @@ class SClassifier(Classifier):
 
 class OClassifier(Classifier):
     
-    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, counter = None):
-        super().__init__(classifier, states, window, ahead, delay_process, counter)
+    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, history = -1, counter = None):
+        super().__init__(classifier, states, window, ahead, delay_process, history, counter)
         self.data = np.zeros(shape = (1100, self.window * 3)).astype('int64')
             
     def won(self, me, opp):
@@ -354,8 +354,8 @@ class KClassifier(Classifier):
               "10": 6, "21": 7, "02": 8
             }
     
-    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, randomness = 0, counter = None):
-        super().__init__(classifier, states, window, ahead, delay_process, counter)
+    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, history = -1, randomness = 0, counter = None):
+        super().__init__(classifier, states, window, ahead, delay_process, history, counter)
         self.randomness = randomness
         self.data = np.zeros(shape = (1100, self.window)).astype('int64')
     
@@ -630,7 +630,7 @@ class VoteAgency(BaseAgent):
             
             scores[0] = (scores[0] - 1) / 1.2 + 1
             scores[1] = (scores[1] - 1) / 1.2 + 1
-            
+           
             res = (result[0] - self.opponent[-1]) % self.states
             if res == 1:
                 scores[0] += 3
@@ -645,9 +645,12 @@ class VoteAgency(BaseAgent):
    
         probabilities = {}
         for agent, scores, result in self.agents:
+     
             if result[0] not in probabilities:
                 probabilities[result[0]] = [ agent ]
-            probabilities[result[0]].append(round(0 if scores[0] == 0 else scores[0] / scores[1], 4))
+            probabilities[result[0]].append(round(0 if scores[1] == 0 else (scores[0] / scores[1]), 4))
+        
+        
         
         best_agent = None
         best_move = -1

@@ -27,11 +27,11 @@ PLAYER1 336, PLAYER2 335  RATIO 1.0030
 
 def setup():
    
-    xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), history = 300, window = 15)
-    forest = rps.Classifier(RandomForestClassifier(n_estimators = 10), history = 300, window = 15)
-    ada = rps.Classifier(AdaBoostClassifier(n_estimators = 10), history = 300, window = 15)
-    knn = rps.Classifier(KNeighborsClassifier(), history = 300, window = 15)
-    svm = rps.Classifier(SVC(kernel = 'rbf'), history = 300, window = 15)
+    xgb1 = rps.KClassifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), history = 300, window = 40)
+    forest = rps.KClassifier(RandomForestClassifier(n_estimators = 10), history = 300, window = 40)
+    ada = rps.KClassifier(AdaBoostClassifier(n_estimators = 10), history = 300, window = 40)
+    knn = rps.KClassifier(KNeighborsClassifier(), history = 300, window = 40)
+    svm = rps.KClassifier(SVC(kernel = 'rbf'), history = 300, window = 40)
 
     agents = [
                 [ xgb1,                [0, 0], [0]],
