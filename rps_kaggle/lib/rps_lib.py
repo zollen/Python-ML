@@ -767,22 +767,28 @@ class MetaAgency(BaseAgent):
             
             
     def choose(self, last):
-   
-        probabilities = {}
-        for manager, scores, result in self.managers:
-            manager.fit(self.data[:last], self.results[:last])
-            result[0] = manager.predict(self.testdata)[0]
-            if result[0] not in probabilities:
-                probabilities[result[0]] = []
-            probabilities[result[0]].append(round(scores[0] / (scores[1] + 1), 4))
         
-        best_agent = -1
-        best_prob = -1
-        for key, val in probabilities.items():
-            mprob = np.median(val)
-            if mprob > best_prob:
-                best_prob = mprob
-                best_agent = key
+        best_agent = 0
+        
+        try :
+            
+            probabilities = {}
+            for manager, scores, result in self.managers:
+                manager.fit(self.data[:last], self.results[:last])
+                result[0] = manager.predict(self.testdata)[0]
+                if result[0] not in probabilities:
+                    probabilities[result[0]] = []
+                probabilities[result[0]].append(round(scores[0] / (scores[1] + 1), 4))
+            
+            best_agent = -1
+            best_prob = -1
+            for key, val in probabilities.items():
+                mprob = np.median(val)
+                if mprob > best_prob:
+                    best_prob = mprob
+                    best_agent = key
+        except:
+            pass
       
         return best_agent
     
@@ -831,9 +837,13 @@ class MetaAgency(BaseAgent):
         
       
         self.lastmoves = np.array([]).astype('int64')
+        
+        try:
             
-        for agent in self.agents:
-            self.lastmoves = np.append(self.lastmoves, agent.estimate())
+            for agent in self.agents:
+                self.lastmoves = np.append(self.lastmoves, agent.estimate())
+        except:
+                self.lastmoves = np.array([0, 1, 2])
             
              
         self.executor = self.agents[0]
