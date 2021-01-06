@@ -631,6 +631,9 @@ class MetaAgency(BaseAgent):
         elif out == 2:
             self.totalLoss += 1
             
+        for agent in self.agents:
+            agent.reset()
+            
         for _, scores, result in self.managers:
             
             scores[0] = (scores[0] - 1) / 1.1 + 1
@@ -640,7 +643,7 @@ class MetaAgency(BaseAgent):
             if res == 1:
                 scores[0] += 3
             elif res == 2:
-                scores[1] += 6
+                scores[1] += 5
             else:
                 scores[0] += 3 / 2
                 scores[1] += 3 / 2
@@ -668,72 +671,76 @@ class MetaAgency(BaseAgent):
     
     def decide(self):
         
-        last = 0
-      
-        if self.mines.size > 0 and self.opponent.size > 0:
-            self.lastmatch()
-            current = self.totalWin - self.totalLoss
-            if current < self.randomthreshold:
-                ratio = 0.3 + abs(current) * 0.1
-                self.lostcontrol = ratio if ratio < 0.6 else 0.6
-            else:
-                self.lostcontrol = self.randomness
-
+        try:            
+            last = 0
+          
+            if self.mines.size > 0 and self.opponent.size > 0:
+                self.lastmatch()
+                current = self.totalWin - self.totalLoss
+                if current < self.randomthreshold:
+                    ratio = 0.3 + abs(current) * 0.1
+                    self.lostcontrol = ratio if ratio < 0.6 else 0.6
+                else:
+                    self.lostcontrol = self.randomness
     
-        if self.mines.size > self.window and self.opponent.size > self.window:
-            outcomes = []
-            for index in range(self.row, self.row + self.window):
-                outcomes.append(self.encode(index))
+        
+            if self.mines.size > self.window and self.opponent.size > self.window:
+                outcomes = []
+                for index in range(self.row, self.row + self.window):
+                    outcomes.append(self.encode(index))
+                    
+                self.data[self.row] = outcomes
+                self.results[self.row] = np.where(self.lastmoves == (self.opponent[-1].item() + 1) % self.states)[0][0]
                 
-            self.data[self.row] = outcomes
-            self.results[self.row] = np.where(self.lastmoves == (self.opponent[-1].item() + 1) % self.states)[0][0]
+                
+                if self.full == False:
+                    if self.history > 0 and self.row + 1 >= self.history:
+                        self.full = True
+                
+                if self.history > 0:        
+                    self.row = (self.row + 1) % self.history
+                else:
+                    self.row += 1
+                
+                last = self.row if self.full == False else self.history
+                
+                
+                
+                outcomes = []
+                for index in range(self.mines.size - self.window, self.mines.size):
+                    outcomes.append(self.encode(index))
+                    
+                self.testdata = np.array(outcomes).astype('int64').reshape(1, -1)
             
+          
+            self.lastmoves = np.array([]).astype('int64')
+                
+            for agent in self.agents:
+                self.lastmoves = np.append(self.lastmoves, agent.estimate())
+                
+                 
+            self.executor = self.agents[0]
+            best_move = self.lastmoves[0].item()
             
-            if self.full == False:
-                if self.history > 0 and self.row + 1 >= self.history:
-                    self.full = True
-            
-            if self.history > 0:        
-                self.row = (self.row + 1) % self.history
+            if self.randomness > 0 and np.random.uniform(0, 1) <= self.lostcontrol:
+                self.crazy = True
+                best_move = self.random()
             else:
-                self.row += 1
+                self.crazy = False
+                if self.testdata.size > 0 and last > 5 and np.unique(self.results).size > 1:
+                    best_agent = self.choose(last)
+                    self.executor = self.agents[best_agent]
+                    best_move = self.lastmoves[best_agent].item()
             
-            last = self.row if self.full == False else self.history
+                          
+            for agent in self.agents:
+                agent.deposit(best_move)
             
-            
-            
-            outcomes = []
-            for index in range(self.mines.size - self.window, self.mines.size):
-                outcomes.append(self.encode(index))
-                
-            self.testdata = np.array(outcomes).astype('int64').reshape(1, -1)
+            return self.submit(best_move)
         
-      
-        self.lastmoves = np.array([]).astype('int64')
+        except:
             
-        for agent in self.agents:
-            self.lastmoves = np.append(self.lastmoves, agent.estimate())
-            
-             
-        self.executor = self.agents[0]
-        best_move = self.lastmoves[0].item()
-        
-        if self.randomness > 0 and np.random.uniform(0, 1) <= self.lostcontrol:
-            self.crazy = True
-            best_move = self.random()
-        else:
-            self.crazy = False
-            if self.testdata.size > 0 and last > 5 and np.unique(self.results).size > 1:
-                best_agent = self.choose(last)
-                self.executor = self.agents[best_agent]
-                best_move = self.lastmoves[best_agent].item()
-        
-                      
-        for agent in self.agents:
-            agent.deposit(best_move)
-        
-        return self.submit(best_move)
-    
+            return self.submit(self.random())
     
     
 class BetaAgency:
