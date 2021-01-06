@@ -672,9 +672,12 @@ class VoteAgency(BaseAgent):
             self.lastmatch()
       
         self.lastmoves = np.array([]).astype('int64')
-            
-        for agent, _, result in self.agents:
-            result[0] = agent.estimate()
+        
+        try:    
+            for agent, _, result in self.agents:
+                result[0] = agent.estimate()
+        except:
+            pass
             
              
         self.executor = self.agents[0]
