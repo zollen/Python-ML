@@ -12,17 +12,16 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 import rps_kaggle.lib.rps_lib as rps
 import warnings
-from sklearn.ensemble._weight_boosting import AdaBoostRegressor
 
 
 warnings.filterwarnings('ignore')
 
 
-xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), history = 200, window = 15)
-forest = rps.Classifier(RandomForestClassifier(n_estimators = 10), history = 200, window = 15)
-ada = rps.Classifier(AdaBoostClassifier(n_estimators = 10), history = 200, window = 15)
-knn = rps.Classifier(KNeighborsClassifier(), history = 200, window = 15)
-svm = rps.Classifier(SVC(kernel = 'rbf'), history = 200, window = 15)
+xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), history = 300, window = 15)
+forest = rps.Classifier(RandomForestClassifier(n_estimators = 10), history = 300, window = 15)
+ada = rps.Classifier(AdaBoostClassifier(n_estimators = 10), history = 300, window = 15)
+knn = rps.Classifier(KNeighborsClassifier(), history = 300, window = 15)
+svm = rps.Classifier(SVC(kernel = 'rbf'), history = 300, window = 15)
 
 agents = [
                 [ xgb1,                [0, 0], [0]],
