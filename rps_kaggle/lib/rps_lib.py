@@ -648,7 +648,7 @@ class VoteAgency(BaseAgent):
      
             if result[0] not in probabilities:
                 probabilities[result[0]] = [ agent ]
-            probabilities[result[0]].append(round(0 if scores[1] == 0 else (scores[0] / scores[1]), 4))
+            probabilities[result[0]].append(round(0 if scores[1] == 0 else (scores[0] / (scores[1] + 1)), 4))
         
         
         
@@ -774,7 +774,7 @@ class MetaAgency(BaseAgent):
             result[0] = manager.predict(self.testdata)[0]
             if result[0] not in probabilities:
                 probabilities[result[0]] = []
-            probabilities[result[0]].append(round(scores[0] / scores[1], 4))
+            probabilities[result[0]].append(round(scores[0] / (scores[1] + 1), 4))
         
         best_agent = -1
         best_prob = -1
