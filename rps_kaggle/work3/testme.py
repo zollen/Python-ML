@@ -17,19 +17,20 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
+xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss', num_class = 3), history = 5, window = 5)
 xgb2 = rps.Sharer(xgb1, ahead = 1)
 xgb3 = rps.Sharer(xgb1, ahead = 2)
 managers = [
-                [ XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), [0, 0], [0]],
-                [ RandomForestClassifier(n_estimators = 10),                 [0, 0], [0]],
-                [ KNeighborsClassifier(),                                    [0, 0], [0]],
-                [ SVC(kernel = 'rbf'),                                       [0, 0], [0]]
+                [ XGBClassifier(n_estimators = 10, eval_metric = 'logloss', num_class = 3), [0, 0], [0]],
+                [ RandomForestClassifier(n_estimators = 10),                                [0, 0], [0]],
+                [ KNeighborsClassifier(),                                                   [0, 0], [0]],
+                [ SVC(kernel = 'rbf'),                                                      [0, 0], [0]]
             ]
             
 agents = [ xgb1, xgb2, xgb3 ]
     
-agency = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -40, randomness = 0.1)
+#agency = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -40, randomness = 0.1)
+agency = xgb1
 
 
 def classifier_move(observation, configuration):

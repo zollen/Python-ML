@@ -206,12 +206,16 @@ class RandomHolder:
          
 class Classifier(BaseAgent):
     
-    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, counter = None):
+    def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, history = -1, counter = None):
         super().__init__(states, window, ahead, counter)
         self.classifier = classifier
+        self.history = history
         self.delayProcess = delay_process
         self.row = 0
+        self.pos = 0
+        self.full = False
         self.data = np.zeros(shape = (1100, self.window * 2)).astype('int64')
+        self.results = np.zeros(shape = (1100, 1)).astype('int64')
         self.last = None
              
     def __str__(self):
@@ -233,17 +237,32 @@ class Classifier(BaseAgent):
             self.prepare() 
     
     def prepare(self):
-        self.data[self.row] = self.convert(self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist())
-        self.results = np.append(self.results, self.opponent[-1])    
+        print("MINES: ", self.mines)
+        print("OPPT:  ", self.opponent)
+        self.data[self.pos] = self.convert(self.mines[self.row:self.row+self.window].tolist() + self.opponent[self.row:self.row+self.window].tolist())
+        self.results[self.pos] = self.opponent[-1]   
         self.row = self.row + 1
+        if self.history <= 0:
+            self.pos = self.row
+        else:
+            if self.row == self.history:
+                self.full = True
+            self.pos = (self.row % self.history)
         
     def test(self):
         return np.array(self.convert(self.mines[-self.window:].tolist() + self.opponent[-self.window:].tolist())).reshape(1, -1)
   
     def decide(self):
+        
+        lpos = self.pos if self.full == False else self.history
+        
+        print(self.pos, lpos, self.row)
+        print(self.mines[self.row:self.row+self.window])
+        print(self.results[:lpos])
+        print(self.data[:lpos])
     
         if len(self.opponent) > self.window + self.delayProcess + 1:
-            self.classifier.fit(self.data[:self.row], self.results)  
+            self.classifier.fit(self.data[:lpos], self.results[:lpos])  
             
             self.last = (int(self.classifier.predict(self.test()).item()) + self.ahead) % self.states
             return self.submit(self.last)
@@ -580,6 +599,17 @@ class Sharer:
     
 
 
+class VoteAgency:
+    
+    def __init__(self, agents, states = 3, history = 100, randomness = 0, window = 10):
+        super().__init__(states, window, 0, None)
+        self.agents = agents
+        self.history = history
+        self.totalWin = 0
+        self.totalLoss = 0
+
+    
+     
 class MetaAgency(BaseAgent):
     
     TABLE = { 
@@ -671,76 +701,73 @@ class MetaAgency(BaseAgent):
     
     def decide(self):
         
-        try:            
-            last = 0
-          
-            if self.mines.size > 0 and self.opponent.size > 0:
-                self.lastmatch()
-                current = self.totalWin - self.totalLoss
-                if current < self.randomthreshold:
-                    ratio = 0.3 + abs(current) * 0.1
-                    self.lostcontrol = ratio if ratio < 0.6 else 0.6
-                else:
-                    self.lostcontrol = self.randomness
-    
-        
-            if self.mines.size > self.window and self.opponent.size > self.window:
-                outcomes = []
-                for index in range(self.row, self.row + self.window):
-                    outcomes.append(self.encode(index))
-                    
-                self.data[self.row] = outcomes
-                self.results[self.row] = np.where(self.lastmoves == (self.opponent[-1].item() + 1) % self.states)[0][0]
-                
-                
-                if self.full == False:
-                    if self.history > 0 and self.row + 1 >= self.history:
-                        self.full = True
-                
-                if self.history > 0:        
-                    self.row = (self.row + 1) % self.history
-                else:
-                    self.row += 1
-                
-                last = self.row if self.full == False else self.history
-                
-                
-                
-                outcomes = []
-                for index in range(self.mines.size - self.window, self.mines.size):
-                    outcomes.append(self.encode(index))
-                    
-                self.testdata = np.array(outcomes).astype('int64').reshape(1, -1)
-            
-          
-            self.lastmoves = np.array([]).astype('int64')
-                
-            for agent in self.agents:
-                self.lastmoves = np.append(self.lastmoves, agent.estimate())
-                
-                 
-            self.executor = self.agents[0]
-            best_move = self.lastmoves[0].item()
-            
-            if self.randomness > 0 and np.random.uniform(0, 1) <= self.lostcontrol:
-                self.crazy = True
-                best_move = self.random()
+           
+        last = 0
+      
+        if self.mines.size > 0 and self.opponent.size > 0:
+            self.lastmatch()
+            current = self.totalWin - self.totalLoss
+            if current < self.randomthreshold:
+                ratio = 0.3 + abs(current) * 0.1
+                self.lostcontrol = ratio if ratio < 0.6 else 0.6
             else:
-                self.crazy = False
-                if self.testdata.size > 0 and last > 5 and np.unique(self.results).size > 1:
-                    best_agent = self.choose(last)
-                    self.executor = self.agents[best_agent]
-                    best_move = self.lastmoves[best_agent].item()
+                self.lostcontrol = self.randomness
+
+    
+        if self.mines.size > self.window and self.opponent.size > self.window:
+            outcomes = []
+            for index in range(self.row, self.row + self.window):
+                outcomes.append(self.encode(index))
+                
+            self.data[self.row] = outcomes
+            self.results[self.row] = np.where(self.lastmoves == (self.opponent[-1].item() + 1) % self.states)[0][0]
             
-                          
-            for agent in self.agents:
-                agent.deposit(best_move)
             
-            return self.submit(best_move)
+            if self.full == False:
+                if self.history > 0 and self.row + 1 >= self.history:
+                    self.full = True
+            
+            if self.history > 0:        
+                self.row = (self.row + 1) % self.history
+            else:
+                self.row += 1
+            
+            last = self.row if self.full == False else self.history
+            
+            
+            
+            outcomes = []
+            for index in range(self.mines.size - self.window, self.mines.size):
+                outcomes.append(self.encode(index))
+                
+            self.testdata = np.array(outcomes).astype('int64').reshape(1, -1)
         
-        except:
+      
+        self.lastmoves = np.array([]).astype('int64')
             
-            return self.submit(self.random())
+        for agent in self.agents:
+            self.lastmoves = np.append(self.lastmoves, agent.estimate())
+            
+             
+        self.executor = self.agents[0]
+        best_move = self.lastmoves[0].item()
+        
+        if self.randomness > 0 and np.random.uniform(0, 1) <= self.lostcontrol:
+            self.crazy = True
+            best_move = self.random()
+        else:
+            self.crazy = False
+            if self.testdata.size > 0 and last > 5 and np.unique(self.results).size > 1:
+                best_agent = self.choose(last)
+                self.executor = self.agents[best_agent]
+                best_move = self.lastmoves[best_agent].item()
+        
+                      
+        for agent in self.agents:
+            agent.deposit(best_move)
+        
+        return self.submit(best_move)
+        
     
     
 class BetaAgency:
