@@ -17,22 +17,20 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), history = 300, window = 15)
-forest = rps.Classifier(RandomForestClassifier(n_estimators = 10), history = 300, window = 15)
-ada = rps.Classifier(AdaBoostClassifier(n_estimators = 10), history = 300, window = 15)
-knn = rps.Classifier(KNeighborsClassifier(), history = 300, window = 15)
-svm = rps.Classifier(SVC(kernel = 'rbf'), history = 300, window = 15)
+xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 10)
+xgb2 = rps.Sharer(xgb1, ahead = 1)
+xgb3 = rps.Sharer(xgb1, ahead = 2)
+managers = [
+                 [ XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), [0, 0], [0] ],
+                 [ RandomForestClassifier(n_estimators = 10),                 [0, 0], [0] ],
+                 [ KNeighborsClassifier(),                                    [0, 0], [0] ],
+                 [ SVC(kernel = 'rbf'),                                       [0, 0], [0] ]
+             ]
 
-agents = [
-                [ xgb1,                [0, 0], [0]],
-                [ forest,              [0, 0], [0]],
-                [ ada,                 [0, 0], [0]],
-                [ knn,                 [0, 0], [0]],
-                [ svm,                 [0, 0], [0]]
-            ]
-            
+agents = [ xgb1, xgb2, xgb3 ]
+     
+agency = rps.MetaAgency(managers, agents, window = 25, history = 50, random_threshold = -40, randomness = 0.1)
 
-agency = rps.VoteAgency(agents, randomness = 0.1)
 
 
 

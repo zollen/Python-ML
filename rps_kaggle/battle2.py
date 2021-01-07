@@ -27,22 +27,20 @@ PLAYER1 336, PLAYER2 335  RATIO 1.0030
 
 def setup():
    
-    xgb1 = rps.KClassifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), history = 300, window = 40)
-    forest = rps.KClassifier(RandomForestClassifier(n_estimators = 10), history = 300, window = 40)
-    ada = rps.KClassifier(AdaBoostClassifier(n_estimators = 10), history = 300, window = 40)
-    knn = rps.KClassifier(KNeighborsClassifier(), history = 300, window = 40)
-    svm = rps.KClassifier(SVC(kernel = 'rbf'), history = 300, window = 40)
-
-    agents = [
-                [ xgb1,                [0, 0], [0]],
-                [ forest,              [0, 0], [0]],
-                [ ada,                 [0, 0], [0]],
-                [ knn,                 [0, 0], [0]],
-                [ svm,                 [0, 0], [0]]
-            ]
-            
-
-    player1 = rps.VoteAgency(agents, randomness = 0.1)
+    xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 10)
+    xgb2 = rps.Sharer(xgb1, ahead = 1)
+    xgb3 = rps.Sharer(xgb1, ahead = 2)
+    managers = [
+                    [ XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), [0, 0], [0] ],
+                    [ RandomForestClassifier(n_estimators = 10),                 [0, 0], [0] ],
+                    [ KNeighborsClassifier(),                                    [0, 0], [0] ],
+                    [ SVC(kernel = 'rbf'),                                       [0, 0], [0] ]
+                ]
+    
+    agents = [ xgb1, xgb2, xgb3 ]
+        
+    player1 = rps.MetaAgency(managers, agents, window = 25, history = 50, random_threshold = -40, randomness = 0.1)
+   
     player2 = enm.MutliArmAgent()
     
     return player1, player2
