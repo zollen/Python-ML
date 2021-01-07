@@ -41,7 +41,7 @@ def setup():
     
     agents = [ xgb1, xgb2, xgb3 ]
         
-    player1 = rps.MetaAgency(manager, agents, window = 25, history = 50, random_threshold = -10, randomness = 0.1)
+    player1 = rps.MetaAgency(manager, agents, window = 25, history = 50, random_threshold = -40, randomness = 0.1)
    
     player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
                              window = 10)
