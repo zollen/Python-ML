@@ -796,8 +796,7 @@ class MetaAgency(BaseAgent):
         return best_agent
     
     def decide(self):
-        
-           
+              
         last = 0
       
         if self.mines.size > 0 and self.opponent.size > 0:
