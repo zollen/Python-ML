@@ -357,7 +357,7 @@ class KClassifier(Classifier):
     def __init__(self, classifier, states = 3, window = 3, ahead = 1, delay_process = 5, history = -1, randomness = 0, counter = None):
         super().__init__(classifier, states, window, ahead, delay_process, history, counter)
         self.randomness = randomness
-        self.data = np.zeros(shape = (1100, self.window)).astype('int64')
+        self.data = np.zeros(shape = (1100, self.window * 3)).astype('int64')
     
     def encode(self, me, op):
         return self.TABLE[str(me) + str(op)]
@@ -368,7 +368,7 @@ class KClassifier(Classifier):
         for index in range(self.window):
             arr.append(self.encode(buf[index], buf[index + self.window]))
         
-        return np.array(arr).astype('int64')
+        return np.array(buf + arr).astype('int64')
     
     def decide(self):
         
@@ -765,8 +765,7 @@ class MetaAgency(BaseAgent):
             elif res == 2:
                 scores[1] += 5
             else:
-                scores[0] += 3 / 2
-                scores[1] += 3 / 2
+                scores[1] += 3
             
             
     def choose(self, last):

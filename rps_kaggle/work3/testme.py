@@ -29,7 +29,7 @@ managers = [
 
 agents = [ xgb1, xgb2, xgb3 ]
      
-agency = rps.MetaAgency(managers, agents, window = 25, history = 50, random_threshold = -10, randomness = 0.1)
+agency = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
 
 

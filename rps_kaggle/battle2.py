@@ -33,13 +33,13 @@ def setup():
     managers = [
                     [ XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), [0, 0], [0] ],
                     [ RandomForestClassifier(n_estimators = 10),                 [0, 0], [0] ],
-                    [ KNeighborsClassifier(),                                    [0, 0], [0] ],
+                    [ AdaBoostClassifier(n_estimators = 10),                     [0, 0], [0] ],
                     [ SVC(kernel = 'rbf'),                                       [0, 0], [0] ]
                 ]
     
     agents = [ xgb1, xgb2, xgb3 ]
         
-    player1 = rps.MetaAgency(managers, agents, window = 25, history = 50, random_threshold = -10, randomness = 0.1)
+    player1 = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
    
     player2 = enm.MutliArmAgent()
     
