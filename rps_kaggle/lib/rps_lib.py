@@ -763,9 +763,10 @@ class MetaAgency(BaseAgent):
             if res == 1:
                 scores[0] += 3
             elif res == 2:
-                scores[1] += 5
+                scores[1] += 6
             else:
-                scores[1] += 3
+                scores[0] += 3 / 2
+                scores[1] += 3 / 2
             
             
     def choose(self, last):
