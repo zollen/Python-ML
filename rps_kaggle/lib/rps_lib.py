@@ -508,6 +508,21 @@ class GMarkov(BaseAgent):
             
         return seq
     
+    def priors2(self, prob):
+        '''
+        This generate a nice decreasing sequence of coefficiences that sum up to 1
+        '''
+        
+        seq = []
+        for index in range(self.window + 1):
+            if index == 0:
+                coeff = pow((1 - prob), self.window)
+            else:
+                coeff = prob * pow((1 - prob), self.window - index)
+        seq.append(coeff)
+        
+        return seq
+    
     def decide(self):
         
         totalMoves = len(self.opponent)
