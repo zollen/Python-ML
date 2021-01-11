@@ -63,7 +63,7 @@ for rnd in range(0, 100):
         best_action = np.random.randint(0, 3)
     else:
         # exploit! 
-        # The probabilty of the next possible actions are already calculated or pre-defined.
+        # The probabilty/scores of the next possible actions are already calculated or pre-defined.
         # No need to be worried by the q learning method
         # Hence, *off policy*
         qtable[rnd + 1, 0] = np.random.uniform(0, 1)  
