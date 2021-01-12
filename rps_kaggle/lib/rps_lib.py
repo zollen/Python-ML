@@ -391,6 +391,16 @@ class MirrorOpponentDecider(BaseAgent):
  
         return self.submit((self.opponent[-1].item() + self.ahead) % self.states)
 
+
+class RepeaterDecider(BaseAgent):
+    
+    def __init__(self, states = 3, window = 0, ahead = 0, counter = None, symbol = 0):    
+        super().__init__(states, window, ahead, counter)
+        self.symbol = symbol
+        
+    def decide(self):
+        return self.submit(self.symbol)
+
     
 class MirrorSelfDecider(BaseAgent):
     
