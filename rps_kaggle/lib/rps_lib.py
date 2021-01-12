@@ -650,7 +650,7 @@ class VoteAgency(BaseAgent):
             if res == 1:
                 scores[0] += 3
             elif res == 2:
-                scores[1] += 6
+                scores[1] += 4
             else:
                 scores[0] += 3 / 2
                 scores[1] += 3 / 2
@@ -778,7 +778,7 @@ class MetaAgency(BaseAgent):
             if res == 1:
                 scores[0] += 3
             elif res == 2:
-                scores[1] += 6
+                scores[1] += 4
             else:
                 scores[0] += 3 / 2
                 scores[1] += 3 / 2
