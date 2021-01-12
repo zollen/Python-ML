@@ -886,8 +886,9 @@ class MetaAgency(BaseAgent):
     
 class BetaAgency:
     
-    def __init__(self, agents, step_size = 3, decay = 1.05):
+    def __init__(self, agents, states = 3, step_size = 3, decay = 1.05):
         self.agents = agents
+        self.states = states
         self.stepSize = step_size
         self.decay = decay
         self.executor = None
@@ -896,14 +897,15 @@ class BetaAgency:
         return "BetaAgency(" + self.executor.__str__() + ")"
     
     def add(self, token):
-        for agent, _ in self.agents:
+        for agent, _, _ in self.agents:
             agent.add(token)
     
-    def lastgame(self, agent):
-        if agent.myQueue().size <= 0 or agent.opQueue().size <= 0:
+    def lastgame(self, agent, result):
+        
+        if agent.opQueue().size <= 0:
             return 0
         
-        res = (agent.myQueue(-1) - agent.opQueue(-1)) % 3
+        res = (result - agent.opQueue(-1)) % self.states
         if res == 1:
             return 1
         elif res == 2:
@@ -912,14 +914,14 @@ class BetaAgency:
         return 0    
           
     def decide(self):
-        for agent, scores in self.agents:
+        for agent, scores, result in self.agents:
             
             agent.reset()
             
             scores[0] = (scores[0] - 1) / self.decay + 1
             scores[1] = (scores[1] - 1) / self.decay + 1
           
-            outcome = self.lastgame(agent)
+            outcome = self.lastgame(agent, result[0])
             if outcome > 0:
                 scores[0] += self.stepSize
             elif outcome < 0:
@@ -932,17 +934,17 @@ class BetaAgency:
         best_prob = -1
         best_agent = None
         best_move = None
-        for agent, scores in self.agents:
+        for agent, scores, result in self.agents:
             prob = np.random.beta(scores[0], scores[1])
-            move = agent.estimate()
+            result[0] = agent.estimate()
             if prob > best_prob:
                 best_prob = prob
                 best_agent = agent
-                best_move = move
+                best_move = result[0]
         
         self.executor = best_agent
         
-        for agent, _ in self.agents:
+        for agent, _, _ in self.agents:
             agent.deposit(best_move)
                
         return best_move
