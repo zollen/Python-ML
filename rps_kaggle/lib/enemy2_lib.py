@@ -118,10 +118,10 @@ class MarkovChain2():
                 'R': {  'prob' : 1 / 3,
                         'n_obs' : 0
                     },
-                'P': {'prob' : 1 / 3,
+                'P': {  'prob' : 1 / 3,
                         'n_obs' : 0
                     },
-                'S': {'prob' : 1 / 3,
+                'S': {  'prob' : 1 / 3,
                         'n_obs' : 0
                     }
                 }
