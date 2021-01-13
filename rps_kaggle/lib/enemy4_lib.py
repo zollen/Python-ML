@@ -38,6 +38,9 @@ class Iocaine2:
     def add(self, token):
         self.input = self.SYMBOLS[token]
         
+    def __str__(self):
+        return "Iocaine2()"
+        
     def random(self):
         return self.SYMBOLS[random.randint(0, 2)]
         

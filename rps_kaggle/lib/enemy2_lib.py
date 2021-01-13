@@ -54,6 +54,9 @@ class MarkovChain():
 
         return matrix
     
+    def __str__(self):
+        return "MarkovChain(" + str(self.order) + ")"
+    
     def add(self, token):
         self.pair_diff2 = self.pair_diff1
         self.pair_diff1 = str(self.SYMBOLS[self.best_move]) + str(self.SYMBOLS[token])

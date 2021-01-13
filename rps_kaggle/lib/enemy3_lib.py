@@ -94,6 +94,9 @@ class Iocaine:
     def add(self, token):
         self.opponent = token
         
+    def __str__(self):
+        return "Iocaine()"
+        
     def decide(self):
         if self.opponent == None:
             return self.move(-1)          
