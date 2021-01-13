@@ -44,10 +44,14 @@ def setup():
      
     player1 = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
-#    player2 = enm.MutliArmAgent()
-#    player2 = enm2.MarkovChain(2, 0.9)
-#    player2 = enm3.Iocaine()
-    player2 = enm4.Iocaine2()
+    if False:
+        player2 = enm.MutliArmAgent()
+    if False:
+        player2 = enm2.MarkovChain(2, 0.9)
+    if False:
+        player2 = enm3.Iocaine()
+    if True:
+        player2 = enm4.Iocaine2(num_predictor = 100)
 
    
     
