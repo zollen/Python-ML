@@ -14,6 +14,7 @@ import rps_kaggle.lib.battle_lib as bat
 import rps_kaggle.lib.enemy_lib as enm
 import rps_kaggle.lib.enemy2_lib as enm2
 import rps_kaggle.lib.enemy3_lib as enm3
+import rps_kaggle.lib.enemy4_lib as enm4
 import warnings
 
 
@@ -45,7 +46,8 @@ def setup():
 
 #    player2 = enm.MutliArmAgent()
 #    player2 = enm2.MarkovChain(2, 0.9)
-    player2 = enm3.Iocaine()
+#    player2 = enm3.Iocaine()
+    player2 = enm4.Iocaine2()
 
    
     
