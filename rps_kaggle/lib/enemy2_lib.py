@@ -13,6 +13,7 @@ class MarkovChain():
     
     def __init__(self, order, decay=1.0):
         self.decay = decay
+        self.order = order
         self.matrix = self.create_matrix(order)
         self.SYMBOLS = ['R', 'P', 'S']
         self.RSYMBOLS = { 'R': 0, 'P': 1, 'S': 2 }
@@ -56,7 +57,7 @@ class MarkovChain():
     def add(self, token):
         self.pair_diff2 = self.pair_diff1
         self.pair_diff1 = str(self.SYMBOLS[self.best_move]) + str(self.SYMBOLS[token])
-        if len(self.pair_diff2) == 2:
+        if len(self.pair_diff2) == self.order + 1:
             self.update_matrix(self.pair_diff2, self.SYMBOLS[token])
 
     def update_matrix(self, pair, input):
@@ -78,9 +79,9 @@ class MarkovChain():
 
     def predict(self, pair):
 
-        if len(pair) == 2:
+        if len(pair) == self.order + 1:
             probs = self.matrix[pair]
-        if self.best_move == '' or len(self.pair_diff1) < 2 or len(self.pair_diff2) < 2 or max(probs.values(), key=itemgetter('prob')) == min(probs.values(), key=itemgetter('prob')):
+        if self.best_move == '' or len(self.pair_diff1) < self.order + 1 or len(self.pair_diff2) < self.order + 1 or max(probs.values(), key=itemgetter('prob')) == min(probs.values(), key=itemgetter('prob')):
             self.best_move = random.choice([ 0, 1, 2 ])
         else: 
             best_prob = -1
