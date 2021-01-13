@@ -48,10 +48,12 @@ def setup():
         player2 = enm.MutliArmAgent()
     if False:
         player2 = enm2.MarkovChain(2, 0.9)
+    if True:
+        player2 = enm2.MarkovChain2(2, 0.9)
     if False:
         player2 = enm3.Iocaine()
-    if True:
-        player2 = enm4.Iocaine2(num_predictor = 100)
+    if False:
+        player2 = enm4.Iocaine2(num_predictor = 60)
 
    
     
