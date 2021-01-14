@@ -69,6 +69,7 @@ class Iocaine2:
         self.your_his += self.input
         self.both_his += self.temp1[self.input+self.output]
         self.length +=1
+        
         for i in range(1):
             len_size = min(self.length,self.len_rfind[i])
             j=len_size
