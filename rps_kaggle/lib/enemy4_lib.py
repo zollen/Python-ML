@@ -2,6 +2,7 @@
 Created on Jan. 13, 2021
 
 @author: zollen
+@url: http://www.rpscontest.com/entry/885001
 '''
 
 import random
@@ -61,7 +62,7 @@ class Iocaine2:
                 result ="1"
             else:
                 result ="0"
-        self.list_predictor[i] = self.list_predictor[i][front:5]+result #only 5 rounds before
+                self.list_predictor[i] = self.list_predictor[i][front:5]+result #only 5 rounds before
         #history matching 1-6
         self.my_his += self.output
         self.your_his += self.input
