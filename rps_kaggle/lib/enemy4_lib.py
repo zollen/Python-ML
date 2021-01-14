@@ -75,10 +75,13 @@ class Iocaine2:
             len_size = min(self.length,self.len_rfind[i])
             j=len_size
             #both_his
+            # extract a maximun length token that contains in both_his[0, self.legnth - 1]
             while j>=1 and not self.both_his[self.length-j:self.length] in self.both_his[0:self.length-1]:
                 j-=1
             if j>=1:
+                # find the starting position of the matched token
                 k = self.both_his.rfind(self.both_his[self.length-j:self.length],0,self.length-1)
+                # extract the next action just after the matched token
                 self.predictors[0+6*i] = self.your_his[j+k]
                 self.predictors[1+6*i] = self.beat[self.my_his[j+k]]
             else:
@@ -87,10 +90,13 @@ class Iocaine2:
                 
             j=len_size
             #your_his
+            # extract a maximun length token that contains in your_his[0, self.legnth - 1]
             while j>=1 and not self.your_his[self.length-j:self.length] in self.your_his[0:self.length-1]:
                 j-=1
             if j>=1:
+                # find the starting position of the matched token
                 k = self.your_his.rfind(self.your_his[self.length-j:self.length],0,self.length-1)
+                # extract the next action just after the matched token
                 self.predictors[2+6*i] = self.your_his[j+k]
                 self.predictors[3+6*i] = self.beat[self.my_his[j+k]]
             else:
@@ -99,10 +105,13 @@ class Iocaine2:
                 
             j=len_size
             #my_his
+            # extract a maximun length token that contains in my_his[0, self.legnth - 1]
             while j>=1 and not self.my_his[self.length-j:self.length] in self.my_his[0:self.length-1]:
                 j-=1
             if j>=1:
+                # find the starting position of the matched token
                 k = self.my_his.rfind(self.my_his[self.length-j:self.length],0,self.length-1)
+                # extract the next action just after the matched token
                 self.predictors[4+6*i] = self.your_his[j+k]
                 self.predictors[5+6*i] = self.beat[self.my_his[j+k]]
             else:
