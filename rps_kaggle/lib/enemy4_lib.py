@@ -35,6 +35,7 @@ class Iocaine2:
                             "SP": 1, "SR":-1, "SS":0}
         self.output = None
         self.input = None
+        self.predictors = None
     
     def add(self, token):
         self.input = self.SYMBOLS[token]
