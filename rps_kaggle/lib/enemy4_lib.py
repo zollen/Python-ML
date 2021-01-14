@@ -120,7 +120,13 @@ class Iocaine2:
 
         for i in range(3):
             temp =""
+            # get the encoded value of the last my move and opponent move
             search = self.temp1[(self.output+self.input)] #last round
+            # From 2 -> min(10, self.length)
+            # From 2 -> min(20, self.length)
+            # From 2 -> min(60, self.length)
+            #     Search self.both_his backward 
+            #     Get the next encoded action(s) after the matched token(s) 
             for start in range(2, min(self.limit[i],self.length) ):
                 if search == self.both_his[self.length-start]:
                     temp+=self.both_his[self.length-start+1]
@@ -128,6 +134,7 @@ class Iocaine2:
                 self.predictors[6+i] = random.choice("RPS")
             else:
                 collectR = {"P":0,"R":0,"S":0} #take win/lose from opponent into account
+                # Decode each action in temp and update the scorebaord collectR
                 for sdf in temp:
                     next_move = self.temp2[sdf]
                     if(self.who_win[next_move]==-1):
