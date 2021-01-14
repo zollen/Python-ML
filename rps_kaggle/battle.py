@@ -6,6 +6,9 @@ Created on Dec. 16, 2020
 
 from xgboost import XGBClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 import rps_kaggle.lib.rps_lib as rps
 import rps_kaggle.lib.battle_lib as bat
 import warnings
@@ -15,36 +18,24 @@ warnings.filterwarnings('ignore')
 
 
 def setup():
-    '''
-    
-    xgb15 Classifier
-    
-    xgb10 Classifier
-   
-    
-    xgb10 Classifier with meta window = 6
-   
-    
-    xgb10 Classifier with meta window = 20
-    WON [18], LOST [2 ] EVEN [0 ] WINNING RATIO [1.1051]
-    
-    '''
-    
-    forest1 = rps.Classifier(RandomForestClassifier(n_estimators = 10), window = 10)
-    forest2 = rps.Sharer(forest1, ahead = 1)
-    forest3 = rps.Sharer(forest1, ahead = 2)
-    
+
     xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 10)
     xgb2 = rps.Sharer(xgb1, ahead = 1)
     xgb3 = rps.Sharer(xgb1, ahead = 2)
-    manager = XGBClassifier(n_estimators = 10, eval_metric = 'logloss')
+    managers = [
+                [ XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), [0, 0], [0]],
+                [ RandomForestClassifier(n_estimators = 10),                 [0, 0], [0]],
+                [ AdaBoostClassifier(n_estimators = 10),                     [0, 0], [0]],
+                [ KNeighborsClassifier(),                                    [0, 0], [0]],
+                [ SVC(kernel = 'rbf'),                                       [0, 0], [0]]
+                ]
     
     agents = [ xgb1, xgb2, xgb3 ]
         
-    player1 = rps.MetaAgency(manager, agents, window = 25, history = 50, random_threshold = -40, randomness = 0.1)
+    player1 = rps.MetaAgency(managers, agents, window = 25, history = 50, random_threshold = -40, randomness = 0.1)
    
-    player2 = rps.Classifier(XGBClassifier(random_state = 17, n_estimators = 10, eval_metric = 'logloss'), 
-                             window = 10)
+    import rps_kaggle.lib.enemy4_lib as enm4
+    player2 = enm4.Iocaine2(num_predictor = 120)
     
     return player1, player2
 
