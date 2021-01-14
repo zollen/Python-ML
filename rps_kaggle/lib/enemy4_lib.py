@@ -134,7 +134,7 @@ class Iocaine2:
                 self.predictors[6+i] = random.choice("RPS")
             else:
                 collectR = {"P":0,"R":0,"S":0} #take win/lose from opponent into account
-                # Decode each action in temp and update the scorebaord collectR
+                # Decode each likely action in temp and update the scorebaord collectR
                 for sdf in temp:
                     next_move = self.temp2[sdf]
                     if(self.who_win[next_move]==-1):
@@ -145,7 +145,7 @@ class Iocaine2:
                         collectR[self.beat[self.temp2[sdf][0]]]+=1
                 max1 = -1
                 p1 =""
-                # Find the action with the highest count from the scoreboard
+                # Find the likely action with the highest count from the scoreboard
                 for key in collectR:
                     if(collectR[key]>max1):
                         max1 = collectR[key]
