@@ -58,11 +58,12 @@ class Iocaine2:
             front =1
         
         for i in range (self.num_predictor):
-            if self.predictors[i]==input:
+            if self.predictors[i]==self.input:
                 result ="1"
             else:
                 result ="0"
             self.list_predictor[i] = self.list_predictor[i][front:5]+result #only 5 rounds before
+
         #history matching 1-6
         self.my_his += self.output
         self.your_his += self.input
