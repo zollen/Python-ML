@@ -82,28 +82,30 @@ class Iocaine2:
             else:
                 self.predictors[0+6*i] = random.choice("RPS")
                 self.predictors[1+6*i] = random.choice("RPS")
-        j=len_size
-        #your_his
-        while j>=1 and not self.your_his[self.length-j:self.length] in self.your_his[0:self.length-1]:
-            j-=1
-        if j>=1:
-            k = self.your_his.rfind(self.your_his[self.length-j:self.length],0,self.length-1)
-            self.predictors[2+6*i] = self.your_his[j+k]
-            self.predictors[3+6*i] = self.beat[self.my_his[j+k]]
-        else:
-            self.predictors[2+6*i] = random.choice("RPS")
-            self.predictors[3+6*i] = random.choice("RPS")
-        j=len_size
-        #my_his
-        while j>=1 and not self.my_his[self.length-j:self.length] in self.my_his[0:self.length-1]:
-            j-=1
-        if j>=1:
-            k = self.my_his.rfind(self.my_his[self.length-j:self.length],0,self.length-1)
-            self.predictors[4+6*i] = self.your_his[j+k]
-            self.predictors[5+6*i] = self.beat[self.my_his[j+k]]
-        else:
-            self.predictors[4+6*i] = random.choice("RPS")
-            self.predictors[5+6*i] = random.choice("RPS")
+                
+            j=len_size
+            #your_his
+            while j>=1 and not self.your_his[self.length-j:self.length] in self.your_his[0:self.length-1]:
+                j-=1
+            if j>=1:
+                k = self.your_his.rfind(self.your_his[self.length-j:self.length],0,self.length-1)
+                self.predictors[2+6*i] = self.your_his[j+k]
+                self.predictors[3+6*i] = self.beat[self.my_his[j+k]]
+            else:
+                self.predictors[2+6*i] = random.choice("RPS")
+                self.predictors[3+6*i] = random.choice("RPS")
+                
+            j=len_size
+            #my_his
+            while j>=1 and not self.my_his[self.length-j:self.length] in self.my_his[0:self.length-1]:
+                j-=1
+            if j>=1:
+                k = self.my_his.rfind(self.my_his[self.length-j:self.length],0,self.length-1)
+                self.predictors[4+6*i] = self.your_his[j+k]
+                self.predictors[5+6*i] = self.beat[self.my_his[j+k]]
+            else:
+                self.predictors[4+6*i] = random.choice("RPS")
+                self.predictors[5+6*i] = random.choice("RPS")
 
         for i in range(3):
             temp =""
