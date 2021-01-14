@@ -145,6 +145,7 @@ class Iocaine2:
                         collectR[self.beat[self.temp2[sdf][0]]]+=1
                 max1 = -1
                 p1 =""
+                # Find the action with the highest count from the scoreboard
                 for key in collectR:
                     if(collectR[key]>max1):
                         max1 = collectR[key]
