@@ -39,7 +39,7 @@ class Iocaine2:
         self.input = self.SYMBOLS[token]
         
     def __str__(self):
-        return "Iocaine2()"
+        return "Iocaine2(" + str(self.num_predictor) + ")"
         
     def random(self):
         return self.SYMBOLS[random.randint(0, 2)]
