@@ -9,11 +9,13 @@ import itertools
 from operator import itemgetter
 
 
-class MarkovChain():
+class MarkovChain:
     
     def __init__(self, order, decay=1.0):
         self.decay = decay
         self.order = order
+        self.mines = []
+        self.opponents = []
         self.matrix = self.create_matrix(order)
         self.SYMBOLS = ['R', 'P', 'S']
         self.RSYMBOLS = { 'R': 0, 'P': 1, 'S': 2 }
@@ -57,14 +59,32 @@ class MarkovChain():
     def __str__(self):
         return "MarkovChain(" + str(self.order) + ")"
     
+    def submit(self, token):
+        self.mines.append(token)
+        return token
+        
+    def encode(self):
+        
+        mymoves, opmoves = self.mines[-1 * self.order:], self.opponents[-1 * self.order:]
+        
+        bothmoves = ''
+        for mymove, opmove in zip(mymoves, opmoves):
+            bothmoves += self.SYMBOLS[mymove] + self.SYMBOLS[opmove]
+          
+        return bothmoves
+    
     def add(self, token):
+        
+        self.opponents.append(token)
+        
         self.pair_diff2 = self.pair_diff1
-        self.pair_diff1 = str(self.SYMBOLS[self.best_move]) + str(self.SYMBOLS[token])
-        if len(self.pair_diff2) == self.order + 1:
+        self.pair_diff1 = self.encode()
+
+        if len(self.pair_diff2) == self.order * 2:
             self.update_matrix(self.pair_diff2, self.SYMBOLS[token])
 
     def update_matrix(self, pair, input):
-        
+                
         for i in self.matrix[pair]:
             self.matrix[pair][i]['n_obs'] = self.decay * self.matrix[pair][i]['n_obs']
 
@@ -81,10 +101,11 @@ class MarkovChain():
         return self.predict(self.pair_diff1)          
 
     def predict(self, pair):
-
-        if len(pair) == self.order + 1:
+        
+        if pair in self.matrix:
             probs = self.matrix[pair]
-        if self.best_move == '' or len(self.pair_diff1) < self.order + 1 or len(self.pair_diff2) < self.order + 1 or max(probs.values(), key=itemgetter('prob')) == min(probs.values(), key=itemgetter('prob')):
+                      
+        if self.best_move == '' or len(self.pair_diff1) < self.order * 2 or len(self.pair_diff2) < self.order * 2 or max(probs.values(), key=itemgetter('prob')) == min(probs.values(), key=itemgetter('prob')):
             self.best_move = random.choice([ 0, 1, 2 ])
         else: 
             best_prob = -1
@@ -94,16 +115,19 @@ class MarkovChain():
                     best_prob = item['prob']
                     best_move = move
             self.best_move = self.beat[self.RSYMBOLS[best_move]]
-        return self.best_move
+            
+        return self.submit(self.best_move)
     
     
     
 
-class MarkovChain2():
+class MarkovChain2:
     
     def __init__(self, order, decay=1.0):
         self.decay = decay
         self.order = order
+        self.mines = []
+        self.opponents = []
         self.matrix = {}
         self.SYMBOLS = ['R', 'P', 'S']
         self.RSYMBOLS = { 'R': 0, 'P': 1, 'S': 2 }
@@ -129,14 +153,32 @@ class MarkovChain2():
     def __str__(self):
         return "MarkovChain2(" + str(self.order) + ")"
     
+    def encode(self):
+        
+        mymoves, opmoves = self.mines[-1 * self.order:], self.opponents[-1 * self.order:]
+        
+        bothmoves = ''
+        for mymove, opmove in zip(mymoves, opmoves):
+            bothmoves += self.SYMBOLS[mymove] + self.SYMBOLS[opmove]
+          
+        return bothmoves
+    
+    def submit(self, token):
+        self.mines.append(token)
+        return token
+    
     def add(self, token):
+        
+        self.opponents.append(token)
+        
         self.pair_diff2 = self.pair_diff1
-        self.pair_diff1 = str(self.SYMBOLS[self.best_move]) + str(self.SYMBOLS[token])
-        if len(self.pair_diff2) == self.order + 1:
+        self.pair_diff1 = self.encode()
+
+        if len(self.pair_diff2) == self.order * 2:
             self.update_matrix(self.pair_diff2, self.SYMBOLS[token])
 
     def update_matrix(self, pair, input):
-        
+          
         if pair not in self.matrix:
             self.matrix[pair] = self.init_matrix()
         
@@ -156,10 +198,13 @@ class MarkovChain2():
         return self.predict(self.pair_diff1)          
 
     def predict(self, pair):
+        
+        probs = self.init_matrix()
 
-        if len(pair) == self.order + 1:
+        if len(pair) == self.order * 2 and pair in self.matrix:
             probs = self.matrix[pair]
-        if self.best_move == '' or len(self.pair_diff1) < self.order + 1 or len(self.pair_diff2) < self.order + 1 or max(probs.values(), key=itemgetter('prob')) == min(probs.values(), key=itemgetter('prob')):
+            
+        if self.best_move == '' or max(probs.values(), key=itemgetter('prob')) == min(probs.values(), key=itemgetter('prob')):
             self.best_move = random.choice([ 0, 1, 2 ])
         else: 
             best_prob = -1
@@ -169,6 +214,7 @@ class MarkovChain2():
                     best_prob = item['prob']
                     best_move = move
             self.best_move = self.beat[self.RSYMBOLS[best_move]]
-        return self.best_move
+            
+        return self.submit(self.best_move)
     
     
