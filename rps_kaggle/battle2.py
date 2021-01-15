@@ -73,7 +73,7 @@ def setup():
 
 
     if False:
-        player1 = enm.MutliArmAgent()
+        player1 = enm.MultiArmsBandit()
     if False:
         player2 = enm2.MarkovChain(4, 0.9)
     if False:
