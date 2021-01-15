@@ -53,7 +53,7 @@ def setup():
                     [ rps.RepeaterDecider(symbol = 2),      [0, 0], [0]]
             ]
         
-        player1 = rps.BetaAgency(agents, decay = 1.1)
+        player1 = rps.VoteAgency(agents, randomness = 0.1)
     
     
     if True:
@@ -88,6 +88,25 @@ def setup():
 
 
 
-player1, player2 = setup()
-bat.battleground(player1, player2)
+totalwin = 0
+totalloss = 0
+totaleven = 0
+totalratio = 0.0
+for rnd in range(20):
+    
+    player1, player2 = setup()
+   
+    win1, win2 = bat.battleground(player1, player2, verbose = False)
+    if win1 > win2:
+        totalwin += 1
+        totalratio += win1 / win2
+    elif win1 < win2:
+        totalloss += 1
+    else:
+        totaleven += 1   
+          
+    print("Match [{:>2}] WON [{}]  LOST [{}] RATIO [{:2.4f}]".format(rnd + 1, win1, win2, win1 / win2))
+ 
+print("=================== TOTAL =======================")    
+print("WON [{:<2}], LOST [{:<2}] EVEN [{:<2}] WINNING RATIO [{:2.4f}]".format(totalwin, totalloss, totaleven, 0 if totalwin == 0 else totalratio / totalwin))
 

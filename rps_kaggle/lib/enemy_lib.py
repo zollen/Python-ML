@@ -160,114 +160,49 @@ class pattern_matching(agent):
             # we just predict competitors step and beat it
             return (step + 1) % 3
         
-# if we add all agents the algorithm will spend more that 1 second on turn and will be invalidated
-# right now the agens are non optimal and the same computeations are repeated a lot of times
-# the approach can be optimised to run much faster
-agents = {
-    'mirror_0': mirror_shift(0),
-    'mirror_1': mirror_shift(1),  
-    'mirror_2': mirror_shift(2),
-    'self_0': self_shift(0),
-    'self_1': self_shift(1),  
-    'self_2': self_shift(2),
-    'popular_beater': popular_beater(),
-    'anti_popular_beater': anti_popular_beater(),
-    'random_transitison_matrix': transition_matrix(False, False),
-    'determenistic_transitison_matrix': transition_matrix(True, False),
-    'random_self_trans_matrix': transition_matrix(False, True),
-    'determenistic_self_trans_matrix': transition_matrix(True, True),
-    'random_transitison_tensor': transition_tensor(False, False),
-    'determenistic_transitison_tensor': transition_tensor(True, False),
-    'random_self_trans_tensor': transition_tensor(False, True),
-    'determenistic_self_trans_tensor': transition_tensor(True, True),
-    
-    'random_transitison_matrix_decay': transition_matrix(False, False, decay = 1.05),
-    'random_self_trans_matrix_decay': transition_matrix(False, True, decay = 1.05),
-    'random_transitison_tensor_decay': transition_tensor(False, False, decay = 1.05),
-    'random_self_trans_tensor_decay': transition_tensor(False, True, decay = 1.05),
-    
-    'determenistic_transitison_matrix_decay': transition_matrix(True, False, decay = 1.05),
-    'determenistic_self_trans_matrix_decay': transition_matrix(True, True, decay = 1.05),
-    'determenistic_transitison_tensor_decay': transition_tensor(True, False, decay = 1.05),
-    'determenistic_self_trans_tensor_decay': transition_tensor(True, True, decay = 1.05),
-    
 
-    'determenistic_pattern_matching_decay_3': pattern_matching(3, True, False, decay = 1.001),
-    'determenistic_self_pattern_matching_decay_3': pattern_matching(3, True, True, decay = 1.001)
-}
-
-history = []
-bandit_state = {k:[1,1] for k in agents.keys()}
-best_agent = None
-def multi_armed_bandit_agent (observation, configuration):
+class MultiArmsBandit:
     
-    global best_agent
-    # bandits' params
-    step_size = 3 # how much we increase a and b 
-    decay_rate = 1.05 # how much do we decay old historical data
-    
-    global history, bandit_state
-    
-    def log_step(step = None, history = None, agent = None, competitorStep = None):
-        if step is None:
-            step = np.random.randint(3)
-        if history is None:
-            history = []
-        history.append({'step': step, 'competitorStep': competitorStep, 'agent': agent})
-        return step
-    
-    def update_competitor_step(history, competitorStep):
-        history[-1]['competitorStep'] = int(competitorStep)
-        return history
-    
-    # load history
-    if observation.step == 0:
-        pass
-    else:
-        history = update_competitor_step(history, observation.lastOpponentAction)
-        
-        # updating bandit_state using the result of the previous step
-        # we can update all states even those that were not used
-        for name, agent in agents.items():
-            agent_step = agent.step(history[:-1])
-            bandit_state[name][1] = (bandit_state[name][1] - 1) / decay_rate + 1
-            bandit_state[name][0] = (bandit_state[name][0] - 1) / decay_rate + 1
+    def __init__(self, step_size = 3, decay_rate = 1.05):
+        self.agents = {
+            'mirror_0': mirror_shift(0),
+            'mirror_1': mirror_shift(1),  
+            'mirror_2': mirror_shift(2),
+            'self_0': self_shift(0),
+            'self_1': self_shift(1),  
+            'self_2': self_shift(2),
+            'popular_beater': popular_beater(),
+            'anti_popular_beater': anti_popular_beater(),
+            'random_transitison_matrix': transition_matrix(False, False),
+            'determenistic_transitison_matrix': transition_matrix(True, False),
+            'random_self_trans_matrix': transition_matrix(False, True),
+            'determenistic_self_trans_matrix': transition_matrix(True, True),
+            'random_transitison_tensor': transition_tensor(False, False),
+            'determenistic_transitison_tensor': transition_tensor(True, False),
+            'random_self_trans_tensor': transition_tensor(False, True),
+            'determenistic_self_trans_tensor': transition_tensor(True, True),
             
-            if (history[-1]['competitorStep'] - agent_step) % 3 == 1:
-                bandit_state[name][1] += step_size
-            elif (history[-1]['competitorStep'] - agent_step) % 3 == 2:
-                bandit_state[name][0] += step_size
-            else:
-                bandit_state[name][0] += step_size/2
-                bandit_state[name][1] += step_size/2
+            'random_transitison_matrix_decay': transition_matrix(False, False, decay = 1.05),
+            'random_self_trans_matrix_decay': transition_matrix(False, True, decay = 1.05),
+            'random_transitison_tensor_decay': transition_tensor(False, False, decay = 1.05),
+            'random_self_trans_tensor_decay': transition_tensor(False, True, decay = 1.05),
             
-    
-    
-    # generate random number from Beta distribution for each agent and select the most lucky one
-    best_proba = -1
-    best_agent = None
-    for k in bandit_state.keys():
-        proba = np.random.beta(bandit_state[k][0],bandit_state[k][1])
-        if proba > best_proba:
-            best_proba = proba
-            best_agent = k
+            'determenistic_transitison_matrix_decay': transition_matrix(True, False, decay = 1.05),
+            'determenistic_self_trans_matrix_decay': transition_matrix(True, True, decay = 1.05),
+            'determenistic_transitison_tensor_decay': transition_tensor(True, False, decay = 1.05),
+            'determenistic_self_trans_tensor_decay': transition_tensor(True, True, decay = 1.05),
+            
         
-    step = agents[best_agent].step(history)
-    return log_step(step, history, best_agent)
-
-class observationCls:
-    step = 0
-    lastOpponentAction = 0
-class configurationCls:
-    signs = 3
-    
-class MutliArmAgent:
-    
-    def __init__(self):
-        self.round = 0
-        self.observation = observationCls()
-        self.configuration = configurationCls()
-        self.bestAgent = None
+            'determenistic_pattern_matching_decay_3': pattern_matching(3, True, False, decay = 1.001),
+            'determenistic_self_pattern_matching_decay_3': pattern_matching(3, True, True, decay = 1.001)
+        }
+        self.history = []
+        self.bandit_state = {k:[1,1] for k in self.agents.keys()}
+        self.step = 0
+        self.stepSize = step_size
+        self.decayRate = decay_rate
+        self.lastOpponentAction = None
+        self.best_agent = None
         
     def __str__(self):
         return "Mutli-Arm Bandit(" + self.bestAgent + ")"
@@ -277,6 +212,52 @@ class MutliArmAgent:
         self.observation.lastOpponentAction = token
     
     def decide(self):
-        choice = multi_armed_bandit_agent(self.observation, self.configuration)
-        self.bestAgent = best_agent
-        return choice
+        
+        def log_step(step = None, history = None, agent = None, competitorStep = None):
+            if step is None:
+                step = np.random.randint(3)
+            if history is None:
+                history = []
+            history.append({'step': step, 'competitorStep': competitorStep, 'agent': agent})
+            return step
+    
+        def update_competitor_step(history, competitorStep):
+            history[-1]['competitorStep'] = int(competitorStep)
+            return history
+    
+        # load history
+        if self.step == 0:
+            pass
+        else:
+            self.history = update_competitor_step(self.history, self.lastOpponentAction)
+        
+            # updating bandit_state using the result of the previous step
+            # we can update all states even those that were not used
+            for name, agent in self.agents.items():
+                agent_step = agent.step(self.history[:-1])
+                self.bandit_state[name][1] = (self.bandit_state[name][1] - 1) / self.decayRate + 1
+                self.bandit_state[name][0] = (self.bandit_state[name][0] - 1) / self.decayRate + 1
+            
+                if (self.history[-1]['competitorStep'] - agent_step) % 3 == 1:
+                    self.bandit_state[name][1] += self.stepSize
+                elif (self.history[-1]['competitorStep'] - agent_step) % 3 == 2:
+                    self.bandit_state[name][0] += self.stepSize
+                else:
+                    self.bandit_state[name][0] += self.stepSize / 2
+                    self.bandit_state[name][1] += self.stepSize / 2
+            
+    
+    
+        # generate random number from Beta distribution for each agent and select the most lucky one
+        best_proba = -1
+        best_agent = None
+        for k in self.bandit_state.keys():
+            proba = np.random.beta(self.bandit_state[k][0],self.bandit_state[k][1])
+            if proba > best_proba:
+                best_proba = proba
+                best_agent = k
+        
+        self.best_agent = self.agents[best_agent]    
+        step = self.best_agent.step(self.history)
+        return log_step(step, self.history, best_agent)
+    
