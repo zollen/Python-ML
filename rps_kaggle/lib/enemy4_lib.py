@@ -60,7 +60,8 @@ class Iocaine2(rps.BaseAgent):
         if self.input == None:
             self.output = self.random()
             self.predictors = [self.output] * self.num_predictor
-            return self.submit(self.RSYMBOLS[self.output])
+            self.last = self.submit(self.RSYMBOLS[self.output])
+            return self.last
         
         if len(self.list_predictor[0])<5:
             front =0
@@ -182,5 +183,5 @@ class Iocaine2(rps.BaseAgent):
         else:
             self.predict = random.choice(self.your_his)
         self.output = random.choice(self.not_lose[self.predict])
-        
-        return self.submit(self.RSYMBOLS[self.output])
+        self.last = self.RSYMBOLS[self.output]
+        return self.submit(self.last)
