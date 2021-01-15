@@ -53,10 +53,10 @@ def setup():
                     [ rps.RepeaterDecider(symbol = 2),      [0, 0], [0]]
             ]
         
-        player1 = rps.VoteAgency(agents, randomness = 0.1)
+        player1 = rps.BetaAgency(agents, decay = 1.1)
     
     
-    if True:
+    if False:
         xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
         xgb2 = rps.Sharer(xgb1, ahead = 1)
         xgb3 = rps.Sharer(xgb1, ahead = 2)
@@ -72,8 +72,8 @@ def setup():
         player2 = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
 
-    if False:
-        player1 = enm.MultiArmsBandit()
+    if True:
+        player2 = enm.MultiArmsBandit()
     if False:
         player2 = enm2.MarkovChain(4, 0.9)
     if False:

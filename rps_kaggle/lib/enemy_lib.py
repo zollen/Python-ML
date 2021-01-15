@@ -208,8 +208,8 @@ class MultiArmsBandit:
         return "Mutli-Arm Bandit(" + self.bestAgent + ")"
     
     def add(self, token):
-        self.observation.step += 1
-        self.observation.lastOpponentAction = token
+        self.step += 1
+        self.lastOpponentAction = token
     
     def decide(self):
         
