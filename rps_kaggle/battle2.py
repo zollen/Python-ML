@@ -53,7 +53,7 @@ def setup():
                     [ rps.RepeaterDecider(symbol = 2),      [0, 0], [0]]
             ]
         
-        player1 = rps.VoteAgency(agents, randomness = 0.1)
+        player1 = rps.BetaAgency(agents, decay = 1.1)
     
     
     if True:
