@@ -653,8 +653,8 @@ class VoteAgency(BaseAgent):
             
             agent.reset()
             
-            scores[0] = (scores[0] - 1) / 1.2 + 1
-            scores[1] = (scores[1] - 1) / 1.2 + 1
+            scores[0] = (scores[0] - 1) / 1.1 + 1
+            scores[1] = (scores[1] - 1) / 1.1 + 1
            
             res = (result[0] - self.opponent[-1]) % self.states
             if res == 1:

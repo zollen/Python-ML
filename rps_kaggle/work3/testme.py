@@ -11,6 +11,9 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 import rps_kaggle.lib.rps_lib as rps
+import rps_kaggle.lib.enemy2_lib as enm2
+import rps_kaggle.lib.enemy3_lib as enm3
+import rps_kaggle.lib.enemy4_lib as enm4
 import warnings
 
 
@@ -31,7 +34,9 @@ agents = [ xgb1, xgb2, xgb3 ]
      
 agency = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
+agency = enm2.MarkovChain(3, 0.9)
 
+agency = enm4.Iocaine2(num_predictor = 120)
 
 
 def classifier_move(observation, configuration):

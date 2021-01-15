@@ -36,15 +36,24 @@ def setup():
         iocaine2 = enm4.Iocaine2(num_predictor = 100)
         
         agents = [
-                    [ markov,                          [0, 0], [0]],
-                    [ rps.Sharer(markov, ahead = 1),   [0, 0], [0]],
-                    [ rps.Sharer(markov, ahead = 2),   [0, 0], [0]],
-                    [ iocaine2,                        [0, 0], [0]],
-                    [ rps.Sharer(iocaine2, ahead = 1), [0, 0], [0]],
-                    [ rps.Sharer(iocaine2, ahead = 2), [0, 0], [0]]
+                    [ markov,                               [0, 0], [0]],
+                    [ rps.Sharer(markov, ahead = 1),        [0, 0], [0]],
+                    [ rps.Sharer(markov, ahead = 2),        [0, 0], [0]],
+                    [ iocaine2,                             [0, 0], [0]],
+                    [ rps.Sharer(iocaine2, ahead = 1),      [0, 0], [0]],
+                    [ rps.Sharer(iocaine2, ahead = 2),      [0, 0], [0]],
+                    [ rps.MirrorOpponentDecider(ahead = 0), [0, 0], [0]],
+                    [ rps.MirrorOpponentDecider(ahead = 1), [0, 0], [0]],
+                    [ rps.MirrorOpponentDecider(ahead = 2), [0, 0], [0]],
+                    [ rps.MirrorSelfDecider(ahead = 0),     [0, 0], [0]],
+                    [ rps.MirrorSelfDecider(ahead = 1),     [0, 0], [0]],
+                    [ rps.MirrorSelfDecider(ahead = 2),     [0, 0], [0]],
+                    [ rps.RepeaterDecider(symbol = 0),      [0, 0], [0]],
+                    [ rps.RepeaterDecider(symbol = 1),      [0, 0], [0]],
+                    [ rps.RepeaterDecider(symbol = 2),      [0, 0], [0]]
             ]
         
-        player1 = rps.BetaAgency(agents, decay = 1.1)
+        player1 = rps.VoteAgency(agents, randomness = 0.1)
     
     
     if True:
