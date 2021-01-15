@@ -33,11 +33,15 @@ def setup():
     if True:
         
         markov = enm2.MarkovChain(4, 0.9)
+        iocaine2 = enm4.Iocaine2(num_predictor = 100)
         
         agents = [
-                    [ markov,                        [0, 0], [0]],
-                    [ rps.Sharer(markov, ahead = 1), [0, 0], [0]],
-                    [ rps.Sharer(markov, ahead = 2), [0, 0], [0]]
+                    [ markov,                          [0, 0], [0]],
+                    [ rps.Sharer(markov, ahead = 1),   [0, 0], [0]],
+                    [ rps.Sharer(markov, ahead = 2),   [0, 0], [0]],
+                    [ iocaine2,                        [0, 0], [0]],
+                    [ rps.Sharer(iocaine2, ahead = 1), [0, 0], [0]],
+                    [ rps.Sharer(iocaine2, ahead = 2), [0, 0], [0]]
             ]
         
         player1 = rps.BetaAgency(agents, decay = 1.1)

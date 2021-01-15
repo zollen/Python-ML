@@ -57,6 +57,7 @@ class MarkovChain(rps.BaseAgent):
     
     def deposit(self, token):
         self.last = token
+        self.best_move = token
         super().deposit(token)
     
     def add(self, token):

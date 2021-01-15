@@ -6,11 +6,13 @@ Created on Jan. 13, 2021
 '''
 
 import random
+import rps_kaggle.lib.rps_lib as rps
 
 
-class Iocaine2:
+class Iocaine2(rps.BaseAgent):
     
-    def __init__(self, num_predictor = 27):
+    def __init__(self, states = 3, window = 5, ahead = 0, counter = None, num_predictor = 27):
+        super().__init__(states, window, ahead, counter)
         self.SYMBOLS = {0: 'R', 1: 'P', 2: 'S'}
         self.RSYMBOLS = { 'R': 0, 'P': 1, 'S': 2 }
         self.len_rfind = [20]
@@ -35,10 +37,17 @@ class Iocaine2:
                             "SP": 1, "SR":-1, "SS":0}
         self.output = None
         self.input = None
+        self.last = None
         self.predictors = None
     
+    def deposit(self, token):
+        self.output = self.SYMBOLS[token]
+        self.last = token
+        super().deposit(token)
+        
     def add(self, token):
         self.input = self.SYMBOLS[token]
+        super().add(token)
         
     def __str__(self):
         return "Iocaine2(" + str(self.num_predictor) + ")"
@@ -51,7 +60,7 @@ class Iocaine2:
         if self.input == None:
             self.output = self.random()
             self.predictors = [self.output] * self.num_predictor
-            return self.RSYMBOLS[self.output]
+            return self.submit(self.RSYMBOLS[self.output])
         
         if len(self.list_predictor[0])<5:
             front =0
@@ -174,4 +183,4 @@ class Iocaine2:
             self.predict = random.choice(self.your_his)
         self.output = random.choice(self.not_lose[self.predict])
         
-        return self.RSYMBOLS[self.output]
+        return self.submit(self.RSYMBOLS[self.output])
