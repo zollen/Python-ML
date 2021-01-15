@@ -32,25 +32,14 @@ def setup():
     
     if True:
         
-        markov = enm2.MarkovChain(4, 0.9)
+        markovChain = enm2.MarkovChain(4, 0.9)
         iocaine2 = enm4.Iocaine2(num_predictor = 100)
+        xgb15 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
         
         agents = [
-                    [ markov,                               [0, 0], [0]],
-                    [ rps.Sharer(markov, ahead = 1),        [0, 0], [0]],
-                    [ rps.Sharer(markov, ahead = 2),        [0, 0], [0]],
-                    [ iocaine2,                             [0, 0], [0]],
-                    [ rps.Sharer(iocaine2, ahead = 1),      [0, 0], [0]],
-                    [ rps.Sharer(iocaine2, ahead = 2),      [0, 0], [0]],
-                    [ rps.MirrorOpponentDecider(ahead = 0), [0, 0], [0]],
-                    [ rps.MirrorOpponentDecider(ahead = 1), [0, 0], [0]],
-                    [ rps.MirrorOpponentDecider(ahead = 2), [0, 0], [0]],
-                    [ rps.MirrorSelfDecider(ahead = 0),     [0, 0], [0]],
-                    [ rps.MirrorSelfDecider(ahead = 1),     [0, 0], [0]],
-                    [ rps.MirrorSelfDecider(ahead = 2),     [0, 0], [0]],
-                    [ rps.RepeaterDecider(symbol = 0),      [0, 0], [0]],
-                    [ rps.RepeaterDecider(symbol = 1),      [0, 0], [0]],
-                    [ rps.RepeaterDecider(symbol = 2),      [0, 0], [0]]
+                    [ markovChain,            [0, 0], [0]],
+                    [ iocaine2,               [0, 0], [0]],
+                    [ xgb15,                  [0, 0], [0]]
             ]
         
         player1 = rps.BetaAgency(agents, decay = 1.1)
@@ -88,25 +77,8 @@ def setup():
 
 
 
-totalwin = 0
-totalloss = 0
-totaleven = 0
-totalratio = 0.0
-for rnd in range(20):
-    
-    player1, player2 = setup()
-   
-    win1, win2 = bat.battleground(player1, player2, verbose = False)
-    if win1 > win2:
-        totalwin += 1
-        totalratio += win1 / win2
-    elif win1 < win2:
-        totalloss += 1
-    else:
-        totaleven += 1   
-          
-    print("Match [{:>2}] WON [{}]  LOST [{}] RATIO [{:2.4f}]".format(rnd + 1, win1, win2, win1 / win2))
- 
-print("=================== TOTAL =======================")    
-print("WON [{:<2}], LOST [{:<2}] EVEN [{:<2}] WINNING RATIO [{:2.4f}]".format(totalwin, totalloss, totaleven, 0 if totalwin == 0 else totalratio / totalwin))
 
+    
+player1, player2 = setup()
+bat.battleground(player1, player2)
+   

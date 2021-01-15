@@ -205,7 +205,7 @@ class MultiArmsBandit:
         self.best_agent = None
         
     def __str__(self):
-        return "Mutli-Arm Bandit(" + self.bestAgent + ")"
+        return "Mutli-Arms-Bandit(" + self.best_agent + ")"
     
     def add(self, token):
         self.step += 1
@@ -257,7 +257,7 @@ class MultiArmsBandit:
                 best_proba = proba
                 best_agent = k
         
-        self.best_agent = self.agents[best_agent]    
-        step = self.best_agent.step(self.history)
+        self.best_agent = best_agent 
+        step = self.agents[best_agent].step(self.history)
         return log_step(step, self.history, best_agent)
     
