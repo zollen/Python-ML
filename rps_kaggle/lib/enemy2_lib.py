@@ -6,15 +6,15 @@ Created on Jan. 13, 2021
 
 import random
 from operator import itemgetter
+import rps_kaggle.lib.rps_lib as rps
 
 
-class MarkovChain:
+class MarkovChain(rps.BaseAgent):
     
-    def __init__(self, order, decay=1.0):
+    def __init__(self, states = 3, window = 3, ahead = 1, counter = None, order = 3, decay=1.0):
+        super().__init__(states, window, ahead, counter)
         self.decay = decay
         self.order = order
-        self.mines = []
-        self.opponents = []
         self.matrix = {}
         self.SYMBOLS = ['R', 'P', 'S']
         self.RSYMBOLS = { 'R': 0, 'P': 1, 'S': 2 }
@@ -22,6 +22,7 @@ class MarkovChain:
         self.best_move = ''
         self.pair_diff2 = ''
         self.pair_diff1 = ''
+        self.last = None
         
     @staticmethod
     def init_matrix():
@@ -36,13 +37,17 @@ class MarkovChain:
                         'n_obs' : 0
                     }
                 }
+        
+    def reset(self):
+        self.last = None
+        super().reset()
     
     def __str__(self):
         return "MarkovChain2(" + str(self.order) + ")"
     
     def encode(self):
         
-        mymoves, opmoves = self.mines[-1 * self.order:], self.opponents[-1 * self.order:]
+        mymoves, opmoves = self.mines[-1 * self.order:], self.opponent[-1 * self.order:]
         
         bothmoves = ''
         for mymove, opmove in zip(mymoves, opmoves):
@@ -50,13 +55,13 @@ class MarkovChain:
           
         return bothmoves
     
-    def submit(self, token):
-        self.mines.append(token)
-        return token
+    def deposit(self, token):
+        self.last = token
+        super().deposit(token)
     
     def add(self, token):
         
-        self.opponents.append(token)
+        super().add(token)
         
         self.pair_diff2 = self.pair_diff1
         self.pair_diff1 = self.encode()
@@ -82,7 +87,11 @@ class MarkovChain:
             self.matrix[pair][i]['prob'] = self.matrix[pair][i]['n_obs'] / n_total  
             
     def decide(self):
-        return self.predict(self.pair_diff1)          
+        return self.predict(self.pair_diff1)       
+    
+    def estimate(self): 
+        self.record = False
+        return self.predict(self.pair_diff1)  
 
     def predict(self, pair):
         
@@ -101,6 +110,8 @@ class MarkovChain:
                     best_prob = item['prob']
                     best_move = move
             self.best_move = self.beat[self.RSYMBOLS[best_move]]
+            
+        self.last = self.best_move
             
         return self.submit(self.best_move)
     

@@ -31,6 +31,19 @@ PLAYER1 336, PLAYER2 335  RATIO 1.0030
 def setup():
     
     if True:
+        
+        markov = enm2.MarkovChain(4, 0.9)
+        
+        agents = [
+                    [ markov,                        [0, 0], [0]],
+                    [ rps.Sharer(markov, ahead = 1), [0, 0], [0]],
+                    [ rps.Sharer(markov, ahead = 2), [0, 0], [0]]
+            ]
+        
+        player1 = rps.BetaAgency(agents, decay = 1.1)
+    
+    
+    if True:
         xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
         xgb2 = rps.Sharer(xgb1, ahead = 1)
         xgb3 = rps.Sharer(xgb1, ahead = 2)
@@ -43,12 +56,12 @@ def setup():
         
         agents = [ xgb1, xgb2, xgb3 ]
              
-        player1 = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
+        player2 = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
 
     if False:
         player1 = enm.MutliArmAgent()
-    if True:
+    if False:
         player2 = enm2.MarkovChain(4, 0.9)
     if False:
         player2 = enm3.Iocaine()
