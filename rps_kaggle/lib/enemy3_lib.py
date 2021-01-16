@@ -22,6 +22,7 @@ class MemoryPatterns:
         self.verbose    = verbose
         self.states     = states
         self.step       = 0
+        self.record     = True
         self.history = {
             "step":      [],
             "reward":    [],
@@ -29,12 +30,22 @@ class MemoryPatterns:
             "pattern":   [],
             "action":    []
         }
-        pass
+
     
     def __str__(self):
-        return "MemoryPattern(" + str(self.min_memory) + ", " + str(self.max_memory) + ")"
+        return "MemoryPatterns(" + str(self.min_memory) + ", " + str(self.max_memory) + ")"
     
     def decide(self):
+        return self.agent()
+    
+    def deposit(self, token):
+        self.history['action'].append(token)
+        
+    def reset(self):
+        pass
+    
+    def estimate(self):
+        self.record = False
         return self.agent()
     
     def add(self, lastOpponentAction):
@@ -68,7 +79,8 @@ class MemoryPatterns:
                 print('pattern ', pattern)
 
         action = (expected + 1) % self.states
-        self.history['action'].append(action)
+        if self.record == True:
+            self.history['action'].append(action)
         
         if self.verbose:
             print('action', action)

@@ -38,6 +38,8 @@ agency = enm2.MarkovChain(3, 0.9)
 
 agency = enm4.Iocaine2(num_predictor = 120)
 
+agency = enm3.MemoryPatterns(min_memory=50, max_memory=120)
+
 
 def classifier_move(observation, configuration):
 
