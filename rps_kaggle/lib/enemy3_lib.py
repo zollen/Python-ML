@@ -31,7 +31,10 @@ class MemoryPatterns:
         }
         pass
     
-    def __call__(self):
+    def __str__(self):
+        return "MemoryPattern(" + str(self.min_memory) + ", " + str(self.max_memory) + ")"
+    
+    def decide(self):
         return self.agent()
     
     def add(self, lastOpponentAction):

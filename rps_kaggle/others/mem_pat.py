@@ -14,7 +14,7 @@ def kaggle_agent(observation, configuration):
     if observation.step > 0:
         mp.add(observation.lastOpponentAction)
         
-    return mp()
+    return mp.decide()
 
 class observationCls:
     step = 0
