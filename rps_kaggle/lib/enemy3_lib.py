@@ -14,10 +14,9 @@ from collections import defaultdict
 
 class MemoryPatterns:
     
-    def __init__(self, states=3, min_memory=2, max_memory=20, threshold=0.5, warmup=5, verbose=False):
+    def __init__(self, states=3, min_memory=2, max_memory=20, warmup=5, verbose=False):
         self.min_memory = min_memory
         self.max_memory = max_memory
-        self.threshold  = threshold
         self.warmup     = warmup
         self.verbose    = verbose
         self.states     = states
