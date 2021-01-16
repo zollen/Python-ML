@@ -44,6 +44,18 @@ class MemoryPatterns:
     def reset(self):
         pass
     
+    def myQueue(self, index = None):
+        if index == None:
+            return np.array(self.history['action'])
+            
+        return self.history['action'][index]
+    
+    def opQueue(self, index = None):
+        if index == None:
+            return np.array(self.history['opponent'])
+            
+        return self.history['opponent'][index]
+    
     def estimate(self):
         self.record = False
         return self.agent()
