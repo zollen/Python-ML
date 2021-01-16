@@ -105,7 +105,7 @@ class MemoryPatterns:
         if len(self.history['action']) <= 0 or len(self.history['opponent']) <= 0:
             return 0
         
-        res = self.history['action'][-1] - self.history['opponent'][-1]
+        res = (self.history['action'][-1] - self.history['opponent'][-1]) % self.states
         if res == 1:
             return 1
         elif res == 2:
@@ -113,10 +113,10 @@ class MemoryPatterns:
         return 0
 
     def update_state(self, lastOpponentAction):
-        self.history['step'].append( self.step )
-        self.history['reward'].append( self.reward() )
         if self.step != 0:
             self.history['opponent'].append( lastOpponentAction )
+        self.history['step'].append( self.step )
+        self.history['reward'].append( self.reward() )
 
     def generate_history(self, keys: List[str]) -> List[Tuple[int]]:
         history = list(zip(*[ reversed(self.history[key]) for key in keys ]))
