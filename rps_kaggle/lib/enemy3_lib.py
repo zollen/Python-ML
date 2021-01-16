@@ -57,7 +57,7 @@ class MemoryPatterns:
             yield iterable[ndx:min(ndx + n, l)]
 
     def agent(self):
-        
+         
         if self.step < self.warmup:
             expected = self.random_action()
         else:
