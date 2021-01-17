@@ -73,16 +73,12 @@ class MemoryPatterns:
         if self.step < self.warmup:
             expected = self.random_action()
         else:
-            for keys in [ ("opponent", "action"), ("opponent",) ]:
-                # Return the reverse of the opponent moves
-                history  = self.generate_history(["opponent"])  
-                memories = self.build_memory(history) 
-                patterns = self.find_patterns(history, memories)
-                if len(patterns): break
+            history  = self.generate_history(["opponent"])  
+            memories = self.build_memory(history) 
+            patterns = self.find_patterns(history, memories)        
             score, expected, pattern = self.find_best_pattern(patterns)
             self.history['pattern'].append(pattern)    
             if self.verbose:
-                print('keys    ', keys)
                 print('history ', history)
                 print('memories', memories)
                 print('patterns', patterns)
