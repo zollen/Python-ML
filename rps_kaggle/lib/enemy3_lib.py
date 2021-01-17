@@ -121,6 +121,7 @@ class MemoryPatterns:
         self.history['reward'].append( self.reward() )
 
     def generate_history(self, keys: List[str]) -> List[Tuple[int]]:
+        # convert an array of numbers into an array of tuples
         history = list(zip(*[ reversed(self.history[key]) for key in keys ]))
         history = list(reversed(history))
         return history 
@@ -128,7 +129,14 @@ class MemoryPatterns:
     def build_memory(self, history: List[Tuple[int]]) -> List[ Dict[Tuple[int], List[int]] ]:
         output    = [ dict() ] * self.min_memory
         expecteds = self.generate_history(["opponent"])
+    
         for batch_size in range(self.min_memory, self.max_memory+1):
+            # each iteration (min_memory -> max_memory)
+            #    create a list of batches with min(batch_size + 1, actual batch length) 
+            #    create a batch without the last opponent move
+            #    extract the last opponent move
+            #    create a hashtable with default value of [0,0,0]
+            #    increase the counter of the hashtable[(the batch without the last move)][(last move)]
             if batch_size >= len(history): break  # ignore batch sizes larger than history
             output_batch    = defaultdict(lambda: [0,0,0])
             history_batches  = list(self.batch(history, batch_size+1))
