@@ -10,3 +10,4 @@ from rps_kaggle.lib.enemy_lib import *
 from rps_kaggle.lib.enemy2_lib import *
 from rps_kaggle.lib.enemy3_lib import *
 from rps_kaggle.lib.enemy4_lib import *
+from rps_kaggle.lib.enemy5_lib import *
