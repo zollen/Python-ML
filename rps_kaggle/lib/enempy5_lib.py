@@ -4,6 +4,7 @@ Created on Jan. 16, 2021
 @author: zollen
 '''
 
+import numpy as np
 import random
 from operator import itemgetter
 
@@ -20,8 +21,33 @@ class GreenBerb:
         self.opponent_hist = []
         self.my_hist = []
         self.score_table = ((0,-1,1),(1,0,-1),(-1,1,0))
+        self.record = True
         self.p_random_score = 0
-        self.act = None
+        self.last = None
+        
+    def __str__(self):
+        return "GreenBerg()"
+    
+    def reset(self):
+        pass
+    
+    def myQueue(self, index = None):
+        if index == None:
+            return np.array(self.my_hist)
+            
+        return self.my_hist[index]
+    
+    def opQueue(self, index = None):
+        if index == None:
+            return np.array(self.opponent_hist)
+            
+        return self.opponent_hist[index]
+    
+    def add(self, token):
+        self.opponent_hist.append(self.rps_to_text[token])
+        
+    def deposit(self, token):
+        self.my_hist.append(self.rps_to_text[token])
         
     def min_index(self, values):
         return min(enumerate(values), key=itemgetter(1))[0]
@@ -59,6 +85,10 @@ class GreenBerb:
                         bs = new_bs
                         bp = (self.r_freq[j][k] + i) % 3
         return bp
+    
+    def estimate(self):
+        self.record = False
+        return self.decide()
     
     def decide(self):
         
@@ -187,4 +217,9 @@ class GreenBerb:
     
         self.p_len = [self.find_best_prediction(l, p_random) for l in self.lengths]
     
-        return self.rps_to_num[self.rps_to_text[self.p_len[self.max_index(self.s_len)]]]
+        self.last = self.rps_to_num[self.rps_to_text[self.p_len[self.max_index(self.s_len)]]]
+        
+        if self.record == True:
+            self.deposit(self.last)
+      
+        return self.last
