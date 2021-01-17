@@ -38,10 +38,10 @@ agency = enm2.MarkovChain(3, 0.9)
 
 agency = enm4.Iocaine2(num_predictor = 120)
 
-agency = enm3.MemoryPatterns(min_memory=50, max_memory=120)
+agency = enm3.MemoryPatterns(warmup=20, min_memory=50, max_memory=120)
 
 
-def classifier_move(observation, configuration):
+def agency_move(observation, configuration):
 
     global agency
     
@@ -60,14 +60,14 @@ class configurationCls:
 observation = observationCls()
 configuration = configurationCls()
 
-for rnd in range(0, 1000):
+for rnd in range(0, 100):
     
     choice = None
     observation.step = rnd
     observation.lastOpponentAction = np.random.randint(3)
 
     t_start = time.perf_counter_ns()
-    choice = classifier_move(observation, configuration)
+    choice = agency_move(observation, configuration)
     t_end = time.perf_counter_ns()
     
     print("Round {} Choice: {}, Elapse Time: {}".format(rnd + 1, choice, t_end - t_start))
