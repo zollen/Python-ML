@@ -74,7 +74,7 @@ class MemoryPatterns:
             expected = self.random_action()
         else:
             for keys in [ ("opponent", "action"), ("opponent",) ]:
-                # history  = self.generate_history(["opponent", "action"])  # "action" must be last
+                # Return the reverse of the opponent moves
                 history  = self.generate_history(["opponent"])  
                 memories = self.build_memory(history) 
                 patterns = self.find_patterns(history, memories)
