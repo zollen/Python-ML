@@ -74,7 +74,6 @@ class MemoryPatterns:
             expected = self.random_action()
         else:
             for keys in [ ("opponent", "action"), ("opponent",) ]:
-                print(keys)
                 # Return the reverse of the opponent moves
                 history  = self.generate_history(["opponent"])  
                 memories = self.build_memory(history) 
