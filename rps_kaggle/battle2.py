@@ -35,7 +35,7 @@ def setup():
     if False:
         
         markovChain = enm2.MarkovChain(4, 0.9)
-        iocaine2 = enm4.Iocaine2(num_predictor = 100)
+        iocaine2 = enm4.Iocaine(num_predictor = 100)
         xgb15 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 10)
         
         agents = [

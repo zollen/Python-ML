@@ -36,9 +36,9 @@ agency = rps.MetaAgency(managers, agents, window = 20, history = 50, random_thre
 
 agency = enm2.MarkovChain(3, 0.9)
 
-agency = enm4.Iocaine2(num_predictor = 120)
+agency = enm4.Iocaine(num_predictor = 100)
 
-agency = enm3.MemoryPatterns(warmup=20, min_memory=50, max_memory=120)
+agency = enm3.MemoryPatterns(warmup=20, min_memory=60, max_memory=120, verbose = False)
 
 
 def agency_move(observation, configuration):
