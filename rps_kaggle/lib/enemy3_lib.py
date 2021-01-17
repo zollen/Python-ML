@@ -133,10 +133,10 @@ class MemoryPatterns:
         for batch_size in range(self.min_memory, self.max_memory+1):
             # each iteration (min_memory -> max_memory)
             #    create a list of batches with min(batch_size + 1, actual batch length) 
-            #    create a batch without the last opponent move
-            #    extract the last opponent move
-            #    create a hashtable with default value of [0,0,0]
-            #    increase the counter of the hashtable[(the batch without the last move)][(last move)]
+            #        create a batch without the last opponent move
+            #        extract the last opponent move
+            #        create a hashtable with default value of [0,0,0]
+            #        increase the counter of the hashtable[(the batch without the last move)][(last move)]
             if batch_size >= len(history): break  # ignore batch sizes larger than history
             output_batch    = defaultdict(lambda: [0,0,0])
             history_batches  = list(self.batch(history, batch_size+1))
