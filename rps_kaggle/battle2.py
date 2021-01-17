@@ -62,17 +62,17 @@ def setup():
         player2 = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
 
-    if False:
+    if True:
         player2 = enm.MultiArmsBandit()
     if False:
         player2 = enm2.MarkovChain(4, 0.9)
     if False:
-        player1 = enm4.Iocaine2(num_predictor = 100)
+        player1 = enm4.Iocaine(num_predictor = 100)
+    if True:
+        player1 = enm3.MemoryPatterns(min_memory=60, max_memory=120, warmup=20)
     if False:
-        player1 = enm3.MemoryPatterns(min_memory=50, max_memory=120, warmup=20)
-    if True:
         player1 = enm5.GreenBerb()
-    if True:
+    if False:
         player2 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
     
 
@@ -83,7 +83,7 @@ def setup():
 
 
 
-if True:    
+if False:    
     player1, player2 = setup()
     bat.battleground(player1, player2)
 else:   

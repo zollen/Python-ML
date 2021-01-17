@@ -9,7 +9,7 @@ import random
 import rps_kaggle.lib.rps_lib as rps
 
 
-class Iocaine2(rps.BaseAgent):
+class Iocaine(rps.BaseAgent):
     
     def __init__(self, states = 3, window = 5, ahead = 0, counter = None, num_predictor = 27):
         super().__init__(states, window, ahead, counter)
