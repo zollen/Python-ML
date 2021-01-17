@@ -22,6 +22,7 @@ class MemoryPatterns:
         self.states     = states
         self.step       = 0
         self.record     = True
+        self.last       = None
         self.history = {
             "step":      [],
             "reward":    [],
@@ -41,7 +42,7 @@ class MemoryPatterns:
         self.history['action'].append(token)
         
     def reset(self):
-        pass
+        self.last = None
     
     def myQueue(self, index = None):
         if index == None:
@@ -96,7 +97,8 @@ class MemoryPatterns:
         if self.verbose:
             print('action', action)
         self.step += 1
-        return int(action) 
+        self.last = int(action)
+        return self.last
        
     def random_action(self) -> int:
         return random.randint(0, self.states-1)
