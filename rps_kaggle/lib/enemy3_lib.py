@@ -152,6 +152,13 @@ class MemoryPatterns:
     def find_patterns(self, history: List[Tuple[int]], memories: List[ Dict[Tuple[int], List[int]] ]) -> List[Tuple[float, int, Tuple[int]]]:
         patterns = []
         for n in range(1, self.max_memory+1):
+            # each iteration (1 -> max_memory)
+            #    extract a list of tuples from the nth position to the end of the opponent moves
+            #    if the list exists in the length n dict()
+            #        calculate the score using standard deviation of the action counts
+            #        extract the last opponent move right after the matched list (opponent moves)
+            #        put the tuple of (score, last opponent move, matched oponent moves) into an resulting array
+            # sort the resulting based on score
             if n >= len(history): break
                 
             pattern = tuple(history[-n:])
