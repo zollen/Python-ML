@@ -413,12 +413,12 @@ class Sharer:
     
 
 
-class Calculator:
+class Manager:
     
     def __init__(self, agents):
         self.agents = agents
     
-class PopularityCalculator(Calculator):
+class PopularityManager(Manager):
     
     def __init__(self, agents):
         super().__init__(agents)
@@ -441,7 +441,7 @@ class PopularityCalculator(Calculator):
             
         return final_score
     
-class OutComeCalculator(Calculator):
+class OutComeManager(Manager):
     
     WON = 0
     LOST = 1
@@ -479,7 +479,7 @@ class OutComeCalculator(Calculator):
             
         return final_scores
     
-class Last5RoundsCalculator(Calculator):
+class Last5RoundsManager(Manager):
     
     def __init__(self, agents):
         super().__init__(agents)
@@ -497,7 +497,7 @@ class Last5RoundsCalculator(Calculator):
         total = np.sum(scores)
         return [ x / total for x in scores ]
     
-class BetaCalculator(OutComeCalculator):
+class BetaManager(OutComeManager):
     
     def __init__(self, agents):
         super().__init__(agents)
@@ -517,9 +517,9 @@ class BetaCalculator(OutComeCalculator):
 
 class StatsAgency(BaseAgent):
         
-    def __init__(self, calculators, agents, states = 3, randomness = 0, random_threshold = -10):
+    def __init__(self, managers, agents, states = 3, randomness = 0, random_threshold = -10):
         super().__init__(states, 0, 0, None)
-        self.calculators = calculators
+        self.managers = managers
         self.agents = agents
         self.randomness = randomness
         self.random_threshold = random_threshold
@@ -556,8 +556,8 @@ class StatsAgency(BaseAgent):
             for _, output, outcome in self.agents:
                 outcome.append(self.reward(output[-1], self.opponent[-1]))
                       
-            for calculator in self.calculators:
-                new_scores = calculator.normalize(calculator.calculate())
+            for manager in self.managers:
+                new_scores = manager.normalize(manager.calculate())
                 final_scores = [a + b for a, b in zip(final_scores, new_scores)]
                 
         for agent, output, _ in self.agents:
