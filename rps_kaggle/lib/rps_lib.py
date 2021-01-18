@@ -436,8 +436,8 @@ class PopularityManager(Manager):
         total = np.sum(scores)
         scores = [ x / total for x in scores ]
         final_score = []
-        for _, output, _ in self.agents:
-            final_score.append(scores[output[-1]])
+        for _, predicted, _ in self.agents:
+            final_score.append(scores[predicted[-1]])
             
         return final_score
     
@@ -517,11 +517,10 @@ class BetaManager(OutComeManager):
 
 class StatsAgency(BaseAgent):
         
-    def __init__(self, managers, agents, states = 3, randomness = 0, random_threshold = -10):
+    def __init__(self, managers, agents, states = 3, random_threshold = -10):
         super().__init__(states, 0, 0, None)
         self.managers = managers
         self.agents = agents
-        self.randomness = randomness
         self.random_threshold = random_threshold
         self.rnd = 0
     
@@ -553,18 +552,19 @@ class StatsAgency(BaseAgent):
         final_scores = [ 0 ] * len(self.agents)   
         
         if self.rnd > 0:
-            for _, output, outcome in self.agents:
-                outcome.append(self.reward(output[-1], self.opponent[-1]))
+            for _, predicted, outcome in self.agents:
+                outcome.append(self.reward(predicted[-1], self.opponent[-1]))
                       
             for manager in self.managers:
                 new_scores = manager.normalize(manager.calculate())
+                print(new_scores)
                 final_scores = [a + b for a, b in zip(final_scores, new_scores)]
                 
-        for agent, output, _ in self.agents:
+        for agent, predicted, _ in self.agents:
             try :
-                output.append(agent.estimate())
+                predicted.append(agent.estimate())
             except:
-                output.append(np.random.randint(self.states))
+                predicted.append(np.random.randint(self.states))
             
         
         self.rnd += 1
