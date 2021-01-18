@@ -59,7 +59,7 @@ def setup():
     if False:
         player2 = enm.MultiArmsBandit()
     if True:
-        player2 = enm2.MarkovChain(4, 0.9)
+        player2 = enm2.MarkovChain(3, 0.9)
     if True:
         player2 = enm4.Iocaine(num_predictor = 140)
     if True:
