@@ -557,7 +557,6 @@ class StatsAgency(BaseAgent):
                       
             for manager in self.managers:
                 new_scores = manager.normalize(manager.calculate())
-                print(new_scores)
                 final_scores = [a + b for a, b in zip(final_scores, new_scores)]
                 
         for agent, predicted, _ in self.agents:
