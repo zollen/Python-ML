@@ -731,7 +731,7 @@ class BetaAgency:
             if outcome > 0:
                 scores[0] += self.stepSize
             elif outcome < 0:
-                scores[1] += self.stepSize
+                scores[1] += (self.stepSize + 1)
             else:
                 scores[0] = scores[0] + self.stepSize / 2
                 scores[1] = scores[1] + self.stepSize / 2
