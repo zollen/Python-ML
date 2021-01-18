@@ -26,10 +26,10 @@ warnings.filterwarnings('ignore')
 def setup():
     
    
-    if True:
+    if False:
         
-        markovChain = enm2.MarkovChain(4, 0.9)
-        iocaine2 = enm4.Iocaine(num_predictor = 100)
+        markovChain = enm2.MarkovChain(3, 0.9)
+        iocaine2 = enm4.Iocaine(num_predictor = 140)
         xgb15 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 10)
         
         agents = [
@@ -40,7 +40,7 @@ def setup():
         
         player2 = rps.BetaAgency(agents, decay = 1.1)
         
-    if False:
+    if True:
         xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
         xgb2 = rps.Sharer(xgb1, ahead = 1)
         xgb3 = rps.Sharer(xgb1, ahead = 2)
@@ -58,9 +58,9 @@ def setup():
 
     if False:
         player2 = enm.MultiArmsBandit()
-    if True:
+    if False:
         player2 = enm2.MarkovChain(3, 0.9)
-    if True:
+    if False:
         player2 = enm4.Iocaine(num_predictor = 140)
     if True:
         player1 = enm3.MemoryPatterns(min_memory=60, max_memory=120, warmup=20)
