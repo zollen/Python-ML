@@ -413,109 +413,163 @@ class Sharer:
     
 
 
-class VoteAgency(BaseAgent):
+class Calculator:
     
-    def __init__(self, agents, states = 3, randomness = 0):
+    def __init__(self, agents):
+        self.agents = agents
+    
+class PopularityCalculator(Calculator):
+    
+    def __init__(self, agents):
+        super().__init__(agents)
+    
+    def calculate(self):
+        
+        counts = [0, 0, 0]
+        for _, output, _ in self.agents:
+            counts[output[-1]] += 1
+            
+        return counts
+    
+    def normalize(self, scores):
+        
+        total = np.sum(scores)
+        scores = [ x / total for x in scores ]
+        final_score = []
+        for _, output, _ in self.agents:
+            final_score.append(scores[output[-1]])
+            
+        return final_score
+    
+class OutComeCalculator(Calculator):
+    
+    WON = 0
+    LOST = 1
+    
+    def __init__(self, agents, step = 3, decay = 1.1):
+        super().__init__(agents)
+        self.numAgents = len(agents)
+        self.score = [ [0, 0] for _ in range(self.numAgents) ] 
+        self.step = step
+        self.decay = decay
+        
+    def calculate(self):
+        
+        idx = 0
+        for _, _, outcome in self.agents:
+            self.score[idx][self.WON] = (self.score[idx][self.WON] - 1) / self.decay + 1
+            self.score[idx][self.LOST] = (self.score[idx][self.LOST] - 1) / self.decay + 1
+
+            if outcome and outcome[-1] == 1:
+                self.score[idx][self.WON] += self.step
+            elif outcome and outcome[-1] == -1:
+                self.score[idx][self.LOST] += (self.step + 1)
+            else:
+                self.score[idx][self.WON] += self.step / 2
+                self.score[idx][self.LOST] += self.step / 2
+            idx += 1
+                
+        return self.score
+    
+    def normalize(self, scores):
+        
+        final_scores = []
+        for score in scores:
+            final_scores.append(score[self.WON] / (score[self.LOST] + score[self.WON]))
+            
+        return final_scores
+    
+class Last5RoundsCalculator(Calculator):
+    
+    def __init__(self, agents):
+        super().__init__(agents)
+    
+    def calculate(self):
+        
+        final_scores = []
+        for _, _, outcome in self.agents:
+            final_scores.append(outcome[-5:].count(1))
+        
+        return final_scores
+    
+    def normalize(self, scores):
+        
+        total = np.sum(scores)
+        return [ x / total for x in scores ]
+    
+class BetaCalculator(OutComeCalculator):
+    
+    def __init__(self, agents):
+        super().__init__(agents)
+    
+    def calculate(self):
+        
+        scores = super().calculate()
+        
+        final_scores = []
+        for won, lost in scores:
+            final_scores.append(np.random.beta(won, lost))
+        return final_scores
+    
+    def normalize(self, scores):
+        return scores
+    
+
+class StatsAgency(BaseAgent):
+        
+    def __init__(self, calculators, agents, states = 3, randomness = 0, random_threshold = -10):
         super().__init__(states, 0, 0, None)
+        self.calculators = calculators
         self.agents = agents
         self.randomness = randomness
-        self.totalWin = 0
-        self.totalLoss = 0
-        self.crazy = False
-        self.executor = None
+        self.random_threshold = random_threshold
+        self.rnd = 0
+    
         
     def __str__(self): 
-        if self.crazy:
-            return "VoteAgency(Crazy)"
-        return "VoteAgency(" + self.executor.__str__() + ")"
+        return "StatsAgency()"
     
     def add(self, token):
-        self.opponent = np.append(self.opponent, token)
+        super().add(token)
         for agent, _, _ in self.agents:
             agent.add(token)
             
     def submit(self, token):
-        self.mines = np.append(self.mines, token)
+        super().submit(token)
+        for agent, _, _ in self.agents:
+            agent.deposit(token)
         return token
-
-    def lastmatch(self):
-        out = (self.mines[-1] - self.opponent[-1]) % self.states
-        if out == 1:
-            self.totalWin += 1
-        elif out == 2:
-            self.totalLoss += 1
-              
-        for agent, scores, result in self.agents:
             
-            agent.reset()
-            
-            scores[0] = (scores[0] - 1) / 1.1 + 1
-            scores[1] = (scores[1] - 1) / 1.1 + 1
-           
-            res = (result[0] - self.opponent[-1]) % self.states
-            if res == 1:
-                scores[0] += 3
-            elif res == 2:
-                scores[1] += 4
-            else:
-                scores[0] += 3 / 2
-                scores[1] += 3 / 2
-            
-            
-    def choose(self):
-   
-        probabilities = {}
-        for agent, scores, result in self.agents:
-     
-            if result[0] not in probabilities:
-                probabilities[result[0]] = [ agent ]
-            probabilities[result[0]].append(round(scores[0] / (scores[1] + 1), 4))
-        
-        
-        
-        best_agent = None
-        best_move = -1
-        best_prob = -1
-        for key, val in probabilities.items():
-            mprob = np.median(val[1:])
-            if mprob > best_prob:
-                best_agent = val[0]
-                best_prob = mprob
-                best_move = key
-                
-        self.executor = best_agent
-      
-        return best_move
+    def reward(self, mymove, opmove):
+        res = (mymove - opmove) % self.states
+        if res == 1:
+            return 1
+        elif res == 2:
+            return -1
+        return 0
     
     def decide(self):
-                         
-        if self.mines.size > 0 and self.opponent.size > 0:
-            self.lastmatch()
-      
-        self.lastmoves = np.array([]).astype('int64')
         
-        try:    
-            for agent, _, result in self.agents:
-                result[0] = agent.estimate()
-        except:
-            pass
-            
-             
-        self.executor = self.agents[0]
-        best_move = self.random()
+        final_scores = [ 0 ] * len(self.agents)   
         
-        if self.randomness > 0 and np.random.uniform(0, 1) <= self.randomness:
-            self.crazy = True
-            best_move = self.random()
-        else:
-            self.crazy = False
-            if self.mines.size > 0 and self.opponent.size > 0:
-                best_move = self.choose()    
+        if self.rnd > 0:
+            for _, output, outcome in self.agents:
+                outcome.append(self.reward(output[-1], self.opponent[-1]))
                       
-        for agent, _, _ in self.agents:
-            agent.deposit(best_move)
+            for calculator in self.calculators:
+                new_scores = calculator.normalize(calculator.calculate())
+                final_scores = [a + b for a, b in zip(final_scores, new_scores)]
+                
+        for agent, output, _ in self.agents:
+            try :
+                output.append(agent.estimate())
+            except:
+                output.append(np.random.randint(self.states))
+            
         
-        return self.submit(best_move)
+        self.rnd += 1
+                              
+        return self.submit(self.agents[np.argmax(final_scores)][1][-1])
 
 
 
