@@ -36,10 +36,10 @@ def setup():
         ]
 
         calculators = [
-            rps.PopularityManager(agents),
-            rps.OutComeManager(agents),
-            rps.Last5RoundsManager(agents),
-            rps.BetaManager(agents)
+        #    rps.PopularityScorer(agents),
+        #    rps.OutComeScorer(agents),
+            rps.Last5RoundsScorer(agents),
+        #    rps.BetaScorer(agents)
         ]
 
         player1 = rps.StatsAgency(calculators, agents, random_threshold = -10)
@@ -59,7 +59,7 @@ def setup():
         
         player2 = rps.BetaAgency(agents1, decay = 1.1)
         
-    if False:
+    if True:
         xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
         xgb2 = rps.Sharer(xgb1, ahead = 1)
         xgb3 = rps.Sharer(xgb1, ahead = 2)
@@ -85,7 +85,7 @@ def setup():
         player1 = enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20)
     if False:
         player1 = enm5.GreenBerb()
-    if True:
+    if False:
         player2 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
     
 
@@ -96,7 +96,7 @@ def setup():
 
 
 
-if True:    
+if False:    
     player1, player2 = setup()
     bat.battleground(player1, player2)
 else:   

@@ -413,7 +413,7 @@ class Sharer:
     
 
 
-class Manager:
+class Scorer:
     
     def __init__(self, agents):
         self.agents = agents
@@ -422,7 +422,7 @@ class Manager:
         total = np.sum(scores)
         return [ x / total for x in scores ]
     
-class PopularityManager(Manager):
+class PopularityScorer(Scorer):
     
     def __init__(self, agents):
         super().__init__(agents)
@@ -443,7 +443,7 @@ class PopularityManager(Manager):
             
         return super().normalize(final_scores)
     
-class OutComeManager(Manager):
+class OutComeScorer(Scorer):
     
     WON = 0
     LOST = 1
@@ -481,7 +481,7 @@ class OutComeManager(Manager):
             
         return super().normalize(final_scores)
     
-class Last5RoundsManager(Manager):
+class Last5RoundsScorer(Scorer):
     
     def __init__(self, agents):
         super().__init__(agents)
@@ -497,7 +497,7 @@ class Last5RoundsManager(Manager):
     def normalize(self, scores):
         return super().normalize(scores)
     
-class BetaManager(OutComeManager):
+class BetaScorer(OutComeScorer):
     
     def __init__(self, agents):
         super().__init__(agents)
@@ -512,7 +512,7 @@ class BetaManager(OutComeManager):
         return final_scores
     
     def normalize(self, scores):
-        return Manager.normalize(self, scores)
+        return Scorer.normalize(self, scores)
     
 
 class StatsAgency(BaseAgent):
