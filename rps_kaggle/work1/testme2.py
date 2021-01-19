@@ -27,10 +27,10 @@ agents = [
     ]
 
 calculators = [
-            rps.PopularityManager(agents),
-            rps.OutComeManager(agents),
-            rps.Last5RoundsManager(agents),
-            rps.BetaManager(agents)
+            rps.PopularityScorer(agents),
+            rps.OutComeScorer(agents),
+            rps.Last5RoundsScorer(agents),
+            rps.BetaScorer(agents)
         ]
 
 agency = rps.StatsAgency(calculators, agents, randomness = 0.1, random_threshold = -10)
