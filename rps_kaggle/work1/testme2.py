@@ -22,8 +22,7 @@ import rps_kaggle.lib.enemy5_lib as enm5
     
 agents = [
             [ enm2.MarkovChain(3, 0.9),                                               [], [] ],
-            [ enm3.MemoryPatterns(min_memory=50, max_memory=120, warmup=20),          [], [] ],
-            [ enm3.MemoryPatterns(min_memory=60, max_memory=120, warmup=20),          [], [] ],
+            [ enm3.MemoryPatterns(min_memory=50, max_memory=140, warmup=20),          [], [] ],
             [ enm4.Iocaine(num_predictor = 160),                                      [], [] ]
     ]
 
