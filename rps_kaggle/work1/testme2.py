@@ -24,7 +24,7 @@ agents = [
             [ enm2.MarkovChain(3, 0.9),                                               [], [] ],
             [ enm3.MemoryPatterns(min_memory=50, max_memory=120, warmup=20),          [], [] ],
             [ enm3.MemoryPatterns(min_memory=60, max_memory=120, warmup=20),          [], [] ],
-            [ enm4.Iocaine(num_predictor = 140),                                      [], [] ]
+            [ enm4.Iocaine(num_predictor = 160),                                      [], [] ]
     ]
 
 calculators = [

@@ -25,35 +25,53 @@ warnings.filterwarnings('ignore')
 
 def setup():
     
+    if True:
+        xgbK = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
+        agents = [
+            [ enm2.MarkovChain(3, 0.9),                                               [], [] ],
+            [ enm3.MemoryPatterns(min_memory=60, max_memory=120, warmup=20),          [], [] ],
+            [ enm4.Iocaine(num_predictor = 160),                                      [], [] ],
+            [ xgbK,                                                                   [], []]
+        ]
+
+        calculators = [
+        #    rps.PopularityManager(agents),
+        #    rps.OutComeManager(agents),
+            rps.Last5RoundsManager(agents),
+        #    rps.BetaManager(agents)
+        ]
+
+        player1 = rps.StatsAgency(calculators, agents, random_threshold = -10)
+    
    
     if False:
         
         markovChain = enm2.MarkovChain(3, 0.9)
-        iocaine2 = enm4.Iocaine(num_predictor = 140)
+        iocaine2 = enm4.Iocaine(num_predictor = 160)
         xgb15 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 10)
         
-        agents = [
+        agents1 = [
                     [ markovChain,            [0, 0], [0] ],
                     [ iocaine2,               [0, 0], [0] ],
                     [ xgb15,                  [0, 0], [0] ]
             ]
         
-        player2 = rps.BetaAgency(agents, decay = 1.1)
+        player2 = rps.BetaAgency(agents1, decay = 1.1)
         
     if True:
         xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
         xgb2 = rps.Sharer(xgb1, ahead = 1)
         xgb3 = rps.Sharer(xgb1, ahead = 2)
-        managers = [
+        managers1 = [
                          [ XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), [0, 0], [0] ],
                          [ RandomForestClassifier(n_estimators = 10),                 [0, 0], [0] ],
                          [ KNeighborsClassifier(),                                    [0, 0], [0] ],
                          [ SVC(kernel = 'rbf'),                                       [0, 0], [0] ]
                      ]
         
-        agents = [ xgb1, xgb2, xgb3 ]
+        agents1 = [ xgb1, xgb2, xgb3 ]
              
-        player2 = rps.MetaAgency(managers, agents, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
+        player2 = rps.MetaAgency(managers1, agents1, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
 
     if False:
@@ -61,8 +79,8 @@ def setup():
     if False:
         player2 = enm2.MarkovChain(3, 0.9)
     if False:
-        player2 = enm4.Iocaine(num_predictor = 140)
-    if True:
+        player2 = enm4.Iocaine(num_predictor = 160)
+    if False:
         player1 = enm3.MemoryPatterns(min_memory=60, max_memory=120, warmup=20)
     if False:
         player1 = enm5.GreenBerb()
