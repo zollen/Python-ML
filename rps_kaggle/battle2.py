@@ -25,21 +25,21 @@ warnings.filterwarnings('ignore')
 
 def setup():
     
-    if False:
-        xgbK = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
+    if True:
+        xgb15 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
         agents = [
             [ enm2.MarkovChain(3, 0.9),                                               [], [] ],
-            [ enm3.MemoryPatterns(min_memory=50, max_memory=120, warmup=20),          [], [] ],
+            [ enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20),          [], [] ],
             [ enm3.MemoryPatterns(min_memory=50, max_memory=140, warmup=20),          [], [] ],
             [ enm4.Iocaine(num_predictor = 140),                                      [], [] ],
-            [ xgbK,                                                                   [], [] ]
+            [ xgb15,                                                                   [], [] ]
         ]
 
         calculators = [
-        #    rps.PopularityManager(agents),
-        #    rps.OutComeManager(agents),
+            rps.PopularityManager(agents),
+            rps.OutComeManager(agents),
             rps.Last5RoundsManager(agents),
-        #    rps.BetaManager(agents)
+            rps.BetaManager(agents)
         ]
 
         player1 = rps.StatsAgency(calculators, agents, random_threshold = -10)
@@ -59,7 +59,7 @@ def setup():
         
         player2 = rps.BetaAgency(agents1, decay = 1.1)
         
-    if True:
+    if False:
         xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
         xgb2 = rps.Sharer(xgb1, ahead = 1)
         xgb3 = rps.Sharer(xgb1, ahead = 2)
@@ -81,11 +81,11 @@ def setup():
         player2 = enm2.MarkovChain(3, 0.9)
     if False:
         player2 = enm4.Iocaine(num_predictor = 140)
-    if True:
-        player1 = enm3.MemoryPatterns(min_memory=40, max_memory=120, warmup=20)
+    if False:
+        player1 = enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20)
     if False:
         player1 = enm5.GreenBerb()
-    if False:
+    if True:
         player2 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
     
 
@@ -96,7 +96,7 @@ def setup():
 
 
 
-if False:    
+if True:    
     player1, player2 = setup()
     bat.battleground(player1, player2)
 else:   

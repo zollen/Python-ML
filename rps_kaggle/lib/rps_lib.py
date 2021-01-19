@@ -476,8 +476,8 @@ class OutComeManager(Manager):
     def normalize(self, scores):
         
         final_scores = []
-        for score in scores:
-            final_scores.append(score[self.WON] / (score[self.LOST] + score[self.WON]))
+        for won, lost in scores:
+            final_scores.append(won / (won + lost))
             
         return super().normalize(final_scores)
     
@@ -512,7 +512,7 @@ class BetaManager(OutComeManager):
         return final_scores
     
     def normalize(self, scores):
-        return super().normalize(scores)
+        return Manager.normalize(self, scores)
     
 
 class StatsAgency(BaseAgent):
