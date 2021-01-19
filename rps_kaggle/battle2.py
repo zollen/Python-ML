@@ -29,7 +29,7 @@ def setup():
         xgbK = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
         agents = [
             [ enm2.MarkovChain(3, 0.9),                                               [], [] ],
-            [ enm3.MemoryPatterns(min_memory=60, max_memory=120, warmup=20),          [], [] ],
+            [ enm3.MemoryPatterns(min_memory=50, max_memory=120, warmup=20),          [], [] ],
             [ enm3.MemoryPatterns(min_memory=50, max_memory=140, warmup=20),          [], [] ],
             [ enm4.Iocaine(num_predictor = 140),                                      [], [] ],
             [ xgbK,                                                                   [], [] ]
@@ -82,7 +82,7 @@ def setup():
     if False:
         player2 = enm4.Iocaine(num_predictor = 140)
     if True:
-        player1 = enm3.MemoryPatterns(min_memory=50, max_memory=140, warmup=20)
+        player1 = enm3.MemoryPatterns(min_memory=40, max_memory=120, warmup=20)
     if False:
         player1 = enm5.GreenBerb()
     if False:
