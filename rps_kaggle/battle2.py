@@ -32,7 +32,7 @@ def setup():
             [ enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20),          [], [] ],
             [ enm3.MemoryPatterns(min_memory=50, max_memory=140, warmup=20),          [], [] ],
             [ enm4.Iocaine(num_predictor = 140),                                      [], [] ],
-            [ xgb15,                                                                   [], [] ]
+            [ xgb15,                                                                  [], [] ]
         ]
 
         calculators = [
