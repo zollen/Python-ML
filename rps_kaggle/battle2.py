@@ -30,7 +30,7 @@ def setup():
         agents = [
             [ enm2.MarkovChain(3, 0.9),                                               [], [] ],
             [ enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20),          [], [] ],
-            [ enm3.MemoryPatterns(min_memory=50, max_memory=140, warmup=20),          [], [] ],
+            [ enm3.MemoryPatterns(min_memory=50, max_memory=150, warmup=20),          [], [] ],
             [ enm4.Iocaine(num_predictor = 160),                                      [], [] ],
             [ xgb15,                                                                  [], [] ]
         ]
@@ -38,8 +38,8 @@ def setup():
         scorers = [
            rps.PopularityScorer(agents),    # 8,11  14,6 10,9 10,10           12,7
            rps.OutComeScorer(agents),       # 7,11  14,6            12,8      12,7
-        #  rps.Last5RoundsScorer(agents),   # 10,10      10,9            8,12 12,7
-        #    rps.BetaScorer(agents)         # 9,11            10,10 12,8 8,12
+           rps.Last5RoundsScorer(agents),   # 10,10      10,9            8,12 12,7
+           rps.BetaScorer(agents)           # 9,11            10,10 12,8 8,12
         ]
 
         player1 = rps.StatsAgency(scorers, agents, random_threshold = -10)

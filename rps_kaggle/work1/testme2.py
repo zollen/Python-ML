@@ -33,7 +33,7 @@ scorers = [
             rps.BetaScorer(agents)
         ]
 
-agency = rps.StatsAgency(scorers, agents, randomness = 0.1, random_threshold = -10)
+agency = rps.StatsAgency(scorers, agents, random_threshold = -10)
 
 
 
