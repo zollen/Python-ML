@@ -31,7 +31,7 @@ def setup():
             [ enm2.MarkovChain(3, 0.9),                                               [], [] ],
             [ enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20),          [], [] ],
             [ enm3.MemoryPatterns(min_memory=50, max_memory=140, warmup=20),          [], [] ],
-            [ enm4.Iocaine(num_predictor = 140),                                      [], [] ],
+            [ enm4.Iocaine(num_predictor = 160),                                      [], [] ],
             [ xgb15,                                                                  [], [] ]
         ]
 
@@ -80,7 +80,7 @@ def setup():
     if False:
         player2 = enm2.MarkovChain(3, 0.9)
     if False:
-        player2 = enm4.Iocaine(num_predictor = 140)
+        player2 = enm4.Iocaine(num_predictor = 160)
     if False:
         player1 = enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20)
     if False:
