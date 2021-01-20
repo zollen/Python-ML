@@ -35,14 +35,14 @@ def setup():
             [ xgb15,                                                                  [], [] ]
         ]
 
-        calculators = [
+        scorers = [
            rps.PopularityScorer(agents),    # 8,11  14,6 10,9 10,10           12,7
            rps.OutComeScorer(agents),       # 7,11  14,6            12,8      12,7
-           rps.Last5RoundsScorer(agents),   # 10,10      10,9            8,12 12,7
+        #  rps.Last5RoundsScorer(agents),   # 10,10      10,9            8,12 12,7
         #    rps.BetaScorer(agents)         # 9,11            10,10 12,8 8,12
         ]
 
-        player1 = rps.StatsAgency(calculators, agents, random_threshold = -10)
+        player1 = rps.StatsAgency(scorers, agents, random_threshold = -10)
     
    
     if False:
@@ -59,7 +59,7 @@ def setup():
         
         player2 = rps.BetaAgency(agents1, decay = 1.1)
         
-    if True:
+    if False:
         xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
         xgb2 = rps.Sharer(xgb1, ahead = 1)
         xgb3 = rps.Sharer(xgb1, ahead = 2)
@@ -75,7 +75,7 @@ def setup():
         player2 = rps.MetaAgency(managers1, agents1, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
 
-    if False:
+    if True:
         player2 = enm.MultiArmsBandit()
     if False:
         player2 = enm2.MarkovChain(3, 0.9)

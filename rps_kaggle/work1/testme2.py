@@ -26,14 +26,14 @@ agents = [
             [ enm4.Iocaine(num_predictor = 160),                                      [], [] ]
     ]
 
-calculators = [
+scorers = [
             rps.PopularityScorer(agents),
             rps.OutComeScorer(agents),
             rps.Last5RoundsScorer(agents),
             rps.BetaScorer(agents)
         ]
 
-agency = rps.StatsAgency(calculators, agents, randomness = 0.1, random_threshold = -10)
+agency = rps.StatsAgency(scorers, agents, randomness = 0.1, random_threshold = -10)
 
 
 
