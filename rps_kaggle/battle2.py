@@ -36,10 +36,10 @@ def setup():
         ]
 
         calculators = [
-        #    rps.PopularityScorer(agents),
-        #    rps.OutComeScorer(agents),
-            rps.Last5RoundsScorer(agents),
-        #    rps.BetaScorer(agents)
+            rps.PopularityScorer(agents),    # 8,11   14,6
+            rps.OutComeScorer(agents),       # 7,11   14,6
+        #    rps.Last5RoundsScorer(agents),  # 10,10
+        #   rps.BetaScorer(agents)           # 9,11
         ]
 
         player1 = rps.StatsAgency(calculators, agents, random_threshold = -10)
