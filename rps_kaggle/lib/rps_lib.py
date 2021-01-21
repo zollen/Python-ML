@@ -555,7 +555,12 @@ class StatsAgency(BaseAgent):
         return token
             
     def reward(self, mymove, opmove):
-        return -1 if (mymove - opmove) % self.states == 2 else (mymove - opmove)
+        rew = (mymove - opmove) % self.states 
+        if rew == 1:
+            return 1
+        elif rew == 2:
+            return -1
+        return 0
     
     def decide(self):
         
