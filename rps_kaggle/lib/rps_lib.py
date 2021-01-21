@@ -556,61 +556,6 @@ class StatsAgency(BaseAgent):
     def reward(self, mymove, opmove):
         return -1 if (mymove - opmove) % self.states == 2 else (mymove - opmove)
     
-    def calculate(self):
-        
-        default_scores = [ 0 ] * len(self.scorers)
-        current_scores = []
-        for scorer in self.scorers:
-            score = scorer.normalize(scorer.calculate())
-            print("SCORE: ", score)
-            current_scores.append(score)
-            default_scores = [ x + y for x, y in zip(default_scores, score) ]
-            
-        
-                       
-        results1 = {}
-        results2 = {}
-        for combo in self.combos:
-            scores = [ 0 ] * len(self.agents)
-            winOnly = True
-            winAndEvenOnly = True
-            for entry in combo:
-                res = (self.agents[np.argmax(current_scores[entry])][1][-1] - self.opponent[-1]) % self.states
-                flag = 0.5 if res == 0 else 1
-                if res == 0:
-                    winOnly = False
-                if res == 2:
-                    winOnly = False
-                    winAndEvenOnly = False
-                    break
-                scores = [ x + (y * flag) for x, y in zip(scores, current_scores[entry]) ]
-            if winOnly == True:
-                results1[combo] = scores
-            if winAndEvenOnly == True:
-                results2[combo] = scores
-                
-        import pprint
-        pp = pprint.PrettyPrinter(indent=3)         
-        pp.pprint(results1)
-        pp.pprint(results2)
-        
-        if len(results1) <= 0 and len(results2) > 0:
-            results1 = results2
-            
-        if len(results1) <= 0:
-            results1['default'] = default_scores
-        
-        best_score = -1
-        best_combo = None        
-        for combo, scores in results1.items():
-            score = np.std(scores)
-            if score > best_score:
-                best_score = score
-                best_combo = combo
-        
-        return results1[best_combo]
-    
-    
     def decide(self):
         
         final_scores = [0] * len(self.scorers)
@@ -618,8 +563,10 @@ class StatsAgency(BaseAgent):
         if self.rnd > 0:
             for _, predicted, outcome in self.agents:
                 outcome.append(self.reward(predicted[-1], self.opponent[-1]))
-                        
-            final_scores = self.calculate()
+             
+            for scorer in self.scorers:
+                new_scores = scorer.normalize(scorer.calculate())
+                final_scores = [ a + b for a, b in zip(final_scores, new_scores)]            
                 
         for agent, predicted, _ in self.agents:
             try :

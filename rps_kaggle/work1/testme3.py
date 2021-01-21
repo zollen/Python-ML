@@ -9,73 +9,115 @@ import itertools
 import pprint
 
 
-pp = pprint.PrettyPrinter(indent=3) 
-
-a = [ x for x in range(4) ]
-
-table = []
-for ll in range(0, len(a)):
-    for subset in itertools.combinations(a, ll):
-        if len(subset) > 0:
-            table.append(subset)
-            
-table.append(tuple(a))
-            
-# 4 scorers
-# 2 agents
-
-predictions = [
-        0,  # agent1 decided 2(SCISSORS)    <- lost
-        2,  # agent2 decided 0(ROCK)        <- won
-        1   # agent3 decided 1(PAPER)       <- event
-    ]
-
-scorers = [
-        [ 0.1, 0.2, 0.3 ],  # scorer1 chose agent3 <-- even
-        [ 0.4, 0.3, 0.1 ],  # scorer2 chose agent1 <-- lost
-        [ 0.4, 0.5, 0.4 ],  # scorer3 chose agent2 <-- won
-        [ 0.7, 0.8, 0.5 ]   # scorer4 chose agent2 <-- won
-    ]
-
-mines = [ 2 ]
-opponent = [ 1 ]
-outcome = [ -1 if (x - y) % 3 == 2 else x - y for x, y in zip(mines, opponent) ]
-
-result1 = {}
-result2 = {}
-for combo in table:
-    scores = [ 0 ] * len(predictions)
-    winOnly = True
-    winAndEvenOnly = True
-    for entry in combo:
-        flag = (predictions[np.argmax(scorers[entry])] - opponent[-1]) % 3
-        if flag == 0:
-            winOnly = False
-        if flag == 2:
-            winOnly = False
-            winAndEvenOnly = False
-            break
-        scores = [ x + (y * flag) for x, y in zip(scores, scorers[entry]) ]
-    if winOnly == True:
-        result1[combo] = scores
-    if winAndEvenOnly == True:
-        result2[combo] = scores
+class StatsAgency(BaseAgent):
         
-pp.pprint(result1)
-print("=======================")
-pp.pprint(result2)
-
-best_score = -1
-best_combo = None        
-for combo, scores in result1.items():
-    score = np.std(scores)
-    if score > best_score:
-        best_score = score
-        best_combo = combo
+    def __init__(self, scorers, agents, states = 3, random_threshold = -10):
+        super().__init__(states, 0, 0, None)
+        self.scorers = scorers
+        self.agents = agents
+        self.random_threshold = random_threshold
+        self.rnd = 0
+        self.combos = self.generate()
     
-
-
-print("LAST MINE ", mines[-1])
-print("LAST OPP ", opponent[-1])
-print("LAST OUTCOME ", outcome[-1])
-print("BEST COMBO: ", best_combo, " ==> ", result1[best_combo])
+    def generate(self):
+        seq = [ x for x in range(len(self.scorers)) ]
+        llist = []
+        for ll in range(0, len(seq)):
+            for subset in itertools.combinations(seq, ll):
+                if len(subset) > 0:
+                    llist.append(subset)           
+        llist.append(tuple(seq))
+        return llist
+        
+    def __str__(self): 
+        return "StatsAgency()"
+    
+    def add(self, token):
+        super().add(token)
+        for agent, _, _ in self.agents:
+            agent.add(token)
+            
+    def submit(self, token):
+        super().submit(token)
+        for agent, _, _ in self.agents:
+            agent.deposit(token)
+        return token
+            
+    def reward(self, mymove, opmove):
+        return -1 if (mymove - opmove) % self.states == 2 else (mymove - opmove)
+    
+    def calculate(self):
+        
+        default_scores = [ 0 ] * len(self.scorers)
+        current_scores = []
+        for scorer in self.scorers:
+            score = scorer.normalize(scorer.calculate())
+            print("SCORE: ", score)
+            current_scores.append(score)
+            default_scores = [ x + y for x, y in zip(default_scores, score) ]
+            
+        
+                       
+        results1 = {}
+        results2 = {}
+        for combo in self.combos:
+            scores = [ 0 ] * len(self.agents)
+            winOnly = True
+            winAndEvenOnly = True
+            for entry in combo:
+                res = (self.agents[np.argmax(current_scores[entry])][1][-1] - self.opponent[-1]) % self.states
+                flag = 0.5 if res == 0 else 1
+                if res == 0:
+                    winOnly = False
+                if res == 2:
+                    winOnly = False
+                    winAndEvenOnly = False
+                    break
+                scores = [ x + (y * flag) for x, y in zip(scores, current_scores[entry]) ]
+            if winOnly == True:
+                results1[combo] = scores
+            if winAndEvenOnly == True:
+                results2[combo] = scores
+                
+        import pprint
+        pp = pprint.PrettyPrinter(indent=3)         
+        pp.pprint(results1)
+        pp.pprint(results2)
+        
+        if len(results1) <= 0 and len(results2) > 0:
+            results1 = results2
+            
+        if len(results1) <= 0:
+            results1['default'] = default_scores
+        
+        best_score = -1
+        best_combo = None        
+        for combo, scores in results1.items():
+            score = np.std(scores)
+            if score > best_score:
+                best_score = score
+                best_combo = combo
+        
+        return results1[best_combo]
+    
+    
+    def decide(self):
+        
+        final_scores = [0] * len(self.scorers)
+        
+        if self.rnd > 0:
+            for _, predicted, outcome in self.agents:
+                outcome.append(self.reward(predicted[-1], self.opponent[-1]))
+                        
+            final_scores = self.calculate()
+                
+        for agent, predicted, _ in self.agents:
+            try :
+                predicted.append(agent.estimate())
+            except:
+                predicted.append(np.random.randint(self.states))
+            
+        
+        self.rnd += 1
+                              
+        return self.submit(self.agents[np.argmax(final_scores)][1][-1])
