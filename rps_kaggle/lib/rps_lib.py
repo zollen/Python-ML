@@ -528,6 +528,7 @@ class StatsAgency(BaseAgent):
         self.random_threshold = random_threshold
         self.rnd = 0
         self.combos = self.generate()
+        self.executor = None
     
     def generate(self):
         seq = [ x for x in range(len(self.scorers)) ]
@@ -540,7 +541,7 @@ class StatsAgency(BaseAgent):
         return llist
         
     def __str__(self): 
-        return "StatsAgency()"
+        return "StatsAgency(" + self.executor.__str__() + ")"
     
     def add(self, token):
         super().add(token)
@@ -576,6 +577,8 @@ class StatsAgency(BaseAgent):
             
         
         self.rnd += 1
+        
+        self.executor = self.agents[np.argmax(final_scores)][0]
                               
         return self.submit(self.agents[np.argmax(final_scores)][1][-1])
 
