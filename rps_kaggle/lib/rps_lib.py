@@ -558,15 +558,15 @@ class StatsAgency(BaseAgent):
     
     def decide(self):
         
-        final_scores = [0] * len(self.scorers)
-        
+        final_scores = [0] * len(self.agents)
+                
         if self.rnd > 0:
             for _, predicted, outcome in self.agents:
                 outcome.append(self.reward(predicted[-1], self.opponent[-1]))
              
             for scorer in self.scorers:
                 new_scores = scorer.normalize(scorer.calculate())
-                final_scores = [ a + b for a, b in zip(final_scores, new_scores)]            
+                final_scores = [ a + b for a, b in zip(final_scores, new_scores) ]
                 
         for agent, predicted, _ in self.agents:
             try :
