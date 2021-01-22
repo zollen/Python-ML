@@ -521,7 +521,7 @@ class BetaScorer(OutComeScorer):
         self.history.append(scores)
         
         final_scores = [0] * len(self.agents)
-        for score in self.history[-3:]:
+        for score in self.history[-5:]:
             final_scores = [ a + b for a, b in zip(final_scores, score)]
         
         return Scorer.normalize(self, final_scores)
