@@ -505,6 +505,7 @@ class BetaScorer(OutComeScorer):
     
     def __init__(self, agents):
         super().__init__(agents)
+        self.history = []
     
     def calculate(self):
         
@@ -516,7 +517,14 @@ class BetaScorer(OutComeScorer):
         return final_scores
     
     def normalize(self, scores):
-        return Scorer.normalize(self, scores)
+        
+        self.history.append(scores)
+        
+        final_scores = [0] * len(self.agents)
+        for score in self.history[-3:]:
+            final_scores = [ a + b for a, b in zip(final_scores, score)]
+        
+        return Scorer.normalize(self, final_scores)
     
 
 class StatsAgency(BaseAgent):
