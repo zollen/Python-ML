@@ -521,7 +521,7 @@ class BetaScorer(OutComeScorer):
         self.history.append(scores)
         
         final_scores = [0] * len(self.agents)
-        for score in self.history[-5:]:
+        for score in self.history[-3:]:
             final_scores = [ a + b for a, b in zip(final_scores, score)]
         
         return Scorer.normalize(self, final_scores)
@@ -537,6 +537,8 @@ class StatsAgency(BaseAgent):
         self.rnd = 0
         self.combos = self.generate()
         self.executor = None
+        self.totalwon = 0
+        self.totallost = 0
     
     def generate(self):
         seq = [ x for x in range(len(self.scorers)) ]
@@ -549,6 +551,8 @@ class StatsAgency(BaseAgent):
         return llist
         
     def __str__(self): 
+        if self.executor == None:
+            return "StatsAgency(Crazy)"
         return "StatsAgency(" + self.executor.__str__() + ")"
     
     def add(self, token):
@@ -570,7 +574,17 @@ class StatsAgency(BaseAgent):
             return -1
         return 0
     
+    def lastmatch(self):
+        if len(self.mines) > 0 and len(self.opponent) > 0:
+            res = self.reward(self.mines[-1], self.opponent[-1])
+            if res > 0:
+                self.totalwon += 1
+            elif res < 0:
+                self.totallost += 1
+    
     def decide(self):
+        
+        self.lastmatch()
         
         final_scores = [0] * len(self.agents)
                 
@@ -592,6 +606,11 @@ class StatsAgency(BaseAgent):
         self.rnd += 1
         
         self.executor = self.agents[np.argmax(final_scores)][0]
+        
+        stats = self.totalwon - self.totallost
+        if stats < self.random_threshold and np.random.uniform(0, 1) < 0.5 + (stats * 0.01):
+            self.executor = None
+            return self.submit(self.random())
                               
         return self.submit(self.agents[np.argmax(final_scores)][1][-1])
 
