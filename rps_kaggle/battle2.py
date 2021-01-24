@@ -26,20 +26,35 @@ warnings.filterwarnings('ignore')
 def setup():
     
     if True:
-        xgb15 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
+        forest17 = rps.Classifier(rps.RandomHolder(
+                [
+                    RandomForestClassifier(n_estimators = 10),
+                    XGBClassifier(n_estimators = 10, eval_metric = 'logloss')
+                ]), window = 15)
+        markov3 = enm2.MarkovChain(3, 0.9)
+        mp160 = enm3.MemoryPatterns(min_memory=50, max_memory=160, warmup=20)
+        mp140 = enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20)
+        iocaine160 = enm4.Iocaine(num_predictor = 160)
         agents = [
-            [ enm2.MarkovChain(3, 0.9),                                               [], [] ],
-            [ enm3.MemoryPatterns(min_memory=40, max_memory=160, warmup=20),          [], [] ],
-            [ enm3.MemoryPatterns(min_memory=50, max_memory=160, warmup=20),          [], [] ],
-            [ enm4.Iocaine(num_predictor = 160),                                      [], [] ],
-            [ xgb15,                                                                  [], [] ]
+        #    [ markov3,                                                                [], [] ],
+        #    [ rps.Sharer(markov3, ahead = 1),                                         [], [] ],
+        #    [ rps.Sharer(markov3, ahead = 2),                                         [], [] ],
+            [ mp140,                                                                  [], [] ],
+        #    [ rps.Sharer(mp140, ahead = 1),                                           [], [] ],
+        #    [ rps.Sharer(mp140, ahead = 2),                                           [], [] ],
+            [ mp160,                                                                  [], [] ],
+        #    [ rps.Sharer(mp160, ahead = 1),                                           [], [] ],
+        #    [ rps.Sharer(mp160, ahead = 2),                                           [], [] ],
+            [ iocaine160,                                                             [], [] ],
+        #    [ rps.Sharer(iocaine160, ahead = 1),                                      [], [] ],
+        #    [ rps.Sharer(iocaine160, ahead = 2),                                      [], [] ],
+            [ forest17,                                                               [], [] ],
+            [ rps.Sharer(forest17, ahead = 1),                                        [], [] ],
+            [ rps.Sharer(forest17, ahead = 2),                                        [], [] ]
         ]
 
         scorers = [
-           rps.PopularityScorer(agents),    # 8,11  14,6 10,9 10,10           12,7
-           rps.OutComeScorer(agents),       # 7,11  14,6            12,8      12,7
-           rps.Last5RoundsScorer(agents),   # 10,10      10,9            8,12 12,7
-           rps.BetaScorer(agents)           # 9,11            10,10 12,8 8,12
+           rps.MarkovScorer(agents, min_len = 3, max_len = 7)
         ]
 
         player1 = rps.StatsAgency(scorers, agents, random_threshold = -10)
@@ -82,7 +97,7 @@ def setup():
     if False:
         player2 = enm4.Iocaine(num_predictor = 160)
     if False:
-        player1 = enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20)
+        player2 = enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20)
     if False:
         player1 = enm5.GreenBerb()
     if False:

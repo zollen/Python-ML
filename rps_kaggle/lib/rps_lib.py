@@ -563,7 +563,8 @@ class MarkovScorer(Scorer):
                   
             if self.currLength > self.minLength:
                 
-                ## put score decay here!
+                for key, val in self.tokens.items():
+                    self.tokens[key] = [ x * 0.8 for x in val ]
                 
                 for window in range(self.minLength, self.maxLength + 1):
                     for ind in range(len(self.almoves) - window):
