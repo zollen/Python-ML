@@ -419,6 +419,10 @@ class Scorer:
     
     def __init__(self, agents):
         self.agents = agents
+        self.agency = None
+        
+    def setup(self, agency):
+        self.agency = agency
         
     def normalize(self, scores):
         total = np.sum(scores)
@@ -545,8 +549,6 @@ class MarkovScorer(Scorer):
         super().__init__(agents)
         self.numAgents = len(agents)
         self.tokens = defaultdict(lambda: [0] * self.numAgents)
-        self.mymoves = mymoves
-        self.opmoves = opmoves
         self.almoves = []
         self.currLength = 0
         self.minLength = min_len
@@ -556,7 +558,7 @@ class MarkovScorer(Scorer):
         
         if self.currLength < len(self.mymoves) and self.currLength < len(self.opmoves):
             
-            self.almoves.append(str(self.mymoves[-1]) + str(self.opmoves[-1]))
+            self.almoves.append(str(self.agency.myQueue(-1)) + str(self.agency.opQueue(-1)))
             self.currLength += 1
                 
             if self.currLength > self.minLength:
@@ -572,16 +574,17 @@ class MarkovScorer(Scorer):
                             elif predicted[-1] == (int(self.RTRANSLATE[self.almoves[ind + window]][1]) + 2) % 3:
                                 self.tokens[tuple(self.almoves[ind:ind + window])][agt] *= 0.8
                             agt += 1
-                
-                final_scores = [0] * self.numAgents
-                for window in range(self.minLength, self.maxLength + 1):
-                    final_scores = [ x + y for x, y in zip(final_scores, self.tokens[tuple(self.almoves[-window:])])]
-                return final_scores
-            
+               
+        final_scores = [0] * self.numAgents
+        for window in range(self.minLength, self.maxLength + 1):
+            final_scores = [ x + y for x, y in zip(final_scores, self.tokens[tuple(self.almoves[-window:])])]
         
-        ll = [ 1 ] + [ 0 ] * self.numAgents - 1
-        np.random.shuffle(ll)
-        return ll
+        if all(x == final_scores[0] for x in final_scores):
+            ll = [ 1 ] + [ 0 ] * (self.numAgents - 1)
+            np.random.shuffle(ll)
+            final_scores = ll
+                       
+        return final_scores
     
 
 
@@ -597,6 +600,8 @@ class StatsAgency(BaseAgent):
         self.executor = None
         self.totalwon = 0
         self.totallost = 0
+        for scorer in self.scores:
+            scorer.setup(self)
     
     def generate(self):
         seq = [ x for x in range(len(self.scorers)) ]
