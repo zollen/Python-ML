@@ -5,6 +5,7 @@ Created on Dec. 15, 2020
 '''
 import numpy as np
 import time
+from collections import defaultdict 
 import itertools
 
 
@@ -525,7 +526,64 @@ class BetaScorer(OutComeScorer):
             final_scores = [ a + b for a, b in zip(final_scores, score)]
         
         return Scorer.normalize(self, final_scores)
+
+class MarkovScorer(Scorer):  
     
+    FTRANSLATE = { 
+              "01": 0, "12": 1, "20": 2,
+              "00": 3, "11": 4, "22": 5,
+              "10": 6, "21": 7, "02": 8
+            }
+
+    RTRANSLATE = {
+                0: '01', 1: '12', 2: '20',
+                3: '00', 4: '11', 5: '22',
+                6: '10', 7: '21', 8: '02'
+            } 
+    
+    def __init__(self, agents, min_len, max_len):
+        super().__init__(agents)
+        self.numAgents = len(agents)
+        self.tokens = defaultdict(lambda: [0] * self.numAgents)
+        self.mymoves = mymoves
+        self.opmoves = opmoves
+        self.almoves = []
+        self.currLength = 0
+        self.minLength = min_len
+        self.maxLength = max_len
+        
+    def calculate(self):
+        
+        if self.currLength < len(self.mymoves) and self.currLength < len(self.opmoves):
+            
+            self.almoves.append(str(self.mymoves[-1]) + str(self.opmoves[-1]))
+            self.currLength += 1
+                
+            if self.currLength > self.minLength:
+                
+                ## put score decay here!
+                
+                for window in range(self.minLength, self.maxLength + 1):
+                    for ind in range(len(self.almoves) - window):
+                        agt = 0
+                        for _, predicted, _ in self.agents:
+                            if predicted[-1] == (int(self.RTRANSLATE[self.almoves[ind + window]][1]) + 1) % 3:
+                                self.tokens[tuple(self.almoves[ind:ind + window])][agt] += 1
+                            elif predicted[-1] == (int(self.RTRANSLATE[self.almoves[ind + window]][1]) + 2) % 3:
+                                self.tokens[tuple(self.almoves[ind:ind + window])][agt] *= 0.8
+                            agt += 1
+                
+                final_scores = [0] * self.numAgents
+                for window in range(self.minLength, self.maxLength + 1):
+                    final_scores = [ x + y for x, y in zip(final_scores, self.tokens[tuple(self.almoves[-window:])])]
+                return final_scores
+            
+        
+        ll = [ 1 ] + [ 0 ] * self.numAgents - 1
+        np.random.shuffle(ll)
+        return ll
+    
+
 
 class StatsAgency(BaseAgent):
         
