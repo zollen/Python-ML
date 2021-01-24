@@ -556,11 +556,11 @@ class MarkovScorer(Scorer):
         
     def calculate(self):
         
-        if self.currLength < len(self.mymoves) and self.currLength < len(self.opmoves):
+        if self.currLength < self.agency.myQueue().size and self.currLength < self.agency.opQueue().size:
             
-            self.almoves.append(str(self.agency.myQueue(-1)) + str(self.agency.opQueue(-1)))
+            self.almoves.append(self.FTRANSLATE[str(self.agency.myQueue(-1)) + str(self.agency.opQueue(-1))])
             self.currLength += 1
-                
+                  
             if self.currLength > self.minLength:
                 
                 ## put score decay here!
@@ -600,7 +600,7 @@ class StatsAgency(BaseAgent):
         self.executor = None
         self.totalwon = 0
         self.totallost = 0
-        for scorer in self.scores:
+        for scorer in self.scorers:
             scorer.setup(self)
     
     def generate(self):
