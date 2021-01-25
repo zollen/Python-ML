@@ -672,7 +672,7 @@ class StatsAgency(BaseAgent):
         self.executor = self.agents[np.argmax(final_scores)][0]
         
         stats = self.totalwon - self.totallost
-        if stats < self.random_threshold and np.random.uniform(0, 1) < 0.5 + (stats * 0.01):
+        if (stats < self.random_threshold and np.random.uniform(0, 1) < 0.5 + (stats * 0.01)) or (np.random.uniform(0, 1) <= 0.1):
             self.executor = None
             return self.submit(self.random())
                               
