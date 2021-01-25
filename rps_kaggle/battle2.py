@@ -35,26 +35,19 @@ def setup():
         mp160 = enm3.MemoryPatterns(min_memory=50, max_memory=160, warmup=20)
         mp140 = enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20)
         iocaine160 = enm4.Iocaine(num_predictor = 160)
+        iocaine200 = enm4.Iocaine(num_predictor = 200)
         agents = [
-        #    [ markov3,                                                                [], [] ],
-        #    [ rps.Sharer(markov3, ahead = 1),                                         [], [] ],
-        #    [ rps.Sharer(markov3, ahead = 2),                                         [], [] ],
             [ mp140,                                                                  [], [] ],
-        #    [ rps.Sharer(mp140, ahead = 1),                                           [], [] ],
-        #    [ rps.Sharer(mp140, ahead = 2),                                           [], [] ],
             [ mp160,                                                                  [], [] ],
-        #    [ rps.Sharer(mp160, ahead = 1),                                           [], [] ],
-        #    [ rps.Sharer(mp160, ahead = 2),                                           [], [] ],
             [ iocaine160,                                                             [], [] ],
-        #    [ rps.Sharer(iocaine160, ahead = 1),                                      [], [] ],
-        #    [ rps.Sharer(iocaine160, ahead = 2),                                      [], [] ],
+            [ iocaine200,                                                             [], [] ],
             [ forest17,                                                               [], [] ],
             [ rps.Sharer(forest17, ahead = 1),                                        [], [] ],
             [ rps.Sharer(forest17, ahead = 2),                                        [], [] ]
         ]
 
         scorers = [
-           rps.MarkovScorer(agents, min_len = 3, max_len = 7)
+           rps.MarkovScorer(agents, min_len = 3, max_len = 30)
         ]
 
         player1 = rps.StatsAgency(scorers, agents, random_threshold = -10)
@@ -74,7 +67,7 @@ def setup():
         
         player2 = rps.BetaAgency(agents1, decay = 1.1)
         
-    if True:
+    if False:
         xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
         xgb2 = rps.Sharer(xgb1, ahead = 1)
         xgb3 = rps.Sharer(xgb1, ahead = 2)
@@ -90,7 +83,7 @@ def setup():
         player2 = rps.MetaAgency(managers1, agents1, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
 
-    if False:
+    if True:
         player2 = enm.MultiArmsBandit()
     if False:
         player2 = enm2.MarkovChain(3, 0.9)
