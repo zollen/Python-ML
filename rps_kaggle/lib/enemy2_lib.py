@@ -43,7 +43,7 @@ class MarkovChain(rps.BaseAgent):
         super().reset()
     
     def __str__(self):
-        return "MarkovChain2(" + str(self.order) + ")"
+        return "MarkovChain(" + str(self.order) + ")"
     
     def encode(self):
         
