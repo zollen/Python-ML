@@ -21,14 +21,21 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-
+'''
+net(10): 12,7
+'''
 
 def setup():
     
     if True:
-        player1 = enm2.MarkovNet(min_len = 3, max_len = 15)
+        player1 = enm2.MarkovNet(min_len = 3, max_len = 10)
     
     if False:
+        '''
+        markov_scorer(10): 9,11
+        markov_scorer(15): 10,10
+        markov_scorer(20): 13,7
+        '''
         forest17 = rps.Classifier(rps.RandomHolder(
                 [
                     RandomForestClassifier(n_estimators = 10),
@@ -40,23 +47,19 @@ def setup():
         iocaine160 = enm4.Iocaine(num_predictor = 160)
         iocaine200 = enm4.Iocaine(num_predictor = 200)
         agents = [
-            [ mp140,                                                                  [], [] ],
             [ mp160,                                                                  [], [] ],
-            [ iocaine160,                                                             [], [] ],
             [ iocaine200,                                                             [], [] ],
-            [ forest17,                                                               [], [] ],
-            [ rps.Sharer(forest17, ahead = 1),                                        [], [] ],
-            [ rps.Sharer(forest17, ahead = 2),                                        [], [] ]
+            [ forest17,                                                               [], [] ]
         ]
 
         scorers = [
-           rps.MarkovScorer(agents, min_len = 3, max_len = 15)
+           rps.MarkovScorer(agents, min_len = 3, max_len = 20)
         ]
 
         player1 = rps.StatsAgency(scorers, agents, random_threshold = -10)
     
    
-    if True:
+    if False:
         
         markovChain = enm2.MarkovChain(3, 0.9)
         iocaine2 = enm4.Iocaine(num_predictor = 140)
@@ -86,7 +89,7 @@ def setup():
         player2 = rps.MetaAgency(managers1, agents1, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
 
-    if False:
+    if True:
         player2 = enm.MultiArmsBandit()
     if False:
         player2 = enm2.MarkovChain(3, 0.9)
