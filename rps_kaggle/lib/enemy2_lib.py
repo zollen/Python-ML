@@ -146,7 +146,7 @@ class MarkovNet(rps.BaseAgent):
     
     def normalize(self, scores):
         total = np.sum(scores)
-        if total == 0:
+        if total <= 0:
             return [ 0 ] * len(scores)
         return [ x / total for x in scores ]
     

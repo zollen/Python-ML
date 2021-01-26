@@ -578,7 +578,7 @@ class MarkovScorer(Scorer):
                
         final_scores = [0] * self.numAgents
         for window in range(self.minLength, self.maxLength + 1):
-            final_scores = [ x + y for x, y in zip(final_scores, Scorer.normalize(self, self.tokens[tuple(self.almoves[-window:])])) ]
+            final_scores = [ x + y for x, y in zip(final_scores, super().normalize(self.tokens[tuple(self.almoves[-window:])])) ]
         
         if all(x == final_scores[0] for x in final_scores):
             ll = [ 1 ] + [ 0 ] * (self.numAgents - 1)
