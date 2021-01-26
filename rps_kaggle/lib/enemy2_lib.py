@@ -144,6 +144,12 @@ class MarkovNet(rps.BaseAgent):
     def __str__(self):
         return "MarkovNet(" + str(self.minLength) + ", " + str(self.maxLength) + ")"
     
+    def normalize(self, scores):
+        total = np.sum(scores)
+        if total == 0:
+            return [ 0 ] * len(scores)
+        return [ x / total for x in scores ]
+    
     def decide(self):
         
         if self.currLength < self.mines.size and self.currLength < self.opponent.size:
@@ -168,8 +174,7 @@ class MarkovNet(rps.BaseAgent):
             
         final_scores = [0] * self.states
         for window in range(self.minLength, self.maxLength + 1):
-            final_scores = [ x + y for x, y in zip(final_scores, self.tokens[tuple(self.almoves[-window:])])]
-    
+            final_scores = [ x + y for x, y in zip(final_scores, self.normalize(self.tokens[tuple(self.almoves[-window:])])) ]
         
         if all(x == final_scores[0] for x in final_scores):
             return self.submit(np.random.randint(self.states))
