@@ -26,6 +26,9 @@ warnings.filterwarnings('ignore')
 def setup():
     
     if True:
+        player1 = enm2.MarkovNet(min_len = 3, max_len = 15)
+    
+    if False:
         forest17 = rps.Classifier(rps.RandomHolder(
                 [
                     RandomForestClassifier(n_estimators = 10),
@@ -47,13 +50,13 @@ def setup():
         ]
 
         scorers = [
-           rps.MarkovScorer(agents, min_len = 3, max_len = 30)
+           rps.MarkovScorer(agents, min_len = 3, max_len = 15)
         ]
 
         player1 = rps.StatsAgency(scorers, agents, random_threshold = -10)
     
    
-    if False:
+    if True:
         
         markovChain = enm2.MarkovChain(3, 0.9)
         iocaine2 = enm4.Iocaine(num_predictor = 140)
@@ -83,7 +86,7 @@ def setup():
         player2 = rps.MetaAgency(managers1, agents1, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
 
-    if True:
+    if False:
         player2 = enm.MultiArmsBandit()
     if False:
         player2 = enm2.MarkovChain(3, 0.9)
@@ -104,7 +107,7 @@ def setup():
 
 
 
-if True:    
+if False:    
     player1, player2 = setup()
     bat.battleground(player1, player2)
 else:   

@@ -2,41 +2,19 @@
 Created on Jan. 18, 2021
 
 @author: zollen
+
+12,8
 '''
+
 import numpy as np
-import time
-from xgboost import XGBClassifier
-from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.neighbors import KNeighborsClassifier
-import rps_kaggle.lib.rps_lib as rps
-import rps_kaggle.lib.battle_lib as bat
-import rps_kaggle.lib.enemy_lib as enm
 import rps_kaggle.lib.enemy2_lib as enm2
-import rps_kaggle.lib.enemy3_lib as enm3
-import rps_kaggle.lib.enemy4_lib as enm4
-import rps_kaggle.lib.enemy5_lib as enm5
 
 
+
+
+markov = enm2.MarkovNet(min_len = 3, max_len = 4)
+ 
+for _ in range(500):
     
-agents = [
-            [ enm2.MarkovChain(3, 0.9),                                               [], [] ],
-            [ enm3.MemoryPatterns(min_memory=50, max_memory=140, warmup=20),          [], [] ],
-            [ enm4.Iocaine(num_predictor = 160),                                      [], [] ]
-    ]
-
-scorers = [
-            rps.PopularityScorer(agents),
-            rps.OutComeScorer(agents),
-            rps.Last5RoundsScorer(agents),
-            rps.BetaScorer(agents)
-        ]
-
-agency = rps.StatsAgency(scorers, agents, random_threshold = -10)
-
-
-
-for _ in range(5):
-    print("MOVE: ", agency.decide())
-    agency.add(np.random.randint(3))
+    print("MOVE: ", markov.decide())
+    markov.add(np.random.randint(3))

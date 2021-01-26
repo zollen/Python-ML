@@ -3,8 +3,9 @@ Created on Jan. 13, 2021
 
 @author: zollen
 '''
-
 import random
+import numpy as np
+from collections import defaultdict 
 from operator import itemgetter
 import rps_kaggle.lib.rps_lib as rps
 
@@ -117,3 +118,60 @@ class MarkovChain(rps.BaseAgent):
         return self.submit(self.best_move)
     
     
+class MarkovNet(rps.BaseAgent):
+    
+    FTRANSLATE = { 
+              "01": 0, "12": 1, "20": 2,
+              "00": 3, "11": 4, "22": 5,
+              "10": 6, "21": 7, "02": 8
+            }
+
+    RTRANSLATE = {
+                0: '01', 1: '12', 2: '20',
+                3: '00', 4: '11', 5: '22',
+                6: '10', 7: '21', 8: '02'
+            }
+    
+    def __init__(self, states = 3, window = 0, min_len = 3, max_len = 7):
+        super().__init__(states, window, 0, None)
+        self.almoves = []
+        self.minLength = min_len
+        self.maxLength = max_len
+        self.tokens = defaultdict(lambda: [0] * self.states)
+        self.currLength = 0
+        self.last = None
+        
+    def __str__(self):
+        return "MarkovNet(" + str(self.minLength) + ", " + str(self.maxLength) + ")"
+    
+    def decide(self):
+        
+        if self.currLength < self.mines.size and self.currLength < self.opponent.size:
+          
+            self.almoves.append(self.FTRANSLATE[str(self.mines[-1]) + str(self.opponent[-1])])
+            self.currLength += 1
+            
+            if self.currLength > self.minLength:
+                
+                for key, val in self.tokens.items():
+                    self.tokens[key] = [ x * 0.8 for x in val ]
+                
+                for window in range(self.minLength, self.maxLength + 1):
+                    for ind in range(len(self.almoves) - window):
+                        predicted = int(self.RTRANSLATE[self.almoves[ind + window]][1])
+                        for action in range(self.states):
+                            if action == predicted:
+                                self.tokens[tuple(self.almoves[ind:ind + window])][action] += 1
+                            else:
+                                self.tokens[tuple(self.almoves[ind:ind + window])][action] *= 0.8
+                      
+            
+        final_scores = [0] * self.states
+        for window in range(self.minLength, self.maxLength + 1):
+            final_scores = [ x + y for x, y in zip(final_scores, self.tokens[tuple(self.almoves[-window:])])]
+    
+        
+        if all(x == final_scores[0] for x in final_scores):
+            return self.submit(np.random.randint(self.states))
+        
+        return self.submit((np.argmax(final_scores).item() + 1) % self.states) 
