@@ -207,6 +207,7 @@ class MarkovAdj(rps.BaseAgent):
         self.currLength = 0
         self.minLength = min_len
         self.maxLength = max_len
+        self.offset = 0
         self.rnd = 0
         
     def add(self, token):
@@ -219,7 +220,7 @@ class MarkovAdj(rps.BaseAgent):
         return token
     
     def __str__(self):
-        return "MarkovAdj(" + str(self.minLength) +", " + str(self.maxLength) + ")"
+        return "MarkovAdj(" + str(self.minLength) +", " + str(self.maxLength) + ", " + str(self.offset) + ")"
     
     def normalize(self, scores):
         total = np.sum(scores)
@@ -256,5 +257,5 @@ class MarkovAdj(rps.BaseAgent):
         for window in range(self.minLength, self.maxLength + 1):
             final_scores = [ x + y for x, y in zip(final_scores, self.normalize(self.tokens[tuple(self.almoves[-window:])])) ]
 
-        offset = np.argmax(final_scores)
-        return self.submit((self.classifier.estimate() + offset) % self.states)
+        self.offset = np.argmax(final_scores)
+        return self.submit((self.classifier.estimate() + self.offset) % self.states)
