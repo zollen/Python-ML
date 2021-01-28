@@ -232,6 +232,8 @@ class MarkovAdj(rps.BaseAgent):
     
     def decide(self):
         
+        self.offset = 0
+        
         if self.currLength < self.mines.size and self.currLength < self.opponent.size:
           
             self.almoves.append(self.FTRANSLATE[str(self.mines[-1]) + str(self.opponent[-1])])
@@ -241,20 +243,25 @@ class MarkovAdj(rps.BaseAgent):
                 
                 for key, val in self.tokens.items():
                     self.tokens[key] = [ x * 0.8 for x in val ]
-                           
-                for window in range(self.minLength, self.maxLength + 1):
+                        
+                for window in range(self.minLength, min(self.currLength, self.maxLength + 1)):
                     mymove = int(self.RTRANSLATE[self.almoves[-1]][0])
                     opmove = int(self.RTRANSLATE[self.almoves[-1]][1])
                     offset = self.OFFSETS[(mymove - opmove) % self.states]
-                    for action in range(self.states):
-                        if action == offset:
-                            self.tokens[tuple(self.almoves[-window-1:-1])][action] += 1
+                    for ahead in range(self.states):
+                        if ahead == offset:
+                            self.tokens[tuple(self.almoves[-window-1:-1])][ahead] += 1
                         else:
-                            self.tokens[tuple(self.almoves[-window-1:-1])][action] *= 0.8
-        
-        final_scores = [0] * self.states
-        for window in range(self.minLength, self.maxLength + 1):
-            final_scores = [ x + y for x, y in zip(final_scores, self.normalize(self.tokens[tuple(self.almoves[-window:])])) ]
+                            self.tokens[tuple(self.almoves[-window-1:-1])][ahead] *= 0.8
+                            
+                final_scores = [0] * self.states
+                for window in range(self.minLength, self.maxLength + 1):
+                    final_scores = [ x + y for x, y in zip(final_scores, self.normalize(self.tokens[tuple(self.almoves[-window:])])) ]
+                    
+                if all(x == final_scores[0] for x in final_scores):
+                    final_scores = [1, 0, 0]
 
-        self.offset = np.argmax(final_scores).item()
+                self.offset = np.argmax(final_scores).item()
+                
+            
         return self.submit((self.classifier.estimate() + self.offset) % self.states)
