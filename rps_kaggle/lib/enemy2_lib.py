@@ -214,8 +214,8 @@ class MarkovAdj(rps.BaseAgent):
         self.classifier.add(token)
         
     def submit(self, token):
-        super().submit(token)
-        self.classifier.submit(token)
+        super().deposit(token)
+        self.classifier.deposit(token)
         return token
     
     def __str__(self):
@@ -257,4 +257,4 @@ class MarkovAdj(rps.BaseAgent):
             final_scores = [ x + y for x, y in zip(final_scores, self.normalize(self.tokens[tuple(self.almoves[-window:])])) ]
 
         offset = np.argmax(final_scores)
-        return self.submit((self.classifier.decide() + offset) % self.states)
+        return self.submit((self.classifier.estimate() + offset) % self.states)
