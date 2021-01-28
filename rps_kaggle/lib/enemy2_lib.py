@@ -163,13 +163,12 @@ class MarkovNet(rps.BaseAgent):
                     self.tokens[key] = [ x * 0.8 for x in val ]
                 
                 for window in range(self.minLength, self.maxLength + 1):
-                    for ind in range(len(self.almoves) - window):
-                        predicted = int(self.RTRANSLATE[self.almoves[ind + window]][1])
-                        for action in range(self.states):
-                            if action == predicted:
-                                self.tokens[tuple(self.almoves[ind:ind + window])][action] += 1
-                            else:
-                                self.tokens[tuple(self.almoves[ind:ind + window])][action] *= 0.8
+                    predicted = int(self.RTRANSLATE[self.almoves[-1]][1])
+                    for action in range(self.states):
+                        if action == predicted:
+                            self.tokens[tuple(self.almoves[-window-1:-1])][action] += 1
+                        else:
+                            self.tokens[tuple(self.almoves[-window-1:-1])][action] *= 0.8
                       
             
         final_scores = [0] * self.states
