@@ -256,5 +256,5 @@ class MarkovAdj(rps.BaseAgent):
         for window in range(self.minLength, self.maxLength + 1):
             final_scores = [ x + y for x, y in zip(final_scores, self.normalize(self.tokens[tuple(self.almoves[-window:])])) ]
 
-        self.offset = np.argmax(final_scores)
+        self.offset = np.argmax(final_scores).item()
         return self.submit((self.classifier.estimate() + self.offset) % self.states)
