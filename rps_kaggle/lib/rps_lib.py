@@ -565,16 +565,15 @@ class MarkovScorer(Scorer):
                 
                 for key, val in self.tokens.items():
                     self.tokens[key] = [ x * 0.8 for x in val ]
-                
+                 
                 for window in range(self.minLength, self.maxLength + 1):
-                    for ind in range(len(self.almoves) - window):
-                        agt = 0
-                        for _, predicted, _ in self.agents:
-                            if predicted[-1] == (int(self.RTRANSLATE[self.almoves[ind + window]][1]) + 1) % 3:
-                                self.tokens[tuple(self.almoves[ind:ind + window])][agt] += 1
-                            elif predicted[-1] == (int(self.RTRANSLATE[self.almoves[ind + window]][1]) + 2) % 3:
-                                self.tokens[tuple(self.almoves[ind:ind + window])][agt] *= 0.8
-                            agt += 1
+                    agt = 0
+                    for _, predicted, _ in self.agents:
+                        if predicted[-1] == (int(self.RTRANSLATE[self.almoves[-1]][1]) + 1) % 3:
+                            self.tokens[tuple(self.almoves[-window-1:-1])][agt] += 1
+                        elif predicted[-1] == (int(self.RTRANSLATE[self.almoves[-1]][1]) + 2) % 3:
+                            self.tokens[tuple(self.almoves[-window-1:-1])][agt] *= 0.8
+                        agt += 1
                
         final_scores = [0] * self.numAgents
         for window in range(self.minLength, self.maxLength + 1):
