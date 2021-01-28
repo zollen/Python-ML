@@ -28,7 +28,8 @@ net(10): 12,7
 def setup():
     
     if True:
-        player1 = enm2.MarkovNet(min_len = 3, max_len = 10)
+        player1 = enm2.MarkovAdj(rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15), 
+                                 min_len = 3, max_len = 20)
     
     if False:
         '''
@@ -73,7 +74,7 @@ def setup():
         
         player2 = rps.BetaAgency(agents1, decay = 1.1)
         
-    if False:
+    if True:
         xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
         xgb2 = rps.Sharer(xgb1, ahead = 1)
         xgb3 = rps.Sharer(xgb1, ahead = 2)
@@ -89,7 +90,7 @@ def setup():
         player2 = rps.MetaAgency(managers1, agents1, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
 
-    if True:
+    if False:
         player2 = enm.MultiArmsBandit()
     if False:
         player2 = enm2.MarkovChain(3, 0.9)
@@ -110,7 +111,7 @@ def setup():
 
 
 
-if False:    
+if True:    
     player1, player2 = setup()
     bat.battleground(player1, player2)
 else:   

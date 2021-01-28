@@ -196,6 +196,8 @@ class MarkovAdj(rps.BaseAgent):
                 6: '10', 7: '21', 8: '02'
             }
     
+    OFFSETS = { 0: 1, 1: 0, 2: 2 }
+    
     def __init__(self, classifier, states = 3, min_len = 3, max_len = 7):
         super().__init__(states, 0, 0, None)
         self.states = states
@@ -217,14 +219,18 @@ class MarkovAdj(rps.BaseAgent):
         return token
     
     def __str__(self):
-        return "TestAgent"
+        return "MarkovAdj(" + str(self.minLength) +", " + str(self.maxLength) + ")"
+    
+    def normalize(self, scores):
+        total = np.sum(scores)
+        if total <= 0:
+            return [ 0 ] * len(scores)
+        return [ x / total for x in scores ]
     
     def original(self, token):
         return (token + 2) % self.states
     
     def decide(self):
-        
-        offset = 0
         
         if self.currLength < self.mines.size and self.currLength < self.opponent.size:
           
@@ -235,18 +241,20 @@ class MarkovAdj(rps.BaseAgent):
                 
                 for key, val in self.tokens.items():
                     self.tokens[key] = [ x * 0.8 for x in val ]
-                    
+                           
                 for window in range(self.minLength, self.maxLength + 1):
-                    for ind in range(len(self.almoves) - window):
-                        mymove = self.original(int(self.RTRANSLATE[self.almoves[ind + window]][0]))
-                        opmove = int(self.RTRANSLATE[self.almoves[ind + window]][1])
-                        offset = (mymove - opmove) % self.states
-                        for action in range(self.states):
-                            if action == offset:
-                                self.tokens[tuple(self.almoves[ind:ind + window])][action] += 1
-                            else:
-                                self.tokens[tuple(self.almoves[ind:ind + window])][action] *= 0.8
+                    mymove = int(self.RTRANSLATE[self.almoves[-1]][0])
+                    opmove = int(self.RTRANSLATE[self.almoves[-1]][1])
+                    offset = self.OFFSETS[(mymove - opmove) % self.states]
+                    for action in range(self.states):
+                        if action == offset:
+                            self.tokens[tuple(self.almoves[-window-1:-1])][action] += 1
+                        else:
+                            self.tokens[tuple(self.almoves[-window-1:-1])][action] *= 0.8
         
-        predicted = self.original(self.classifier.decide())
-        
-        return self.submit((predicted + offset + 1) % self.states)
+        final_scores = [0] * self.states
+        for window in range(self.minLength, self.maxLength + 1):
+            final_scores = [ x + y for x, y in zip(final_scores, self.normalize(self.tokens[tuple(self.almoves[-window:])])) ]
+
+        offset = np.argmax(final_scores)
+        return self.submit((self.classifier.decide() + offset) % self.states)
