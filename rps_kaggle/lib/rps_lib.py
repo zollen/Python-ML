@@ -572,7 +572,7 @@ class MarkovScorer(Scorer):
                         if predicted[-1] == (int(self.RTRANSLATE[self.almoves[-1]][1]) + 1) % 3:
                             self.tokens[tuple(self.almoves[-window-1:-1])][agt] += 1
                         elif predicted[-1] == (int(self.RTRANSLATE[self.almoves[-1]][1]) + 2) % 3:
-                            self.tokens[tuple(self.almoves[-window-1:-1])][agt] *= 0.8
+                            self.tokens[tuple(self.almoves[-window-1:-1])][agt] *= 0.5
                         agt += 1
                
         final_scores = [0] * self.numAgents
