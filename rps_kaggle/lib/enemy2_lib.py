@@ -247,12 +247,12 @@ class MarkovAdj(rps.BaseAgent):
                 for window in range(self.minLength, min(self.currLength, self.maxLength + 1)):
                     mymove = int(self.RTRANSLATE[self.almoves[-1]][0])
                     opmove = int(self.RTRANSLATE[self.almoves[-1]][1])
-                    offset = self.OFFSETS[(mymove - opmove) % self.states]
-                    for ahead in range(self.states):
-                        if ahead == offset:
-                            self.tokens[tuple(self.almoves[-window-1:-1])][ahead] += 1
+                    discrepency = self.OFFSETS[(mymove - opmove) % self.states]
+                    for offset in range(self.states):
+                        if offset == discrepency:
+                            self.tokens[tuple(self.almoves[-window-1:-1])][offset] += 1
                         else:
-                            self.tokens[tuple(self.almoves[-window-1:-1])][ahead] *= 0.8
+                            self.tokens[tuple(self.almoves[-window-1:-1])][offset] *= 0.8
                             
                 final_scores = [0] * self.states
                 for window in range(self.minLength, self.maxLength + 1):
