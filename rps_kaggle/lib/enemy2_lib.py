@@ -168,6 +168,8 @@ class MarkovNet(rps.BaseAgent):
                     for action in range(self.states):
                         if action == predicted:
                             self.tokens[tuple(self.almoves[-window-1:-1])][action] += 1
+                        elif action == (predicted + 2) % self.states:
+                            self.tokens[tuple(self.almoves[-window-1:-1])][action] += 0.4
                         else:
                             self.tokens[tuple(self.almoves[-window-1:-1])][action] *= 0.5
                       
