@@ -3,7 +3,9 @@ Created on Dec. 16, 2020
 
 @author: zollen
 '''
-
+import math
+import numpy as np
+import random
 from xgboost import XGBClassifier
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
@@ -21,15 +23,11 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-'''
-net(10): 12,7
-'''
-
+    
 def setup():
     
     if True:
-        player1 = enm2.MarkovAdj(rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15), 
-                                 min_len = 3, max_len = 20)
+        player1 = enm2.MarkovNet(min_len = 3, max_len = 15)
     
     if False:
         '''
@@ -37,20 +35,14 @@ def setup():
         markov_scorer(15): 10,10
         markov_scorer(20): 13,7
         '''
-        forest17 = rps.Classifier(rps.RandomHolder(
-                [
-                    RandomForestClassifier(n_estimators = 10),
-                    XGBClassifier(n_estimators = 10, eval_metric = 'logloss')
-                ]), window = 15)
-        markov3 = enm2.MarkovChain(3, 0.9)
-        mp160 = enm3.MemoryPatterns(min_memory=50, max_memory=160, warmup=20)
-        mp140 = enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20)
-        iocaine160 = enm4.Iocaine(num_predictor = 160)
-        iocaine200 = enm4.Iocaine(num_predictor = 200)
+        forest15 = rps.Classifier(RandomForestClassifier(n_estimators = 10), window = 15)
+        markov3 = enm2.MarkovNet(3, 20)
+        mp100 = enm3.MemoryPatterns(min_memory=50, max_memory=100, warmup=20)
+        iocaine120 = enm4.Iocaine(num_predictor = 120)
         agents = [
-            [ mp160,                                                                  [], [] ],
-            [ iocaine200,                                                             [], [] ],
-            [ forest17,                                                               [], [] ]
+            [ mp100,         [], [] ],
+            [ iocaine120,    [], [] ],
+            [ forest15,      [], [] ]
         ]
 
         scorers = [
@@ -74,7 +66,7 @@ def setup():
         
         player2 = rps.BetaAgency(agents1, decay = 1.1)
         
-    if True:
+    if False:
         xgb1 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
         xgb2 = rps.Sharer(xgb1, ahead = 1)
         xgb3 = rps.Sharer(xgb1, ahead = 2)
@@ -90,16 +82,14 @@ def setup():
         player2 = rps.MetaAgency(managers1, agents1, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
 
-    if False:
+    if True:
         player2 = enm.MultiArmsBandit()
     if False:
-        player2 = enm2.MarkovChain(3, 0.9)
+        player2 = enm2.MarkovChain(order = 3, decay = 0.9)
     if False:
         player2 = enm4.Iocaine(num_predictor = 160)
     if False:
         player2 = enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20)
-    if False:
-        player1 = enm5.GreenBerb()
     if False:
         player2 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
     

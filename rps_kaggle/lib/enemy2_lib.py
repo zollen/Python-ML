@@ -4,6 +4,7 @@ Created on Jan. 13, 2021
 @author: zollen
 '''
 import random
+import math
 import numpy as np
 from collections import defaultdict 
 from operator import itemgetter
@@ -132,8 +133,8 @@ class MarkovNet(rps.BaseAgent):
                 6: '10', 7: '21', 8: '02'
             }
     
-    def __init__(self, states = 3, min_len = 3, max_len = 7):
-        super().__init__(states, 0, 0, None)
+    def __init__(self, min_len = 3, max_len = 7):
+        super().__init__(3, 0, 0, None)
         self.almoves = []
         self.minLength = min_len
         self.maxLength = max_len
@@ -168,12 +169,14 @@ class MarkovNet(rps.BaseAgent):
                         if action == predicted:
                             self.tokens[tuple(self.almoves[-window-1:-1])][action] += 1
                         else:
-                            self.tokens[tuple(self.almoves[-window-1:-1])][action] *= 0.8
+                            self.tokens[tuple(self.almoves[-window-1:-1])][action] *= 0.5
                       
             
         final_scores = [0] * self.states
-        for window in range(self.minLength, self.maxLength + 1):
-            final_scores = [ x + y for x, y in zip(final_scores, self.normalize(self.tokens[tuple(self.almoves[-window:])])) ]
+        p = 0
+        for window in range(self.maxLength, self.minLength - 1, -1):
+            final_scores = [ x + (y * math.pow(0.9, p)) for x, y in zip(final_scores, self.normalize(self.tokens[tuple(self.almoves[-window:])])) ]
+            p += 1
         
         if all(x == final_scores[0] for x in final_scores):
             return self.submit(np.random.randint(self.states))
