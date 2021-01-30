@@ -27,7 +27,7 @@ warnings.filterwarnings('ignore')
 def setup():
     
     if True:
-        player1 = enm2.MarkovNet(min_len = 3, max_len = 15)
+        player1 = enm2.MarkovNet(min_len = 3, max_len = 7)
     
     if False:
         '''
@@ -36,10 +36,11 @@ def setup():
         markov_scorer(20): 13,7
         '''
         forest15 = rps.Classifier(RandomForestClassifier(n_estimators = 10), window = 15)
-        markov3 = enm2.MarkovNet(3, 20)
+        markov3 = enm2.MarkovNet(min_len = 3, max_len = 7)
         mp100 = enm3.MemoryPatterns(min_memory=50, max_memory=100, warmup=20)
         iocaine120 = enm4.Iocaine(num_predictor = 120)
         agents = [
+            [ markov3,       [], [] ],
             [ mp100,         [], [] ],
             [ iocaine120,    [], [] ],
             [ forest15,      [], [] ]
@@ -54,7 +55,7 @@ def setup():
    
     if False:
         
-        markovChain = enm2.MarkovChain(3, 0.9)
+        markovChain = enm2.MarkovChain(order = 3, decay=0.9)
         iocaine2 = enm4.Iocaine(num_predictor = 140)
         xgb15 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 10)
         
@@ -82,13 +83,13 @@ def setup():
         player2 = rps.MetaAgency(managers1, agents1, window = 20, history = 50, random_threshold = -10, randomness = 0.1)
 
 
-    if True:
+    if False:
         player2 = enm.MultiArmsBandit()
     if False:
         player2 = enm2.MarkovChain(order = 3, decay = 0.9)
     if False:
         player2 = enm4.Iocaine(num_predictor = 160)
-    if False:
+    if True:
         player2 = enm3.MemoryPatterns(min_memory=40, max_memory=140, warmup=20)
     if False:
         player2 = rps.Classifier(XGBClassifier(n_estimators = 10, eval_metric = 'logloss'), window = 15)
@@ -101,7 +102,7 @@ def setup():
 
 
 
-if True:    
+if False:    
     player1, player2 = setup()
     bat.battleground(player1, player2)
 else:   
