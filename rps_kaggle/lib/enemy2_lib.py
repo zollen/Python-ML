@@ -133,7 +133,7 @@ class MarkovNet(rps.BaseAgent):
                 6: '10', 7: '21', 8: '02'
             }
     
-    def __init__(self, states = 3, min_len = 3, max_len = 7):
+    def __init__(self, states = 3, opp_predicted = True, min_len = 3, max_len = 7):
         super().__init__(states, 0, 0, None)
         self.almoves = []
         self.minLength = min_len
@@ -141,6 +141,13 @@ class MarkovNet(rps.BaseAgent):
         self.tokens = defaultdict(lambda: [0] * self.states)
         self.currLength = 0
         self.last = None
+        
+        if opp_predicted == True:
+            self.ahead = 1
+            self.identity = 1
+        else:
+            self.ahead = 2
+            self.identity = 0
         
     def __str__(self):
         return "MarkovNet(" + str(self.minLength) + ", " + str(self.maxLength) + ")"
@@ -164,7 +171,7 @@ class MarkovNet(rps.BaseAgent):
                     self.tokens[key] = [ x * 0.8 for x in val ]
                 
                 for window in range(self.minLength, self.maxLength + 1):
-                    predicted = int(self.RTRANSLATE[self.almoves[-1]][1])
+                    predicted = int(self.RTRANSLATE[self.almoves[-1]][self.identity])
                     for action in range(self.states):
                         if action == predicted:
                             self.tokens[tuple(self.almoves[-window-1:-1])][action] += 1
@@ -181,6 +188,7 @@ class MarkovNet(rps.BaseAgent):
         if all(x == final_scores[0] for x in final_scores):
             return self.submit(np.random.randint(self.states))
         
-        return self.submit((np.argmax(final_scores).item() + 1) % self.states) 
+        return self.submit((np.argmax(final_scores).item() + self.ahead) % self.states) 
     
     
+
