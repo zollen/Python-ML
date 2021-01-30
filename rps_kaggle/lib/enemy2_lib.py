@@ -173,10 +173,8 @@ class MarkovNet(rps.BaseAgent):
                       
             
         final_scores = [0] * self.states
-        p = 0
-        for window in range(self.maxLength, self.minLength - 1, -1):
+        for window, p in zip(range(self.maxLength, self.minLength - 1, -1), range(100)):
             final_scores = [ x + (y * math.pow(0.9, p)) for x, y in zip(final_scores, self.normalize(self.tokens[tuple(self.almoves[-window:])])) ]
-            p += 1
         
         if all(x == final_scores[0] for x in final_scores):
             return self.submit(np.random.randint(self.states))
