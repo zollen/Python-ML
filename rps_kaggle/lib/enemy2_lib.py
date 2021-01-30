@@ -133,8 +133,8 @@ class MarkovNet(rps.BaseAgent):
                 6: '10', 7: '21', 8: '02'
             }
     
-    def __init__(self, min_len = 3, max_len = 7):
-        super().__init__(3, 0, 0, None)
+    def __init__(self, states = 3, min_len = 3, max_len = 7):
+        super().__init__(states, 0, 0, None)
         self.almoves = []
         self.minLength = min_len
         self.maxLength = max_len
