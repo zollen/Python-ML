@@ -143,10 +143,8 @@ class MarkovNet(rps.BaseAgent):
         self.last = None
         
         if opp_predicted == True:
-            self.ahead = 1
             self.identity = 1
         else:
-            self.ahead = 2
             self.identity = 0
         
     def __str__(self):
@@ -188,7 +186,7 @@ class MarkovNet(rps.BaseAgent):
         if all(x == final_scores[0] for x in final_scores):
             return self.submit(np.random.randint(self.states))
         
-        return self.submit((np.argmax(final_scores).item() + self.ahead) % self.states) 
+        return self.submit((np.argmax(final_scores).item() + 1) % self.states) 
     
     
 
