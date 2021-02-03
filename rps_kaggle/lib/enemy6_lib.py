@@ -79,7 +79,7 @@ class QLearner:
                                            self.Q[self.current_state, self.current_action])
             
             self.Q[self.current_state, self.current_action] = self.Q[self.current_state, self.current_action] + discounted_next_state
-            self.current_state = self.STATES[(self.current_action, self.current_action)]
+            self.current_state = self.STATES[(self.current_action, self.current_opponent)]
             
             
             
