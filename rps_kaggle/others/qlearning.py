@@ -2,6 +2,7 @@
 Created on Feb. 3, 2021
 
 @author: zollen
+@review: check rps_kaggle/lib/enemy6_lib.py (using q-learning)
 '''
 
 import numpy as np
