@@ -3,6 +3,10 @@ Created on Feb. 3, 2021
 
 @author: zollen
 @url: https://towardsdatascience.com/dirichlet-distribution-a82ab942a879
+
+The Dirichlet distribution Dir(α) is a family of continuous multivariate probability distributions 
+parameterized by a vector α of positive reals. It is a multivariate generalisation of the Beta 
+distribution. Dirichlet distributions are commonly used as prior distributions in Bayesian statistics.
 '''
 
 
