@@ -12,9 +12,9 @@ import matplotlib.pyplot as plt
 '''
 The multi-dimension array indicates the percent sigificants for each class
 If we have three classes, therefore 3D array
-10: The first class length
-5: The second class length
-3: The third class length
+10: Input of the first class strength/length
+5: Input of the second class strength/length
+3: Input of the third class strength/length
 '''
 s = np.random.dirichlet((10, 5, 3), 20).transpose()
 print(s.shape)
