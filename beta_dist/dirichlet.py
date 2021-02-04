@@ -22,6 +22,7 @@ If we have three classes, therefore 3D array
 '''
 s = np.random.dirichlet((10, 5, 3), 20).transpose()
 print(s.shape)
+print(s)
 
 plt.barh(range(20), s[0])
 plt.barh(range(20), s[1], left=s[0], color='g')
