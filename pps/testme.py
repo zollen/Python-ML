@@ -46,7 +46,7 @@ df.drop(columns = 'PassengerId', inplace = True)
 corr = df.corr()
 
 fig, (a1, a2) = plt.subplots(1, 2)
-fig.set_size_inches(20, 7)
+fig.set_size_inches(14, 5)
 
 a1.set_title("Correlation Matrix")
 sb.heatmap(corr, cmap='RdBu_r', annot=True, linewidths=0.5, fmt='0.2f', ax = a1)
