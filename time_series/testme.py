@@ -91,7 +91,6 @@ if False:
 
 
 
-#pred = results.get_prediction(start=pd.to_datetime('2012-01-13'), dynamic=False)
 pred = results.get_prediction(start=36, end=47, dynamic=False)
 pred_ci = pred.conf_int()
 ax = y['2009':].plot(label='Observed')
