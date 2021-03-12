@@ -1,0 +1,69 @@
+url: https://www.youtube.com/channel/UC59tJcvdkXSpl_-_kUZbjew/videos
+
+AutoRegressive Model (AR)
+=========================
+AR - forecast a series based solely on the past values in the series called lags.
+
+Y(t)     = target
+Y(t - 1) = lagged target
+e(t)     = Error
+
+Y(t)   = w + φ Y(t-1) + e(t)
+Y(t-1) = w + φ Y(t-2) + e(t-1)
+...
+Y(t)   = w + φ Y(w + φ Y(t-2) + e(t-1)) + e(t) 
+Y(t)   = w* + φ^2 Y(t-2) + φ e(t-1) + e(t)
+...
+Recursivly substitute Y-1, Y-2, Y-3....1
+...
+Y(t)   = w / (1 - w) + φ^t Y(1) + φ^(t-1) e(2) + φ^(t-2) e(3) + ... + e(t)
+
+Above equaion can link by to the Y(1). This is also called Long memory models
+So the effect of shocks that happen long ago have little effect on the present *if* |φ| < 1
+The first observation(Y(1) still matter but it has very very small impact to the prediction of Y(t)
+
+
+Moving Average Models (MA)
+==========================
+MA - forecast a series based solely on the past errors in the series called error lags.
+
+Y(t)     = target
+Y(t - 1) = lagged Error
+e(t)     = Error
+
+Y(t+1)   = w + φ e(t) + e(t+1)
+Y(t)     = w + φ e(t-1) + e(t)
+Y(t-1)   = w + φ e(t-2) + e(t-1)
+Y(t-2)   = w + φ e(t-3) + e(t-2)
+
+Above question can only link to e(t-1) and no further, This is called Short memory models
+
+
+Combing both AR and MA (ARMA)
+=============================
+AR(1)
+Y(t)   = w / (1 - w) + φ^t Y(1) + φ^(t-1) e(2) + φ^(t-2) e(3) + ... + e(t)
+                                |----------------- MA(∞) ----------------|
+
+How many AR terms and how many MA term should we use.
+1. Plotting patterns in correlation
+2. Automatic selection techniques
+	There are three selection techniques (MINIC, SCAN, ESACF)
+
+
+ARIMA  (I stands for integrated)
+================================
+Essentially, you need to make your data stationary (typically done through differncing)
+Distriubtion depends *only* on difference in time, *not* location in time
+
+ARIMA(p, d, q)
+p - # of AR terms
+d - # of first differences
+q - # of MA terms
+
+Y(t) - Y(t-1) = W(t) <-- difference between Y(t) and Y(t-1)
+W(t) = w + φ(AR:1) W(t-1) + φ(MA:1) e(t-1) + e(t)
+
+W(t-1) - p
+W(t)   - d
+e(t-1) - q
