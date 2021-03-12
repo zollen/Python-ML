@@ -12,6 +12,7 @@ import pandas as pd
 from pylab import rcParams
 import statsmodels.api as sm
 import matplotlib
+from numba.core.types import none
 
 warnings.filterwarnings("ignore")
 pd.set_option('max_columns', None)
@@ -48,6 +49,9 @@ if False:
     plt.show()
 
 if False:
+    best_score = 999999
+    best_param = None
+    best_sparam = None
     p = d = q = range(0, 2)
     pdq = list(itertools.product(p, d, q))
 
@@ -67,20 +71,26 @@ if False:
                                             enforce_stationarity=False,
                                             enforce_invertibility=False)
                 results = mod.fit()
+                if results.aic < best_score:
+                    best_score = results.aic
+                    best_param = param
+                    best_sparam = param_seasonal
                 print('ARIMA{}x{}12 - AIC:{}'.format(param, param_seasonal, results.aic))
             except:
                 continue
-        
+    
+    print("Best AIC: {} Best Order {} Best Seasonal Order {}".format(best_score, best_param, best_sparam))
+    exit()    
 '''
-The optimal model with the lowest AIC: 369.31400816630793 - ARIMA(1, 1, 1)x(0, 1, 1, 12)
+The optimal model with the lowest AIC: 369.31400816630793 - ARIMA(0, 1, 1)x(0, 1, 1, 12)
 '''
 mod = sm.tsa.statespace.SARIMAX(y,
-                                order=(1, 1, 1),
+                                order=(0, 1, 1),
                                 seasonal_order=(0, 1, 1, 12),
                                 enforce_stationarity=True,
                                 enforce_invertibility=False)
 results = mod.fit()
-print('ARIMA{}x{}12 - AIC:{}'.format((1, 1, 1), (0, 1, 1, 12), results.aic))    
+print('ARIMA{}x{}12 - AIC:{}'.format((0, 1, 1), (0, 1, 1, 12), results.aic))    
 
 print(results.summary())
 
