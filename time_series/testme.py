@@ -77,14 +77,24 @@ The optimal model with the lowest AIC: 369.31400816630793 - ARIMA(1, 1, 1)x(0, 1
 mod = sm.tsa.statespace.SARIMAX(y,
                                 order=(1, 1, 1),
                                 seasonal_order=(0, 1, 1, 12),
-                                enforce_stationarity=False,
+                                enforce_stationarity=True,
                                 enforce_invertibility=False)
 results = mod.fit()
 print('ARIMA{}x{}12 - AIC:{}'.format((1, 1, 1), (0, 1, 1, 12), results.aic))    
 
-pred = results.get_prediction(start=pd.to_datetime('2012-01-13'), dynamic=False)
+print(results.summary())
+
+
+if False:
+    results.plot_diagnostics(figsize=(16, 8))
+    plt.show()
+
+
+
+#pred = results.get_prediction(start=pd.to_datetime('2012-01-13'), dynamic=False)
+pred = results.get_prediction(start=36, end=47, dynamic=False)
 pred_ci = pred.conf_int()
-ax = y['2014':].plot(label='observed')
+ax = y['2009':].plot(label='Observed')
 pred.predicted_mean.plot(ax=ax, label='One-step ahead Forecast', alpha=.7, figsize=(14, 7))
 ax.fill_between(pred_ci.index,
                 pred_ci.iloc[:, 0],
