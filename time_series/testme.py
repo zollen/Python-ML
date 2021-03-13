@@ -41,12 +41,14 @@ y = furniture['Sales'].resample('MS').mean()
 if False:
     y.plot(figsize=(15, 6))
     plt.show()
+    exit()
 
 if False:
     rcParams['figure.figsize'] = 18, 8
     decomposition = sm.tsa.seasonal_decompose(y, model='additive')
     fig = decomposition.plot()
     plt.show()
+    exit()
 
 if False:
     best_score = 999999
@@ -99,6 +101,7 @@ print(results.summary())
 if False:
     results.plot_diagnostics(figsize=(16, 8))
     plt.show()
+    exit()
 
 
 
