@@ -78,19 +78,20 @@ if False:
                 print('ARIMA{}x{}12 - AIC:{}'.format(param, param_seasonal, results.aic))
             except:
                 continue
-    
+    print()
+    print()
     print("Best AIC: {} Best Order {} Best Seasonal Order {}".format(best_score, best_param, best_sparam))
     exit()    
 '''
-The optimal model with the lowest AIC: 369.31400816630793 - ARIMA(2, 2, 2)x(2, 2, 2, 12)
+The optimal model with the lowest AIC: 6.0 - ARIMA(0, 0, 0)x(0, 2, 2, 12)
 '''
 mod = sm.tsa.statespace.SARIMAX(y,
-                                order=(2, 2, 2),
-                                seasonal_order=(2, 2, 2, 12),
+                                order=(0, 0, 0),
+                                seasonal_order=(0, 2, 2, 12),
                                 enforce_stationarity=True,
                                 enforce_invertibility=False)
 results = mod.fit()
-print('ARIMA{}x{}12 - AIC:{}'.format((2, 2, 2), (2, 2, 2, 12), results.aic))    
+print('ARIMA{}x{}12 - AIC:{}'.format((0, 0, 0), (0, 2, 2, 12), results.aic))    
 
 print(results.summary())
 
