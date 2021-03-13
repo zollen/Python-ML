@@ -6,13 +6,12 @@ Created on Mar. 8, 2021
 
 import warnings
 import itertools
-import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 from pylab import rcParams
 import statsmodels.api as sm
 import matplotlib
-from numba.core.types import none
+
 
 warnings.filterwarnings("ignore")
 pd.set_option('max_columns', None)
