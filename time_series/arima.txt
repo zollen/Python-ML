@@ -1,6 +1,28 @@
 url: https://www.youtube.com/channel/UC59tJcvdkXSpl_-_kUZbjew/videos
 
 Stationary time series is when the mean and variance are constant over time. 
+Differencing is a method of transforming a non-stationary time series into a stationary one. 
+This is an important step in preparing data to be used in an ARIMA model.
+
+The first differencing value is the difference between the current time period and the previous time period.
+If these values fail to revolve around a constant mean and variance then we find the second differencing 
+using the values of the first differencing. We repeat this until we get a stationary series
+
+The best way to determine whether or not the series is sufficiently differenced is to plot the differenced 
+series and check to see if there is a constant mean and variance.
+
+Autocorrelation function (ACF)
+==============================
+Autocorrelation refers to how correlated a time series is with its past values whereas the ACF is the plot 
+used to see the correlation between the points, up to and including the lag unit. In ACF, the correlation 
+coefficient is in the x-axis whereas the number of lags is shown in the y-axis.
+
+Normally in an ARIMA model, we make use of either the AR term or the MA term. We use both of these terms 
+only on rare occasions. We use the ACF plot to decide which one of these terms we would use for our time 
+series
+If there is a Positive autocorrelation at lag 1 then we use the AR model
+If there is a Negative autocorrelation at lag 1 then we use the MA model
+
 
 AutoRegressive Model (AR)
 =========================
