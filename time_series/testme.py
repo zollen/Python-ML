@@ -35,7 +35,11 @@ furniture['Order Date'] = pd.to_datetime(furniture['Order Date'], format="%m/%d/
 
 furniture = furniture.groupby('Order Date')['Sales'].sum().reset_index()
 furniture = furniture.set_index('Order Date')
-y = furniture['Sales'].resample('MS').mean()
+'''
+url: https://towardsdatascience.com/using-the-pandas-resample-function-a231144194c4
+MS - Month Start Frequency 
+'''
+y = furniture['Sales'].resample(rule='MS').mean()
 
 if False:
     y.plot(figsize=(15, 6))
