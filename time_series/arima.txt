@@ -1,5 +1,7 @@
 url: https://www.youtube.com/channel/UC59tJcvdkXSpl_-_kUZbjew/videos
 
+Stationary time series is when the mean and variance are constant over time. 
+
 AutoRegressive Model (AR)
 =========================
 AR - forecast a series based solely on the past values in the series called lags.
