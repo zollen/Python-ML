@@ -40,7 +40,9 @@ Y(t)   = w* + φ^2 Y(t-2) + φ e(t-1) + e(t)
 ...
 Recursivly substitute Y-1, Y-2, Y-3....1
 ...
-Y(t)   = w / (1 - w) + φ^t Y(1) + φ^(t-1) e(2) + φ^(t-2) e(3) + ... + e(t)
+Y(t)   = w / (1 - w) + φ1^t Y(1) + φ2^(t-1) e(2) + φ3^(t-2) e(3) + ... + e(t)
+
+φ1, φ2, φ3..etc = PACF (partial auto-correlation function)
 
 Above equaion can link by to the Y(1). This is also called Long memory models
 So the effect of shocks that happen long ago have little effect on the present *if* |φ| < 1
@@ -66,7 +68,7 @@ Above question can only link to e(t-1) and no further, This is called Short memo
 Combing both AR and MA (ARMA)
 =============================
 AR(1)
-Y(t)   = w / (1 - w) + φ^t Y(1) + φ^(t-1) e(2) + φ^(t-2) e(3) + ... + e(t)
+Y(t)   = w / (1 - w) + φ1^t Y(1) + φ2^(t-1) e(2) + φ3^(t-2) e(3) + ... + e(t)
                                 |----------------- MA(∞) ----------------|
 
 How many AR terms and how many MA term should we use.
