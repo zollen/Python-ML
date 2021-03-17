@@ -40,9 +40,11 @@ Y(t)   = w* + φ^2 Y(t-2) + φ e(t-1) + e(t)
 ...
 Recursivly substitute Y-1, Y-2, Y-3....1
 ...
-Y(t)   = w / (1 - w) + φ1^t Y(1) + φ2^(t-1) e(2) + φ3^(t-2) e(3) + ... + e(t)
+Y(t)       = w / (1 - w) + φ1^t Y(1) + φ2^(t-1) e(2) + φ3^(t-2) e(3) + ... + e(t)
 
-φ1, φ2, φ3..etc = PACF (partial auto-correlation function)
+Predict(t) = φ0 + φ1^t Y(1) + φ2^(t-1) e(2) + φ3^(t-2) e(3) + ... + e(t)
+
+φ1, φ2, φ3..etc = PACF (partial auto-correlation function, we pick φ# for the AR equestion only if it exceed the threshold)
 
 Above equaion can link by to the Y(1). This is also called Long memory models
 So the effect of shocks that happen long ago have little effect on the present *if* |φ| < 1
@@ -53,6 +55,7 @@ Moving Average Models (MA)
 ==========================
 MA - forecast a series based solely on the past errors in the series called error lags.
 
+w		 = mean/average
 Y(t)     = target
 Y(t - 1) = lagged Error
 e(t)     = Error
@@ -61,6 +64,9 @@ Y(t+1)   = w + φ e(t) + e(t+1)
 Y(t)     = w + φ e(t-1) + e(t)
 Y(t-1)   = w + φ e(t-2) + e(t-1)
 Y(t-2)   = w + φ e(t-3) + e(t-2)
+
+Predict(t)     = w + φ1 e(t - 1) + φ2 e(t - 2) + φ3 e(t - 3) + ...
+Actual(t)      = w + φ1 e(t - 1) + φ2 e(t - 2) + φ3 e(t - 3) + ... + e(t)
 
 Above question can only link to e(t-1) and no further, This is called Short memory models
 
