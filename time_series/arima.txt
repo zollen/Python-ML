@@ -69,6 +69,7 @@ Predict(t)     = w + φ1 e(t - 1) + φ2 e(t - 2) + φ3 e(t - 3) + ...
 Actual(t)      = w + φ1 e(t - 1) + φ2 e(t - 2) + φ3 e(t - 3) + ... + e(t)
 
 Above question can only link to e(t-1) and no further, This is called Short memory models
+φ1, φ2, φ3..etc = ACF (Auto-correlation function, we pick φ# for the AR equation only if the φ# exceeds the threshold)
 
 
 Combing both AR and MA (ARMA)
@@ -76,6 +77,11 @@ Combing both AR and MA (ARMA)
 AR(1)
 Y(t)   = w / (1 - w) + φ1^t Y(1) + φ2^(t-1) e(2) + φ3^(t-2) e(3) + ... + e(t)
                                 |----------------- MA(∞) ----------------|
+
+Actual1(t)  = φ0 + φ(AR:1) Y(t-1) + φ(MA:1) e(t-1) + e(t)
+Predict1(t) = φ0 + φ(AR:1) Y(t-1) + φ(MA:1) e(t-1)
+
+Predict(t) would not have the current error term because it has not happen yet.
 
 How many AR terms and how many MA term should we use.
 1. Plotting patterns in correlation
