@@ -69,7 +69,7 @@ Predict(t)     = w + φ1 e(t - 1) + φ2 e(t - 2) + φ3 e(t - 3) + ...
 Actual(t)      = w + φ1 e(t - 1) + φ2 e(t - 2) + φ3 e(t - 3) + ... + e(t)
 
 Above question can only link to e(t-1) and no further, This is called Short memory models
-φ1, φ2, φ3..etc = ACF (Auto-correlation function, we pick φ# for the AR equation only if the φ# exceeds the threshold)
+φ1, φ2, φ3..etc = ACF (Auto-correlation function, we pick φ# for the MA equation only if the φ# exceeds the threshold)
 
 
 Combing both AR and MA (ARMA)
