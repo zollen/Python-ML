@@ -108,3 +108,12 @@ W(t) = w + φ(AR:1) W(t-1) + φ(MA:1) e(t-1) + e(t)
 W(t-1) - p
 W(t)   - d
 e(t-1) - q
+
+
+What is seasonality?
+====================
+A repeating pattern within a year
+We need to remove seasonality so we can apply the models
+Z(t) = y(t+265) - y(t)
+
+Cycle is a trend span across mutliple years. Cycle is not as predictable as seasonality
