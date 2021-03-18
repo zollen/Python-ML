@@ -44,6 +44,7 @@ Y(t)       = w / (1 - w) + φ1^t Y(1) + φ2^(t-1) e(2) + φ3^(t-2) e(3) + ... + 
 
 Predict(t) = φ0 + φ1^t Y(1) + φ2^(t-1) e(2) + φ3^(t-2) e(3) + ... + e(t)
 
+PACF mesaures the correlation of the direct affect between two periods
 φ1, φ2, φ3..etc = PACF (partial auto-correlation function, we pick φ# for the AR equation only if the φ# exceeds the threshold)
 
 Above equaion can link by to the Y(1). This is also called Long memory models
@@ -69,6 +70,8 @@ Predict(t)     = w + φ1 e(t - 1) + φ2 e(t - 2) + φ3 e(t - 3) + ...
 Actual(t)      = w + φ1 e(t - 1) + φ2 e(t - 2) + φ3 e(t - 3) + ... + e(t)
 
 Above question can only link to e(t-1) and no further, This is called Short memory models
+
+ACF mesaures the correlation of both the direct & indirect affect between two periods
 φ1, φ2, φ3..etc = ACF (Auto-correlation function, we pick φ# for the MA equation only if the φ# exceeds the threshold)
 
 
