@@ -131,3 +131,9 @@ C(t) = φ C(t-1) + e(t)
 φ must be < 1 so we can transform 1 / (1 - φL) into a infinite geometric series
 (1 + φL + φ^2L^2 +....) e(t) = c(t)
 φ e(t-1) + φ^2 e(t-2) + φ^3 e(t-3) + .... = MA(∞) = c(t)
+
+Unit Roots
+==========
+AR(p) has unit roots if |φ| = 1
+Having units root is bad, it must be removed.
+Using first difference could eliminate the unit roots
