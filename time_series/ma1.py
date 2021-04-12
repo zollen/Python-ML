@@ -7,7 +7,6 @@ Created on Apr. 11, 2021
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import acf, pacf
 from statsmodels.tsa.arima_model import ARIMA
 from datetime import datetime, timedelta
