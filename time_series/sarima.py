@@ -103,6 +103,7 @@ All P scores are close to 0 means they are sigificant
 predictions = model_fit.forecast(len(test_data))
 predictions = pd.Series(predictions, index=test_data.index)
 residuals = test_data - predictions
+
 if False:
     plt.figure(figsize=(10,4))
     plt.plot(residuals)
@@ -134,4 +135,41 @@ print('Root Mean Squared Error: ', np.sqrt(np.mean(residuals**2)))
 
 '''
 Let's try a different technique. Rolling Forecast Origin
+It use one month to predict the next, it returns much better prediction
+The error is now centered around 0
 '''
+rolling_predictions = test_data.copy()
+
+for train_end in test_data.index:
+    train_data = lim_catfish_sales[:train_end - timedelta(days = 1)]
+    model = SARIMAX(train_data, order=my_order, seasonal_order=my_seasonal_order)
+    model_fit = model.fit()
+    pred = model_fit.forecast()
+    rolling_predictions[train_end] = pred
+
+rolling_residuals = test_data - rolling_predictions
+
+if False:
+    plt.figure(figsize=(10,4))
+    plt.plot(rolling_residuals)
+    plt.axvline(0, linestyle='--', color='k')
+    plt.title('Rolling Forecase Residuals from SARIMA Model', fontsize=20)
+    plt.ylabel('Error', fontsize=16)
+    plt.show()
+    
+if False:
+    plt.figure(figsize=(10,4))
+    plt.plot(lim_catfish_sales)
+    plt.plot(rolling_predictions)
+    plt.legend(('Data', 'Predictions'), fontsize=16)
+    plt.title('Production', fontsize=20)
+    plt.ylabel('Sales', fontsize=16)
+    for year in range(start_date.year, end_date.year):
+        plt.axvline(pd.to_datetime(str(year) + '-01-01'), color='k', linestyle='--', alpha=0.2)
+    plt.show()
+    
+'''
+The rolling prediction is much better
+'''
+print('Mean Absolute Percent Error: ', round(np.mean(abs(rolling_residuals/test_data)), 4))
+print('Root Mean Squared Error: ', np.sqrt(np.mean(rolling_residuals**2)))
