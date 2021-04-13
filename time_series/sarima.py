@@ -152,9 +152,11 @@ rolling_residuals = test_data - rolling_predictions
 if False:
     plt.figure(figsize=(10,4))
     plt.plot(rolling_residuals)
-    plt.axvline(0, linestyle='--', color='k')
     plt.title('Rolling Forecase Residuals from SARIMA Model', fontsize=20)
     plt.ylabel('Error', fontsize=16)
+    for month in ['08', '09', '10', '11', '12']:
+        plt.axvline(pd.to_datetime('1999-' + month), color='k', linestyle='--', alpha=0.2)
+    plt.axvline(pd.to_datetime('2000-01'), color='k', linestyle='--', alpha=0.2)
     plt.show()
     
 if False:
