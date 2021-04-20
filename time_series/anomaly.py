@@ -4,6 +4,7 @@ Created on Apr. 19, 2021
 @author: zollen
 @url: https://www.youtube.com/watch?v=XPwCo4cqqt0&list=PLvcbYUQ5t0UHOLnBzl46_Q6QKtFgfMGc3&index=43
 '''
+from numba.core.types import none
 
 '''
 Created on Apr. 11, 2021
@@ -119,7 +120,7 @@ At December 1 1998
 lim_catfish_sales[datetime(1998,12,1)] = 10000    
 '''
 lim_catfish_sales[datetime(1998,12,1)] = 10000
-if True:
+if False:
     plt.figure(figsize=(10,4))
     plt.plot(lim_catfish_sales)
     plt.title('CatFish Sales in 1000s of Pounds', fontsize=20)
@@ -127,3 +128,105 @@ if True:
     for year in range(start_date.year, end_date.year):
         plt.axvline(pd.to_datetime(str(year) + '-01-01'), color='k', linestyle='--', alpha=0.2)
     plt.show()
+
+train_end = datetime(1999, 7, 1)
+test_end = datetime(2000, 1, 1)
+
+train_data = lim_catfish_sales[:train_end]
+test_data = lim_catfish_sales[train_end + timedelta(days = 1):test_end]
+
+rolling_predictions = test_data.copy()
+
+my_order = (0, 1, 0)  # Non-Seasonal AR(0) and MA(0) with integration of 1 
+my_seasonal_order = (1, 0, 1, 12) # Seasonal AR(1) and MA(1) and freqeuncy of 12
+for train_end in test_data.index:
+    train_data = lim_catfish_sales[:train_end - timedelta(days = 1)]
+    model = SARIMAX(train_data, order=my_order, seasonal_order=my_seasonal_order)
+    model_fit = model.fit()
+    pred = model_fit.forecast()
+    rolling_predictions[train_end] = pred
+
+rolling_residuals = test_data - rolling_predictions
+
+if False:
+    plt.figure(figsize=(10,4))
+    plt.plot(rolling_residuals)
+    plt.title('Rolling Forecase Residuals from SARIMA Model', fontsize=20)
+    plt.ylabel('Error', fontsize=16)
+    plt.axhline(0, color='k', linestyle='--', alpha=0.2)
+    plt.show()
+    
+if False:
+    plt.figure(figsize=(10,4))
+    plt.plot(lim_catfish_sales)
+    plt.plot(rolling_predictions)
+    plt.legend(('Data', 'Predictions'), fontsize=16)
+    plt.title('Production', fontsize=20)
+    plt.ylabel('Sales', fontsize=16)
+    for year in range(start_date.year, end_date.year):
+        plt.axvline(pd.to_datetime(str(year) + '-01-01'), color='k', linestyle='--', alpha=0.2)
+    plt.show()
+    
+'''
+The rolling prediction is much better
+'''
+print('Mean Absolute Percent Error: ', round(np.mean(abs(rolling_residuals/test_data)), 4))
+print('Root Mean Squared Error: ', np.sqrt(np.mean(rolling_residuals**2)))
+
+'''
+Detcting the anomaly    
+Attempt #1: Deviation Method
+Calculating a standard deviation in each group of data points and look for any unusual
+'''
+rolling_deviations = pd.Series(dtype=float, index = lim_catfish_sales.index)
+for date in rolling_deviations.index:
+    # get the window ending at this data point
+    window = lim_catfish_sales.loc[:date]
+    # get the deviation within this window
+    rolling_deviations.loc[date] = window.std()
+    
+# get the first difference in devation between one time point and the next
+diff_rolling_deviations = rolling_deviations.diff()
+diff_rolling_deviations = diff_rolling_deviations.dropna()
+
+if False:
+    # we ignore the first highest point because initial standard deviation calculation using only a few points
+    # This method is not good because if the anomaly happen early on, it would be hard to know for sure.
+    # another drawback is that anomaly not necessary has extreme values.
+    plt.figure(figsize=(10,4))
+    plt.plot(diff_rolling_deviations)
+    plt.title('Deviation First Differences', fontsize=20)
+    plt.ylabel('Sales', fontsize=16)
+    for year in range(start_date.year, end_date.year):
+        plt.axvline(pd.to_datetime(str(year) + '-01-01'), color='k', linestyle='--', alpha=0.2)
+    plt.show()
+    
+'''
+Attempt #2: Seasonal Method
+better method
+We know there is a sessonal pattern in the data, so we are going to use that
+Calculating the standard deviation using the same date of each month.
+'''
+month_deviations = lim_catfish_sales.groupby(lambda d: d.month).std()
+
+if False:
+    # december has a large spike
+    plt.figure(figsize=(10,4))
+    plt.plot(month_deviations)
+    plt.title('Deviation by Month', fontsize=20)
+    plt.ylabel('Sales', fontsize=16)
+    plt.show()
+    
+december_data = lim_catfish_sales[lim_catfish_sales.index.month == 12]
+print(december_data)
+
+min_dev = 9999999
+curr_anomaly = None
+for date in december_data.index:
+    other_data = december_data[december_data.index != date]
+    curr_dev = other_data.std()
+    if curr_dev < min_dev:
+        min_dev = curr_dev
+        curr_anomaly = date
+        
+print("ANOMALY: ", curr_anomaly)
