@@ -4,13 +4,6 @@ Created on Apr. 19, 2021
 @author: zollen
 @url: https://www.youtube.com/watch?v=XPwCo4cqqt0&list=PLvcbYUQ5t0UHOLnBzl46_Q6QKtFgfMGc3&index=43
 '''
-from numba.core.types import none
-
-'''
-Created on Apr. 11, 2021
-
-@author: zollen
-'''
 
 import pandas as pd
 import numpy as np
