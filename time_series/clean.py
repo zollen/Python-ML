@@ -69,9 +69,11 @@ if False:
 Remove Increasing Volatitiy
 '''
 annual_volatility = heater_series.groupby(heater_series.index.year).std()
+# calculate the standard deviation of each  month
 print(annual_volatility)
 
 heater_annual_vol = heater_series.index.map(lambda d: annual_volatility.loc[d.year])
+# map the monthly standard deviation in each time series data based on the month each data belongs to
 print(heater_annual_vol)
 
 heater_series = heater_series / heater_annual_vol
