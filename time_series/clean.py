@@ -82,9 +82,11 @@ if False:
     plt.show()
     
 month_avgs = heater_series.groupby(heater_series.index.month).mean()
+# calculate the average of each  month
 print(month_avgs)
 
 heater_month_avg = heater_series.index.map(lambda d: month_avgs.loc[d.month])
+# populate the monthly average in each time series data based on the month it belongs
 print(heater_month_avg)
 
 heater_series = heater_series - heater_month_avg
