@@ -14,8 +14,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 sb.set_style('whitegrid')
-pd.set_option('max_columns', None)
-pd.set_option('max_rows', None)
+
 
 
 def parser(s):
@@ -69,11 +68,11 @@ if False:
 Remove Increasing Volatitiy
 '''
 annual_volatility = heater_series.groupby(heater_series.index.year).std()
-# calculate the standard deviation of each  month
+# calculate the standard deviation of each year
 print(annual_volatility)
 
 heater_annual_vol = heater_series.index.map(lambda d: annual_volatility.loc[d.year])
-# map the monthly standard deviation in each time series data based on the month each data belongs to
+# map the yearly standard deviation in each time series data based on the month each data belongs to
 print(heater_annual_vol)
 
 heater_series = heater_series / heater_annual_vol
