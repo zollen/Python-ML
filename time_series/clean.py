@@ -31,7 +31,7 @@ print(heater_series)
 
 def plot_series(series):
     plt.figure(figsize=(12,6))
-    plt.plot(heater_series, color='red')
+    plt.plot(series, color='red')
     plt.ylabel('Search Frequency for "Heater"', fontsize=16)
 
     for year in range(2004, 2021):
