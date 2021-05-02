@@ -99,3 +99,7 @@ if False:
     plot_series(heater_series)
     plt.axhline(0, linestyle='--', color='k', alpha=0.3)
     plt.show()
+    
+'''
+Finally we should conduct some formal tests for checking true stationary with unit-root test, and others.. 
+'''
