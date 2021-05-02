@@ -82,7 +82,10 @@ if False:
     plot_series(heater_series)
     plt.axhline(0, linestyle='--', color='k', alpha=0.3)
     plt.show()
-    
+
+'''
+Remove Seasonality(seasonal patterns)
+'''    
 month_avgs = heater_series.groupby(heater_series.index.month).mean()
 # calculate the average of each  month
 print(month_avgs)
