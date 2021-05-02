@@ -86,7 +86,7 @@ month_avgs = heater_series.groupby(heater_series.index.month).mean()
 print(month_avgs)
 
 heater_month_avg = heater_series.index.map(lambda d: month_avgs.loc[d.month])
-# populate the monthly average in each time series data based on the month it belongs
+# map the monthly average in each time series data based on the month each data belongs to
 print(heater_month_avg)
 
 heater_series = heater_series - heater_month_avg
