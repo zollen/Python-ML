@@ -72,7 +72,7 @@ annual_volatility = heater_series.groupby(heater_series.index.year).std()
 print(annual_volatility)
 
 heater_annual_vol = heater_series.index.map(lambda d: annual_volatility.loc[d.year])
-# map the yearly standard deviation in each time series data based on the month each data belongs to
+# map the yearly standard deviation in each time series data based on the year each data belongs to
 print(heater_annual_vol)
 
 heater_series = heater_series / heater_annual_vol
@@ -86,7 +86,7 @@ if False:
 Remove Seasonality(seasonal patterns)
 '''    
 month_avgs = heater_series.groupby(heater_series.index.month).mean()
-# calculate the average of each  month
+# calculate the average of each month
 print(month_avgs)
 
 heater_month_avg = heater_series.index.map(lambda d: month_avgs.loc[d.month])
