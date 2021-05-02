@@ -29,18 +29,19 @@ heater_series = ice_cream_heater_df.heater
 
 print(heater_series)
 
-def plot_series(series):
-    plt.figure(figsize=(12,6))
+def plot_series(series, title):
     plt.plot(series, color='red')
-    plt.ylabel('Search Frequency for "Heater"', fontsize=16)
+    plt.ylabel(title, fontsize=10)
 
     for year in range(2004, 2021):
         plt.axvline(datetime(year,1,1), linestyle='--', color='k', alpha=0.5)
 
-        
-if False:
-    plot_series(heater_series)
-    plt.show()
+
+plt.figure(figsize=(10, 10))        
+
+plt.subplot(5, 1, 1)
+plot_series(heater_series, 'Heater Data')
+
     
     
 '''
@@ -49,20 +50,22 @@ Normalize
 avg, dev = heater_series.mean(), heater_series.std()
 heater_series = (heater_series - avg) / dev
 
-if False:
-    plot_series(heater_series)
-    plt.axhline(0, linestyle='--', color='k', alpha=0.3)
-    plt.show()
+
+plt.subplot(5, 1, 2)
+plot_series(heater_series, 'Normalized')
+plt.axhline(0, linestyle='--', color='k', alpha=0.3)
+
     
     
 '''
 Take First Difference to remove Trend
 '''
 heater_series = heater_series.diff().dropna()  # dropna() remove the first NAN value
-if False:
-    plot_series(heater_series)
-    plt.axhline(0, linestyle='--', color='k', alpha=0.3)
-    plt.show()
+
+plt.subplot(5, 1, 3)
+plot_series(heater_series, 'First Difference')
+plt.axhline(0, linestyle='--', color='k', alpha=0.3)
+
     
 '''
 Remove Increasing Volatitiy
@@ -77,10 +80,10 @@ print(heater_annual_vol)
 
 heater_series = heater_series / heater_annual_vol
 
-if False:
-    plot_series(heater_series)
-    plt.axhline(0, linestyle='--', color='k', alpha=0.3)
-    plt.show()
+plt.subplot(5, 1, 4)
+plot_series(heater_series, 'Remove Volatity')
+plt.axhline(0, linestyle='--', color='k', alpha=0.3)
+
 
 '''
 Remove Seasonality(seasonal patterns)
@@ -95,10 +98,12 @@ print(heater_month_avg)
 
 heater_series = heater_series - heater_month_avg
 
-if False:
-    plot_series(heater_series)
-    plt.axhline(0, linestyle='--', color='k', alpha=0.3)
-    plt.show()
+plt.subplot(5, 1, 5)
+plot_series(heater_series, 'Remove Seasonality')
+plt.axhline(0, linestyle='--', color='k', alpha=0.3)
+
+
+plt.show()
     
 '''
 Finally we should conduct some formal tests for checking true stationary with unit-root test, and others.. 
