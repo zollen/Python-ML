@@ -85,6 +85,7 @@ if True:
     plt.xlim(datetime(2003,9,1), datetime(2020,12,1))
     
 anomalies = ice_cream_interest[(resid < lower) | (resid > upper)]
+print(anomalies)
 
 if True:
     plt.figure(figsize=(10,4))
@@ -92,6 +93,7 @@ if True:
     for year in range(2004,2021):
         plt.axvline(datetime(year,1,1), color='k', linestyle='--', alpha=0.5)
         
+    # display the three points of anomalies
     plt.scatter(anomalies.index, anomalies.interest, color='r', marker='D')
 
 plt.show()
