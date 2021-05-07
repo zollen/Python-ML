@@ -2,6 +2,8 @@
 Created on May 6, 2021
 
 @author: zollen
+@url: https://www.youtube.com/watch?v=6Ye0CsfRDJg&list=PLvcbYUQ5t0UHOLnBzl46_Q6QKtFgfMGc3&index=42&ab_channel=ritvikmath
+@desc: vector autoregression model (with multiple time series)
 '''
 
 
