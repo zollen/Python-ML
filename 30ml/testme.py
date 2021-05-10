@@ -2,6 +2,8 @@
 Created on Mar. 22, 2021
 
 @author: zollen
+@url: https://towardsdatascience.com/train-all-classification-or-regression-models-in-one-line-of-python-code-4ccdcaf01f0c
+@desc: One wrapper for test the data with many classifiers or regressors
 '''
 
 import pyforest
