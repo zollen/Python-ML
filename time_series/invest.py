@@ -116,22 +116,7 @@ series_tickers = [
         ["AVGO", "Broadcom Inc. - Common Stock"],
         ["ADBE", "Adobe Inc. - Common Stock"],
         ["ALXN", "Alexion Pharmaceuticals, Inc. - Common Stock"],
-        ["LLNW", "Limelight Networks, Inc. - Common Stock"],
-        ["MXIM", "Maxim Integrated Products, Inc. - Common Stock"],
-        ["ARCC", "Ares Capital Corporation - Closed End Fund"],
-        ["COST", "Costco Wholesale Corporation - Common Stock"],
-        ["GNUS", "Genius Brands International, Inc. - Common Stock"],
-        ["FRSX", "Foresight Autonomous Holdings Ltd. - American Depositary Shares"],
-        ["CRIS", "Curis, Inc. - Common Stock"],
-        ["NLOK", "NortonLifeLock Inc. - Common Stock"],
-        ["GEVO", "Gevo, Inc. - Common Stock"],
-        ["DGLY", "Digital Ally, Inc. - Common Stock"],
-        ["QRTEA", "Qurate Retail, Inc. - Series A Common Stock"],
-        ["MAR", "Marriott International - Class A Common Stock"],
-        ["VSTM", "Verastem, Inc. - Common Stock"],
-        ["MGNX", "MacroGenics, Inc. - Common Stock"],
-        ["SABR", "Sabre Corporation - Common Stock"],
-        ["ENDP", "Endo International plc - Ordinary Shares"]
+        ["LLNW", "Limelight Networks, Inc. - Common Stock"]
     ]
 
 
