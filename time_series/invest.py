@@ -108,11 +108,37 @@ min_avg_return  = 0.1
 
 #I want at most this much volatility in return
 max_dev_return = 0.07
-series_tickers = pickle.load(open("series_tickers.p", "rb" ))
+
+series_tickers = [
+        ["VG", "Vonage Holdings Corp. - Common Stock"],
+        ["CDNS", "Cadence Design Systems, Inc. - Common Stock"],
+        ["UONE", "Urban One, Inc.  - Class A Common Stock"],
+        ["AVGO", "Broadcom Inc. - Common Stock"],
+        ["ADBE", "Adobe Inc. - Common Stock"],
+        ["ALXN", "Alexion Pharmaceuticals, Inc. - Common Stock"],
+        ["LLNW", "Limelight Networks, Inc. - Common Stock"],
+        ["MXIM", "Maxim Integrated Products, Inc. - Common Stock"],
+        ["ARCC", "Ares Capital Corporation - Closed End Fund"],
+        ["COST", "Costco Wholesale Corporation - Common Stock"],
+        ["GNUS", "Genius Brands International, Inc. - Common Stock"],
+        ["FRSX", "Foresight Autonomous Holdings Ltd. - American Depositary Shares"],
+        ["CRIS", "Curis, Inc. - Common Stock"],
+        ["NLOK", "NortonLifeLock Inc. - Common Stock"],
+        ["GEVO", "Gevo, Inc. - Common Stock"],
+        ["DGLY", "Digital Ally, Inc. - Common Stock"],
+        ["QRTEA", "Qurate Retail, Inc. - Series A Common Stock"],
+        ["MAR", "Marriott International - Class A Common Stock"],
+        ["VSTM", "Verastem, Inc. - Common Stock"],
+        ["MGNX", "MacroGenics, Inc. - Common Stock"],
+        ["SABR", "Sabre Corporation - Common Stock"],
+        ["ENDP", "Endo International plc - Ordinary Shares"]
+    ]
 
 
-for ticker, name in series_tickers.iteritems():
+for ticker, name in series_tickers:
     avg_return, dev_return, all_returns = perform_analysis_for_stock(ticker, start_date, end_date, return_period_weeks)
+
+    print(ticker, name)
 
     if avg_return > min_avg_return and dev_return < max_dev_return:
         title_price = '%s\n%s'%(ticker, name)
