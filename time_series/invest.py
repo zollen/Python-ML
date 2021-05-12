@@ -103,7 +103,7 @@ def perform_analysis_for_stock(ticker, start_date, end_date, return_period_weeks
 #start date for simulation. 
 #Further back means more training data but risk of including patterns that no longer exist
 #More recent means less training data but only using recent patterns
-start_date, end_date = datetime(2020,4,1), datetime.now().date()
+start_date, end_date = datetime.now().date() - timedelta(weeks=24), datetime.now().date()
 
 #set number of weeks in which you want to see return
 return_period_weeks = 4
@@ -112,7 +112,7 @@ return_period_weeks = 4
 min_avg_return  = 0.1
 
 #I want at most this much volatility in return
-max_dev_return = 0.07
+max_dev_return = 0.10
 
 series_tickers = [
         ["XIU.TO", "iShare S&P/TSX 60 index ETF"],
