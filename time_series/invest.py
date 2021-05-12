@@ -159,7 +159,7 @@ series_tickers = [
 for ticker, name in series_tickers:
     avg_return, dev_return, all_returns = perform_analysis_for_stock(ticker, start_date, end_date, return_period_weeks)
 
-    print(ticker, name)
+    print("{:8} {:60} | {:0.4f}, {:0.4f}".format(ticker, name, avg_return, dev_return))
 
     if avg_return > min_avg_return and dev_return < max_dev_return:
         title_price = '%s\n%s'%(ticker, name)
