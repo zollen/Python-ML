@@ -146,13 +146,11 @@ series_tickers = [
         ["XTR.TO", "iShares Diversified Monthly Income ETF"],
         ["CWW.TO", "iShares Global Water Index ETF"],
         ["COW.TO", "iShares Global Agriculture Index ETF"],
-        ["CGLC.TO", "iShares Gold Bullion ETF"],
         ["XBM.TO", "iShares S&P/TSX Global Base Metals Index ETF"],
         ["CGR.TO", "iShares Global Real Estate Index ETF"],
         ["CIF.TO", "iShares Global Infrastructure Index ETF"],
         ["XPF.TO", "iShares S&P/TSX North American Preferred Stock Index ETF"],
-        ["SVR.TO", "iShares Silver Bullion ETF"],
-        ["SVRC.TO", "iShares Silver Bullion ETF"]
+        ["SVR.TO", "iShares Silver Bullion ETF"]
     ]
 
 
