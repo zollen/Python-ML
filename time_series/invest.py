@@ -106,13 +106,13 @@ def perform_analysis_for_stock(ticker, start_date, end_date, return_period_weeks
 start_date, end_date = datetime.now().date() - timedelta(weeks=24), datetime.now().date()
 
 #set number of weeks in which you want to see return
-return_period_weeks = 8
+return_period_weeks = 12
 
 #I want at least this much average return
 min_avg_return  = 0.1
 
 #I want at most this much volatility in return
-max_dev_return = 0.10
+max_dev_return = 0.03
 
 series_tickers = [
         ["XIU.TO", "iShare S&P/TSX 60 index ETF"],
@@ -141,7 +141,6 @@ series_tickers = [
         ["XGRO.TO", "iShares Core Growth ETF Portfolio"],
         ["FIE.TO", "iShares Canadian Financial Monthly Income ETF"],
         ["CGL.TO", "iShares Gold Bullion ETF"],
-        ["XFN.TO", "iShares Core MSCI EAFE IMI Index ETF (CAD-Hedged)"],
         ["XBAL.TO", "iShares Core Balanced ETF Portfolio"],
         ["XTR.TO", "iShares Diversified Monthly Income ETF"],
         ["CWW.TO", "iShares Global Water Index ETF"],
