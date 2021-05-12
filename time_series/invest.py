@@ -10,8 +10,13 @@ from pandas_datareader._utils import RemoteDataError
 from datetime import datetime, timedelta
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sb
 import numpy as np
-import pickle
+import warnings
+
+warnings.filterwarnings('ignore')
+
+sb.set_style('whitegrid')
 
 def plot_stock_trend_and_returns(ticker, titles, start_date, end_date, all_returns):
     
