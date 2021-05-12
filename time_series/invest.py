@@ -106,7 +106,7 @@ def perform_analysis_for_stock(ticker, start_date, end_date, return_period_weeks
 start_date, end_date = datetime.now().date() - timedelta(weeks=24), datetime.now().date()
 
 #set number of weeks in which you want to see return
-return_period_weeks = 4
+return_period_weeks = 8
 
 #I want at least this much average return
 min_avg_return  = 0.1
