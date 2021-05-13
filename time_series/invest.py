@@ -320,7 +320,9 @@ series_tickers = [
         ["DISC.TO", "BMO Global Consumer Discretionary Hedged to CAD Index ETF"],
         ["STPL.TO", "BMO Global Consumer Staples Hedged to CAD Index ETF"],
         ["COMM.TO", "BMO Global Communications Index ETF"],
-        ["ZJG.TO", "BMO Junior Gold Index ETF"]  
+        ["ZJG.TO", "BMO Junior Gold Index ETF"],  
+        
+        ["RBNK.TO", "RBC CA Bank Yield ETF"]
     ]
 
 goodETFs = []
