@@ -150,6 +150,9 @@ series_tickers = [
         ["CIF.TO", "iShares Global Infrastructure Index ETF"],
         ["XPF.TO", "iShares S&P/TSX North American Preferred Stock Index ETF"],
         ["SVR.TO", "iShares Silver Bullion ETF"],
+        ["XGRO.TO", "iShares Core Growth ETF Portfolio"],
+        ["XEQT.TO", "iShares All-Equity ETF Portfolio"],
+        ["XDIV.TO", "iShares Core MSCI Canadian Quality Dividend Index ETF"]
         
         ["VCN.TO", "FTSE Canada All Cap Index ETF"],
         ["VCE.TO", "FTSE Canada Index ETF"],
@@ -177,6 +180,9 @@ series_tickers = [
         ["VSC.TO", "Canadian Short-Term Corporate Bond Index ETF"],
         ["VBG.TO", "Global ex-U.S. Aggregate Bond Index ETF (CAD-hedged)"],
         ["VBU.TO", "U.S. Aggregate Bond Index ETF (CAD-hedged)"],
+        ["VGRO.TO", "Vanguard Growth ETF Portfolio"],
+        ["VBAL.TO", "Vanguard Balanced ETF Portfolio"],
+        ["VEQT.TO", "Vanguard ALL-Equity ETF Portfolio"],
         
         ["HAB.TO", "Horizons Active Corporate Bond ETF"],
         ["HAD.TO", "Horizons Active Cdn Bond ETF"],
