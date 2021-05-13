@@ -152,7 +152,7 @@ series_tickers = [
         ["SVR.TO", "iShares Silver Bullion ETF"],
         ["XGRO.TO", "iShares Core Growth ETF Portfolio"],
         ["XEQT.TO", "iShares All-Equity ETF Portfolio"],
-        ["XDIV.TO", "iShares Core MSCI Canadian Quality Dividend Index ETF"]
+        ["XDIV.TO", "iShares Core MSCI Canadian Quality Dividend Index ETF"],
         
         ["VCN.TO", "FTSE Canada All Cap Index ETF"],
         ["VCE.TO", "FTSE Canada Index ETF"],
