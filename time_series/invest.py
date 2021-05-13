@@ -341,7 +341,7 @@ for ticker, name in series_tickers:
             plot_stock_trend_and_returns(ticker, [title_price, title_return], start_date, end_date, all_returns)
         
 
-
+print()
 print("======= WAIT WEEKS PERIOD {} MIN AVG RETURN {} MAX AVG DEV {} ==========".format(return_period_weeks, min_avg_return, max_dev_return))
 
 for ticker, name, avg_return, dev_return in goodETFs:
