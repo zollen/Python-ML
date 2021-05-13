@@ -322,7 +322,7 @@ series_tickers = [
         ["COMM.TO", "BMO Global Communications Index ETF"],
         ["ZJG.TO", "BMO Junior Gold Index ETF"],  
         
-        ["RBNK.TO", "RBC CA Bank Yield ETF"]
+        ["RBNK.TO", "RBC CANADIAN Bank YIELD INDEX ETF"]
     ]
 
 goodETFs = []
