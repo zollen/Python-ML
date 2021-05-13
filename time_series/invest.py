@@ -247,7 +247,7 @@ series_tickers = [
         ["ESGH.TO", "BMO ESG High Yield US Corporate Bond Index ETF"],
         ["ZFH.TO", "BMO Floating Rate High Yield ETF"],
         ["ZEF.TO", "BMO Emerging Markets Bond Hedged to CAD Index ETF"],
-        ["ZPR.TO", "MO Laddered Preferred Share Index ETF"],
+        ["ZPR.TO", "BMO Laddered Preferred Share Index ETF"],
         ["ZUP.TO", "BMO US Preferred Share Index ETF"],
         ["ZHP.TO", "BMO US Preferred Share Hedged to CAD Index ETF"],
         ["ZCON.TO", "BMO Conservative ETF"],
