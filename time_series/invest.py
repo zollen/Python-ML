@@ -342,6 +342,7 @@ for ticker, name in series_tickers:
         
 
 
-print("====================================================================")
+print("======= WAIT PERIOD {} MIN AVG RETURN {} MAX AVG DEV {} ==========" % 
+      (return_period_weeks, min_avg_return, max_dev_return))
 for ticker, name, avg_return, dev_return in goodETFs:
     print("{:8} {:80} | {:0.4f}, {:0.4f}".format(ticker, name, avg_return, dev_return))
