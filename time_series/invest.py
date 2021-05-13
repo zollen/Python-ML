@@ -328,7 +328,32 @@ series_tickers = [
         ["COMM.TO", "BMO Global Communications Index ETF"],
         ["ZJG.TO", "BMO Junior Gold Index ETF"],  
         
-        ["RBNK.TO", "RBC CANADIAN Bank YIELD INDEX ETF"]
+        ["RBNK.TO", "RBC CANADIAN Bank YIELD INDEX ETF"],
+        ["RLB.TO", "RBC 1-5 Year Laddered Canadian Bond ETF"],
+        ["RBO.TO", "RBC 1-5 Year Laddered Corporate Bond ETF"],
+        ["RQI.TO", "RBC Target 2021 Corporate Bond Index ETF"],
+        ["RQJ.TO", "RBC Target 2022 Corporate Bond Index ETF"],
+        ["RQK.TO", "RBC Target 2023 Corporate Bond Index ETF"],
+        ["RQL.TO", "RBC Target 2024 Corporate Bond Index ETF"],
+        ["RQN.TO", "RBC Target 2025 Corporate Bond Index ETF"],
+        ["RQO.TO", "RBC Target 2026 Corporate Bond Index ETF"],
+        ["RQP.TO", "RBC Target 2027 Corporate Bond Index ETF"],
+        ["RPSB.TO", "RBC PH&N Short Term Canadian Bond ETF"],
+        ["RUSB.TO", "RBC Short Term U.S. Corporate Bond ETF"],
+        ["RBDI.TO", "RBC BlueBay Global Diversified Income (CAD Hedged) ETF"],
+        ["RPF.TO", "RBC Canadian Preferred Share ETF"],
+        ["RCD.TO", "RBC Quant Canadian Dividend Leaders ETF"],
+        ["RCE.TO", "RBC Quant Canadian Equity Leaders ETF"],
+        ["RUD.TO", "RBC Quant U.S. Dividend Leaders ETF"],
+        ["RUE.TO", "RBC Quant U.S. Equity Leaders ETF"],
+        ["RUBY.TO", "RBC U.S. Banks Yield Index ETF"],
+        ["RUBH.TO", "RBC U.S. Banks Yield (CAD Hedged) Index ETF"],
+        ["RPD.TO", "RBC Quant European Dividend Leaders ETF"],
+        ["RID.TO", "RBC Quant EAFE Dividend Leaders ETF"],
+        ["RIE.TO", "RBC Quant EAFE Equity Leaders ETF"],
+        ["RIEH.TO", "RBC Quant EAFE Equity Leaders (CAD Hedged) ETF"],
+        ["RXD.TO", "RBC Quant Emerging Markets Dividend Leaders ETF"],
+        ["RXE.TO", "RBC Quant Emerging Markets Equity Leaders ETF"]        
     ]
 
 goodETFs = []
