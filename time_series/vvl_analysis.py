@@ -26,8 +26,9 @@ sb.set_style('whitegrid')
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 
-SHOW_GRAPHS = True
+SHOW_GRAPHS = False
 WEEKS_FOR_ANALYSIS = 24
+TEST_SIZE = (WEEKS_FOR_ANALYSIS * 7 * 0.1)
 TICKER = 'VVL.TO'
 
 
@@ -38,7 +39,7 @@ if SHOW_GRAPHS:
 
 def plotSeries(series, title, pos):
     plt.subplot(5, 1, pos)
-    plt.plot(series['Date'], series['Price'], color='red')
+    plt.plot(series.index, series['Price'], color='red')
     plt.ylabel(title, fontsize=10)
 
     
@@ -56,10 +57,9 @@ def get_stock():
     
     prices = pd.DataFrame({'Date' : prices.index, 'Price' : prices.values})
     prices['Date'] = pd.to_datetime(prices['Date'])
-    prices.set_index('Date')
-    
-    if SHOW_GRAPHS:
-        plotSeries(prices, "YYL.TO", 1)
+    prices = prices.set_index('Date')
+     
+    plotSeries(prices, "YYL.TO", 1)
      
     return prices
     
@@ -73,41 +73,37 @@ def normalize(data):
     data['Price'] = out
     data['Price'] = data['Price'].astype('float64')
     
-    if SHOW_GRAPHS:
-        plotSeries(data, "Normalize", 2)
+    plotSeries(data, "Normalize", 2)
     
     # First Differences
     data['Price'] = data['Price'].diff()
     data = data.dropna()
     data['Price'] = data['Price'].astype('float64')
     
-    if SHOW_GRAPHS:
-        plotSeries(data, "First Difference", 3)
+    plotSeries(data, "First Difference", 3)
     
-    data['Month'] = data['Date'].map(lambda d: datetime.strptime(d.strftime("%Y-%m-%d"), "%Y-%m-%d").month)
-    
+    data['Month'] = data.index.map(lambda d: datetime.strptime(d.strftime("%Y-%m-%d"), "%Y-%m-%d").month)
+   
     # Clean Volatitiy
     std = data.groupby(data['Month']).std()
     std['Price'].fillna(sys.maxsize, inplace = True)
-    data_std = data['Date'].map(lambda d : std.loc[d.month])
+    data_std = data.index.map(lambda d : std.loc[d.month])
     data['Price'] = data['Price'] / data_std
     data['Price'] = data['Price'].astype('float64')
     
-    if SHOW_GRAPHS:
-        plotSeries(data, "Remove Volaitity", 4)
+    plotSeries(data, "Remove Volaitity", 4)
         
     data.drop(columns = ['Month'], inplace = True)   
-    data['Day'] = data['Date'].map(lambda d: datetime.strptime(d.strftime("%Y-%m-%d"), "%Y-%m-%d").day)
+    data['Day'] = data.index.map(lambda d: datetime.strptime(d.strftime("%Y-%m-%d"), "%Y-%m-%d").day)
     
     
     # Clean Seasonality 
     days_avgs = data.groupby(data['Day']).mean()
-    data_avg = data['Date'].map(lambda d: days_avgs.loc[d.day])
+    data_avg = data.index.map(lambda d: days_avgs.loc[d.day])
     data['Price'] = data['Price'] - data_avg
     data['Price'] = data['Price'].astype('float64')
     
-    if SHOW_GRAPHS:
-        plotSeries(data, "Remove Seasonality", 5)
+    plotSeries(data, "Remove Seasonality", 5)
     
     
     data.drop(columns = ['Day'], inplace = True)
@@ -126,6 +122,14 @@ def analysis_stock(orig_data, normalize_data):
 analysisNode = node(analysis_stock, inputs=["trade_data", "normalize_data"], outputs=None)
 
 
+def train_archmodel(orig_data, normalize_data):
+    
+    model = arch_model(orig_data, p=12, q=12)
+    model_fit = model.fit()
+    
+    print(model_fit.summary())
+
+archModelNode = node(train_archmodel, inputs=["trade_data", "normalize_data"], outputs=None)
 
 # Create a data source
 data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
@@ -134,7 +138,8 @@ data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 pipeline = Pipeline([ 
                         getStockNode,
                         normalizeNode,
-                        analysisNode
+                  #      analysisNode,
+                        archModelNode
                     ])
 
 # Create a "runner" to run the "pipeline"
