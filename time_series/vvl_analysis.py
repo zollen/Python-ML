@@ -44,10 +44,9 @@ def plotSeries(series, title, pos):
     
 
 def display(data):
-    print("+++++++++++++++++++++++++++++")
     print(data)
     
-displayNode = node(display, inputs="output", outputs=None)
+
 
 
 def get_stock():
@@ -79,6 +78,7 @@ def normalize(data):
     # First Differences
     data['Price'] = data['Price'].diff()
     data = data.dropna()
+    data['Price'] = data['Price'].astype('float64')
     
     if SHOW_GRAPHS:
         plotSeries(data, "First Difference", 3)
@@ -94,10 +94,14 @@ def normalize(data):
     
     if SHOW_GRAPHS:
         plotSeries(data, "Remove Volaitity", 4)
+        
+    data.drop(columns = ['Month'], inplace = True)   
+    data['Day'] = data['Date'].map(lambda d: datetime.strptime(d.strftime("%Y-%m-%d"), "%Y-%m-%d").day)
+    
     
     # Clean Seasonality 
-    month_avgs = data.groupby(data['Month']).mean()
-    data_avg = data['Date'].map(lambda d: month_avgs.loc[d.month])
+    days_avgs = data.groupby(data['Day']).mean()
+    data_avg = data['Date'].map(lambda d: days_avgs.loc[d.day])
     data['Price'] = data['Price'] - data_avg
     data['Price'] = data['Price'].astype('float64')
     
@@ -105,7 +109,7 @@ def normalize(data):
         plotSeries(data, "Remove Seasonality", 5)
     
     
-    data.drop(columns = ['Month'], inplace = True)
+    data.drop(columns = ['Day'], inplace = True)
     
     return data
 
@@ -117,15 +121,16 @@ normalizeNode = node(normalize, inputs="trade_data", outputs="output")
 data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 
 # Assign "nodes" to a "pipeline"
-pipeline = Pipeline([ getStockNode,
-                        normalizeNode, 
-                        displayNode ])
+pipeline = Pipeline([ 
+                        getStockNode,
+                        normalizeNode
+                    ])
 
 # Create a "runner" to run the "pipeline"
 runner = SequentialRunner()
 
 # Execute a pipeline
-print(runner.run(pipeline, data_catalog))
+runner.run(pipeline, data_catalog)
 
 if SHOW_GRAPHS:
     plt.show()
