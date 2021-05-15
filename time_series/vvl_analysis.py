@@ -31,7 +31,8 @@ WEEKS_FOR_ANALYSIS = 24
 TICKER = 'VVL.TO'
 
 
-plt.figure(figsize=(10, 10))        
+if SHOW_GRAPHS:
+    plt.figure(figsize=(10, 10))        
 
 
 
@@ -126,4 +127,5 @@ runner = SequentialRunner()
 # Execute a pipeline
 print(runner.run(pipeline, data_catalog))
 
-plt.show()
+if SHOW_GRAPHS:
+    plt.show()
