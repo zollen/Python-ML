@@ -71,6 +71,7 @@ def normalize(data):
     avg, dev = data['Price'].mean(), data['Price'].std()
     out = (data['Price'] - avg) / dev
     data['Price'] = out
+    data['Price'] = data['Price'].astype('float64')
     
     if SHOW_GRAPHS:
         plotSeries(data, "Normalize", 2)
@@ -113,7 +114,16 @@ def normalize(data):
     
     return data
 
-normalizeNode = node(normalize, inputs="trade_data", outputs="output")
+normalizeNode = node(normalize, inputs="trade_data", outputs="normalize_data")
+
+
+def analysis_stock(orig_data, normalize_data):
+    
+    plot_pacf(np.array(orig_data['Price'])**2, title="PACF(orignal)")
+    plot_pacf(np.array(normalize_data['Price'])**2, title="PACF(normalize)")
+    plt.show()
+    
+analysisNode = node(analysis_stock, inputs=["trade_data", "normalize_data"], outputs=None)
 
 
 
@@ -123,7 +133,8 @@ data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 # Assign "nodes" to a "pipeline"
 pipeline = Pipeline([ 
                         getStockNode,
-                        normalizeNode
+                        normalizeNode,
+                        analysisNode
                     ])
 
 # Create a "runner" to run the "pipeline"
