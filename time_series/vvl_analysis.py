@@ -26,10 +26,21 @@ sb.set_style('whitegrid')
 pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 
-
+SHOW_GRAPHS = True
 WEEKS_FOR_ANALYSIS = 24
 TICKER = 'VVL.TO'
 
+
+plt.figure(figsize=(10, 10))        
+
+
+
+def plotSeries(series, title, pos):
+    plt.subplot(5, 1, pos)
+    plt.plot(series['Date'], series['Price'], color='red')
+    plt.ylabel(title, fontsize=10)
+
+    
 
 def display(data):
     print("+++++++++++++++++++++++++++++")
@@ -46,6 +57,9 @@ def get_stock():
     prices = pd.DataFrame({'Date' : prices.index, 'Price' : prices.values})
     prices['Date'] = pd.to_datetime(prices['Date'])
     prices.set_index('Date')
+    
+    if SHOW_GRAPHS:
+        plotSeries(prices, "YYL.TO", 1)
      
     return prices
     
@@ -58,9 +72,15 @@ def normalize(data):
     out = (data['Price'] - avg) / dev
     data['Price'] = out
     
+    if SHOW_GRAPHS:
+        plotSeries(data, "Normalize", 2)
+    
     # First Differences
     data['Price'] = data['Price'].diff()
     data = data.dropna()
+    
+    if SHOW_GRAPHS:
+        plotSeries(data, "First Difference", 3)
     
     data['Month'] = data['Date'].map(lambda d: datetime.strptime(d.strftime("%Y-%m-%d"), "%Y-%m-%d").month)
     
@@ -71,11 +91,17 @@ def normalize(data):
     data['Price'] = data['Price'] / data_std
     data['Price'] = data['Price'].astype('float64')
     
+    if SHOW_GRAPHS:
+        plotSeries(data, "Remove Volaitity", 4)
+    
     # Clean Seasonality 
     month_avgs = data.groupby(data['Month']).mean()
     data_avg = data['Date'].map(lambda d: month_avgs.loc[d.month])
     data['Price'] = data['Price'] - data_avg
     data['Price'] = data['Price'].astype('float64')
+    
+    if SHOW_GRAPHS:
+        plotSeries(data, "Remove Seasonality", 5)
     
     
     data.drop(columns = ['Month'], inplace = True)
@@ -99,3 +125,5 @@ runner = SequentialRunner()
 
 # Execute a pipeline
 print(runner.run(pipeline, data_catalog))
+
+plt.show()
