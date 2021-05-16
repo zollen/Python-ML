@@ -138,7 +138,7 @@ def normalize2(data):
 normalize2Node = node(normalize2, inputs="trade_data", outputs="normalize_data2")
     
 
-def train_archmodel(data):
+def train_archmodel(title, data):
 
     test_data = data.iloc[len(data) - TEST_SIZE:]
     
@@ -150,20 +150,24 @@ def train_archmodel(data):
         pred = model_fit.forecast(horizon=1)
         rolling_predictions.append(np.sqrt(pred.variance.values[-1,:][0]))
         
-    print("RMSE: %0.4f" % np.sqrt(mean_squared_error(test_data['Price'], rolling_predictions)))
+    print("%s RMSE: %0.4f" % (title, np.sqrt(mean_squared_error(test_data['Price'], rolling_predictions))))
     
     plt.figure(figsize=(10,4))
     plt.plot(data)
     plt.plot(test_data.index, rolling_predictions)
     plt.legend(('Data', 'Predictions'), fontsize=16)
-    plt.title('VVL.TO', fontsize=20)
+    plt.title(title, fontsize=20)
     plt.ylabel('Price', fontsize=16)
 
-     
+def train_archmodel1(data):
+    return train_archmodel("Normalize(VVL.TO)", data)    
+ 
+def train_archmodel2(data):
+    return train_archmodel("ChgPct(VVL.TO)", data) 
    
 
-archModel1Node = node(train_archmodel, inputs="normalize_data1", outputs=None)
-archModel2Node = node(train_archmodel, inputs="normalize_data2", outputs=None)
+archModel1Node = node(train_archmodel1, inputs="normalize_data1", outputs=None)
+archModel2Node = node(train_archmodel2, inputs="normalize_data2", outputs=None)
 
 # Create a data source
 data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
