@@ -10,7 +10,7 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 from arch import arch_model
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from sklearn.metrics import mean_squared_error
 import numpy as np
 from kedro.pipeline import node
 from kedro.pipeline import Pipeline
@@ -67,8 +67,13 @@ def get_stock():
     
 getStockNode = node(get_stock, inputs=None, outputs="trade_data")
 
-
-def normalize(data):
+'''
+                 coef    std err          t      P>|t|       95.0% Conf. Int.
+-----------------------------------------------------------------------------
+alpha[7]       0.1569  4.192e-02      3.743  1.819e-04    [7.475e-02,  0.239]
+RMSE: 1.2973
+'''
+def normalize1(data):
     # Normalize: put the data with averge of zero
     avg, dev = data['Price'].mean(), data['Price'].std()
     out = (data['Price'] - avg) / dev
@@ -116,63 +121,49 @@ def normalize(data):
     
     return data
 
-normalizeNode = node(normalize, inputs="trade_data", outputs="normalize_data")
+normalize1Node = node(normalize1, inputs="trade_data", outputs="normalize_data1")
 
+'''
+                 coef    std err          t      P>|t|       95.0% Conf. Int.
+-----------------------------------------------------------------------------
+alpha[7]       0.5724      0.175      3.275  1.058e-03      [  0.230,  0.915]
+RMSE: 1.4538
+'''
+def normalize2(data):
+    data['Price'] = 100 * data['Price'].pct_change()
+    data.dropna(inplace=True)
+    data['Price'] = data['Price'].astype('float64')
+    return data
 
-def analysis_stock(orig_data, normalize_data):
+normalize2Node = node(normalize2, inputs="trade_data", outputs="normalize_data2")
     
-    plot_pacf(np.array(orig_data['Price'])**2, title="PACF(orignal)")
-    plot_pacf(np.array(normalize_data['Price'])**2, title="PACF(normalize)")
-    plt.show()
-    
-analysisNode = node(analysis_stock, inputs=["trade_data", "normalize_data"], outputs=None)
 
+def train_archmodel(data):
 
-def train_archmodel(orig_data, normalize_data):
+    test_data = data.iloc[len(data) - TEST_SIZE:]
     
-    '''
-                     coef    std err          t      P>|t|       95.0% Conf. Int.
-    -----------------------------------------------------------------------------
-    omega          0.0258  9.879e-03      2.609  9.083e-03  [6.411e-03,4.514e-02]
-    alpha[1]       0.9532  4.340e-02     21.961 6.743e-107      [  0.868,  1.038]
-
-    model = arch_model(orig_data, p=12, q=12)
-    model_fit = model.fit(disp='off')
-    
-    print(model_fit.summary())
-    
-    
-                     coef    std err          t      P>|t|       95.0% Conf. Int.
-    -----------------------------------------------------------------------------
-    alpha[7]       0.1569  4.192e-02      3.743  1.819e-04    [7.475e-02,  0.239]
-    beta[7]        0.7827  7.511e-02     10.420  1.999e-25      [  0.635,  0.930]
-    
-    model = arch_model(normalize_data, p=12, q=12)
-    model_fit = model.fit(disp='off')
-    
-    print(model_fit.summary())
-    '''
-    
-    rolling_predictions1 = []
+    rolling_predictions = []
     for i in range(TEST_SIZE):
-        train = orig_data[:-(TEST_SIZE-i)]
-        model = arch_model(train, p=1, q=0)
+        train_data = data.iloc[:-(TEST_SIZE-i)]
+        model = arch_model(train_data, p=7, q=0)
         model_fit = model.fit(disp='off')
         pred = model_fit.forecast(horizon=1)
-        rolling_predictions1.append(np.sqrt(pred.variance.values[-1,:][0]))
+        rolling_predictions.append(np.sqrt(pred.variance.values[-1,:][0]))
         
-        
-    rolling_predictions2 = []
-    for i in range(TEST_SIZE):
-        train = normalize_data[:-(TEST_SIZE-i)]
-        model = arch_model(train, p=7, q=7)
-        model_fit = model.fit(disp='off')
-        pred = model_fit.forecast(horizon=1)
-        rolling_predictions2.append(np.sqrt(pred.variance.values[-1,:][0]))
+    print("RMSE: %0.4f" % np.sqrt(mean_squared_error(test_data['Price'], rolling_predictions)))
     
-    
+    plt.figure(figsize=(10,4))
+    plt.plot(data)
+    plt.plot(test_data.index, rolling_predictions)
+    plt.legend(('Data', 'Predictions'), fontsize=16)
+    plt.title('VVL.TO', fontsize=20)
+    plt.ylabel('Price', fontsize=16)
 
-archModelNode = node(train_archmodel, inputs=["trade_data", "normalize_data"], outputs=None)
+     
+   
+
+archModel1Node = node(train_archmodel, inputs="normalize_data1", outputs=None)
+archModel2Node = node(train_archmodel, inputs="normalize_data2", outputs=None)
 
 # Create a data source
 data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
@@ -180,9 +171,10 @@ data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 # Assign "nodes" to a "pipeline"
 pipeline = Pipeline([ 
                         getStockNode,
-                        normalizeNode,
-                  #      analysisNode,
-                        archModelNode
+                        normalize1Node,
+                        normalize2Node,
+                        archModel1Node,
+                        archModel2Node
                     ])
 
 # Create a "runner" to run the "pipeline"
@@ -191,5 +183,5 @@ runner = SequentialRunner()
 # Execute a pipeline
 runner.run(pipeline, data_catalog)
 
-if SHOW_GRAPHS:
-    plt.show()
+
+plt.show()
