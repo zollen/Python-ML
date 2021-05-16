@@ -131,7 +131,7 @@ def train_archmodel(orig_data, normalize_data):
     omega          0.0258  9.879e-03      2.609  9.083e-03  [6.411e-03,4.514e-02]
     alpha[1]       0.9532  4.340e-02     21.961 6.743e-107      [  0.868,  1.038]
 
-    model = arch_model(orig_data)
+    model = arch_model(orig_data, p=12, q=12)
     model_fit = model.fit(disp='off')
     
     print(model_fit.summary())
@@ -142,7 +142,7 @@ def train_archmodel(orig_data, normalize_data):
     alpha[7]       0.1569  4.192e-02      3.743  1.819e-04    [7.475e-02,  0.239]
     beta[7]        0.7827  7.511e-02     10.420  1.999e-25      [  0.635,  0.930]
     
-    model = arch_model(normalize_data)
+    model = arch_model(normalize_data, p=12, q=12)
     model_fit = model.fit(disp='off')
     
     print(model_fit.summary())
