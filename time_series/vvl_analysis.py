@@ -58,7 +58,8 @@ def get_stock():
     prices = pd.DataFrame({'Date' : prices.index, 'Price' : prices.values})
     prices['Date'] = pd.to_datetime(prices['Date'])
     prices = prices.set_index('Date')
-     
+    prices = prices.asfreq(pd.infer_freq(prices.index), method="pad")
+         
     plotSeries(prices, "YYL.TO", 1)
      
     return prices
@@ -124,7 +125,7 @@ analysisNode = node(analysis_stock, inputs=["trade_data", "normalize_data"], out
 
 def train_archmodel(orig_data, normalize_data):
     
-    model = arch_model(orig_data, p=12, q=12)
+    model = arch_model(normalize_data, p=12, q=12)
     model_fit = model.fit()
     
     print(model_fit.summary())
