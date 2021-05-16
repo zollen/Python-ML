@@ -125,6 +125,11 @@ analysisNode = node(analysis_stock, inputs=["trade_data", "normalize_data"], out
 
 def train_archmodel(orig_data, normalize_data):
     
+    model = arch_model(orig_data, p=12, q=12)
+    model_fit = model.fit()
+    
+    print(model_fit.summary())
+    
     model = arch_model(normalize_data, p=12, q=12)
     model_fit = model.fit()
     
