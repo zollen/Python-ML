@@ -60,7 +60,8 @@ def get_stock():
     prices = prices.set_index('Date')
     prices = prices.asfreq(pd.infer_freq(prices.index), method="pad")
          
-    plotSeries(prices, "YYL.TO", 1)
+    if SHOW_GRAPHS:
+        plotSeries(prices, "YYL.TO", 1)
      
     return prices
     
@@ -74,14 +75,16 @@ def normalize(data):
     data['Price'] = out
     data['Price'] = data['Price'].astype('float64')
     
-    plotSeries(data, "Normalize", 2)
+    if SHOW_GRAPHS:
+        plotSeries(data, "Normalize", 2)
     
     # First Differences
     data['Price'] = data['Price'].diff()
     data = data.dropna()
     data['Price'] = data['Price'].astype('float64')
     
-    plotSeries(data, "First Difference", 3)
+    if SHOW_GRAPHS:
+        plotSeries(data, "First Difference", 3)
     
     data['Month'] = data.index.map(lambda d: datetime.strptime(d.strftime("%Y-%m-%d"), "%Y-%m-%d").month)
    
@@ -92,7 +95,8 @@ def normalize(data):
     data['Price'] = data['Price'] / data_std
     data['Price'] = data['Price'].astype('float64')
     
-    plotSeries(data, "Remove Volaitity", 4)
+    if SHOW_GRAPHS:
+        plotSeries(data, "Remove Volaitity", 4)
         
     data.drop(columns = ['Month'], inplace = True)   
     data['Day'] = data.index.map(lambda d: datetime.strptime(d.strftime("%Y-%m-%d"), "%Y-%m-%d").day)
@@ -104,7 +108,8 @@ def normalize(data):
     data['Price'] = data['Price'] - data_avg
     data['Price'] = data['Price'].astype('float64')
     
-    plotSeries(data, "Remove Seasonality", 5)
+    if SHOW_GRAPHS:
+        plotSeries(data, "Remove Seasonality", 5)
     
     
     data.drop(columns = ['Day'], inplace = True)
