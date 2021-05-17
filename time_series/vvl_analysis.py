@@ -236,7 +236,7 @@ def predict_sarimax(model, data):
         plt.plot(graphed_data)
         plt.plot(dates, pred)
         plt.legend(('Data', 'Predictions'), fontsize=16)
-        plt.title("Prediction", fontsize=20)
+        plt.title("Future %d days Prediction" % PREDICTION_SIZE, fontsize=20)
         plt.ylabel('Price', fontsize=16)
 
     
