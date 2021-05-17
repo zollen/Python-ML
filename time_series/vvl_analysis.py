@@ -231,10 +231,14 @@ def predict_sarimax(model, data):
     pred = model.forecast(PREDICTION_SIZE)
     dates = [ data.index[-1] + timedelta(days = d) for d in range(PREDICTION_SIZE) ]
     
+    cond_intv = model.get_forecast(PREDICTION_SIZE).conf_int()
+   
     if True:
         plt.figure(figsize=(10,4))
         plt.plot(graphed_data)
         plt.plot(dates, pred)
+        plt.ylim(35, 45)
+        plt.fill_between(dates, cond_intv['lower Price'], cond_intv['upper Price'], color='g', alpha=0.1)
         plt.legend(('Data', 'Predictions'), fontsize=16)
         plt.title("Future %d days Prediction" % PREDICTION_SIZE, fontsize=20)
         plt.ylabel('Price', fontsize=16)
