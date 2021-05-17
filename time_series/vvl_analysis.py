@@ -229,10 +229,8 @@ def predict_sarimax(model, data):
     graphed_data = data.iloc[-PREDICTION_SIZE:]
     
     pred = model.forecast(PREDICTION_SIZE)
-    dates = []
-    for d in range(PREDICTION_SIZE):
-        dates.append(data.index[-1] + timedelta(days = d))
-        
+    dates = [ data.index[-1] + timedelta(days = d) for d in range(PREDICTION_SIZE) ]
+    
     if True:
         plt.figure(figsize=(10,4))
         plt.plot(graphed_data)
