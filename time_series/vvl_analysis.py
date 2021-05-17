@@ -30,6 +30,7 @@ pd.set_option('max_rows', None)
 
 SHOW_GRAPHS = False
 WEEKS_FOR_ANALYSIS = 24
+PREDICTION_SIZE = 14
 TEST_SIZE = int(WEEKS_FOR_ANALYSIS * 7 * 0.1)
 TICKER = 'VVL.TO'
 
@@ -220,8 +221,29 @@ def train_sarimax(data):
     
     return model_fit
 
-sarimaxNode = node(train_sarimax, inputs="trade_data", outputs=None)
+sarimaxNode = node(train_sarimax, inputs="trade_data", outputs="sarimax_model")
 
+
+def predict_sarimax(model, data):
+    
+    graphed_data = data.iloc[-PREDICTION_SIZE:]
+    
+    pred = model.forecast(PREDICTION_SIZE)
+    dates = []
+    for d in range(PREDICTION_SIZE):
+        dates.append(data.index[-1] + timedelta(days = d))
+        
+    if True:
+        plt.figure(figsize=(10,4))
+        plt.plot(graphed_data)
+        plt.plot(dates, pred)
+        plt.legend(('Data', 'Predictions'), fontsize=16)
+        plt.title("Prediction", fontsize=20)
+        plt.ylabel('Price', fontsize=16)
+
+    
+predictNode = node(predict_sarimax, inputs=["sarimax_model", "trade_data"], outputs=None)
+    
 # Create a data source
 data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 
@@ -232,7 +254,8 @@ pipeline = Pipeline([
                         normalize2Node,
                     #    archModel1Node,
                     #    archModel2Node
-                        sarimaxNode
+                        sarimaxNode,
+                        predictNode
                     ])
 
 # Create a "runner" to run the "pipeline"
