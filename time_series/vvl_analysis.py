@@ -238,7 +238,7 @@ def predict_sarimax(model, data):
         plt.plot(graphed_data)
         plt.plot(dates, pred)
         plt.ylim(35, 45)
-        plt.fill_between(dates, cond_intv['lower Price'], cond_intv['upper Price'], color='g', alpha=0.1)
+        plt.fill_between(dates, cond_intv['lower Price'], cond_intv['upper Price'], color='k', alpha=0.1)
         plt.legend(('Data', 'Predictions'), fontsize=16)
         plt.title("Future %d days Prediction" % PREDICTION_SIZE, fontsize=20)
         plt.ylabel('Price', fontsize=16)
