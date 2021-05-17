@@ -139,6 +139,9 @@ normalize2Node = node(normalize2, inputs="trade_data", outputs="normalize_data2"
     
 
 def train_archmodel(title, data):
+    '''
+    GARCH predicts the voliatity of the prices (not the prices itself)
+    '''
 
     test_data = data.iloc[len(data) - TEST_SIZE:]
     
