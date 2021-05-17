@@ -10,6 +10,8 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 from arch import arch_model
+from statsmodels.tsa.stattools import acf, pacf
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 from sklearn.metrics import mean_squared_error
 import numpy as np
 from kedro.pipeline import node
@@ -172,6 +174,54 @@ def train_archmodel2(data):
 archModel1Node = node(train_archmodel1, inputs="normalize_data1", outputs=None)
 archModel2Node = node(train_archmodel2, inputs="normalize_data2", outputs=None)
 
+
+def train_sarimax(data):
+    
+    title = "SARIMAX"
+    
+    first_diff = data['Price'].diff()[1:]
+    # ACF - lag 3
+    if False:
+        acf_vals = acf(first_diff)
+        num_lags = 20
+        plt.bar(range(num_lags), acf_vals[:num_lags])
+        plt.title('ACF')
+        plt.show()
+    
+    #PACF - lag 3
+    if False:
+        pacf_vals = pacf(first_diff)
+        plt.bar(range(num_lags), pacf_vals[:num_lags])
+        plt.title('PACF')
+        plt.show()
+
+    
+    test_data = data.iloc[len(data) - TEST_SIZE:]
+    
+    my_order = (3, 1, 3)             
+    my_seasonal_order = (1, 0, 1, 12)
+    rolling_predictions = []
+    for i in range(TEST_SIZE):
+        train_data = data.iloc[:-(TEST_SIZE-i)]
+        model = SARIMAX(train_data, order=my_order, seasonal_order=my_seasonal_order)
+        model_fit = model.fit()
+        pred = model_fit.forecast(horizon=1)
+        rolling_predictions.append(pred)
+        
+    print("%s RMSE: %0.4f" % (title, np.sqrt(mean_squared_error(test_data['Price'], rolling_predictions))))
+    
+    if False:
+        plt.figure(figsize=(10,4))
+        plt.plot(data)
+        plt.plot(test_data.index, rolling_predictions)
+        plt.legend(('Data', 'Predictions'), fontsize=16)
+        plt.title(title, fontsize=20)
+        plt.ylabel('Price', fontsize=16)
+    
+    return model_fit
+
+sarimaxNode = node(train_sarimax, inputs="trade_data", outputs=None)
+
 # Create a data source
 data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 
@@ -180,8 +230,9 @@ pipeline = Pipeline([
                         getStockNode,
                         normalize1Node,
                         normalize2Node,
-                        archModel1Node,
-                        archModel2Node
+                    #    archModel1Node,
+                    #    archModel2Node
+                        sarimaxNode
                     ])
 
 # Create a "runner" to run the "pipeline"
