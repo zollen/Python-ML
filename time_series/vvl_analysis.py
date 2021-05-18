@@ -11,6 +11,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from arch import arch_model
 from statsmodels.tsa.stattools import acf, pacf
+from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from sklearn.metrics import mean_squared_error
 import numpy as np
@@ -177,6 +178,52 @@ archModel1Node = node(train_archmodel1, inputs="normalize_data1", outputs=None)
 archModel2Node = node(train_archmodel2, inputs="normalize_data2", outputs=None)
 
 
+def train_arima(data):
+    title = "ARIMA"
+    
+    first_diff = data['Price'].diff()[1:]
+    # ACF - lag 3
+    if False:
+        acf_vals = acf(first_diff)
+        num_lags = 20
+        plt.bar(range(num_lags), acf_vals[:num_lags])
+        plt.title('ACF')
+        plt.show()
+    
+    #PACF - lag 3
+    if False:
+        pacf_vals = pacf(first_diff)
+        plt.bar(range(num_lags), pacf_vals[:num_lags])
+        plt.title('PACF')
+        plt.show()
+
+    
+    test_data = data.iloc[len(data) - TEST_SIZE:]
+    
+    my_order = (3, 1, 3)             
+    rolling_predictions = []
+    for i in range(TEST_SIZE):
+        train_data = data.iloc[:-(TEST_SIZE-i)]
+        model = ARIMA(train_data, order=my_order)
+        model_fit = model.fit()
+        pred = model_fit.forecast(horizon=1)
+        rolling_predictions.append(pred)
+        
+    print("%s RMSE: %0.4f" % (title, np.sqrt(mean_squared_error(test_data['Price'], rolling_predictions))))
+    
+    if False:
+        plt.figure(figsize=(10,4))
+        plt.plot(data)
+        plt.plot(test_data.index, rolling_predictions)
+        plt.legend(('Data', 'Predictions'), fontsize=16)
+        plt.title(title, fontsize=20)
+        plt.ylabel('Price', fontsize=16)
+    
+    return model_fit
+
+arimaNode = node(train_arima, inputs="trade_data", outputs="arima_model")
+
+
 def train_sarimax(data):
     
     title = "SARIMAX"
@@ -225,7 +272,7 @@ def train_sarimax(data):
 sarimaxNode = node(train_sarimax, inputs="trade_data", outputs="sarimax_model")
 
 
-def predict_sarimax(model, data):
+def predict(title, model, data):
     
     graphed_data = data.iloc[-PREDICTION_SIZE:]
     
@@ -241,11 +288,19 @@ def predict_sarimax(model, data):
         plt.ylim(35, 45)
         plt.fill_between(dates, cond_intv['lower Price'], cond_intv['upper Price'], color='k', alpha=0.1)
         plt.legend(('Data', 'Predictions'), fontsize=16)
-        plt.title("Future %d days Prediction" % PREDICTION_SIZE, fontsize=20)
+        plt.title("(%s) Future %d days Prediction" % (title, PREDICTION_SIZE), fontsize=20)
         plt.ylabel('Price', fontsize=16)
 
-    
-predictNode = node(predict_sarimax, inputs=["sarimax_model", "trade_data"], outputs=None)
+
+def predict_arima(model, data):
+    return predict("ARIMA", model, data)    
+ 
+def predict_sarimax(model, data):
+    return predict("SARIMAX", model, data) 
+
+predictARIMANode = node(predict_arima, inputs=["arima_model", "trade_data"], outputs=None)    
+predictSARIMAXNode = node(predict_sarimax, inputs=["sarimax_model", "trade_data"], outputs=None)
+ 
     
 # Create a data source
 data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
@@ -257,8 +312,10 @@ pipeline = Pipeline([
                         normalize2Node,
                     #    archModel1Node,
                     #    archModel2Node
+                        arimaNode,
                         sarimaxNode,
-                        predictNode
+                        predictARIMANode,
+                        predictSARIMAXNode
                     ])
 
 # Create a "runner" to run the "pipeline"
