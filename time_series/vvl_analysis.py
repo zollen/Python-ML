@@ -62,6 +62,7 @@ def get_stock():
     prices['Date'] = pd.to_datetime(prices['Date'])
     prices = prices.set_index('Date')
     prices = prices.asfreq(pd.infer_freq(prices.index), method="pad")
+    prices['Price'] = prices['Price'].astype('float64')
          
     if SHOW_GRAPHS:
         plotSeries(prices, "YYL.TO", 1)
