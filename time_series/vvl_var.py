@@ -6,14 +6,11 @@ Created on May 18, 2021
 
 import pandas_datareader.data as web
 from datetime import datetime, timedelta
-import sys
 import pandas as pd
 import matplotlib.pyplot as plt
-from arch import arch_model
-from statsmodels.tsa.stattools import acf, pacf
-from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.tsa.api import VAR
 from sklearn.metrics import mean_squared_error
-import numpy as np
 from kedro.pipeline import node
 from kedro.pipeline import Pipeline
 from kedro.io import DataCatalog, MemoryDataSet
@@ -115,8 +112,43 @@ def normalize(data):
 normalizeNode = node(normalize, inputs="trade_data", outputs="normalize_data")
 
 
-def train_VAR(trade_data, normalize_data):
-    pass
+def analysis_data(trade_data, normalize_data):
+    if True:
+        fig, (a1, a2, a3, a4, a5, a6) = plt.subplots(6, 1)
+        fig.set_size_inches(10, 12)
+        a1.set_ylabel('TRADE(WWL.TO)', fontsize=10)
+        a2.set_ylabel('NORMALIZE(WWL.TO)', fontsize=10)
+        a3.set_ylabel('TRADE(DOW)', fontsize=10)
+        a4.set_ylabel('NORMALIZE(DOW)', fontsize=10)
+        a5.set_ylabel('TRADE(TSX)', fontsize=10)
+        a6.set_ylabel('NORMALIZE(TSX)', fontsize=10)
+        plot_pacf(trade_data['VVL.TO'], ax=a1, title=None)
+        plot_pacf(normalize_data['VVL.TO'], ax=a2, title=None)
+        plot_pacf(trade_data['DOW'], ax=a3, title=None)
+        plot_pacf(normalize_data['DOW'], ax=a4, title=None)
+        plot_pacf(trade_data['TSX'], ax=a5, title=None)
+        plot_pacf(normalize_data['TSX'], ax=a6, title=None)
+
+analysisNode = node(analysis_data, inputs=["trade_data", "normalize_data"], outputs=None)
+
+def train_val(trade_data, normalize_data):
+    '''
+    Results for equation VVL.TO
+                    coefficient       std. error           t-stat            prob
+    -----------------------------------------------------------------------------
+    L1.DOW            -0.504074         0.122882           -4.102           0.000
+    L3.VVL.TO         -0.336660         0.131142           -2.567           0.010
+    L5.VVL.TO          0.239572         0.133176            1.799           0.072
+    L5.TSX            -0.468865         0.129902           -3.609           0.000
+    L10.VVL.TO        -0.272380         0.127437           -2.137           0.033  
+    '''
+    normalize_data = normalize_data[['VVL.TO', 'DOW', 'TSX']]
+    model = VAR(normalize_data)
+    model_fit = model.fit(maxlags=13) # it use maximum of 13 lags for both series
+    print(model_fit.summary())
+
+
+trainNode = node(train_val, inputs=["trade_data", "normalize_data"], outputs=None)
 
 
 # Create a data source
@@ -125,7 +157,9 @@ data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 # Assign "nodes" to a "pipeline"
 pipeline = Pipeline([ 
                         getStockNode,
-                        normalizeNode
+                        normalizeNode,
+                        analysisNode,
+                        trainNode
                     ])
 
 # Create a "runner" to run the "pipeline"
