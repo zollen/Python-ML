@@ -259,6 +259,9 @@ def train_sarimax(data):
         
     print("%s RMSE: %0.4f" % (title, np.sqrt(mean_squared_error(test_data['Price'], rolling_predictions))))
     
+    if True:
+        model_fit.plot_diagnostics(figsize=(10,8))
+        
     if False:
         plt.figure(figsize=(10,4))
         plt.plot(data)
