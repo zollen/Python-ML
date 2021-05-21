@@ -220,6 +220,7 @@ def train_arima(data):
         plt.bar(range(num_lags), acf_vals[:num_lags])
         plt.title('ACF')
         plt.show()
+
     
     #PACF - lag 3
     if False:
@@ -228,10 +229,11 @@ def train_arima(data):
         plt.title('PACF')
         plt.show()
 
+
     
     test_data = data.iloc[len(data) - TEST_SIZE:]
     
-    my_order = (3, 1, 3)             
+    my_order = (12, 1, 12)             
     rolling_predictions = []
     for i in range(TEST_SIZE):
         train_data = data.iloc[:-(TEST_SIZE-i)]
@@ -240,6 +242,8 @@ def train_arima(data):
         pred = model_fit.forecast(horizon=1)
         rolling_predictions.append(pred)
         
+    print(model_fit.summary())
+       
     print("%s RMSE: %0.4f" % (title, np.sqrt(mean_squared_error(test_data['Price'], rolling_predictions))))
     
     if False:
@@ -290,7 +294,7 @@ def train_sarimax(data):
         
     print("%s RMSE: %0.4f" % (title, np.sqrt(mean_squared_error(test_data['Price'], rolling_predictions))))
     
-    if True:
+    if False:
         model_fit.plot_diagnostics(figsize=(10,8))
         
     if False:
@@ -335,6 +339,9 @@ def predict_sarimax(model, data):
 predictARIMANode = node(predict_arima, inputs=["arima_model", "trade_data"], outputs=None)    
 predictSARIMAXNode = node(predict_sarimax, inputs=["sarimax_model", "trade_data"], outputs=None)
  
+
+
+    
     
 # Create a data source
 data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
