@@ -10,7 +10,7 @@ import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 from arch import arch_model
-from statsmodels.tsa.stattools import acf, pacf
+from statsmodels.tsa.stattools import acf, pacf, adfuller
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from sklearn.metrics import mean_squared_error
@@ -48,8 +48,29 @@ def plotSeries(series, title, pos):
 
     
 
-def display(data):
-    print(data)
+def adfuller_test(series, signif=0.05, name='', verbose=False):
+    """Perform ADFuller to test for Stationarity of given series and print report"""
+    r = adfuller(series, autolag='AIC')
+    output = {'test_statistic':round(r[0], 4), 'pvalue':round(r[1], 4), 'n_lags':round(r[2], 4), 'n_obs':r[3]}
+    p_value = output['pvalue'] 
+    def adjust(val, length= 6): return str(val).ljust(length)
+
+    # Print Summary
+    print(f'    Augmented Dickey-Fuller Test on "{name}"', "\n   ", '-'*47)
+    print(f' Null Hypothesis: Data has unit root. Non-Stationary.')
+    print(f' Significance Level    = {signif}')
+    print(f' Test Statistic        = {output["test_statistic"]}')
+    print(f' No. Lags Chosen       = {output["n_lags"]}')
+
+    for key,val in r[4].items():
+        print(f' Critical value {adjust(key)} = {round(val, 3)}')
+
+    if p_value <= signif:
+        print(f" => P-Value = {p_value}. Rejecting Null Hypothesis.")
+        print(f" => Series is Stationary.")
+    else:
+        print(f" => P-Value = {p_value}. Weak evidence to reject the Null Hypothesis.")
+        print(f" => Series is Non-Stationary.")    
     
 
 
@@ -67,6 +88,9 @@ def get_stock():
          
     if SHOW_GRAPHS:
         plotSeries(prices, "YYL.TO", 1)
+    
+    print("=====================================================")
+    adfuller_test(prices, name='VVL.TO')
      
     return prices
     
@@ -124,6 +148,9 @@ def normalize1(data):
     
     data.drop(columns = ['Day'], inplace = True)
     
+    print("=====================================================")
+    adfuller_test(data, name='normalize(VVL.TO)')
+    
     return data
 
 normalize1Node = node(normalize1, inputs="trade_data", outputs="normalize_data1")
@@ -138,6 +165,10 @@ def normalize2(data):
     data['Price'] = 100 * data['Price'].pct_change()
     data.dropna(inplace=True)
     data['Price'] = data['Price'].astype('float64')
+    
+    print("=====================================================")
+    adfuller_test(data, name='normalize2(VVL.TO)')
+    
     return data
 
 normalize2Node = node(normalize2, inputs="trade_data", outputs="normalize_data2")
