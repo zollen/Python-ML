@@ -7,6 +7,7 @@ Created on May 18, 2021
 import pandas_datareader.data as web
 from datetime import datetime, timedelta
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.api import VAR
@@ -113,7 +114,7 @@ normalizeNode = node(normalize, inputs="trade_data", outputs="normalize_data")
 
 
 def analysis_data(trade_data, normalize_data):
-    if True:
+    if False:
         fig, (a1, a2, a3, a4, a5, a6) = plt.subplots(6, 1)
         fig.set_size_inches(10, 10)
         a1.set_ylabel('TRADE(WWL.TO)', fontsize=8)
@@ -131,23 +132,43 @@ def analysis_data(trade_data, normalize_data):
 
 analysisNode = node(analysis_data, inputs=["trade_data", "normalize_data"], outputs=None)
 
-def train_val(trade_data, normalize_data):
+def train_val(data):
     '''
-    Results for equation VVL.TO
+    Results for equation Normalize(VVL.TO)
                     coefficient       std. error           t-stat            prob
     -----------------------------------------------------------------------------
-    L1.DOW            -0.504074         0.122882           -4.102           0.000
-    L3.VVL.TO         -0.336660         0.131142           -2.567           0.010
-    L5.TSX            -0.468865         0.129902           -3.609           0.000
-    L10.VVL.TO        -0.272380         0.127437           -2.137           0.033  
+    L1.DOW            -0.582504         0.127475           -4.570           0.000
+    L1.TSX             0.248251         0.122756            2.022           0.043
+    L3.VVL.TO         -0.298217         0.131244           -2.272           0.023
+    L10.VVL.TO        -0.254706         0.122933           -2.072           0.038
     '''
-    normalize_data = normalize_data[['VVL.TO', 'DOW', 'TSX']]
-    model = VAR(normalize_data)
-    model_fit = model.fit(maxlags=13) # it use maximum of 13 lags for both series
-    print(model_fit.summary())
+    
+    test_data = data.iloc[len(data) - TEST_SIZE:]
+    train_data = data.iloc[:len(data) - TEST_SIZE]
+
+    model = VAR(train_data)
+    results = model.fit(maxlags=10) # it use maximum of 13 lags for both series
+    print(results.summary())
+    
+    if False:
+        # ACF plots for residuals with 2 / sqrt(T)b bounds
+        results.plot_acorr()
+         
+    preds = results.forecast(y=test_data.values, steps=TEST_SIZE)
+    
+    print("RMSE: %0.4f" % np.sqrt(mean_squared_error(test_data['VVL.TO'], preds[:,0])))
+ 
+    if True:
+        plt.figure(figsize=(10,4))
+        plt.plot(data['VVL.TO'])
+        plt.plot(test_data.index, preds[:,0])
+        plt.legend(('Data', 'Predictions'), fontsize=16)
+        plt.title("Prediction vs Observed", fontsize=20)
+        plt.ylabel('Price', fontsize=16)
 
 
-trainNode = node(train_val, inputs=["trade_data", "normalize_data"], outputs=None)
+
+trainNode = node(train_val, inputs="normalize_data", outputs=None)
 
 
 # Create a data source
