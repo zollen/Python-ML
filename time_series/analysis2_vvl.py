@@ -99,13 +99,13 @@ def train(data):
     test_data = data.iloc[len(data) - TEST_SIZE:]
     
     mod = SARIMAX(train_data,
-            order=(1, 0, 3),
-            seasonal_order=(0, 0, 0, 12),
+            order=(1, 2, 2),
+            seasonal_order=(0, 1, 1, 12),
             enforce_stationarity=False,
             enforce_invertibility=False)
     results = mod.fit()
     
-    preds = results.predict(TEST_SIZE)
+    preds = results.forecast(TEST_SIZE)
     
     print("RMSE: %0.4f" % np.sqrt(mean_squared_error(test_data['Price'], preds)))
     
@@ -131,7 +131,8 @@ data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 # Assign "nodes" to a "pipeline"
 pipeline = Pipeline([ 
                         getStockNode,
-                        optimizeNode
+                     #   optimizeNode,
+                        trainNode
                     ])
 
 # Create a "runner" to run the "pipeline"
