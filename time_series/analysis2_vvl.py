@@ -9,9 +9,11 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 import itertools
+from statsmodels.tsa.seasonal import STL
 from sklearn.metrics import mean_squared_error
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from pmdarima.arima import auto_arima
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.stattools import arma_order_select_ic
 from kedro.pipeline import node
@@ -80,16 +82,42 @@ def analysis(data):
      
     adfuller_test(data, name='Price')
     
-    data['Price'] = data['Price'].diff()
-    data.dropna(inplace=True)
-    
-    adfuller_test(data, name='Price')
-    
     if False:
+        data['Price'] = data['Price'].diff()
+        data.dropna(inplace=True)
         _, ax = plt.subplots(2, 1, figsize = (10,8))
         plot_acf(data, lags = 24, ax = ax[0])
         plot_pacf(data, lags = 24, ax = ax[1])
         plt.show()
+        
+    if True:
+        # Seasonal component show there is 4 cycles
+        stl = STL(data)
+        result = stl.fit()
+
+        seasonal, trend, resid = result.seasonal, result.trend, result.resid
+        
+        plt.figure(figsize=(8,6))
+        
+        plt.subplot(4,1,1)
+        plt.plot(data)
+        plt.title('Original Series', fontsize=16)
+        
+        plt.subplot(4,1,2)
+        plt.plot(trend)
+        plt.title('Trend', fontsize=16)
+        
+        plt.subplot(4,1,3)
+        plt.plot(seasonal)
+        plt.title('Seasonal', fontsize=16)
+        
+        plt.subplot(4,1,4)
+        plt.plot(resid)
+        plt.title('Residual', fontsize=16)
+        
+        plt.tight_layout()
+        
+    
     
 analysisNode = node(analysis, inputs="trade_data", outputs=None)
     
@@ -154,6 +182,17 @@ def optimize2(data):
     print('ARMA(p,q) =', resDiff['aic_min_order'], 'is the best.')
 
 optimize2Node = node(optimize2, inputs="trade_data", outputs=None)
+
+def optimize3(data):
+    
+    # Best model:  ARIMA(0,1,0)(0,0,0)[4] intercept
+    
+    auto_model = auto_arima(data, m=4, seasonal=True,
+                        suppress_warnings = True,  
+                        step_wise=True, trace=True)           
+    print(auto_model.summary())
+
+optimize3Node = node(optimize3, inputs="trade_data", outputs=None)
     
 
 
@@ -161,13 +200,15 @@ def train(data):
     
     train_data = data.iloc[:len(data) - TEST_SIZE]
     test_data = data.iloc[len(data) - TEST_SIZE:]
-    
+        
     mod = SARIMAX(train_data,
-            order=(3, 1, 3),
-            seasonal_order=(1, 0, 1, 12),
+            order=(0, 1, 0),
+            seasonal_order=(0, 0, 0, 4),
             enforce_stationarity=False,
             enforce_invertibility=False)
     results = mod.fit()
+    
+    print(results.summary())
     
     preds = results.forecast(TEST_SIZE)
     
@@ -196,9 +237,10 @@ data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 pipeline = Pipeline([ 
                         getStockNode,
                         analysisNode,
-                     #   optimizeNode1.
-                     #   optimizeNode12,
-                     #   trainNode
+                    #    optimize1Node,
+                    #    optimize2Node,
+                    #    optimize3Node
+                        trainNode
                     ])
 
 # Create a "runner" to run the "pipeline"
