@@ -49,41 +49,56 @@ getStockNode = node(get_stock, inputs=None, outputs="trade_data")
 
 
 def optimize(data):
-    '''
-    Best AIC: 38.64968775676793 Best Order (1, 0, 3) Best Seasonal Order (0, 0, 0, 12)
-    '''
+    
     best_score = 999999
     best_param = None
     best_sparam = None
-    p = q = range(0, 7)
-    pdq = list(itertools.product(p, [0,1,2], q))
+    p = q = [0, 1, 2, 3, 4]
+    pdq = list(itertools.product(p, [1,2,3], q))
+    
+    params = []
+    params_s = []
+    aics = []
+    mses = []
+    
+    train_data = data.iloc[:len(data) - TEST_SIZE]
+    test_data = data.iloc[len(data) - TEST_SIZE:]
 
-    seasonal_pdq = [(x[0], x[1], x[2], 12) for x in list(itertools.product([0,1,2], [0,1], [0,1,2]))]
-    print('Examples of parameter combinations for Seasonal ARIMA...')
-    print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[1]))
-    print('SARIMAX: {} x {}'.format(pdq[1], seasonal_pdq[2]))
-    print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[3]))
-    print('SARIMAX: {} x {}'.format(pdq[2], seasonal_pdq[4]))
-
+    seasonal_pdq = [(x[0], x[1], x[2], 12) for x in list(itertools.product([0,1,2,3], [0,1], [0,1,2,3]))]
+   
     for param in pdq:
         for param_seasonal in seasonal_pdq:
+          
             try:
-                mod = SARIMAX(data,
+                mod = SARIMAX(train_data,
                             order=param,
                             seasonal_order=param_seasonal,
                             enforce_stationarity=False,
                             enforce_invertibility=False)
                 results = mod.fit()
-                if results.aic < best_score:
-                    best_score = results.aic
-                    best_param = param
-                    best_sparam = param_seasonal
-                print('SARIMAX{}x{}12 - AIC:{}'.format(param, param_seasonal, results.aic))
+                
+                pred = results.get_prediction(start = test_data.index[0],
+                                              end = test_data.index[-1])
+                
+   
+                params.append(param)
+                params_s.append(param_seasonal)
+                aics.append(results.aic)
+                mses.append(mean_squared_error(test_data , pred.predicted_mean[1:]))   
+                
+                print('SARIMAX{}x{} - AIC:{} - MSE:{}'.format(param,
+                                                        param_seasonal,
+                                                        results.aic,
+                                                        mses[-1])) 
             except:
                 continue
-    print()
-    print()
-    print("Best AIC: {} Best Order {} Best Seasonal Order {}".format(best_score, best_param, best_sparam))
+    min_ind = aics.index(min(aics)) 
+    bestparam = (params[min_ind], params_s[min_ind]) 
+    print('best_param_aic:', bestparam, ' aic:', min(aics)) 
+    min_ind = mses.index(min(mses)) 
+    bestparam = (params[min_ind], params_s[min_ind]) 
+    print('best_param_mse:', bestparam, ' mse:', min(mses))
+
      
    
 optimizeNode = node(optimize, inputs="trade_data", outputs=None)
@@ -91,16 +106,12 @@ optimizeNode = node(optimize, inputs="trade_data", outputs=None)
 
 def train(data):
     
-    '''
-    Best AIC: 10.0 Best Order (1, 2, 2) Best Seasonal Order (0, 1, 1, 12)
-    '''
-    
     train_data = data.iloc[:len(data) - TEST_SIZE]
     test_data = data.iloc[len(data) - TEST_SIZE:]
     
     mod = SARIMAX(train_data,
-            order=(1, 2, 2),
-            seasonal_order=(0, 1, 1, 12),
+            order=(3, 1, 3),
+            seasonal_order=(1, 0, 1, 12),
             enforce_stationarity=False,
             enforce_invertibility=False)
     results = mod.fit()
@@ -131,8 +142,8 @@ data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 # Assign "nodes" to a "pipeline"
 pipeline = Pipeline([ 
                         getStockNode,
-                     #   optimizeNode,
-                        trainNode
+                        optimizeNode
+                     #   trainNode
                     ])
 
 # Create a "runner" to run the "pipeline"
