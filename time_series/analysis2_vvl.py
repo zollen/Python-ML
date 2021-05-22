@@ -77,7 +77,6 @@ def optimize(data):
                 pred = results.get_prediction(start = test_data.index[0],
                                               end = test_data.index[-1])
                 
-   
                 params.append(param)
                 params_s.append(param_seasonal)
                 aics.append(results.aic)
