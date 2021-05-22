@@ -85,21 +85,16 @@ def optimize(data):
                 params_s.append(param_seasonal)
                 aics.append(results.aic)
                 mses.append(mean_squared_error(test_data , pred.predicted_mean[1:]))   
-                
-                print('SARIMAX{}x{} - AIC:{} - MSE:{}'.format(param,
-                                                        param_seasonal,
-                                                        results.aic,
-                                                        mses[-1])) 
+
             except:
                 continue
+            
     min_ind = aics.index(min(aics)) 
     bestparam = (params[min_ind], params_s[min_ind]) 
     print('best_param_aic:', bestparam, ' aic:', min(aics)) 
     min_ind = mses.index(min(mses)) 
     bestparam = (params[min_ind], params_s[min_ind]) 
     print('best_param_mse:', bestparam, ' mse:', min(mses))
-
-     
    
 optimizeNode = node(optimize, inputs="trade_data", outputs=None)
 
