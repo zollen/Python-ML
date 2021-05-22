@@ -81,7 +81,7 @@ def optimize(data):
                 results = mod.fit()
                 
                 pred = results.get_prediction(start = test_data.index[0],
-                                              end = test_data.index[-1])
+                                              end = test_data.index[-1] + + timedelta(days = 1))
                 
                 params.append(param)
                 params_s.append(param_seasonal)
