@@ -10,7 +10,10 @@ import numpy as np
 import pandas as pd
 import itertools
 from sklearn.metrics import mean_squared_error
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.stattools import arma_order_select_ic
 from kedro.pipeline import node
 from kedro.pipeline import Pipeline
 from kedro.io import DataCatalog, MemoryDataSet
@@ -32,6 +35,31 @@ PREDICTION_SIZE = 14
 TEST_SIZE = int(WEEKS_FOR_ANALYSIS * 7 * 0.1)
 TICKER = 'VVL.TO'
 
+
+def adfuller_test(series, signif=0.05, name='', verbose=False):
+    """Perform ADFuller to test for Stationarity of given series and print report"""
+    r = adfuller(series, autolag='AIC', regression="ctt")
+    output = {'test_statistic':round(r[0], 4), 'pvalue':round(r[1], 4), 'n_lags':round(r[2], 4), 'n_obs':r[3]}
+    p_value = output['pvalue'] 
+    def adjust(val, length= 6): return str(val).ljust(length)
+
+    # Print Summary
+    print(f'    Augmented Dickey-Fuller Test on "{name}"', "\n   ", '-'*47)
+    print(f' Null Hypothesis: Data has unit root. Non-Stationary.')
+    print(f' Significance Level    = {signif}')
+    print(f' Test Statistic        = {output["test_statistic"]}')
+    print(f' No. Lags Chosen       = {output["n_lags"]}')
+
+    for key,val in r[4].items():
+        print(f' Critical value {adjust(key)} = {round(val, 3)}')
+
+    if p_value <= signif:
+        print(f" => P-Value = {p_value}. Rejecting Null Hypothesis.")
+        print(f" => Series is Stationary.")
+    else:
+        print(f" => P-Value = {p_value}. Weak evidence to reject the Null Hypothesis.")
+        print(f" => Series is Non-Stationary.")    
+
 def get_stock():
     start_date, end_date = datetime.now().date() - timedelta(weeks=WEEKS_FOR_ANALYSIS), datetime.now().date()
     prices = web.DataReader(TICKER, 'yahoo', start=start_date, end=end_date).Close
@@ -48,9 +76,27 @@ def get_stock():
 getStockNode = node(get_stock, inputs=None, outputs="trade_data")
 
 
-def optimize(data):
+def analysis(data):
+     
+    adfuller_test(data, name='Price')
     
-    p = q = [0, 1, 2, 3, 4, 5]
+    data['Price'] = data['Price'].diff()
+    data.dropna(inplace=True)
+    
+    adfuller_test(data, name='Price')
+    
+    if False:
+        _, ax = plt.subplots(2, 1, figsize = (10,8))
+        plot_acf(data, lags = 24, ax = ax[0])
+        plot_pacf(data, lags = 24, ax = ax[1])
+        plt.show()
+    
+analysisNode = node(analysis, inputs="trade_data", outputs=None)
+    
+
+def optimize1(data):
+    
+    p = q = [0, 1, 2, 3, 4, 5, 6]
     pdq = list(itertools.product(p, [1,2], q))
     
     params = []
@@ -99,7 +145,16 @@ def optimize(data):
     bestparam = (params[min_ind], params_s[min_ind]) 
     print('best_param_mse:', bestparam, ' mse:', min(mses))
    
-optimizeNode = node(optimize, inputs="trade_data", outputs=None)
+optimize1Node = node(optimize1, inputs="trade_data", outputs=None)
+
+
+def optimize2(data):
+    # ARMA(p,q) = (0, 3) is the best.
+    resDiff = arma_order_select_ic(data, max_ar=7, max_ma=7, ic=['aic','bic'], trend='nc')
+    print('ARMA(p,q) =', resDiff['aic_min_order'], 'is the best.')
+
+optimize2Node = node(optimize2, inputs="trade_data", outputs=None)
+    
 
 
 def train(data):
@@ -140,7 +195,9 @@ data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 # Assign "nodes" to a "pipeline"
 pipeline = Pipeline([ 
                         getStockNode,
-                        optimizeNode
+                        analysisNode,
+                     #   optimizeNode1.
+                     #   optimizeNode12,
                      #   trainNode
                     ])
 
