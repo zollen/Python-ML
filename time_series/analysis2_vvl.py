@@ -50,8 +50,8 @@ getStockNode = node(get_stock, inputs=None, outputs="trade_data")
 
 def optimize(data):
     
-    p = q = [0, 1, 2, 3, 4]
-    pdq = list(itertools.product(p, [1,2,3], q))
+    p = q = [0, 1, 2, 3, 4, 5]
+    pdq = list(itertools.product(p, [1,2], q))
     
     params = []
     params_s = []
@@ -61,12 +61,18 @@ def optimize(data):
     train_data = data.iloc[:len(data) - TEST_SIZE]
     test_data = data.iloc[len(data) - TEST_SIZE:]
 
-    seasonal_pdq = [(x[0], x[1], x[2], 12) for x in list(itertools.product([0,1,2,3], [0,1], [0,1,2,3]))]
-   
+    seasonal_pdq = [(x[0], x[1], x[2], 12) for x in list(itertools.product([0,1,2], [0,1,2], [0,1,2]))]
+    
+    total = len(pdq) * len(seasonal_pdq)
+    current = 0
+       
     for param in pdq:
         for param_seasonal in seasonal_pdq:
           
             try:
+                current = current + 1 
+                print("Progress: ", (current / total * 100), "%")
+                print(param, param_seasonal)
                 mod = SARIMAX(train_data,
                             order=param,
                             seasonal_order=param_seasonal,
@@ -80,10 +86,11 @@ def optimize(data):
                 params.append(param)
                 params_s.append(param_seasonal)
                 aics.append(results.aic)
-                mses.append(mean_squared_error(test_data , pred.predicted_mean[1:]))   
-
+                mses.append(mean_squared_error(test_data , pred.predicted_mean[1:]))  
+                
             except:
                 continue
+            
             
     min_ind = aics.index(min(aics)) 
     bestparam = (params[min_ind], params_s[min_ind]) 
