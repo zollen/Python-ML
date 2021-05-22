@@ -50,9 +50,6 @@ getStockNode = node(get_stock, inputs=None, outputs="trade_data")
 
 def optimize(data):
     
-    best_score = 999999
-    best_param = None
-    best_sparam = None
     p = q = [0, 1, 2, 3, 4]
     pdq = list(itertools.product(p, [1,2,3], q))
     
