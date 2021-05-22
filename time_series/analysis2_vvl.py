@@ -72,7 +72,7 @@ def optimize(data):
             try:
                 current = current + 1 
                 print("Progress: ", (current / total * 100), "%")
-                print(param, param_seasonal)
+                print("settings: ", param, param_seasonal)
                 mod = SARIMAX(train_data,
                             order=param,
                             seasonal_order=param_seasonal,
