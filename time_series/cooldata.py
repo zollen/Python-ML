@@ -21,9 +21,9 @@ pd.set_option('max_rows', None)
 day = 24 * 60 * 60
 year = 365.2425 * day
 
-def adfuller_test(series, signif=0.05, name='', verbose=False):
+def adfuller_test(series, signif=0.05, reg='c', name='', verbose=False):
     """Perform ADFuller to test for Stationarity of given series and print report"""
-    r = adfuller(series, autolag='AIC', regression="c")
+    r = adfuller(series, autolag='AIC', regression=reg)
     output = {'test_statistic':round(r[0], 4), 'pvalue':round(r[1], 4), 'n_lags':round(r[2], 4), 'n_obs':r[3]}
     p_value = output['pvalue'] 
     def adjust(val, length= 6): return str(val).ljust(length)
