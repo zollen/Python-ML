@@ -40,7 +40,7 @@ TICKER = 'VVL.TO'
 
 def adfuller_test(series, signif=0.05, name='', verbose=False):
     """Perform ADFuller to test for Stationarity of given series and print report"""
-    r = adfuller(series, autolag='AIC', regression="ctt")
+    r = adfuller(series, autolag='AIC', regression="c")
     output = {'test_statistic':round(r[0], 4), 'pvalue':round(r[1], 4), 'n_lags':round(r[2], 4), 'n_obs':r[3]}
     p_value = output['pvalue'] 
     def adjust(val, length= 6): return str(val).ljust(length)
