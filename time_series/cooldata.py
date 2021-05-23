@@ -4,7 +4,6 @@ Created on May 22, 2021
 @author: zollen
 '''
 
-import datetime
 from statsmodels.tsa.seasonal import STL
 from statsmodels.tsa.stattools import adfuller
 import pandas as pd
@@ -56,7 +55,8 @@ def generate_data(start, end) -> pd.DataFrame:
     df['Price'] = df['Price'].astype('float64')
     df['Date'] = df['Date'].apply(lambda d: d.strftime('%Y-%m-%d'))
     df = df.set_index('Date')
-   
+    df = df.asfreq(pd.infer_freq(df.index))
+
     return df
 
 
