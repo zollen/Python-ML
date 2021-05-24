@@ -191,7 +191,7 @@ test_data = train_df.iloc[len(train_df) - TEST_SIZE:]
     
 moddel = SARIMAX(train_data,
                 order=(7, 1, 10),
-                seasonal_order=(5, 1, 5, 12),
+                seasonal_order=(5, 1, 4, 12),
                 enforce_stationarity=False,
                 enforce_invertibility=False)
 results = moddel.fit()
@@ -203,9 +203,9 @@ preds = results.predict(start = test_data.index[0],
 
 '''
 order=(7, 1, 10)
-seasonal_order=(5, 1, 5, 12)
-AIC: 2027.9420
-MSRE 183156.2283
+seasonal_order=(5, 1, 4, 12)
+AIC: 2065.7666
+MSRE 2166.8013
 '''                
 print("AIC: %0.4f" % results.aic)
 print("MSRE %0.4f" % mean_squared_error(test_data , preds))  
