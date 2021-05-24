@@ -40,6 +40,17 @@ def simulate_seasonal_term(periodicity, total_cycles, noise_std=1.,
     y(t)=μ(t) + γ1(t) + γ2(t)
     μ - lambda
     γ - gamma
+    
+    where μ(t) represents the trend or level, γ1(t) represents a seasonal component 
+    with a relatively short period, and γ2(t) represents another seasonal component 
+    of longer period. We will have a fixed intercept term for our level and consider 
+    both γ2(t) and γ2(t) to be stochastic so that the seasonal patterns can vary 
+    over time.
+    
+    We will simulate 300 periods and two seasonal terms parametrized in the frequency 
+    domain having periods 10 and 100, respectively, and 3 and 2 number of harmonics, 
+    respectively. Further, the variances of their stochastic parts are 4 and 9, 
+    respectively.
     '''
     duration = periodicity * total_cycles
     assert duration == int(duration)
