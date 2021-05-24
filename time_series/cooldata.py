@@ -7,6 +7,8 @@ Created on May 22, 2021
 from datetime import datetime, timedelta
 from statsmodels.tsa.seasonal import STL
 from statsmodels.tsa.stattools import adfuller
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -122,7 +124,7 @@ if True:
                             '100(2)': terms[1],
                             'level':terms[2]})
 
-    if True:    
+    if False:    
         h1, = plt.plot(df['Price'])
         h2, = plt.plot(df['10(3)'])
         h3, = plt.plot(df['100(2)'])
@@ -142,30 +144,64 @@ else:
     train_df = generate_data('2018-01-01', '2021-01-01')
 
 adfuller_test(train_df)
+firstdiff = train_df['Price'].diff()
+firstdiff.dropna(inplace=True)
+# confirm: we need first difference to make it stationary
+adfuller_test(firstdiff)
 
-stl = STL(train_df)
-result = stl.fit()
+if False:
+    stl = STL(train_df)
+    result = stl.fit()
+    
+    seasonal, trend, resid = result.seasonal, result.trend, result.resid
+    
+    plt.figure(figsize=(8,6))
+    
+    plt.subplot(4,1,1)
+    plt.plot(train_df)
+    plt.title('Original Series', fontsize=16)
+    
+    plt.subplot(4,1,2)
+    plt.plot(trend)
+    plt.title('Trend', fontsize=16)
+    
+    plt.subplot(4,1,3)
+    plt.plot(seasonal)
+    plt.title('Seasonal', fontsize=16)
+    
+    plt.subplot(4,1,4)
+    plt.plot(resid)
+    plt.title('Residual', fontsize=16)
+    
+    plt.tight_layout()
+   
+if False: 
+    '''
+    ACF:  lags 1, 2, 8, 10, 12, 18, 20, 22
+    PACF: lags 7, 13, 23
+    '''
+    _, ax = plt.subplots(2, 1, figsize = (10,8))
+    plot_acf(firstdiff, lags = 24, ax = ax[0])
+    plot_pacf(firstdiff, lags = 24, ax = ax[1])
 
-seasonal, trend, resid = result.seasonal, result.trend, result.resid
 
-plt.figure(figsize=(8,6))
+moddel = SARIMAX(train_df,
+                order=(7, 1, 10),
+                seasonal_order=(2, 1, 2, 12),
+                enforce_stationarity=False,
+                enforce_invertibility=False)
+results = moddel.fit()
 
-plt.subplot(4,1,1)
-plt.plot(train_df)
-plt.title('Original Series', fontsize=16)
+print(results.summary())
 
-plt.subplot(4,1,2)
-plt.plot(trend)
-plt.title('Trend', fontsize=16)
+'''
+I suppose to use optimize the find out the optimize seasonal_order
+'''
 
-plt.subplot(4,1,3)
-plt.plot(seasonal)
-plt.title('Seasonal', fontsize=16)
 
-plt.subplot(4,1,4)
-plt.plot(resid)
-plt.title('Residual', fontsize=16)
 
-plt.tight_layout()
 
+
+
+    
 plt.show()
