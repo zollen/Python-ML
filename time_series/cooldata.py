@@ -9,6 +9,7 @@ from statsmodels.tsa.seasonal import STL
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from sklearn.metrics import mean_squared_error
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -184,15 +185,32 @@ if False:
     plot_acf(firstdiff, lags = 24, ax = ax[0])
     plot_pacf(firstdiff, lags = 24, ax = ax[1])
 
-
-moddel = SARIMAX(train_df,
+TEST_SIZE = 20
+train_data = train_df.iloc[:len(train_df) - TEST_SIZE]
+test_data = train_df.iloc[len(train_df) - TEST_SIZE:]
+    
+moddel = SARIMAX(train_data,
                 order=(7, 1, 10),
-                seasonal_order=(2, 1, 2, 12),
+                seasonal_order=(5, 1, 5, 12),
                 enforce_stationarity=False,
                 enforce_invertibility=False)
 results = moddel.fit()
 
 print(results.summary())
+
+preds = results.predict(start = test_data.index[0],
+                        end = test_data.index[-1])
+                
+print("AIC: %0.4f" % results.aic)
+print("MSRE %0.4f" % mean_squared_error(test_data , preds))  
+
+if True:
+    plt.figure(figsize=(10,4))
+    plt.plot(train_df)
+    plt.plot(test_data.index, preds)
+    plt.legend(('Data', 'Predictions'), fontsize=16)
+    plt.title("Price vs Prediction", fontsize=20)
+    plt.ylabel('Price', fontsize=16)
 
 '''
 I suppose to use optimize the find out the optimize seasonal_order
