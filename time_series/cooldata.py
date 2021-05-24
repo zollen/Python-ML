@@ -200,7 +200,13 @@ print(results.summary())
 
 preds = results.predict(start = test_data.index[0],
                         end = test_data.index[-1])
-                
+
+'''
+order=(7, 1, 10)
+seasonal_order=(5, 1, 5, 12)
+AIC: 2027.9420
+MSRE 183156.2283
+'''                
 print("AIC: %0.4f" % results.aic)
 print("MSRE %0.4f" % mean_squared_error(test_data , preds))  
 
