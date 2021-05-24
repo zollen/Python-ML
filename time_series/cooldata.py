@@ -4,6 +4,7 @@ Created on May 22, 2021
 @author: zollen
 '''
 
+from datetime import datetime, timedelta
 from statsmodels.tsa.seasonal import STL
 from statsmodels.tsa.stattools import adfuller
 import pandas as pd
@@ -79,14 +80,48 @@ def generate_data(start, end) -> pd.DataFrame:
 
     return df
 
+if True:
+    duration = 100 * 3
+    periodicities = [10, 100]
+    num_harmonics = [3, 2]
+    std = np.array([2, 3])
+    np.random.seed(8678309)
+    
+    terms = []
+    for ix, _ in enumerate(periodicities):
+        s = simulate_seasonal_term(
+            periodicities[ix],
+            duration / periodicities[ix],
+            harmonics=num_harmonics[ix],
+            noise_std=std[ix])
+        terms.append(s)
+    terms.append(np.ones_like(terms[0]) * 10.)
+    series = pd.Series(np.sum(terms, axis=0))
+    df = pd.DataFrame(data={'Price': series,
+                            '10(3)': terms[0],
+                            '100(2)': terms[1],
+                            'level':terms[2]})
 
-train_df = generate_data('2018-01-01', '2021-01-01')
+    if True:    
+        h1, = plt.plot(df['Price'])
+        h2, = plt.plot(df['10(3)'])
+        h3, = plt.plot(df['100(2)'])
+        h4, = plt.plot(df['level'])
+        plt.legend(['total','10(3)','100(2)', 'level'])
+
+    start_date = datetime.now()
+    end_date = start_date + timedelta(days=len(series) - 1)
+    train_df = pd.DataFrame({
+                    'Date': pd.date_range(start=start_date, end=end_date, freq='D'),
+                    'Price': series
+                })
+    train_df['Date'] = pd.to_datetime(train_df['Date'])
+    train_df = train_df.set_index('Date')
+    train_df = train_df.asfreq(pd.infer_freq(train_df.index), method="pad")
+else:
+    train_df = generate_data('2018-01-01', '2021-01-01')
 
 adfuller_test(train_df)
-
-train_df.plot(figsize=(12, 8))
-plt.show()
-
 
 stl = STL(train_df)
 result = stl.fit()
