@@ -2,6 +2,9 @@
 Created on May 18, 2021
 
 @author: zollen
+@url: https://www.statsmodels.org/stable/generated/statsmodels.tsa.statespace.varmax.VARMAX.html
+@url: https://www.statsmodels.org/stable/examples/notebooks/generated/statespace_varmax.html
+@url: https://docs.w3cub.com/statsmodels/examples/notebooks/generated/statespace_varmax
 '''
 
 import pandas_datareader.data as web
@@ -10,7 +13,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-from statsmodels.tsa.api import VAR
+import statsmodels.api as sm
 from sklearn.metrics import mean_squared_error
 from kedro.pipeline import node
 from kedro.pipeline import Pipeline
@@ -34,7 +37,7 @@ TICKER = 'VVL.TO'
 
   
 def get_stock():
-    start_date, end_date = datetime.now().date() - timedelta(weeks=WEEKS_FOR_ANALYSIS), datetime.now().date()
+    start_date, end_date = datetime.now().date() - timedelta(weeks=WEEKS_FOR_ANALYSIS), datetime.now().date() - timedelta(days=1)
     vvl = web.DataReader(TICKER, 'yahoo', start=start_date, end=end_date).Close
     dwi = web.DataReader('^DJI', 'yahoo', start=start_date, end=end_date).Close
     spi = web.DataReader('^GSPTSE', 'yahoo', start=start_date, end=end_date).Close
@@ -134,21 +137,16 @@ analysisNode = node(analysis_data, inputs=["trade_data", "normalize_data"], outp
 
 def train_val(data):
     '''
-    Results for equation Normalize(VVL.TO)
-                    coefficient       std. error           t-stat            prob
-    -----------------------------------------------------------------------------
-    L1.DOW            -0.582504         0.127475           -4.570           0.000
-    L1.TSX             0.248251         0.122756            2.022           0.043
-    L3.VVL.TO         -0.298217         0.131244           -2.272           0.023
-    L10.VVL.TO        -0.254706         0.122933           -2.072           0.038
+   
     '''
     
     test_data = data.iloc[len(data) - TEST_SIZE:]
     train_data = data.iloc[:len(data) - TEST_SIZE]
 
-    model = VAR(train_data)
-    results = model.fit(maxlags=10) # it use maximum of 13 lags for both series
+    model = sm.tsa.VARMAX(train_data, order=(3,3), trend="ct")
+    results = model.fit(maxiter=100, disp=True) 
     print(results.summary())
+    exit()
     
     if False:
         # ACF plots for residuals with 2 / sqrt(T)b bounds
@@ -168,7 +166,7 @@ def train_val(data):
 
 
 
-trainNode = node(train_val, inputs="normalize_data", outputs=None)
+trainNode = node(train_val, inputs="trade_data", outputs=None)
 
 
 # Create a data source
