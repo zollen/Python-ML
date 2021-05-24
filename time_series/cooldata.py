@@ -34,7 +34,7 @@ def generate_data(start, end) -> pd.DataFrame:
     df['Date'] = pd.date_range(start=start, end=end, freq='D')
     df['Price'] = 1 + np.sin(df['Date'].astype('int64') // 1e9 * (4 * np.pi / year))
     df['Price'] = (df['Price'] * 100).round(2)
-    df['Price'] = df['Price'] + np.arange(len(df['Date']))
+    df['Price'] = df['Price'] + np.arange(len(df['Date'])) + np.random.standard_normal(len(df['Date']))
     df['Price'] = df['Price'].astype('float64')
     df['Date'] = df['Date'].apply(lambda d: d.strftime('%Y-%m-%d'))
     df = df.set_index('Date')
