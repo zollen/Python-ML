@@ -34,7 +34,7 @@ def simulate_seasonal_term(periodicity, total_cycles, noise_std=1.,
                            harmonics=None):
     '''
     Consider the problem of modeling time series data with multiple seasonal components 
-    with different periodicities. Let us take the time series yt and decompose it 
+    with different periodicities. Let us take the time series y(t) and decompose it 
     explicitly to have a level component and two seasonal components.
     
     y(t)=μ(t) + γ1(t) + γ2(t)
