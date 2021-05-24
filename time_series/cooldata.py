@@ -110,10 +110,10 @@ if True:
     terms = []
     for ix, _ in enumerate(periodicities):
         s = simulate_seasonal_term(
-            periodicities[ix],
-            duration / periodicities[ix],
-            harmonics=num_harmonics[ix],
-            noise_std=std[ix])
+                periodicities[ix],
+                duration / periodicities[ix],
+                harmonics=num_harmonics[ix],
+                noise_std=std[ix])
         terms.append(s)
     terms.append(np.ones_like(terms[0]) * 10.)
     series = pd.Series(np.sum(terms, axis=0))
