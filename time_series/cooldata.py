@@ -201,9 +201,20 @@ if True:
     plt.ylabel('Price', fontsize=16)
 
 '''
-I suppose to use optimize the find out the optimize seasonal_order
+===================================================================================
+Ljung-Box (L1) (Q):                   1.94   Jarque-Bera (JB):                 0.45
+Prob(Q):                              0.16   Prob(JB):                         0.80
+Heteroskedasticity (H):               1.26   Skew:                            -0.11
+Prob(H) (two-sided):                  0.35   Kurtosis:                         2.94
+===================================================================================
+Prob(JB) is 0.80 (above 0.50), it means this model's resid is following a normal distriubtion
+If Prob(JB) is under 0.05, it means this model's resid is not following a normal distrbution
+In other words, some information still remain in the model's resid
 '''
-
+if False:
+    results.resid.plot()
+    res_df = pd.DataFrame(results.resid,columns=['resid'])
+    print(res_df.sort_values(by='resid',ascending=False).head(5))
 
 
 
