@@ -209,7 +209,7 @@ Prob(H) (two-sided):                  0.35   Kurtosis:                         2
 ===================================================================================
 Prob(JB) is 0.80 (above 0.50), it means this model's resid is following a normal distriubtion
 If Prob(JB) is under 0.05, it means this model's resid is not following a normal distrbution
-In other words, some information still remain in the model's resid
+    In other words, some information still remain in the model's resid
 '''
 if False:
     results.resid.plot()
