@@ -33,7 +33,7 @@ def adfuller_test(series, signif=0.05, reg='c', name='', verbose=False):
     print("P value of reg(%s): %0.4f" % (reg, p_value))
     
     
-def simulate_seasonal_term(periodicity, total_cycles, noise_std=1.,
+def generate_seasonal_data(periodicity, total_cycles, noise_std=1.,
                            harmonics=None):
     '''
     Consider the problem of modeling time series data with multiple seasonal components 
@@ -86,63 +86,45 @@ def simulate_seasonal_term(periodicity, total_cycles, noise_std=1.,
 
     return wanted_series
 
-def myfunc(df):
-    return 1 + np.sin(df.astype('int64') // 1e9 * (4 * np.pi / year))
 
-def generate_data(start, end) -> pd.DataFrame:
-    """ Create a time series x sin wave dataframe. """
-    df = pd.DataFrame(columns=['Date', 'Price'])
-    df['Date'] = pd.date_range(start=start, end=end, freq='D')
-    df['Price'] = myfunc(df['Date'])
-    df['Price'] = (df['Price'] * 100).round(2)
-    df['Price'] = df['Price'] + np.arange(len(df['Date'])) + np.random.standard_normal(len(df['Date']))
-    df['Price'] = df['Price'].astype('float64')
-    df['Date'] = df['Date'].apply(lambda d: d.strftime('%Y-%m-%d'))
-    df = df.set_index('Date')
-    df = df.asfreq(pd.infer_freq(df.index))
+duration = 100 * 3
+periodicities = [10, 100]
+num_harmonics = [3, 2]
+std = np.array([2, 3])
+np.random.seed(8678309)
 
-    return df
+terms = []
+for ix, _ in enumerate(periodicities):
+    s = generate_seasonal_data(
+            periodicities[ix],
+            duration / periodicities[ix],
+            harmonics=num_harmonics[ix],
+            noise_std=std[ix])
+    terms.append(s)
+terms.append(np.ones_like(terms[0]) * 10.)
+series = pd.Series(np.sum(terms, axis=0))
+df = pd.DataFrame(data={'Price': series,
+                        '10(3)': terms[0],
+                        '100(2)': terms[1],
+                        'level':terms[2]})
 
-if True:
-    duration = 100 * 3
-    periodicities = [10, 100]
-    num_harmonics = [3, 2]
-    std = np.array([2, 3])
-    np.random.seed(8678309)
-    
-    terms = []
-    for ix, _ in enumerate(periodicities):
-        s = simulate_seasonal_term(
-                periodicities[ix],
-                duration / periodicities[ix],
-                harmonics=num_harmonics[ix],
-                noise_std=std[ix])
-        terms.append(s)
-    terms.append(np.ones_like(terms[0]) * 10.)
-    series = pd.Series(np.sum(terms, axis=0))
-    df = pd.DataFrame(data={'Price': series,
-                            '10(3)': terms[0],
-                            '100(2)': terms[1],
-                            'level':terms[2]})
+if False:    
+    h1, = plt.plot(df['Price'])
+    h2, = plt.plot(df['10(3)'])
+    h3, = plt.plot(df['100(2)'])
+    h4, = plt.plot(df['level'])
+    plt.legend(['total','10(3)','100(2)', 'level'])
 
-    if False:    
-        h1, = plt.plot(df['Price'])
-        h2, = plt.plot(df['10(3)'])
-        h3, = plt.plot(df['100(2)'])
-        h4, = plt.plot(df['level'])
-        plt.legend(['total','10(3)','100(2)', 'level'])
+start_date = datetime.now()
+end_date = start_date + timedelta(days=len(series) - 1)
+train_df = pd.DataFrame({
+                'Date': pd.date_range(start=start_date, end=end_date, freq='D'),
+                'Price': series
+            })
+train_df['Date'] = pd.to_datetime(train_df['Date'])
+train_df = train_df.set_index('Date')
+train_df = train_df.asfreq(pd.infer_freq(train_df.index), method="pad")
 
-    start_date = datetime.now()
-    end_date = start_date + timedelta(days=len(series) - 1)
-    train_df = pd.DataFrame({
-                    'Date': pd.date_range(start=start_date, end=end_date, freq='D'),
-                    'Price': series
-                })
-    train_df['Date'] = pd.to_datetime(train_df['Date'])
-    train_df = train_df.set_index('Date')
-    train_df = train_df.asfreq(pd.infer_freq(train_df.index), method="pad")
-else:
-    train_df = generate_data('2018-01-01', '2021-01-01')
 
 adfuller_test(train_df)
 firstdiff = train_df['Price'].diff()
