@@ -152,6 +152,12 @@ def undo_transformations(predictions, series, mu, sigma):
     first_pred = sigma*np.log(predictions[0] + np.exp((series.iloc[-1]-mu)/sigma)) + mu
     orig_predictions = [first_pred]
     
+    '''
+    if we have more than 1 lag to calculate, we need the following loop to calculate the
+    predicted values, because the predicted value depends on the last lag of the
+    predicted value v(t-4) -> v(t-3) -> v(t-2) -> v(t-1)
+    '''
+    
     for i in range(len(predictions[1:])):
         next_pred = sigma*np.log(predictions[i+1] + np.exp((orig_predictions[-1]-mu)/sigma)) + mu
         orig_predictions.append(next_pred)
