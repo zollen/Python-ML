@@ -47,9 +47,14 @@ Normalize: (v(t) -> n(t)): (v(t) - mean) / std
 Exponentiate (n(t) -> e(t)): e(t) = e^(n(t))   <-- convert exponenal into straight line
 First Difference(e(t) -> d(t)): d(t) = e(t) - e(t-1)
 
-Final Equation for Conversion
+Final Equation for Conversion v(t) -> d(t)
 d(t) = e^((v(t) - mean)/std) - e^((v(t-1) - mean)/std)
+
+Equation for reverse Conversion d(t+1) -> v(t+1)
+v(t+1) = std ln(d(t+1) + e^((v(t)-mean)/std)) + mean
 '''
+    
+    
     
 '''
 Normalize
