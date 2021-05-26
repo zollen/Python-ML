@@ -170,6 +170,9 @@ if True:
     plt.plot(np.arange(len(ts)+1, len(ts)+4), orig_preds, color='g')
     plt.fill_between(np.arange(len(ts)+1, len(ts)+4), orig_lower_bound, orig_upper_bound, color='g', alpha=0.1)
     
+    '''
+    Good example of customize xtick,xlim and ytick,ylim
+    '''
     plt.figure(figsize=(10,4))
     plt.plot(ts)
     
