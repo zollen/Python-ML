@@ -183,6 +183,7 @@ if True:
     
     '''
     Good example of customize xtick,xlim and ytick,ylim
+    let's zoom in!!!
     '''
     plt.figure(figsize=(10,4))
     plt.plot(ts)
