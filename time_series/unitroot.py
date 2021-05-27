@@ -2,6 +2,7 @@
 Created on May 26, 2021
 
 @author: zollen
+@url: https://www.youtube.com/watch?v=1opjnegd_hA&list=PLvcbYUQ5t0UHOLnBzl46_Q6QKtFgfMGc3&index=7
 '''
 import matplotlib.pyplot as plt
 import numpy as np

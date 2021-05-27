@@ -2,6 +2,7 @@
 Created on May 26, 2021
 
 @author: zollen
+@url: https://www.youtube.com/watch?v=McEN54l3EPU&list=PLvcbYUQ5t0UHOLnBzl46_Q6QKtFgfMGc3&index=35
 '''
 
 import pandas as pd
