@@ -61,7 +61,8 @@ X, y = make_classification(
 X_train, X_valid, X_test = X[:5000], X[5000:10000], X[10000:]
 y_train, y_valid, y_test = y[:5000], y[5000:10000], y[10000:]
 
-model = RandomForestClassifier(n_estimators=1000)
+# pretending an average learner with un-calibrated probabilities
+model = RandomForestClassifier()
 model.fit(X_train, y_train)
 
 proba_valid = model.predict_proba(X_valid)
@@ -74,7 +75,7 @@ y_means, proba_means = calibration_curve(y_valid,
 plt.plot([0, 1], [0, 1], linestyle = '--')
 plt.plot(proba_means, y_means) 
 
-show_score(y_valid, model.predict(X_valid))
+show_score(y_test, model.predict(X_test))
 print("ECE(Random Forest): %0.4f" % expected_calibration_error(y_means, proba_means))
 
 
@@ -127,12 +128,12 @@ At this point we have three options for predicting probabilties
 2. Random Forest + QuadraticDiscriminantAnalysis
 3. Random Forest + Logistic Regression
 
-RF  : Accuracy: 0.91    Precision: 1.00    Recall: 0.15    AUC: 0.58    Loss: 3.10
-RF+Q: Accuracy: 0.95    Precision: 0.84    Recall: 0.63    AUC: 0.81    Loss: 1.78
-RF+L: Accuracy: 0.95    Precision: 0.88    Recall: 0.60    AUC: 0.80    Loss: 1.75
-ECE(Random Forest)                                : 0.0825
-ECE(Random Forest + QuadraticDiscriminantAnalysis): 0.0340
-ECE(Random Forest + Logistic Regression)          : 0.0101
+RF  : Accuracy: 0.91    Precision: 1.00    Recall: 0.16    AUC: 0.58    Loss: 3.08
+RF+Q: Accuracy: 0.86    Precision: 0.41    Recall: 0.85    AUC: 0.85    Loss: 4.98
+RF+L: Accuracy: 0.95    Precision: 0.89    Recall: 0.56    AUC: 0.78    Loss: 1.87
+ECE(Random Forest)                                : 0.0723
+ECE(Random Forest + QuadraticDiscriminantAnalysis): 0.2755
+ECE(Random Forest + Logistic Regression)          : 0.0085
 
 Random Forest + Logistic Regression has the least calibration error
 '''
