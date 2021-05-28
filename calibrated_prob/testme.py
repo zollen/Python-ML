@@ -9,9 +9,13 @@ import numpy as np
 from sklearn.datasets import make_classification
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.isotonic import IsotonicRegression
-from sklearn.model_selection import train_test_split
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from sklearn.calibration import calibration_curve
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import log_loss
 import matplotlib.pyplot as plt
 import seaborn as sb
 import warnings
@@ -19,6 +23,19 @@ import warnings
 
 warnings.filterwarnings("ignore")
 sb.set_style('whitegrid')
+
+def score_model(observed, predicted):
+    accuracy = accuracy_score(observed, predicted)
+    precision = precision_score(observed, predicted)
+    recall = recall_score(observed, predicted)
+    auc = roc_auc_score(observed, predicted)
+    loss = log_loss(observed, predicted)
+    
+    return accuracy, precision, recall, auc, loss
+    
+def show_score (observed, predicted):
+    print("Accuracy: %0.2f    Precision: %0.2f    Recall: %0.2f    AUC: %0.2f    Loss: %0.2f" %
+           (score_model(observed, predicted)))
 
 def expected_calibration_error(y, proba, bins = 'fd'):
     bin_count, bin_edges = np.histogram(proba, bins = bins)
@@ -44,19 +61,21 @@ X, y = make_classification(
 X_train, X_valid, X_test = X[:5000], X[5000:10000], X[10000:]
 y_train, y_valid, y_test = y[:5000], y[5000:10000], y[10000:]
 
-
-
 model = RandomForestClassifier(n_estimators=1000)
 model.fit(X_train, y_train)
 
-proba_valid = model.predict_proba(X_valid)[:, 1]
+proba_valid = model.predict_proba(X_valid)
 
 nbins = 10
-y_means, proba_means = calibration_curve(y_valid, proba_valid, n_bins=nbins, strategy='quantile')
+y_means, proba_means = calibration_curve(y_valid, 
+                                         proba_valid[:, 1], 
+                                         n_bins=nbins, strategy='quantile')
 
 plt.plot([0, 1], [0, 1], linestyle = '--')
 plt.plot(proba_means, y_means) 
-print("Random Forest %0.4f" % expected_calibration_error(y_means, proba_means))
+
+show_score(y_valid, model.predict(X_valid))
+print("ECE(Random Forest): %0.4f" % expected_calibration_error(y_means, proba_means))
 
 
 
@@ -68,44 +87,53 @@ Note: Calibration should *not* be carried out on the same data that has been use
         training the first classifier.
 '''
 
-
+test_probs = model.predict_proba(X_test)
 
 '''
 Approach #1
-Isotonic Regression
+QuadraticDiscriminantAnalysis
 '''
-iso_reg = IsotonicRegression(y_min = 0, y_max = 1, out_of_bounds = 'clip').fit(proba_valid, y_valid)
-iso_probs = iso_reg.predict(model.predict_proba(X_test)[:, 1])
-y_means, proba_means = calibration_curve(y_test, iso_probs, n_bins=nbins, strategy='quantile')
+iso_model = QuadraticDiscriminantAnalysis().fit(proba_valid, y_valid)
+iso_probs = iso_model.predict_proba(test_probs)
+y_means, proba_means = calibration_curve(y_test, 
+                                        iso_probs[:, 1], 
+                                        n_bins=nbins, strategy='quantile')
 plt.plot(proba_means, y_means) 
-print("Random Forest + Isotonic Regression %0.4f" % expected_calibration_error(y_means, proba_means))
+show_score(y_test, iso_model.predict(test_probs))
+print("ECE(Random Forest + QuadraticDiscriminantAnalysis): %0.4f" % expected_calibration_error(y_means, proba_means))
 
 '''
 Approach #2
 Logistic Regression
 '''
-log_reg = LogisticRegression().fit(proba_valid.reshape(-1, 1), y_valid)
-log_probs = log_reg.predict_proba(model.predict_proba(X_test)[:, 1].reshape(-1, 1))[:, 1]
-y_means, proba_means = calibration_curve(y_test, log_probs, n_bins=nbins, strategy='quantile')
+log_model = LogisticRegression().fit(proba_valid, y_valid)
+log_probs = log_model.predict_proba(test_probs)
+y_means, proba_means = calibration_curve(y_test, 
+                                         log_probs[:, 1], 
+                                         n_bins=nbins, strategy='quantile')
 plt.plot(proba_means, y_means) 
-print("Random Forest + Logistic Regression %0.4f" % expected_calibration_error(y_means, proba_means))
+show_score(y_test, log_model.predict(test_probs))
+print("ECE(Random Forest + Logistic Regression): %0.4f" % expected_calibration_error(y_means, proba_means))
 
 
 plt.legend(
-    labels = ('Perfect calibration', 'Random Forest', 'Random Forest + Isotonic', 'Random Forest + Logistic'), 
+    labels = ('Perfect calibration', 'Random Forest', 'Random Forest + QuadraticDiscriminantAnalysis', 'Random Forest + Logistic Regression'), 
     loc = 'lower right')
    
 plt.show()   
 '''
 At this point we have three options for predicting probabilties
 1. Random Forest
-2. Random Forest + isotinic Regresion
+2. Random Forest + QuadraticDiscriminantAnalysis
 3. Random Forest + Logistic Regression
 
-Random Forest 0.0838
-Random Forest + Isotonic Regression 0.0075
-Random Forest + Logistic Regression 0.0191
+RF  : Accuracy: 0.91    Precision: 1.00    Recall: 0.15    AUC: 0.58    Loss: 3.10
+RF+Q: Accuracy: 0.95    Precision: 0.84    Recall: 0.63    AUC: 0.81    Loss: 1.78
+RF+L: Accuracy: 0.95    Precision: 0.88    Recall: 0.60    AUC: 0.80    Loss: 1.75
+ECE(Random Forest)                                : 0.0825
+ECE(Random Forest + QuadraticDiscriminantAnalysis): 0.0340
+ECE(Random Forest + Logistic Regression)          : 0.0101
 
-Random Forest + Isotonic Regression has the least calibration error
+Random Forest + Logistic Regression has the least calibration error
 '''
 
