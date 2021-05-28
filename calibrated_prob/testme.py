@@ -6,7 +6,7 @@ Created on May 27, 2021
 '''
 
 import numpy as np
-import pandas as pd
+from sklearn.datasets import make_classification
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.isotonic import IsotonicRegression
@@ -33,29 +33,26 @@ def expected_calibration_error(y, proba, bins = 'fd'):
     return ece
 
 
-data = pd.read_csv("../data/pima-indians-diabetes.csv")
-
-feature_df = data[['preg', 'plas', 'pres', 'skin', 'test', 'mass', 'pedi', 'age']]
-label_df = data['class']
-
-feature1_df = feature_df.iloc[:len(feature_df) // 2]
-label1_df = label_df.iloc[:len(feature_df) // 2]
-
-
-feature2_df = feature_df.iloc[len(feature_df) // 2:]
-label2_df = label_df.iloc[len(feature_df) // 2:]
-
+X, y = make_classification(
+            n_samples = 15000, 
+            n_features = 50, 
+            n_informative = 30, 
+            n_redundant = 20,
+            weights = [.9, .1],
+            random_state = 0
+        )
+X_train, X_valid, X_test = X[:5000], X[5000:10000], X[10000:]
+y_train, y_valid, y_test = y[:5000], y[5000:10000], y[10000:]
 
 
-X_train, X_test, y_train, y_test = train_test_split(feature1_df, label1_df, test_size=0.3, random_state=0)
 
 model = RandomForestClassifier(n_estimators=1000)
 model.fit(X_train, y_train)
 
-probs = model.predict_proba(X_test)[:, 1]
+proba_valid = model.predict_proba(X_valid)[:, 1]
 
 nbins = 10
-y_means, proba_means = calibration_curve(y_test.values, probs, n_bins=nbins, strategy='quantile')
+y_means, proba_means = calibration_curve(y_valid, proba_valid, n_bins=nbins, strategy='quantile')
 
 plt.plot([0, 1], [0, 1], linestyle = '--')
 plt.plot(proba_means, y_means) 
@@ -71,15 +68,15 @@ Note: Calibration should *not* be carried out on the same data that has been use
         training the first classifier.
 '''
 
-X_train, X_test, y_train, y_test = train_test_split(feature2_df, label2_df, test_size=0.3, random_state=0)
+
 
 '''
 Approach #1
 Isotonic Regression
 '''
-iso_reg = IsotonicRegression(y_min = 0, y_max = 1, out_of_bounds = 'clip').fit(probs, y_test.values)
+iso_reg = IsotonicRegression(y_min = 0, y_max = 1, out_of_bounds = 'clip').fit(proba_valid, y_valid)
 iso_probs = iso_reg.predict(model.predict_proba(X_test)[:, 1])
-y_means, proba_means = calibration_curve(y_test.values, iso_probs, n_bins=nbins, strategy='quantile')
+y_means, proba_means = calibration_curve(y_test, iso_probs, n_bins=nbins, strategy='quantile')
 plt.plot(proba_means, y_means) 
 print("Random Forest + Isotonic Regression %0.4f" % expected_calibration_error(y_means, proba_means))
 
@@ -87,9 +84,9 @@ print("Random Forest + Isotonic Regression %0.4f" % expected_calibration_error(y
 Approach #2
 Logistic Regression
 '''
-log_reg = LogisticRegression().fit(probs.reshape(-1, 1), y_test.values)
+log_reg = LogisticRegression().fit(proba_valid.reshape(-1, 1), y_valid)
 log_probs = log_reg.predict_proba(model.predict_proba(X_test)[:, 1].reshape(-1, 1))[:, 1]
-y_means, proba_means = calibration_curve(y_test.values, log_probs, n_bins=nbins, strategy='quantile')
+y_means, proba_means = calibration_curve(y_test, log_probs, n_bins=nbins, strategy='quantile')
 plt.plot(proba_means, y_means) 
 print("Random Forest + Logistic Regression %0.4f" % expected_calibration_error(y_means, proba_means))
 
@@ -105,9 +102,9 @@ At this point we have three options for predicting probabilties
 2. Random Forest + isotinic Regresion
 3. Random Forest + Logistic Regression
 
-Random Forest 0.0532
-Random Forest + Isotonic Regression 0.0286
-Random Forest + Logistic Regression 0.1810
+Random Forest 0.0838
+Random Forest + Isotonic Regression 0.0075
+Random Forest + Logistic Regression 0.0191
 
 Random Forest + Isotonic Regression has the least calibration error
 '''
