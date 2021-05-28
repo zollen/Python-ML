@@ -39,5 +39,5 @@ print(proba_means)
 
 plt.plot([0, 1], [0, 1], linestyle = '--')
 plt.plot(proba_means, y_means)
-plt.legend(labels = ('Perfect calibration', 'Logistic'), loc = 'lower right')
+plt.legend(labels = ('Perfect calibration', 'Logistic Regression'), loc = 'lower right')
 plt.show()
