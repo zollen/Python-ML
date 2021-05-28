@@ -37,6 +37,7 @@ y_means, proba_means = calibration_curve(y_test.values, probs, n_bins=nbins, str
 print(y_means)
 print(proba_means)
 
-plt.plot([0, 1], [0, 1], linestyle = '--', label = 'Perfect calibration')
+plt.plot([0, 1], [0, 1], linestyle = '--')
 plt.plot(proba_means, y_means)
+plt.legend(labels = ('Perfect calibration', 'Logistic'), loc = 'lower right')
 plt.show()
