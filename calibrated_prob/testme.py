@@ -78,8 +78,8 @@ Approach #1
 Isotonic Regression
 '''
 iso_reg = IsotonicRegression(y_min = 0, y_max = 1, out_of_bounds = 'clip').fit(probs, y_test.values)
-probs = iso_reg.predict(model.predict_proba(X_test)[:, 1])
-y_means, proba_means = calibration_curve(y_test.values, probs, n_bins=nbins, strategy='quantile')
+iso_probs = iso_reg.predict(model.predict_proba(X_test)[:, 1])
+y_means, proba_means = calibration_curve(y_test.values, iso_probs, n_bins=nbins, strategy='quantile')
 plt.plot(proba_means, y_means) 
 print("Random Forest + Isotonic Regression %0.4f" % expected_calibration_error(y_means, proba_means))
 
@@ -88,8 +88,8 @@ Approach #2
 Logistic Regression
 '''
 log_reg = LogisticRegression().fit(probs.reshape(-1, 1), y_test.values)
-probs = log_reg.predict_proba(model.predict_proba(X_test)[:, 1].reshape(-1, 1))[:, 1]
-y_means, proba_means = calibration_curve(y_test.values, probs, n_bins=nbins, strategy='quantile')
+log_probs = log_reg.predict_proba(model.predict_proba(X_test)[:, 1].reshape(-1, 1))[:, 1]
+y_means, proba_means = calibration_curve(y_test.values, log_probs, n_bins=nbins, strategy='quantile')
 plt.plot(proba_means, y_means) 
 print("Random Forest + Logistic Regression %0.4f" % expected_calibration_error(y_means, proba_means))
 
@@ -105,9 +105,9 @@ At this point we have three options for predicting probabilties
 2. Random Forest + isotinic Regresion
 3. Random Forest + Logistic Regression
 
-Random Forest 0.0536
-Random Forest + Isotonic Regression 0.0458
-Random Forest + Logistic Regression 0.1165
+Random Forest 0.0532
+Random Forest + Isotonic Regression 0.0286
+Random Forest + Logistic Regression 0.1810
 
 Random Forest + Isotonic Regression has the least calibration error
 '''
