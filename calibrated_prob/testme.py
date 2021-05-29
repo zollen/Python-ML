@@ -95,9 +95,8 @@ Approach #1
 QuadraticDiscriminantAnalysis
 '''
 iso_model = QuadraticDiscriminantAnalysis().fit(proba_valid, y_valid)
-iso_probs = iso_model.predict_proba(test_probs)
 y_means, proba_means = calibration_curve(y_test, 
-                                        iso_probs[:, 1], 
+                                        iso_model.predict_proba(test_probs)[:, 1], 
                                         n_bins=nbins, strategy='quantile')
 plt.plot(proba_means, y_means) 
 show_score(y_test, iso_model.predict(test_probs))
@@ -108,9 +107,8 @@ Approach #2
 Logistic Regression
 '''
 log_model = LogisticRegression().fit(proba_valid, y_valid)
-log_probs = log_model.predict_proba(test_probs)
 y_means, proba_means = calibration_curve(y_test, 
-                                         log_probs[:, 1], 
+                                         log_model.predict_proba(test_probs)[:, 1], 
                                          n_bins=nbins, strategy='quantile')
 plt.plot(proba_means, y_means) 
 show_score(y_test, log_model.predict(test_probs))
