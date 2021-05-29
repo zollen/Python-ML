@@ -117,7 +117,7 @@ print("ECE(Random Forest + Logistic Regression): %0.4f" % expected_calibration_e
 
 plt.legend(
     labels = ('Perfect calibration', 'Random Forest', 'Random Forest + QuadraticDiscriminantAnalysis', 'Random Forest + Logistic Regression'), 
-    loc = 'lower right')
+    loc = 'upper left')
    
 plt.show()   
 '''
