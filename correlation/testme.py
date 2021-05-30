@@ -57,8 +57,8 @@ ax[0].axis([150, 210, 30, 125])
 
 sb.set(rc={'figure.figsize':(10, 6)})
 sb.regplot(x="Height", y="Weight", data=olymp[['Height', 'Weight']], 
-           marker='.', fit_reg = False, x_jitter = 0.2, y_jitter = 0.2, 
-           scatter_kws = {'alpha' : 1/3}, ax=ax[1])
+           marker='.', fit_reg = False, x_jitter = 0.6, y_jitter = 0.2, 
+           scatter_kws = {'alpha' : 0.02}, ax=ax[1])
 
 
 
