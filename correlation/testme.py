@@ -32,7 +32,7 @@ olymp = pd.read_csv('../data/athlete_events.csv',
 print(olymp.head())
 print(olymp.info())
 
-fig, ax = plt.subplots(figsize=(10,6))
+fig, ax = plt.subplots(2, 1, figsize=(10,6))
 
 # Jitter the height
 height_jitter = olymp['Height'] + np.random.normal(0, 2, size=len(olymp))
@@ -40,7 +40,7 @@ height_jitter = olymp['Height'] + np.random.normal(0, 2, size=len(olymp))
 weight_jitter = olymp['Weight'] + np.random.normal(0, 1, size=len(olymp))
 
 # Create the scatterplot
-ax.plot(height_jitter, 
+ax[0].plot(height_jitter, 
         weight_jitter, 
         marker='.', # plot as dots
         linestyle='',
@@ -48,11 +48,19 @@ ax.plot(height_jitter,
         markersize=3) # remove line
 
 # Labeling
-ax.set(title='Height vs. Weight of Olympic Athletes',
+ax[0].set(title='Height vs. Weight of Olympic Athletes',
       xlabel='Height (cm)', ylabel='Weight (kg)')
 
 # Zoom in
-ax.axis([150, 210, 30, 125])
+ax[0].axis([150, 210, 30, 125])
+
+
+sb.set(rc={'figure.figsize':(10, 6)})
+sb.regplot(x="Height", y="Weight", data=olymp[['Height', 'Weight']], 
+           marker='.', fit_reg = False, x_jitter = 0.2, y_jitter = 0.2, 
+           scatter_kws = {'alpha' : 1/3}, ax=ax[1])
+
+
 
 
 '''
@@ -88,4 +96,4 @@ about the coefficients before you move on. One of the common pitfalls of correla
 that if you compare two variables that do not have a linear relationship, you will get 
 a coefficient very close to 0.
 '''
-plt.show();
+plt.show()
