@@ -104,7 +104,7 @@ def analysis_data(trade_data):
         a1.set_ylabel('NORMALIZE(VVL.TO)', fontsize=8)
         plot_pacf(trade_data['VVL.TO'], ax=a1, title="PACF Analysis of VVL.TO")
         
-    if True:
+    if False:
         stl = STL(trade_data['VVL.TO'])
         result = stl.fit()
         
@@ -174,8 +174,8 @@ def optimize_model(trade_data):
                     mses_t.append(mean_squared_error(X_test['VVL.TO'].iloc[:-1], pred.predicted_mean[1:])) 
                 
                 params.append(param)
-                aics.append(np.sum(aics_t) / TIME_SPLITS_CV)
-                mses.append(np.sum(mses_t) / TIME_SPLITS_CV)  
+                aics.append(np.sum(aics_t) / len(aics_t))
+                mses.append(np.sum(mses_t) / len(mses_t))  
                 
             except:
                 continue
