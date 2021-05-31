@@ -92,10 +92,11 @@ def analysis_data(trade_data):
     trade_data['DOW'] = trade_data['DOW'].diff()
     trade_data['TSX'] = trade_data['TSX'].diff()
     trade_data.dropna(inplace = True)
-        
-    perform_adf_test(trade_data['VVL.TO'])
-    perform_adf_test(trade_data['DOW'])
-    perform_adf_test(trade_data['TSX'])
+     
+    if False:   
+        perform_adf_test(trade_data['VVL.TO'])
+        perform_adf_test(trade_data['DOW'])
+        perform_adf_test(trade_data['TSX'])
     
     
     if False:
