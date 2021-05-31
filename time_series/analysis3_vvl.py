@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 import itertools
-import statsmodels.api as sm
+from statsmodels.tsa.seasonal import STL
 import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_pacf
 from sklearn.model_selection import TimeSeriesSplit
@@ -103,6 +103,32 @@ def analysis_data(trade_data):
         _, a1 = plt.subplots(1, 1)
         a1.set_ylabel('NORMALIZE(VVL.TO)', fontsize=8)
         plot_pacf(trade_data['VVL.TO'], ax=a1, title="PACF Analysis of VVL.TO")
+        
+    if True:
+        stl = STL(trade_data['VVL.TO'])
+        result = stl.fit()
+        
+        seasonal, trend, resid = result.seasonal, result.trend, result.resid
+        
+        plt.figure(figsize=(8,6))
+        
+        plt.subplot(4,1,1)
+        plt.plot(trade_data['VVL.TO'])
+        plt.title('Original Series', fontsize=16)
+        
+        plt.subplot(4,1,2)
+        plt.plot(trend)
+        plt.title('Trend', fontsize=16)
+        
+        plt.subplot(4,1,3)
+        plt.plot(seasonal)
+        plt.title('Seasonal', fontsize=16)
+        
+        plt.subplot(4,1,4)
+        plt.plot(resid)
+        plt.title('Residual', fontsize=16)
+        
+        plt.tight_layout()
 
     
     
