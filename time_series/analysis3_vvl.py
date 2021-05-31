@@ -163,8 +163,11 @@ def optimize_model(trade_data):
         print('best_param_mse:', bestparam, ' mse:', min(mses))
         
         '''
-        best_param_aic: (2, 1, 2)  aic: 30.706256895869064
-        best_param_mse: (2, 1, 2)  mse: 0.14321048365277564
+        best_param_aic: (2, 1, 2)(0, 0, 0, 0)  aic: 30.706256895869064
+        best_param_mse: (2, 1, 2)(0, 0, 0, 0)  mse: 0.14321048365277564
+        
+        best_param_aic: (3, 1, 5)(2, 1, 2, 12)  aic: 557.9136442544652
+        best_param_mse: (4, 1, 5)(2, 1, 2, 12)  mse: 0.15319565381354142
         '''
 
 optimizeNode = node(optimize_model, inputs=["trade_data"], outputs=None)
@@ -178,7 +181,7 @@ def test_model(trade_data):
     X_test = trade_data.iloc[-TEST_SIZE:]
     
     model = SARIMAX(X_train['VVL.TO'],
-                    order=(2, 1, 2),
+                    order=(4, 1, 5),
                     seasonal_order=(2, 1, 2, 12),
                     enforce_stationarity=False,
                     enforce_invertibility=False)
@@ -207,8 +210,8 @@ data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 pipeline = Pipeline([ 
                         getStockNode,
                         analysisNode,
-                        optimizeNode,
-                    #   testNode
+                    #   optimizeNode,
+                        testNode
                     ])
 
 # Create a "runner" to run the "pipeline"
