@@ -31,8 +31,9 @@ pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 
 SHOW_GRAPHS = False
-WEEKS_FOR_ANALYSIS = 54
-PREDICTION_SIZE = 14
+WEEKS_FOR_ANALYSIS = 72
+TRAIN_SIZE=2120
+TEST_SIZE = 14
 TIME_SPLITS_CV = 6
 TICKER = 'VVL.TO'
 
@@ -62,6 +63,7 @@ def get_stock():
     prices['TSX'] = prices['TSX'].astype('float64')
     
     prices['DOW'] = prices['DOW'].fillna(method='ffill', axis=0)
+    
   
     return prices
 
@@ -116,8 +118,8 @@ def optimize_model(trade_data):
         aics = []
         mses = []
         
-        p = [0, 1, 2, 3, 4, 5, 6, 7]
-        q = [0, 1, 2, 3, 4, 5, 6, 7]
+        p = [0, 1, 2, 3, 4, 5]
+        q = [0, 1, 2, 3, 4, 5]
         pdq = list(itertools.product(p, [1], q))
         pdq.remove((0,1,0))
        
@@ -125,7 +127,7 @@ def optimize_model(trade_data):
         
             try:
                 
-                tscv = TimeSeriesSplit(n_splits=TIME_SPLITS_CV, max_train_size=120, test_size=14)
+                tscv = TimeSeriesSplit(n_splits=TIME_SPLITS_CV, max_train_size=TRAIN_SIZE, test_size=TEST_SIZE)
                 aics_t = []
                 mses_t = []
                 for train_index, test_index in tscv.split(trade_data):
@@ -134,7 +136,7 @@ def optimize_model(trade_data):
                     
                     model = SARIMAX(X_train['VVL.TO'],
                                     order=param,
-                                    seasonal_order=(0, 0, 0, 0),
+                                    seasonal_order=(2, 1, 2, 12),
                                     enforce_stationarity=False,
                                     enforce_invertibility=False)
                     results = model.fit() 
@@ -169,6 +171,35 @@ optimizeNode = node(optimize_model, inputs=["trade_data"], outputs=None)
 
 
 
+def test_model(trade_data):
+    
+    G_train = trade_data.iloc[-(TEST_SIZE)*2:]
+    X_train = trade_data.iloc[-TRAIN_SIZE-TEST_SIZE:-TEST_SIZE]
+    X_test = trade_data.iloc[-TEST_SIZE:]
+    
+    model = SARIMAX(X_train['VVL.TO'],
+                    order=(2, 1, 2),
+                    seasonal_order=(2, 1, 2, 12),
+                    enforce_stationarity=False,
+                    enforce_invertibility=False)
+    results = model.fit() 
+    
+    preds = results.get_prediction(start = X_test.index[0],
+                                   end = X_test.index[-1] + timedelta(days = 1))
+    
+    if True:
+        plt.figure(figsize=(10,4))
+        plt.plot(G_train['VVL.TO'])
+        plt.plot(X_test.index, preds.predicted_mean[1:])
+        plt.legend(('Data', 'Predictions'), fontsize=16)
+        plt.title("Price vs Prediction", fontsize=20)
+        plt.ylabel('Price', fontsize=16) 
+                
+    
+    
+
+testNode = node(test_model, inputs=["trade_data"], outputs=None)
+
 # Create a data source
 data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 
@@ -176,7 +207,8 @@ data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 pipeline = Pipeline([ 
                         getStockNode,
                         analysisNode,
-                        optimizeNode
+                        optimizeNode,
+                    #   testNode
                     ])
 
 # Create a "runner" to run the "pipeline"
