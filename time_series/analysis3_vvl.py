@@ -201,20 +201,28 @@ optimizeNode = node(optimize_model, inputs=["trade_data"], outputs=None)
 
 
 def test_model(trade_data):
+    '''
+    (2, 1, 2)(2, 1, 2, 3): 0.0785
+    (2, 1, 2)(2, 1, 2, 4): 0.1442
+    (3, 1, 3)(2, 1, 2, 4): 0.1391
+    (3, 1, 3)(1, 1, 1, 4): 0.1391
+    '''
     
     G_train = trade_data.iloc[-(TEST_SIZE)*2:]
     X_train = trade_data.iloc[-TRAIN_SIZE-TEST_SIZE:-TEST_SIZE]
     X_test = trade_data.iloc[-TEST_SIZE:]
     
     model = SARIMAX(X_train['VVL.TO'],
-                    order=(4, 1, 5),
-                    seasonal_order=(2, 1, 2, 12),
+                    order=(2, 1, 2),
+                    seasonal_order=(2, 1, 2, 3),
                     enforce_stationarity=False,
                     enforce_invertibility=False)
     results = model.fit() 
     
     preds = results.get_prediction(start = X_test.index[0],
                                    end = X_test.index[-1] + timedelta(days = 1))
+    
+    print("RMSE: %0.4f" % mean_squared_error(X_test['VVL.TO'], preds.predicted_mean[1:]))
     
     if True:
         plt.figure(figsize=(10,4))
