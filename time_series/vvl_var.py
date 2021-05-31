@@ -45,8 +45,8 @@ def get_stock():
       
     prices = pd.DataFrame({'Date' : vvl.index, 
                            'VVL.TO' : vvl.values, 
-                           'DOW': dwi.values,
-                           'TSX': spi.values })
+                           'DOW': dwi[vvl.index].values,
+                           'TSX': spi[vvl.index].values })
     
     prices['Date'] = pd.to_datetime(prices['Date'])
     prices = prices.set_index('Date')
