@@ -145,41 +145,53 @@ def optimize_model(trade_data):
         aics = []
         mses = []
         
-        p = [0, 1, 2, 3, 4, 5]
-        q = [0, 1, 2, 3, 4, 5]
+        p = [0, 1, 2, 3, 4]
+        q = [0, 1, 2, 3, 4]
+        pp = [ 0, 1, 2, 3, 4 ]
+        qq = [ 0, 1, 2, 3, 4 ]
+        ss = [ 1, 2, 3, 4, 5 ]
         pdq = list(itertools.product(p, [1], q))
+        spqd = list(itertools.product(pp, [1], qq, ss))
         pdq.remove((0,1,0))
+        
+        total = len(pdq) * len(spqd)
+        count = 0
        
         for param in pdq:
+            
+            for sparam in spqd:
         
-            try:
-                
-                tscv = TimeSeriesSplit(n_splits=TIME_SPLITS_CV, max_train_size=TRAIN_SIZE, test_size=TEST_SIZE)
-                aics_t = []
-                mses_t = []
-                for train_index, test_index in tscv.split(trade_data):
+                try:
                     
-                    X_train, X_test = trade_data.iloc[train_index], trade_data.iloc[test_index]
+                    count += 1
+                    print("PROGRESS: ", ( 1 / total) * 100, "%")
                     
-                    model = SARIMAX(X_train['VVL.TO'],
-                                    order=param,
-                                    seasonal_order=(2, 1, 2, 12),
-                                    enforce_stationarity=False,
-                                    enforce_invertibility=False)
-                    results = model.fit() 
+                    tscv = TimeSeriesSplit(n_splits=TIME_SPLITS_CV, max_train_size=TRAIN_SIZE, test_size=TEST_SIZE)
+                    aics_t = []
+                    mses_t = []
+                    for train_index, test_index in tscv.split(trade_data):
+                        
+                        X_train, X_test = trade_data.iloc[train_index], trade_data.iloc[test_index]
+                        
+                        model = SARIMAX(X_train['VVL.TO'],
+                                        order=param,
+                                        seasonal_order=sparam,
+                                        enforce_stationarity=False,
+                                        enforce_invertibility=False)
+                        results = model.fit() 
+                        
+                        pred = results.get_prediction(start = X_test.index[0],
+                                                      end = X_test.index[-1])
+        
+                        aics_t.append(results.aic)
+                        mses_t.append(mean_squared_error(X_test['VVL.TO'].iloc[:-1], pred.predicted_mean[1:])) 
                     
-                    pred = results.get_prediction(start = X_test.index[0],
-                                                  end = X_test.index[-1])
-    
-                    aics_t.append(results.aic)
-                    mses_t.append(mean_squared_error(X_test['VVL.TO'].iloc[:-1], pred.predicted_mean[1:])) 
-                
-                params.append(param)
-                aics.append(np.sum(aics_t) / len(aics_t))
-                mses.append(np.sum(mses_t) / len(mses_t))  
-                
-            except:
-                continue
+                    params.append(param)
+                    aics.append(np.sum(aics_t) / len(aics_t))
+                    mses.append(np.sum(mses_t) / len(mses_t))  
+                    
+                except:
+                    continue
                 
                 
         min_ind = aics.index(min(aics)) 
