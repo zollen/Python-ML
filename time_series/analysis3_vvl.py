@@ -226,7 +226,7 @@ def test_model(trade_data):
     X_test = trade_data.iloc[-TEST_SIZE:]
     
     model = SARIMAX(X_train['VVL.TO'],
-                    order=(3, 1, 2),
+                    order=(2, 1, 2),
                     seasonal_order=(3, 1, 3, 4),
                     enforce_stationarity=False,
                     enforce_invertibility=False)
