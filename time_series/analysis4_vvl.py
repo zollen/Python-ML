@@ -138,81 +138,6 @@ analysisNode = node(analysis_data, inputs=["trade_data"], outputs=None)
 
 
 
-def optimize_model(trade_data):
-     
-    if True:  
-        params = []
-        aics = []
-        mses = []
-        
-        p = [0, 1, 2, 3, 4]
-        q = [0, 1, 2, 3, 4]
-        pp = [ 0, 1, 2, 3, 4 ]
-        qq = [ 0, 1, 2, 3, 4 ]
-        ss = [ 1, 2, 3, 4, 5 ]
-        pdq = list(itertools.product(p, [1], q))
-        spqd = list(itertools.product(pp, [1], qq, ss))
-        pdq.remove((0,1,0))
-        
-        total = len(pdq) * len(spqd)
-        count = 0
-       
-        for param in pdq:
-            
-            for sparam in spqd:
-        
-                try:
-                    
-                    count += 1
-                    print("PROGRESS: ", ( 1 / total) * 100, "%")
-                    
-                    tscv = TimeSeriesSplit(n_splits=TIME_SPLITS_CV, max_train_size=TRAIN_SIZE, test_size=TEST_SIZE)
-                    aics_t = []
-                    mses_t = []
-                    for train_index, test_index in tscv.split(trade_data):
-                        
-                        X_train, X_test = trade_data.iloc[train_index], trade_data.iloc[test_index]
-                        
-                        model = SARIMAX(X_train['VVL.TO'],
-                                        order=param,
-                                        seasonal_order=sparam,
-                                        enforce_stationarity=False,
-                                        enforce_invertibility=False)
-                        results = model.fit() 
-                        
-                        pred = results.get_prediction(start = X_test.index[0],
-                                                      end = X_test.index[-1])
-        
-                        aics_t.append(results.aic)
-                        mses_t.append(mean_squared_error(X_test['VVL.TO'].iloc[:-1], pred.predicted_mean[1:])) 
-                    
-                    params.append((param, sparam))
-                    aics.append(np.sum(aics_t) / len(aics_t))
-                    mses.append(np.sum(mses_t) / len(mses_t))  
-                    
-                except:
-                    continue
-                
-                
-        min_ind = aics.index(min(aics)) 
-        bestparam = params[min_ind]
-        print('best_param_aic:', bestparam, ' aic:', min(aics)) 
-        min_ind = mses.index(min(mses)) 
-        bestparam = params[min_ind]
-        print('best_param_mse:', bestparam, ' mse:', min(mses))
-        
-        '''
-        best_param_aic: (2, 1, 2)(0, 0, 0, 0)  aic: 30.706256895869064
-        best_param_mse: (2, 1, 2)(0, 0, 0, 0)  mse: 0.14321048365277564
-        
-        best_param_aic: (3, 1, 5)(2, 1, 2, 12)  aic: 557.9136442544652
-        best_param_mse: (4, 1, 5)(2, 1, 2, 12)  mse: 0.15319565381354142
-        '''
-
-optimizeNode = node(optimize_model, inputs=["trade_data"], outputs=None)
-
-
-
 def test_model(trade_data):
     '''
     (2, 1, 2)(2, 1, 2, 3): 0.0785
@@ -257,7 +182,6 @@ data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 pipeline = Pipeline([ 
                         getStockNode,
                         analysisNode,
-                    #   optimizeNode,
                         testNode
                     ])
 
