@@ -186,7 +186,7 @@ def optimize_model(trade_data):
                         aics_t.append(results.aic)
                         mses_t.append(mean_squared_error(X_test['VVL.TO'].iloc[:-1], pred.predicted_mean[1:])) 
                     
-                    params.append(param)
+                    params.append((param, sparam))
                     aics.append(np.sum(aics_t) / len(aics_t))
                     mses.append(np.sum(mses_t) / len(mses_t))  
                     
