@@ -4,9 +4,8 @@ Created on Jun. 2, 2021
 @author: zollen
 '''
 
-
-from sktime.forecasting.ets import AutoETS
 from sktime.forecasting.base import ForecastingHorizon
+from sktime.forecasting.arima import AutoARIMA
 
 from sktime.datasets import load_airline
 from sktime.utils.plotting import plot_series
@@ -34,7 +33,7 @@ y_to_train, y_to_test = temporal_train_test_split(y, test_size=36)
 fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 
 
-model = AutoETS(auto=True, sp=12, seasonal="additive", n_jobs=-1)
+model = AutoARIMA(sp=12, suppress_warnings=True)
 model.fit(y_to_train)
 y_forecast = model.predict(fh)
 

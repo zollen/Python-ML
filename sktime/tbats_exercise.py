@@ -6,6 +6,7 @@ Created on Jun. 2, 2021
 
 from datetime import datetime
 import pandas as pd
+import numpy as np
 from tbats import TBATS
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
@@ -44,7 +45,7 @@ if __name__ == '__main__':
     print(model.params.components.use_box_cox)
     print(model.params.components.seasonal_harmonics)
     
-    print("RMSE: %0.4f" % mean_squared_error(y_to_test, y_forecast))
+    print("RMSE: %0.4f" % np.sqrt(mean_squared_error(y_to_test, y_forecast)))
     if False:
         plt.figure(figsize=(16,8))
         plt.plot(y_to_test)

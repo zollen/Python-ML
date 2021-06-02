@@ -4,8 +4,7 @@ Created on Jun. 2, 2021
 @author: zollen
 '''
 
-
-from sktime.forecasting.ets import AutoETS
+from sktime.forecasting.exp_smoothing import ExponentialSmoothing
 from sktime.forecasting.base import ForecastingHorizon
 
 from sktime.datasets import load_airline
@@ -34,7 +33,7 @@ y_to_train, y_to_test = temporal_train_test_split(y, test_size=36)
 fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 
 
-model = AutoETS(auto=True, sp=12, seasonal="additive", n_jobs=-1)
+model = ExponentialSmoothing(trend="add", seasonal="additive", sp=12)
 model.fit(y_to_train)
 y_forecast = model.predict(fh)
 

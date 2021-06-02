@@ -4,9 +4,9 @@ Created on Jun. 2, 2021
 @author: zollen
 '''
 
-
-from sktime.forecasting.ets import AutoETS
 from sktime.forecasting.base import ForecastingHorizon
+from sklearn.neighbors import KNeighborsRegressor
+from sktime.forecasting.compose import make_reduction
 
 from sktime.datasets import load_airline
 from sktime.utils.plotting import plot_series
@@ -22,7 +22,6 @@ warnings.filterwarnings('ignore')
 
 sb.set_style('whitegrid')
 
-
 y = load_airline()
 #plot_series(y);
 y_to_train, y_to_test = temporal_train_test_split(y, test_size=36)
@@ -34,7 +33,8 @@ y_to_train, y_to_test = temporal_train_test_split(y, test_size=36)
 fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 
 
-model = AutoETS(auto=True, sp=12, seasonal="additive", n_jobs=-1)
+regressor = KNeighborsRegressor(n_neighbors=1)
+model =  make_reduction(regressor, window_length=15, strategy="recursive")
 model.fit(y_to_train)
 y_forecast = model.predict(fh)
 
