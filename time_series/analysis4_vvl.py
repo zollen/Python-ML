@@ -173,15 +173,17 @@ testNode1 = node(test_model1, inputs=["trade_data"], outputs=None)
 
 def test_model2(trade_data):
     '''
-    (0, 0, 0)(0, 1, 0, 9): 0.1779
+    (?, 1, ?)(?, 1, ?, 7): 0.1150
+    
     '''
     
     G_train = trade_data.iloc[-(TEST_SIZE)*2:]
     X_train = trade_data.iloc[-TRAIN_SIZE-TEST_SIZE:-TEST_SIZE]
     X_test = trade_data.iloc[-TEST_SIZE:]
     
-    model = auto_arima(X_train['VVL.TO'], seasonal=True, 
-                       max_p=3, d=1, max_q=2, max_P=3, D=1, max_Q=3, m=9)
+    model = auto_arima(X_train['VVL.TO'], seasonal=True,
+                       start_p=0, start_q=0, max_p=3, d=1, max_q=2, 
+                       start_P=0, start_Q=0, max_P=3, D=1, max_Q=3, m=7)
     print(model.summary())
     preds = model.predict(n_periods=TEST_SIZE)
     
