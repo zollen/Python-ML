@@ -173,7 +173,7 @@ testNode1 = node(test_model1, inputs=["trade_data"], outputs=None)
 
 def test_model2(trade_data):
     '''
-    (?, 1, ?)(?, 1, ?, 7): 0.1150
+    (0, 1, 0)(7, 1, 0, 7): 0.1150
     
     '''
     
