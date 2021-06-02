@@ -7,12 +7,10 @@ Created on May 18, 2021
 import pandas_datareader.data as web
 from datetime import datetime, timedelta
 import pandas as pd
-import numpy as np
-import itertools
 from statsmodels.tsa.seasonal import STL
 import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_pacf
-from sklearn.model_selection import TimeSeriesSplit
+from pmdarima import auto_arima
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.stattools import adfuller
 from sklearn.metrics import mean_squared_error
@@ -138,12 +136,9 @@ analysisNode = node(analysis_data, inputs=["trade_data"], outputs=None)
 
 
 
-def test_model(trade_data):
+def test_model1(trade_data):
     '''
-    (2, 1, 2)(2, 1, 2, 3): 0.0785
-    (2, 1, 2)(2, 1, 2, 4): 0.1442
-    (3, 1, 3)(2, 1, 2, 4): 0.1391
-    (3, 1, 3)(1, 1, 1, 4): 0.1391
+    (2, 1, 2)(0, 1, 0, 7): 0.0924
     '''
     
     G_train = trade_data.iloc[-(TEST_SIZE)*2:]
@@ -152,7 +147,7 @@ def test_model(trade_data):
     
     model = SARIMAX(X_train['VVL.TO'],
                     order=(2, 1, 2),
-                    seasonal_order=(3, 1, 3, 4),
+                    seasonal_order=(0, 1, 0, 7),
                     enforce_stationarity=False,
                     enforce_invertibility=False)
     results = model.fit() 
@@ -160,20 +155,49 @@ def test_model(trade_data):
     preds = results.get_prediction(start = X_test.index[0],
                                    end = X_test.index[-1] + timedelta(days = 1))
     
-    print("RMSE: %0.4f" % mean_squared_error(X_test['VVL.TO'], preds.predicted_mean[1:]))
+    print("RMSE(SARIMAX): %0.4f" % mean_squared_error(X_test['VVL.TO'], preds.predicted_mean[1:]))
     
     if True:
         plt.figure(figsize=(10,4))
         plt.plot(G_train['VVL.TO'])
         plt.plot(X_test.index, preds.predicted_mean[1:])
         plt.legend(('Data', 'Predictions'), fontsize=16)
-        plt.title("Price vs Prediction", fontsize=20)
+        plt.title("SARIMAX Price vs Prediction", fontsize=20)
         plt.ylabel('Price', fontsize=16) 
                 
     
     
 
-testNode = node(test_model, inputs=["trade_data"], outputs=None)
+testNode1 = node(test_model1, inputs=["trade_data"], outputs=None)
+
+
+def test_model2(trade_data):
+    '''
+    (0, 0, 0)(0, 1, 0, 9): 0.1779
+    '''
+    
+    G_train = trade_data.iloc[-(TEST_SIZE)*2:]
+    X_train = trade_data.iloc[-TRAIN_SIZE-TEST_SIZE:-TEST_SIZE]
+    X_test = trade_data.iloc[-TEST_SIZE:]
+    
+    model = auto_arima(X_train['VVL.TO'], seasonal=True, 
+                       max_p=3, d=1, max_q=2, max_P=3, D=1, max_Q=3, m=9)
+    print(model.summary())
+    preds = model.predict(n_periods=TEST_SIZE)
+    
+    print("AUTO-ARIMA RMSE: %0.4f" % mean_squared_error(X_test['VVL.TO'], preds))
+    
+    if True:
+        plt.figure(figsize=(10,4))
+        plt.plot(G_train['VVL.TO'])
+        plt.plot(X_test.index, preds)
+        plt.legend(('Data', 'Predictions'), fontsize=16)
+        plt.title("Auto-ARIMA Price vs Prediction", fontsize=20)
+        plt.ylabel('Price', fontsize=16) 
+    
+    
+
+testNode2 = node(test_model2, inputs=["trade_data"], outputs=None)
 
 # Create a data source
 data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
@@ -182,7 +206,8 @@ data_catalog = DataCatalog({"trade_data": MemoryDataSet()})
 pipeline = Pipeline([ 
                         getStockNode,
                         analysisNode,
-                        testNode
+                        testNode1,
+                        testNode2
                     ])
 
 # Create a "runner" to run the "pipeline"
