@@ -7,6 +7,7 @@ Created on May 18, 2021
 import pandas_datareader.data as web
 from datetime import datetime, timedelta
 import pandas as pd
+import numpy as np
 from statsmodels.tsa.seasonal import STL
 import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_pacf
@@ -155,7 +156,7 @@ def test_model1(trade_data):
     preds = results.get_prediction(start = X_test.index[0],
                                    end = X_test.index[-1] + timedelta(days = 1))
     
-    print("RMSE(SARIMAX): %0.4f" % mean_squared_error(X_test['VVL.TO'], preds.predicted_mean[1:]))
+    print("RMSE(SARIMAX): %0.4f" % np.sqrt(mean_squared_error(X_test['VVL.TO'], preds.predicted_mean[1:])))
     
     if True:
         plt.figure(figsize=(10,4))
@@ -187,7 +188,7 @@ def test_model2(trade_data):
     print(model.summary())
     preds = model.predict(n_periods=TEST_SIZE)
     
-    print("AUTO-ARIMA RMSE: %0.4f" % mean_squared_error(X_test['VVL.TO'], preds))
+    print("AUTO-ARIMA RMSE: %0.4f" % np.sqrt(mean_squared_error(X_test['VVL.TO'], preds)))
     
     if True:
         plt.figure(figsize=(10,4))

@@ -235,7 +235,7 @@ def test_model(trade_data):
     preds = results.get_prediction(start = X_test.index[0],
                                    end = X_test.index[-1] + timedelta(days = 1))
     
-    print("RMSE: %0.4f" % mean_squared_error(X_test['VVL.TO'], preds.predicted_mean[1:]))
+    print("RMSE: %0.4f" % np.sqrt((mean_squared_error(X_test['VVL.TO'], preds.predicted_mean[1:]))))
     
     if True:
         plt.figure(figsize=(10,4))
