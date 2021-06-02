@@ -67,6 +67,7 @@ fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 
 model = AutoARIMA(sp=12, suppress_warnings=True)
 model.fit(y_to_train)
+print(model.summary())
 y_forecast = model.predict(fh)
 
 print("RMSE: %0.4f" % np.sqrt(mean_squared_error(y_to_test, y_forecast)))
