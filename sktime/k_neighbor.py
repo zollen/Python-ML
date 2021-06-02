@@ -30,7 +30,7 @@ y_to_train, y_to_test = temporal_train_test_split(y, test_size=36)
 #plot_series(y_to_train, y_to_test, labels=["y_train", "y_test"])
 #plt.show()
 
-if True:
+if False:
     yy = pd.DataFrame({'Date': y.index.to_timestamp(freq='M'), 'Price': y.values})
     yy = yy.set_index('Date')
     yy['Price'] = yy['Price'].astype('float64')
