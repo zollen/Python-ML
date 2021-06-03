@@ -61,7 +61,7 @@ if False:
 
 
 
-model = TBATS(sp=12, use_trend=True, use_box_cox=False)
+model = TBATS(sp=12, use_trend=True, use_box_cox=True)
 model.fit(y_to_train)
 y_forecast = model.predict(fh)
 
