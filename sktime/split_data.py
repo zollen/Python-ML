@@ -2,7 +2,7 @@
 Created on Jun. 3, 2021
 
 @author: zollen
-@desc: Converting time series data into a table form for non-time-series Regressor
+@desc: Basic Concept of converting time series data into a table form for non-time-series Regressor
         (i.e. KNNRegressor, XGBRegressor, CatRegressor...etc)
 '''
 
