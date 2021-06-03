@@ -44,3 +44,6 @@ p = list(range(0, 100))
 xtrain, ytrain, xtest, ytest = split_into_train_test(p, 5, 10)
 print(xtrain)
 print(ytrain)
+
+print(xtest)
+print(ytest)
