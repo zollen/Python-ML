@@ -4,8 +4,6 @@ Created on Jun. 2, 2021
 @author: zollen
 '''
 
-from datetime import datetime, timedelta
-from sktime.forecasting.base import ForecastingHorizon
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 from sktime.datasets import load_airline
@@ -61,9 +59,6 @@ if False:
     
     plt.tight_layout()
     plt.show()
-
-
-fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 
 
 model = SARIMAX(y_to_train,
