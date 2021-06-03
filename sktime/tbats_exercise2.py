@@ -4,7 +4,6 @@ Created on Jun. 2, 2021
 @author: zollen
 '''
 
-from datetime import datetime
 import pandas as pd
 import numpy as np
 from statsmodels.tsa.seasonal import STL
