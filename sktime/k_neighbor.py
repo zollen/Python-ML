@@ -85,6 +85,9 @@ if True:
     )
     gscv.fit(y_to_train)
     y_forecast = gscv.predict(fh)
+    print(gscv.best_forecaster_)
+    print(gscv.best_score_)
+    print(gscv.best_params_)
 
     print("Optimize(KNN) RMSE: %0.4f" % np.sqrt(mean_squared_error(y_to_test, y_forecast)))
     plot_series(y_to_train, y_to_test, y_forecast, labels=["y_train", "y_test", "y_pred"])
