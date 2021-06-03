@@ -10,7 +10,7 @@ from sktime.forecasting.compose import make_reduction
 
 from sktime.datasets import load_airline
 from sktime.utils.plotting import plot_series
-from sktime.forecasting.model_selection import temporal_train_test_split
+from sktime.forecasting.model_selection import temporal_train_test_split, ForecastingGridSearchCV, SlidingWindowSplitter
 
 from statsmodels.tsa.seasonal import STL
 from sklearn.metrics import mean_squared_error
@@ -68,6 +68,26 @@ model =  make_reduction(regressor, window_length=15, strategy="recursive")
 model.fit(y_to_train)
 y_forecast = model.predict(fh)
 
-print("RMSE: %0.4f" % np.sqrt(mean_squared_error(y_to_test, y_forecast)))
+print("REDUCT(KNN, 15) RMSE: %0.4f" % np.sqrt(mean_squared_error(y_to_test, y_forecast)))
 plot_series(y_to_train, y_to_test, y_forecast, labels=["y_train", "y_test", "y_pred"])
+
+
+
+if True:
+    model =  make_reduction(regressor, window_length=15, strategy="recursive")
+    param_grid = {"window_length": [5, 10, 15 ]}
+
+    # We fit the forecaster on the initial window, and then use temporal
+    # cross-validation to find the optimal parameter.
+    cv = SlidingWindowSplitter(initial_window=int(len(y_to_train) * 0.8), window_length=20)
+    gscv = ForecastingGridSearchCV(
+        model, strategy="refit", cv=cv, param_grid=param_grid
+    )
+    gscv.fit(y_to_train)
+    y_forecast = gscv.predict(fh)
+
+    print("Optimize(KNN) RMSE: %0.4f" % np.sqrt(mean_squared_error(y_to_test, y_forecast)))
+    plot_series(y_to_train, y_to_test, y_forecast, labels=["y_train", "y_test", "y_pred"])
+
+
 plt.show()
