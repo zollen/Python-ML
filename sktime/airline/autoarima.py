@@ -67,8 +67,16 @@ fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 model = AutoARIMA(sp=12, suppress_warnings=True)
 model.fit(y_to_train)
 print(model.summary())
-y_forecast = model.predict(fh)
+y_forecast, y_forecast_int = model.predict(fh, return_pred_int=True, alpha=0.05)
 
 print("RMSE: %0.4f" % mean_absolute_percentage_error(y_to_test, y_forecast))
-plot_series(y_to_train, y_to_test, y_forecast, labels=["y_train", "y_test", "y_pred"])
+_, ax = plot_series(y_to_train, y_to_test, y_forecast, labels=["y_train", "y_test", "y_pred"])
+ax.fill_between(
+            ax.get_lines()[-1].get_xdata(),
+            y_forecast_int["lower"],
+            y_forecast_int["upper"],
+            alpha=0.2,
+            color=ax.get_lines()[-1].get_c(),
+            label=f"95% prediction intervals"
+        )
 plt.show()
