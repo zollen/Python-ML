@@ -2,6 +2,7 @@
 Created on Jun. 2, 2021
 
 @author: zollen
+@url: https://github.com/alan-turing-institute/sktime/blob/main/examples/01_forecasting.ipynb
 '''
 from statsmodels.tsa.stattools import adfuller
 

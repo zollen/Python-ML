@@ -2,6 +2,7 @@
 Created on Jun. 3, 2021
 
 @author: zollen
+@url: https://github.com/alan-turing-institute/sktime/blob/main/examples/01_forecasting.ipynb
 @desc: Basic Concept of converting time series data into a table form for non-time-series Regressor
         (i.e. KNNRegressor, XGBRegressor, CatRegressor...etc)
 '''
