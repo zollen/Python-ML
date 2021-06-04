@@ -12,7 +12,6 @@ from sktime.utils.plotting import plot_series
 
 from sklearn.ensemble import RandomForestRegressor
 from skopt import BayesSearchCV
-from sklearn.model_selection import KFold
 from sklearn.metrics import make_scorer
 
 from sktime.forecasting.model_selection import temporal_train_test_split, ForecastingGridSearchCV, SlidingWindowSplitter
