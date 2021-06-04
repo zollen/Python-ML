@@ -4,16 +4,14 @@ Created on Jun. 2, 2021
 @author: zollen
 '''
 
-from statsmodels.tsa.statespace.sarimax import SARIMAX
-
+import pandas as pd
+from statsmodels.tsa.seasonal import STL
+from sktime.forecasting.base import ForecastingHorizon
+from sktime.forecasting.tbats import TBATS
 from sktime.datasets import load_airline
 from sktime.utils.plotting import plot_series
 from sktime.forecasting.model_selection import temporal_train_test_split
-
-from statsmodels.tsa.seasonal import STL
-from sklearn.metrics import mean_squared_error
-import pandas as pd
-import numpy as np
+from sktime.performance_metrics.forecasting import mean_absolute_percentage_error
 import matplotlib.pyplot as plt
 import seaborn as sb
 import warnings
@@ -21,12 +19,11 @@ import warnings
 warnings.filterwarnings('ignore')
 
 sb.set_style('whitegrid')
-
-
+ 
 y = load_airline()
-
 #plot_series(y);
 y_to_train, y_to_test = temporal_train_test_split(y, test_size=36)
+fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 #plot_series(y_to_train, y_to_test, labels=["y_train", "y_test"])
 #plt.show()
 
@@ -61,17 +58,12 @@ if False:
     plt.show()
 
 
-model = SARIMAX(y_to_train,
-                    order=(1, 1, 0),
-                    seasonal_order=(0, 1, 0, 12),
-                    enforce_stationarity=False,
-                    enforce_invertibility=False)
-result = model.fit()
-print(result.summary())
 
-y_forecast = result.get_prediction(start = y_to_test.index[0],
-                                   end = '1961-01')
+model = TBATS(sp=12, use_trend=True, use_box_cox=True)
+model.fit(y_to_train)
+y_forecast = model.predict(fh)
 
-print("RMSE: %0.4f" % np.sqrt(mean_squared_error(y_to_test, y_forecast.predicted_mean[1:])))
-plot_series(y_to_train, y_to_test, y_forecast.predicted_mean[1:], labels=["y_train", "y_test", "y_pred"])
+print("RMSE: %0.4f" % mean_absolute_percentage_error(y_to_test, y_forecast))
+plot_series(y_to_train, y_to_test, pd.Series(data=y_forecast, index=y_to_test.index), labels=["y_train", "y_test", "y_pred"])
 plt.show()
+    

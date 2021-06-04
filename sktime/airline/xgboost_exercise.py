@@ -4,17 +4,17 @@ Created on Jun. 2, 2021
 @author: zollen
 '''
 
-from sktime.forecasting.exp_smoothing import ExponentialSmoothing
 from sktime.forecasting.base import ForecastingHorizon
+from xgboost import XGBRegressor
+from sktime.forecasting.compose import make_reduction
 
 from sktime.datasets import load_airline
 from sktime.utils.plotting import plot_series
 from sktime.forecasting.model_selection import temporal_train_test_split
+from sktime.performance_metrics.forecasting import mean_absolute_percentage_error
 
 from statsmodels.tsa.seasonal import STL
-from sklearn.metrics import mean_squared_error
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sb
 import warnings
@@ -22,7 +22,6 @@ import warnings
 warnings.filterwarnings('ignore')
 
 sb.set_style('whitegrid')
-
 
 y = load_airline()
 #plot_series(y);
@@ -63,10 +62,11 @@ if False:
 fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 
 
-model = ExponentialSmoothing(trend="add", seasonal="additive", sp=12)
+regressor = XGBRegressor()
+model =  make_reduction(regressor, window_length=15, strategy="recursive")
 model.fit(y_to_train)
 y_forecast = model.predict(fh)
 
-print("RMSE: %0.4f" % np.sqrt(mean_squared_error(y_to_test, y_forecast)))
+print("RMSE: %0.4f" % mean_absolute_percentage_error(y_to_test, y_forecast))
 plot_series(y_to_train, y_to_test, y_forecast, labels=["y_train", "y_test", "y_pred"])
 plt.show()

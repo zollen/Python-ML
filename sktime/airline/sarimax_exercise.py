@@ -4,18 +4,15 @@ Created on Jun. 2, 2021
 @author: zollen
 '''
 
-
-from sktime.forecasting.ets import AutoETS
-from sktime.forecasting.base import ForecastingHorizon
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 from sktime.datasets import load_airline
 from sktime.utils.plotting import plot_series
 from sktime.forecasting.model_selection import temporal_train_test_split
+from sktime.performance_metrics.forecasting import mean_absolute_percentage_error
 
 from statsmodels.tsa.seasonal import STL
-from sklearn.metrics import mean_squared_error
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sb
 import warnings
@@ -26,6 +23,7 @@ sb.set_style('whitegrid')
 
 
 y = load_airline()
+
 #plot_series(y);
 y_to_train, y_to_test = temporal_train_test_split(y, test_size=36)
 #plot_series(y_to_train, y_to_test, labels=["y_train", "y_test"])
@@ -61,14 +59,18 @@ if False:
     plt.tight_layout()
     plt.show()
 
-fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 
+model = SARIMAX(y_to_train,
+                    order=(1, 1, 0),
+                    seasonal_order=(0, 1, 0, 12),
+                    enforce_stationarity=False,
+                    enforce_invertibility=False)
+result = model.fit()
+print(result.summary())
 
-model = AutoETS(auto=True, sp=12, seasonal="additive", n_jobs=-1)
-model.fit(y_to_train)
-print(model.summary())
-y_forecast = model.predict(fh)
+y_forecast = result.get_prediction(start = y_to_test.index[0],
+                                   end = '1961-01')
 
-print("RMSE: %0.4f" % np.sqrt(mean_squared_error(y_to_test, y_forecast)))
-plot_series(y_to_train, y_to_test, y_forecast, labels=["y_train", "y_test", "y_pred"])
+print("RMSE: %0.4f" % mean_absolute_percentage_error(y_to_test, y_forecast.predicted_mean[1:]))
+plot_series(y_to_train, y_to_test, y_forecast.predicted_mean[1:], labels=["y_train", "y_test", "y_pred"])
 plt.show()

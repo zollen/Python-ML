@@ -4,18 +4,16 @@ Created on Jun. 2, 2021
 @author: zollen
 '''
 
+from sktime.forecasting.exp_smoothing import ExponentialSmoothing
 from sktime.forecasting.base import ForecastingHorizon
-from sklearn.neighbors import KNeighborsRegressor
-from sktime.forecasting.compose import make_reduction
 
 from sktime.datasets import load_airline
 from sktime.utils.plotting import plot_series
-from sktime.forecasting.model_selection import temporal_train_test_split, ForecastingGridSearchCV, SlidingWindowSplitter
+from sktime.forecasting.model_selection import temporal_train_test_split
+from sktime.performance_metrics.forecasting import mean_absolute_percentage_error
 
 from statsmodels.tsa.seasonal import STL
-from sklearn.metrics import mean_squared_error
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sb
 import warnings
@@ -23,6 +21,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 sb.set_style('whitegrid')
+
 
 y = load_airline()
 #plot_series(y);
@@ -63,34 +62,10 @@ if False:
 fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 
 
-regressor = KNeighborsRegressor(n_neighbors=1)
-model =  make_reduction(regressor, window_length=15, strategy="recursive")
+model = ExponentialSmoothing(trend="add", seasonal="additive", sp=12)
 model.fit(y_to_train)
 y_forecast = model.predict(fh)
 
-print("REDUCT(KNN, 15) RMSE: %0.4f" % np.sqrt(mean_squared_error(y_to_test, y_forecast)))
+print("RMSE: %0.4f" % mean_absolute_percentage_error(y_to_test, y_forecast))
 plot_series(y_to_train, y_to_test, y_forecast, labels=["y_train", "y_test", "y_pred"])
-
-
-
-if True:
-    model =  make_reduction(regressor, window_length=15, strategy="recursive")
-    param_grid = {"window_length": [5, 10, 15, 20, 25, 30, 40, 45, 50 ]}
-
-    # We fit the forecaster on the initial window, and then use temporal
-    # cross-validation to find the optimal parameter.
-    cv = SlidingWindowSplitter(initial_window=int(len(y_to_train) * 0.8), window_length=60)
-    gscv = ForecastingGridSearchCV(
-        model, strategy="refit", cv=cv, param_grid=param_grid
-    )
-    gscv.fit(y_to_train)
-    y_forecast = gscv.predict(fh)
-    print(gscv.best_forecaster_)
-    print(gscv.best_score_)
-    print(gscv.best_params_)
-
-    print("Optimize(KNN) RMSE: %0.4f" % np.sqrt(mean_squared_error(y_to_test, y_forecast)))
-    plot_series(y_to_train, y_to_test, y_forecast, labels=["y_train", "y_test", "y_pred"])
-
-
 plt.show()

@@ -6,13 +6,12 @@ Created on Jun. 2, 2021
 
 from datetime import datetime
 import pandas as pd
-import numpy as np
 from statsmodels.tsa.seasonal import STL
 from tbats import TBATS
-from sklearn.metrics import mean_squared_error
 from sktime.datasets import load_airline
 from sktime.utils.plotting import plot_series
 from sktime.forecasting.model_selection import temporal_train_test_split
+from sktime.performance_metrics.forecasting import mean_absolute_percentage_error
 import matplotlib.pyplot as plt
 import seaborn as sb
 import warnings
@@ -78,7 +77,7 @@ if __name__ == '__main__':
     print(model.params.components.use_box_cox)
     print(model.params.components.seasonal_harmonics)
     
-    print("RMSE: %0.4f" % np.sqrt(mean_squared_error(y_to_test, y_forecast)))
+    print("RMSE: %0.4f" % mean_absolute_percentage_error(y_to_test, y_forecast))
     plot_series(y_to_train, y_to_test, pd.Series(data=y_forecast, index=y_to_test.index), labels=["y_train", "y_test", "y_pred"])
     plt.show()
     
