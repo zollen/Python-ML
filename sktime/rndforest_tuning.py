@@ -107,6 +107,7 @@ if True:
     print(gscv.best_forecaster_)
     print(gscv.best_score_)
     print(gscv.best_params_)
+    print(gscv.cv_results_)
 
     print("Optimize(RandomForestRegressor) RMSE: %0.4f" % mean_absolute_percentage_error(y_to_test, y_forecast))
     plot_series(y_to_train, y_to_test, y_forecast, labels=["y_train", "y_test", "y_pred"])
