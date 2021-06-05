@@ -87,6 +87,9 @@ if False:
 
 fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 
+'''
+RMSE: 0.0081
+'''
 model = TBATS(sp=8, use_trend=True, use_box_cox=True)
 model.fit(y_to_train['Prices'])
 
