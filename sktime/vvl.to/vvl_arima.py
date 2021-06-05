@@ -111,16 +111,5 @@ plt.fill_between(
             color='b'
         )
 
-'''        
-_, ax = plot_series(y_to_train.iloc[-64:]['Prices'], y_to_test['Prices'], y_forecast, 
-                    labels=["y_train", "y_test", "y_pred"], markers=['.', '.', '.'])
-ax.fill_between(
-            ax.get_lines()[-1].get_xdata(),
-            y_forecast_int["lower"],
-            y_forecast_int["upper"],
-            alpha=0.2,
-            color=ax.get_lines()[-1].get_c(),
-            label=f"95% prediction intervals"
-        )
-'''
+
 plt.show()
