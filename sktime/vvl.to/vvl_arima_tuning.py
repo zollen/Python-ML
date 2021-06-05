@@ -92,9 +92,8 @@ fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 (2,1,2)(0,1,0,8) : 0.0091
 '''
 model = ARIMA(order=(2, 1, 2), seasonal_order=(0, 1, 0, 8), suppress_warnings=True)
-kk = model.fit(y_to_train['Prices'])
+model.fit(y_to_train['Prices'])
 print(model.summary())
-print(kk._get_param_names())
 y_forecast, y_forecast_int = model.predict(fh, return_pred_int=True, alpha=0.05)
 
 print("RMSE: %0.4f" % mean_absolute_percentage_error(y_to_test, y_forecast))

@@ -102,5 +102,6 @@ plt.plot(y_to_test.index, y_forecast)
 plt.legend(('Data', 'Predictions'), fontsize=16)
 plt.title("ExponentialSmoothing(VVL.TO)", fontsize=20)
 plt.ylabel('Price', fontsize=16) 
+plt.ylim(32, 40)
 
 plt.show()
