@@ -58,7 +58,7 @@ y_to_train, y_to_test = temporal_train_test_split(y, test_size=test_size)
 #plot_series(y_to_train, y_to_test, labels=["y_train", "y_test"])
 #plt.show()
 
-if True:
+if False:
     stl = STL(y)
     result = stl.fit()
     
