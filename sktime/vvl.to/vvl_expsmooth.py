@@ -100,20 +100,7 @@ plt.figure(figsize=(10,4))
 plt.plot(y.iloc[-128:])
 plt.plot(y_to_test.index, y_forecast)
 plt.legend(('Data', 'Predictions'), fontsize=16)
-plt.title("ARIMA(VVL.TO)", fontsize=20)
+plt.title("ExponentialSmoothing(VVL.TO)", fontsize=20)
 plt.ylabel('Price', fontsize=16) 
 
-
-'''        
-_, ax = plot_series(y_to_train.iloc[-64:]['Prices'], y_to_test['Prices'], y_forecast, 
-                    labels=["y_train", "y_test", "y_pred"], markers=['.', '.', '.'])
-ax.fill_between(
-            ax.get_lines()[-1].get_xdata(),
-            y_forecast_int["lower"],
-            y_forecast_int["upper"],
-            alpha=0.2,
-            color=ax.get_lines()[-1].get_c(),
-            label=f"95% prediction intervals"
-        )
-'''
 plt.show()
