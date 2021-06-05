@@ -13,7 +13,7 @@ from sktime.utils.plotting import plot_series
 from sktime.forecasting.model_selection import temporal_train_test_split
 from sktime.performance_metrics.forecasting import mean_absolute_percentage_error
 
-from statsmodels.graphics.tsaplots import plot_pacf
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import STL
 from datetime import datetime, timedelta
@@ -58,7 +58,7 @@ y_to_train, y_to_test = temporal_train_test_split(y, test_size=test_size)
 #plot_series(y_to_train, y_to_test, labels=["y_train", "y_test"])
 #plt.show()
 
-if False:
+if True:
     stl = STL(y)
     result = stl.fit()
     
@@ -84,10 +84,15 @@ if False:
     plt.tight_layout()
     
     '''
-    The pacf shows that the residuals still has some seasonal patterns.
+    Both acf & pacf shows that the residuals still has some seasonal patterns.
     We need Fourier regressors to handle these remaining seasonal patterns.
     '''
-    plot_pacf(result.resid, title="PACF(Residual)")
+    _, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6))
+    ax1.set_ylabel("ACF(Residual)")
+    plot_acf(result.resid, title="", ax=ax1)
+    ax2.set_ylabel("PACF(Residual)")
+    plot_pacf(result.resid, title="", ax=ax2)
+    
     plt.show()
     
 
