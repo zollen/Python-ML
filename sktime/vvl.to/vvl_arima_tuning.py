@@ -2,7 +2,8 @@
 Created on Jun. 2, 2021
 
 @author: zollen
-@url: https://github.com/alan-turing-institute/sktime/blob/main/examples/01_forecasting.ipynb
+@url: https://tanzu.vmware.com/content/blog/forecasting-time-series-data-with-multiple-seasonal-periods
+@url: https://medium.com/intive-developers/forecasting-time-series-with-multiple-seasonalities-using-tbats-in-python-398a00ac0e8a
 '''
 
 from sktime.forecasting.base import ForecastingHorizon
@@ -19,6 +20,8 @@ from statsmodels.tsa.seasonal import STL
 from datetime import datetime, timedelta
 import pandas_datareader.data as web
 import pandas as pd
+import numpy as np
+import itertools
 import matplotlib.pyplot as plt
 import seaborn as sb
 import warnings
@@ -28,7 +31,7 @@ warnings.filterwarnings('ignore')
 sb.set_style('whitegrid')
 
 end_date = datetime(2021, 6, 4)
-start_date = end_date - timedelta(weeks=72)
+start_date = end_date - timedelta(weeks=64)
 test_size=36
 
 def get_stock(TICKER):
@@ -100,14 +103,67 @@ if False:
 fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 
 '''
-(0,0,0)(1,1,0,12): 0.0125
-(2,1,2)(0,1,0,8) : 0.0091
-'''
-model = ARIMA(order=(2, 1, 2), seasonal_order=(0, 1, 0, 8), suppress_warnings=True)
-model.fit(y_to_train['Prices'])
-print(model.summary())
-y_forecast, y_forecast_int = model.predict(fh, return_pred_int=True, alpha=0.05)
+MAPE: 0.00874232
 
+20  : 0.00868552
+81  : 0.00868402
+86  : 0.00864950
+94  : 0.00857343
+102 : 0.00836136
+103 : 0.00858858
+106 : 0.00838859
+107 : 0.00834268
+147 : 0.00846231
+(20, 86, 102, 107, 147): 0.00769097
+(86, 94, 102, 103, 106): 0.00740850
+'''
+
+all_coeffs = [20, 81, 86, 94, 102, 103, 106, 107, 147]
+params = []
+models = []
+aics = []
+mapes = []
+
+for length in range(1, len(all_coeffs) + 1):
+     
+    for coeffs in list(itertools.combinations(all_coeffs, length)):
+        
+        exog = pd.DataFrame({'Date': y.index})
+        exog = exog.set_index(exog['Date'])
+        exog.drop(columns=['Date'], inplace=True)
+        
+        cols = []
+        for coeff in coeffs:
+            exog['sin' + str(coeff)] = np.sin(coeff * np.pi * exog.index.dayofyear / 365.25)
+            exog['cos' + str(coeff)] = np.cos(coeff * np.pi * exog.index.dayofyear / 365.25)
+            cols.append('sin' + str(coeff))
+            cols.append('cos' + str(coeff))
+            
+        exog_train = exog.loc[y_to_train.index]
+        exog_test = exog.loc[y_to_test.index]
+            
+        model = ARIMA(order=(2, 1, 2), seasonal_order=(0, 1, 0, 8), suppress_warnings=True)
+        model.fit(y_to_train['Prices'], X=exog_train[cols])
+        y_forecast = model.predict(fh, X=exog_test[cols])
+        
+        params.append(coeffs)
+        models.append(model)
+        mapes.append(mean_absolute_percentage_error(y_to_test, y_forecast))
+
+
+
+min_ind = mapes.index(min(mapes)) 
+bestparam = params[min_ind]
+bestmodel = models[min_ind]
+print(bestmodel.summary())
+print('MAPE: %0.8f' % min(mapes), 'best_param: ', bestparam)
+
+
+
+
+
+
+'''
 print("RMSE: %0.4f" % mean_absolute_percentage_error(y_to_test, y_forecast))
 plt.figure(figsize=(10,4))
 plt.plot(y.iloc[-128:])
@@ -126,3 +182,4 @@ plt.fill_between(
 
 
 plt.show()
+'''
