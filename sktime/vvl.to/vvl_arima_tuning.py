@@ -183,15 +183,12 @@ for length in range(1, len(all_coeffs) + 1):
         y_forecast = model.predict(fh, X=exog_test[cols])
         
         params.append(coeffs)
-        models.append(model)
         mapes.append(mean_absolute_percentage_error(y_to_test, y_forecast))
 
 
 
 min_ind = mapes.index(min(mapes)) 
 bestparam = params[min_ind]
-bestmodel = models[min_ind]
-print(bestmodel.summary())
 print('MAPE: %0.8f' % min(mapes), 'best_param: ', bestparam)
 
 
