@@ -6,7 +6,7 @@ Created on Jun. 2, 2021
 '''
 
 from sktime.forecasting.base import ForecastingHorizon
-from sktime.forecasting.arima import ARIMA
+from sktime.forecasting.ets import AutoETS
 
 from sktime.datasets import load_airline
 from sktime.utils.plotting import plot_series
@@ -27,7 +27,7 @@ warnings.filterwarnings('ignore')
 sb.set_style('whitegrid')
 
 end_date = datetime(2021, 6, 4)
-start_date = end_date - timedelta(weeks=64)
+start_date = end_date - timedelta(weeks=72)
 test_size=36
 
 def get_stock(TICKER):
@@ -88,30 +88,20 @@ if False:
 fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 
 '''
-(0,0,0)(1,1,0,12): 0.0125
-(2,1,2)(0,1,0,8) : 0.0091
+0.0084
 '''
-model = ARIMA(order=(2, 1, 2), seasonal_order=(0, 1, 0, 8), suppress_warnings=True)
-kk = model.fit(y_to_train['Prices'])
-print(model.summary())
+model = AutoETS(auto=True, trend="add", sp=8, seasonal="additive", n_jobs=-1)
+model.fit(y_to_train['Prices'])
 
-y_forecast, y_forecast_int = model.predict(fh, return_pred_int=True, alpha=0.05)
+y_forecast = model.predict(fh)
 
 print("RMSE: %0.4f" % mean_absolute_percentage_error(y_to_test, y_forecast))
 plt.figure(figsize=(10,4))
 plt.plot(y.iloc[-128:])
 plt.plot(y_to_test.index, y_forecast)
 plt.legend(('Data', 'Predictions'), fontsize=16)
-plt.title("ARIMA(VVL.TO)", fontsize=20)
+plt.title("ExponentialSmoothing(VVL.TO)", fontsize=20)
 plt.ylabel('Price', fontsize=16) 
 plt.ylim(32, 40)
-plt.fill_between(
-            y_to_test.index,
-            y_forecast_int["lower"],
-            y_forecast_int["upper"],
-            alpha=0.2,
-            color='b'
-        )
-
 
 plt.show()
