@@ -5,7 +5,6 @@ Created on Jun. 7, 2021
 '''
 
 import threading
-import time
 
 class MyThread(threading.Thread):
     
@@ -15,11 +14,18 @@ class MyThread(threading.Thread):
         self.name = name
         
     def run(self):
-        for i in range(1, 1000):
+        
+        global wlock
+        
+        wlock.acquire()
+        
+        for _ in range(1, 1000):
             print(self.threadID)
             
+        wlock.release()
+            
 
-
+wlock = threading.Lock()
 thread1 = MyThread(1, "Thread-1")
 thread2 = MyThread(2, "Thread-2")      
 
