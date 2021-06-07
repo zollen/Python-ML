@@ -19,6 +19,7 @@ from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import STL
 from datetime import datetime, timedelta
 import pandas_datareader.data as web
+import threading
 import pandas as pd
 import numpy as np
 import itertools
@@ -60,45 +61,6 @@ y = get_stock('VVL.TO')
 y_to_train, y_to_test = temporal_train_test_split(y, test_size=test_size)
 #plot_series(y_to_train, y_to_test, labels=["y_train", "y_test"])
 #plt.show()
-
-if False:
-    stl = STL(y)
-    result = stl.fit()
-    
-    seasonal, trend, resid = result.seasonal, result.trend, result.resid
-    plt.figure(figsize=(8,6))
-    
-    plt.subplot(4,1,1)
-    plt.plot(y)
-    plt.title('Original Series', fontsize=16)
-    
-    plt.subplot(4,1,2)
-    plt.plot(trend)
-    plt.title('Trend', fontsize=16)
-    
-    plt.subplot(4,1,3)
-    plt.plot(seasonal)
-    plt.title('Seasonal', fontsize=16)
-    
-    plt.subplot(4,1,4)
-    plt.plot(resid)
-    plt.title('Residual', fontsize=16)
-    
-    plt.tight_layout()
-    
-    '''
-    Both acf & pacf shows that the residuals still has some seasonal patterns.
-    We need Fourier regressors to handle these remaining seasonal patterns.
-    '''
-    _, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6))
-    ax1.set_ylabel("ACF(Residual)")
-    plot_acf(result.resid, title="", ax=ax1)
-    ax2.set_ylabel("PACF(Residual)")
-    plot_pacf(result.resid, title="", ax=ax2)
-    
-    plt.show()
-    
-
 
 fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 
@@ -149,27 +111,38 @@ Searching for all possible regressors that can lower the mape
 472 : 0.00866974
 (20, 86, 102, 107, 147): 0.00769097
 (86, 94, 102, 103, 106): 0.00740850
+(20, 101, 103, 147)    : 0.00740587
+(81, 94, 106, 148)     : 0.00737365
+(20, 86, 102, 120, 146): 0.00732646
+(20, 94, 147, 148, 151): 0.00709723
 '''
 
-all_coeffs = [20, 81, 86, 94, 101, 102, 103, 106, 107, 120, 146, 147, 148, 151,
-              154, 173, 178, 182, 202, 206, 207, 211, 227, 265, 269, 271, 296, 
-              297, 306, 307, 349, 352, 367, 379, 392, 419, 420, 425, 467, 472]
-params = []
-models = []
-aics = []
-mapes = []
-
-
-for length in range(1, len(all_coeffs) + 1):
-     
-    for coeffs in list(itertools.combinations(all_coeffs, length)):
+    
+class Worker(threading.Thread):     
+    
+    def __init__(self, threadId):
+        threading.Thread.__init__(self)
+        self.threadID = threadId
         
+    def run(self):
+        
+        global karts
+        
+        try:       
+            while True:
+                self.evaludate(karts.pop(0))   
+   
+        except:
+            pass
+            
+        
+    def evaludate(self, params):
         exog = pd.DataFrame({'Date': y.index})
         exog = exog.set_index(exog['Date'])
         exog.drop(columns=['Date'], inplace=True)
         
         cols = []
-        for coeff in coeffs:
+        for coeff in params:
             exog['sin' + str(coeff)] = np.sin(coeff * np.pi * exog.index.dayofyear / 365.25)
             exog['cos' + str(coeff)] = np.cos(coeff * np.pi * exog.index.dayofyear / 365.25)
             cols.append('sin' + str(coeff))
@@ -181,16 +154,50 @@ for length in range(1, len(all_coeffs) + 1):
         model = ARIMA(order=(2, 1, 2), seasonal_order=(0, 1, 0, 8), suppress_warnings=True)
         model.fit(y_to_train['Prices'], X=exog_train[cols])
         y_forecast = model.predict(fh, X=exog_test[cols])
+        score = mean_absolute_percentage_error(y_to_test, y_forecast)
         
-        params.append(coeffs)
-        mapes.append(mean_absolute_percentage_error(y_to_test, y_forecast))
+        global best_params, best_score, wlock
+        
+        wlock.acquire()
+
+        if best_params == None or best_score > score:
+            best_params = params
+            best_score = score
+            print("InProgress[%3s] => Score: %0.8f" % (str(self.threadID), best_score), " params: ", best_params)
+        
+        wlock.release()
 
 
+best_params = None
+best_score = 99999999
+wlock = threading.Lock()
 
-min_ind = mapes.index(min(mapes)) 
-bestparam = params[min_ind]
-print('MAPE: %0.8f' % min(mapes), 'best_param: ', bestparam)
+karts = []
+all_coeffs = [20, 81, 86, 94, 101, 102, 103, 106, 107, 120, 146, 147, 148, 151, 154, 
+              173, 178, 182, 202, 206 ]
 
+for length in range(1, len(all_coeffs) + 1):
+    for coeffs in list(itertools.combinations(all_coeffs, length)):
+        karts.append(coeffs)
+  
+orig_size = len(karts) 
+print("total: ", orig_size)  
+print()
+
+
+threads = []
+for id in range(0, 100):
+    threads.append(Worker(id))
+
+for thread in threads:
+    thread.start()
+
+for thread in threads:
+    thread.join()
+
+print("=========================================================")
+print("Orig: ", orig_size, " Remaining: ", len(karts))
+print("FINAL RESULT: %0.8f" % best_score, " params: ", best_params)
 
 
 
