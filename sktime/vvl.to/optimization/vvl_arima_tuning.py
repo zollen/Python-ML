@@ -115,6 +115,8 @@ Searching for all possible regressors that can lower the mape
 (81, 94, 106, 148)     : 0.00737365
 (20, 86, 102, 120, 146): 0.00732646
 (20, 94, 147, 148, 151): 0.00709723
+(20, 81, 86, 94, 101, 102, 106, 148, 207, 271) : 0.00706450
+(20, 81, 86, 94, 101, 102, 107, 148, 206, 296) : 0.00691188  (44352165:44347560)
 '''
 
     
@@ -174,11 +176,12 @@ wlock = threading.Lock()
 
 karts = []
 all_coeffs = [20, 81, 86, 94, 101, 102, 103, 106, 107, 120, 146, 147, 148, 151, 154, 
-              173, 178, 182, 202, 206 ]
+              173, 178, 182, 202, 206, 207, 211, 227, 265, 267, 269, 271, 296, 297,
+              306, 307  ]
 
-for length in range(1, len(all_coeffs) + 1):
-    for coeffs in list(itertools.combinations(all_coeffs, length)):
-        karts.append(coeffs)
+
+for coeffs in list(itertools.combinations(all_coeffs, 10)):
+    karts.append(coeffs)
   
 orig_size = len(karts) 
 print("total: ", orig_size)  
@@ -186,7 +189,7 @@ print()
 
 
 threads = []
-for id in range(0, 100):
+for id in range(0, 150):
     threads.append(Worker(id))
 
 for thread in threads:
