@@ -214,25 +214,3 @@ print("FINAL RESULT: %0.8f" % best_score, " params: ", best_params)
 
 
 
-
-
-'''
-print("RMSE: %0.4f" % mean_absolute_percentage_error(y_to_test, y_forecast))
-plt.figure(figsize=(10,4))
-plt.plot(y.iloc[-128:])
-plt.plot(y_to_test.index, y_forecast)
-plt.legend(('Data', 'Predictions'), fontsize=16)
-plt.title("ARIMA(VVL.TO)", fontsize=20)
-plt.ylabel('Price', fontsize=16) 
-plt.ylim(32, 40)
-plt.fill_between(
-            y_to_test.index,
-            y_forecast_int["lower"],
-            y_forecast_int["upper"],
-            alpha=0.2,
-            color='b'
-        )
-
-
-plt.show()
-'''

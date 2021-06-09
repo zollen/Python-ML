@@ -19,11 +19,16 @@ from datetime import datetime, timedelta
 import pandas_datareader.data as web
 import pandas as pd
 import time
+import threading
 
 from deap import base
 from deap import benchmarks
 from deap import creator
 from deap import tools
+from numba.cuda.stubs import threadIdx
+import warnings
+
+warnings.filterwarnings('ignore')
 
 
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
@@ -52,28 +57,61 @@ def get_stock(TICKER):
     
     return prices
 
-def evaludate(params):
+
+class Worker(threading.Thread):     
     
-    global y_to_train, y_to_test, fh
+    def __init__(self, threadId, rnd, queue):
+        threading.Thread.__init__(self)
+        self.threadID = threadId
+        self.rnd = rnd
+        self.queue = queue
         
-    exog = pd.DataFrame({'Date': y.index})
-    exog = exog.set_index(exog['Date'])
-    exog.drop(columns=['Date'], inplace=True)
-    
-    cols = []
-    for coeff in params:
-        exog['sin' + str(coeff)] = np.sin(coeff * np.pi * exog.index.dayofyear / 365.25)
-        exog['cos' + str(coeff)] = np.cos(coeff * np.pi * exog.index.dayofyear / 365.25)
-        cols.append('sin' + str(coeff))
-        cols.append('cos' + str(coeff))
+    def run(self):
         
-    exog_train = exog.loc[y_to_train.index]
-    exog_test = exog.loc[y_to_test.index]
+        try:       
+            while True:
+                self.evaluate(self.queue.pop(0))   
+   
+        except:
+            pass
+            
         
-    model = ARIMA(order=(2, 1, 2), seasonal_order=(0, 1, 0, 8), suppress_warnings=True)
-    model.fit(y_to_train['Prices'], X=exog_train[cols])
-    y_forecast = model.predict(fh, X=exog_test[cols])
-    return mean_absolute_percentage_error(y_to_test, y_forecast)
+    def evaluate(self, part):
+        exog = pd.DataFrame({'Date': y.index})
+        exog = exog.set_index(exog['Date'])
+        exog.drop(columns=['Date'], inplace=True)
+        
+        cols = []
+        for coeff in part:
+            exog['sin' + str(coeff)] = np.sin(coeff * np.pi * exog.index.dayofyear / 365.25)
+            exog['cos' + str(coeff)] = np.cos(coeff * np.pi * exog.index.dayofyear / 365.25)
+            cols.append('sin' + str(coeff))
+            cols.append('cos' + str(coeff))
+            
+        exog_train = exog.loc[y_to_train.index]
+        exog_test = exog.loc[y_to_test.index]
+            
+        model = ARIMA(order=(2, 1, 2), seasonal_order=(0, 1, 0, 8), suppress_warnings=True)
+        model.fit(y_to_train['Prices'], X=exog_train[cols])
+        y_forecast = model.predict(fh, X=exog_test[cols])
+        score = mean_absolute_percentage_error(y_to_test, y_forecast)
+        part.fitness.values = score, 
+        
+        global best, wlock
+        
+        wlock.acquire()
+
+        if not part.best or part.best.fitness < part.fitness:
+            part.best = creator.Particle(part)
+            part.best.fitness.values = part.fitness.values
+        if not best or best.fitness < part.fitness:
+            best = creator.Particle(part)
+            best.fitness.values = part.fitness.values
+            print("InProgress[%3d][%3d][%3s] => Score: %0.8f" % (self.rnd, threading.activeCount(), str(self.threadID), score), " params: ", part)
+            
+        wlock.release()
+        
+        
 
 def generate_params(length):
     arr = []
@@ -84,7 +122,7 @@ def generate_params(length):
     return arr
         
 def evaluate(p):
-    score = evaludate(p)
+    score = evaluate(p)
     return score,
 
 def fesiable(p):
@@ -122,7 +160,7 @@ def updateParticle(part, best, phi1, phi2):
 
 
 toolbox = base.Toolbox()
-toolbox.register("particle", generate, size=5, smin=-7, smax=7)
+toolbox.register("particle", generate, size=7, smin=-7, smax=7)
 toolbox.register("population", tools.initRepeat, list, toolbox.particle)
 toolbox.register("update", updateParticle, phi1=3, phi2=3)
 toolbox.register("evaluate", evaluate)
@@ -131,36 +169,45 @@ toolbox.decorate("evaluate", tools.DeltaPenality(fesiable, (99999,)))
 y = get_stock('VVL.TO')
 y_to_train, y_to_test = temporal_train_test_split(y, test_size=test_size)
 fh = ForecastingHorizon(y_to_test.index, is_relative=False)
+wlock = threading.Lock()
+best = None
 
 def main():
     
     '''
-    FINAL: 0.00795964  params:  [87.0, 141.0, 170.0, 346.0, 267.0] 1722.1818044185638
+    FINAL: 0.00795964  params:  [87.0, 141.0, 170.0, 346.0, 267.0]        1722
+    FINAL: 0.00780563  params:  [87.0, 138.0, 267.0, 410.0, 354.0, 106.0] 3753
     '''
     
     start_time = time.time()
     
-    pop = toolbox.population(n=100)
+    pop = toolbox.population(n=1000)
  
-    GEN = 20
-    best = None
+    GEN = 50
 
     for g in range(GEN):
         for part in pop:
-            part.fitness.values = toolbox.evaluate(part)
-            if not part.best or part.best.fitness < part.fitness:
-                part.best = creator.Particle(part)
-                part.best.fitness.values = part.fitness.values
-            if not best or best.fitness < part.fitness:
-                best = creator.Particle(part)
-                best.fitness.values = part.fitness.values
-         
+            
+            qq = pop.copy()
+            threads = []
+            for id in range(0, 200):
+                threads.append(Worker(id, g, qq))
+
+            for thread in threads:
+                thread.start()
+            
+            for thread in threads:
+                thread.join() 
+                
+        print("Round: ", time.time() - start_time, g)
+            
         for part in pop:
             toolbox.update(part, best)
 
     
     end_time = time.time()
 
+    print("========================================================")
     print("Processing Time: ", end_time - start_time, "secs")
     print("FINAL: %0.8f" % best.fitness.values, " params: ", best)
     
