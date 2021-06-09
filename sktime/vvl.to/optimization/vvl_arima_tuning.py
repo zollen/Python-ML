@@ -173,7 +173,7 @@ class Worker(threading.Thread):
         if best_params == None or best_score > score:
             best_params = params
             best_score = score
-            print("InProgress[%10d][%3s] => Score: %0.8f" % (len(karts), str(self.threadID), best_score), " params: ", best_params)
+            print("InProgress[%10d][%3d][%3s] => Score: %0.8f" % (len(karts), threading.activeCount(), str(self.threadID), best_score), " params: ", best_params)
         
         wlock.release()
 
