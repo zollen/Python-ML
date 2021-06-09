@@ -158,6 +158,14 @@ class Worker(threading.Thread):
         y_forecast = model.predict(fh, X=exog_test[cols])
         score = mean_absolute_percentage_error(y_to_test, y_forecast)
         
+        '''
+        For using AIC for optimization
+        AutoETS: forecaster._fitted_forecaster.bic relevant class is ETSResults from statsmodels
+        ExponentialSmoothing: forecaster._fitted_forecaster.bic relevant class is HoltWintersResults from statsmodels
+        AutoARIMA: forecaster._forecaster.model_.arima_res_.bic relevant class is SARIMAXResults from statsmodels
+        ARIMA: forecaster._forecaster.arima_res_.bicrelevant class is SARIMAXResults from statsmodels
+        '''
+        
         global best_params, best_score, wlock
         
         wlock.acquire()
@@ -175,13 +183,15 @@ best_score = 99999999
 wlock = threading.Lock()
 
 karts = []
-all_coeffs = [20, 81, 86, 94, 101, 102, 103, 106, 107, 120, 146, 147, 148, 151, 154, 
-              173, 178, 182, 202, 206, 207, 211, 227, 265, 267, 269, 271, 296, 297,
-              306, 307  ]
+all_coeffs = [20, 81, 86, 94, 101, 102, 107, 148, 206, 296, 297,
+              306, 307, 349, 352, 367, 379, 392, 419, 420, 425, 467, 472 ]
 
-
+start_param = 0
+count = 0
 for coeffs in list(itertools.combinations(all_coeffs, 10)):
-    karts.append(coeffs)
+    if count >= start_param:
+        karts.append(coeffs)
+    count = count + 1
   
 orig_size = len(karts) 
 print("total: ", orig_size)  
