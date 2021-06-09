@@ -50,14 +50,14 @@ def distance(p):
 
 def generate(size, pmin, pmax, smin, smax):
     part = creator.Particle(generate_params(size)) 
-    part.speed = [ 1 for _ in range(size)]
+    part.speed = [ random.randint(0,2) for _ in range(size)]
     part.smin = smin
     part.smax = smax
     return part
 
 def updateParticle(part, best, phi1, phi2):
-    u1 = ( 1 for _ in range(len(part)))
-    u2 = ( 1 for _ in range(len(part)))
+    u1 = ( random.randint(0,2) for _ in range(len(part)))
+    u2 = ( random.randint(0,2) for _ in range(len(part)))
 
     v_u1 = map(operator.mul, u1, map(operator.sub, part.best, part))
     v_u2 = map(operator.mul, u2, map(operator.sub, best, part))
