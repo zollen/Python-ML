@@ -50,17 +50,20 @@ def distance(p):
 
 def generate(size, pmin, pmax, smin, smax):
     part = creator.Particle(generate_params(size)) 
-    part.speed = [random.uniform(smin, smax) for _ in range(size)]
+    part.speed = [ 1 for _ in range(size)]
     part.smin = smin
     part.smax = smax
     return part
 
 def updateParticle(part, best, phi1, phi2):
-    u1 = (random.uniform(0, phi1) for _ in range(len(part)))
-    u2 = (random.uniform(0, phi2) for _ in range(len(part)))
+    u1 = ( 1 for _ in range(len(part)))
+    u2 = ( 1 for _ in range(len(part)))
+
     v_u1 = map(operator.mul, u1, map(operator.sub, part.best, part))
     v_u2 = map(operator.mul, u2, map(operator.sub, best, part))
+
     part.speed = list(map(operator.add, part.speed, map(operator.add, v_u1, v_u2)))
+    
     for i, speed in enumerate(part.speed):
         if abs(speed) < part.smin:
             part.speed[i] = math.copysign(part.smin, speed)
@@ -68,10 +71,11 @@ def updateParticle(part, best, phi1, phi2):
             part.speed[i] = math.copysign(part.smax, speed)
     part[:] = list(map(operator.add, part, part.speed))
 
+
 toolbox = base.Toolbox()
-toolbox.register("particle", generate, size=3, pmin=0, pmax=1, smin=-0.2, smax=0.2)
+toolbox.register("particle", generate, size=3, pmin=0, pmax=1, smin=-5, smax=5)
 toolbox.register("population", tools.initRepeat, list, toolbox.particle)
-toolbox.register("update", updateParticle, phi1=0.2, phi2=0.2)
+toolbox.register("update", updateParticle, phi1=3, phi2=3)
 toolbox.register("evaluate", evaluate)
 toolbox.decorate("evaluate", tools.DeltaPenality(fesiable, (99999,)))
 
@@ -93,6 +97,7 @@ def main():
          
         for part in pop:
             toolbox.update(part, best)
+
             
 
     print("FINAL: %0.8f" % best.fitness.values, " params: ", best)
