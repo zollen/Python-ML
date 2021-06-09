@@ -78,6 +78,14 @@ plot_series(y_to_train, y_to_test, y_forecast, labels=["y_train", "y_test", "y_p
 
 if True:
     
+    '''
+    For using AIC for optimization
+    AutoETS: forecaster._fitted_forecaster.bic relevant class is ETSResults from statsmodels
+    ExponentialSmoothing: forecaster._fitted_forecaster.bic relevant class is HoltWintersResults from statsmodels
+    AutoARIMA: forecaster._forecaster.model_.arima_res_.bic relevant class is SARIMAXResults from statsmodels
+    ARIMA: forecaster._forecaster.arima_res_.bicrelevant class is SARIMAXResults from statsmodels
+    '''
+    
     regressor_param_grid = {"n_estimators": [100, 200, 300]}
     forecaster_param_grid = {"window_length": [7, 12, 15]}
     
