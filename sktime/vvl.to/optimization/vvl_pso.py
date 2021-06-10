@@ -186,18 +186,18 @@ def main():
     GEN = 50
 
     for g in range(GEN):
-        for part in pop:
-            
-            qq = pop.copy()
-            threads = []
-            for id in range(0, 200):
-                threads.append(Worker(id, g, qq))
+         
+        qq = pop.copy()
+        threads = []
+        
+        for id in range(0, 200):
+            threads.append(Worker(id, g, qq))
 
-            for thread in threads:
-                thread.start()
-            
-            for thread in threads:
-                thread.join() 
+        for thread in threads:
+            thread.start()
+        
+        for thread in threads:
+            thread.join() 
                 
         print("Round: ", time.time() - start_time, g)
             
