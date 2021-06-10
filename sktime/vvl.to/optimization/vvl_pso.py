@@ -30,6 +30,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
+np.random.seed(int(round(time.time())))
 
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
 creator.create("Particle", list, fitness=creator.FitnessMin, speed=list, 
@@ -82,7 +83,8 @@ class Worker(threading.Thread):
         exog.drop(columns=['Date'], inplace=True)
         
         cols = []
-        for coeff in part:
+        coeffs = convert(part)
+        for coeff in coeffs:
             exog['sin' + str(coeff)] = np.sin(coeff * np.pi * exog.index.dayofyear / 365.25)
             exog['cos' + str(coeff)] = np.cos(coeff * np.pi * exog.index.dayofyear / 365.25)
             cols.append('sin' + str(coeff))
@@ -107,17 +109,33 @@ class Worker(threading.Thread):
         if not best or best.fitness < part.fitness:
             best = creator.Particle(part)
             best.fitness.values = part.fitness.values
-            print("InProgress[%3d][%3d][%3s] => Score: %0.8f" % (self.rnd, threading.activeCount(), str(self.threadID), score), " params: ", part)
+            print("InProgress[%3d][%3d][%3s] => Score: %0.8f" % (self.rnd, threading.activeCount(), str(self.threadID), score), " params: ", convert(part))
             
         wlock.release()
         
+def convert(params):
+    
+    global ALL_TOKENS
+    arr = []
+    
+    for idx in range(len(params)):
         
+        if params[idx] < 0:
+            params[idx] = 0
+        if params[idx] >= len(ALL_TOKENS):
+            params[idx] = len(ALL_TOKENS) - 1
+            
+        arr.append(ALL_TOKENS[params[idx]])   
+        
+    return arr     
 
 def generate_params(length):
+    
+    global ALL_TOKENS
     arr = []
     
     for _ in range(length):
-        arr.append(np.random.randint(1, 500))
+        arr.append(np.random.randint(0, len(ALL_TOKENS) + 1))
     
     return arr
         
@@ -160,17 +178,27 @@ def updateParticle(part, best, phi1, phi2):
 
 
 toolbox = base.Toolbox()
-toolbox.register("particle", generate, size=7, smin=-7, smax=7)
+toolbox.register("particle", generate, size=10, smin=-3, smax=3)
 toolbox.register("population", tools.initRepeat, list, toolbox.particle)
-toolbox.register("update", updateParticle, phi1=3, phi2=3)
+toolbox.register("update", updateParticle, phi1=1, phi2=1)
 toolbox.register("evaluate", evaluate)
 toolbox.decorate("evaluate", tools.DeltaPenality(fesiable, (99999,)))
+
+ALL_TOKENS = [
+    20, 81, 86, 94, 101, 102, 103, 106, 107, 120, 122, 146, 147, 148, 151, 154,
+    160, 166, 172, 173, 176, 177, 178, 182, 193, 202, 206, 207, 211, 227, 252, 260, 
+    261, 262, 263, 264, 265, 267, 269, 271, 296, 297, 305, 306, 307, 309, 348, 
+    349, 351, 352, 365, 366, 367, 392, 419, 420, 425, 434, 459, 466, 467, 468, 
+    469, 472, 473, 478, 507, 516, 519, 523, 524, 531, 541, 543, 544, 547 
+    ]
 
 y = get_stock('VVL.TO')
 y_to_train, y_to_test = temporal_train_test_split(y, test_size=test_size)
 fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 wlock = threading.Lock()
 best = None
+
+print("TOTAL: ", len(ALL_TOKENS))
 
 def main():
     
@@ -181,16 +209,16 @@ def main():
     
     start_time = time.time()
     
-    pop = toolbox.population(n=1000)
+    pop = toolbox.population(n=2000)
  
-    GEN = 50
+    GEN = 5
 
     for g in range(GEN):
          
         qq = pop.copy()
         threads = []
         
-        for id in range(0, 200):
+        for id in range(0, 5):
             threads.append(Worker(id, g, qq))
 
         for thread in threads:
@@ -209,7 +237,7 @@ def main():
 
     print("========================================================")
     print("Processing Time: ", end_time - start_time, "secs")
-    print("FINAL: %0.8f" % best.fitness.values, " params: ", best)
+    print("FINAL: %0.8f" % best.fitness.values, " params: ", convert(best))
     
     return pop, best
 
