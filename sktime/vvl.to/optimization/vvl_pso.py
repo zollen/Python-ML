@@ -211,14 +211,14 @@ def main():
     
     pop = toolbox.population(n=2000)
  
-    GEN = 5
+    GEN = 3
 
     for g in range(GEN):
          
         qq = pop.copy()
         threads = []
         
-        for id in range(0, 5):
+        for id in range(0, 200):
             threads.append(Worker(id, g, qq))
 
         for thread in threads:
