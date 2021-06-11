@@ -116,7 +116,7 @@ class Worker(threading.Thread):
 def convert(params):
     
     global ALL_TOKENS
-    arr = []
+    arr = [ 20, 81, 86, 94, 101 ]
     
     for idx in range(len(params)):
         
@@ -178,14 +178,23 @@ def updateParticle(part, best, phi1, phi2):
 
 
 toolbox = base.Toolbox()
-toolbox.register("particle", generate, size=10, smin=-3, smax=3)
+toolbox.register("particle", generate, size=5, smin=-3, smax=3)
 toolbox.register("population", tools.initRepeat, list, toolbox.particle)
 toolbox.register("update", updateParticle, phi1=1, phi2=1)
 toolbox.register("evaluate", evaluate)
 toolbox.decorate("evaluate", tools.DeltaPenality(fesiable, (99999,)))
 
+'''
 ALL_TOKENS = [
     20, 81, 86, 94, 101, 102, 103, 106, 107, 120, 122, 146, 147, 148, 151, 154,
+    160, 166, 172, 173, 176, 177, 178, 182, 193, 202, 206, 207, 211, 227, 252, 260, 
+    261, 262, 263, 264, 265, 267, 269, 271, 296, 297, 305, 306, 307, 309, 348, 
+    349, 351, 352, 365, 366, 367, 392, 419, 420, 425, 434, 459, 466, 467, 468, 
+    469, 472, 473, 478, 507, 516, 519, 523, 524, 531, 541, 543, 544, 547 
+    ]
+'''
+ALL_TOKENS = [
+    102, 103, 106, 107, 120, 122, 146, 147, 148, 151, 154,
     160, 166, 172, 173, 176, 177, 178, 182, 193, 202, 206, 207, 211, 227, 252, 260, 
     261, 262, 263, 264, 265, 267, 269, 271, 296, 297, 305, 306, 307, 309, 348, 
     349, 351, 352, 365, 366, 367, 392, 419, 420, 425, 434, 459, 466, 467, 468, 
