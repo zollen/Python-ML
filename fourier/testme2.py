@@ -104,7 +104,7 @@ axis[2].set_ylabel('Amplitude')
 
 # Frequency domain representation
 
-fourierTransform = np.fft.fft(amplitude)/len(amplitude)           # Normalize amplitude
+fourierTransform = fft(amplitude)/len(amplitude)           # Normalize amplitude
 fourierTransform = fourierTransform[range(int(len(amplitude)/2))] # Exclude sampling frequency
 
  
