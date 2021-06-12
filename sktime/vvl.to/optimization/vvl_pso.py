@@ -116,7 +116,7 @@ class Worker(threading.Thread):
 def convert(params):
     
     global ALL_TOKENS
-    arr = [ 20, 81, 86, 94, 101 ]
+    arr = [ 20, 81, 86, 94, 101, 102, 107 ]
     
     for idx in range(len(params)):
         
@@ -140,8 +140,7 @@ def generate_params(length):
     return arr
         
 def evaluate(p):
-    score = evaluate(p)
-    return score,
+    return 1, 
 
 def fesiable(p):
     
@@ -150,8 +149,6 @@ def fesiable(p):
     
     return all(n > 0 for n in p)
 
-def distance(p):
-    return 3
 
 def generate(size, smin, smax):
     part = creator.Particle(generate_params(size)) 
@@ -178,7 +175,7 @@ def updateParticle(part, best, phi1, phi2):
 
 
 toolbox = base.Toolbox()
-toolbox.register("particle", generate, size=5, smin=-3, smax=3)
+toolbox.register("particle", generate, size=3, smin=-3, smax=3)
 toolbox.register("population", tools.initRepeat, list, toolbox.particle)
 toolbox.register("update", updateParticle, phi1=1, phi2=1)
 toolbox.register("evaluate", evaluate)
@@ -194,7 +191,7 @@ ALL_TOKENS = [
     ]
 '''
 ALL_TOKENS = [
-    102, 103, 106, 107, 120, 122, 146, 147, 148, 151, 154,
+    103, 106, 120, 122, 146, 147, 148, 151, 154,
     160, 166, 172, 173, 176, 177, 178, 182, 193, 202, 206, 207, 211, 227, 252, 260, 
     261, 262, 263, 264, 265, 267, 269, 271, 296, 297, 305, 306, 307, 309, 348, 
     349, 351, 352, 365, 366, 367, 392, 419, 420, 425, 434, 459, 466, 467, 468, 
@@ -218,7 +215,7 @@ def main():
     
     start_time = time.time()
     
-    pop = toolbox.population(n=2000)
+    pop = toolbox.population(n=5000)
  
     GEN = 3
 
