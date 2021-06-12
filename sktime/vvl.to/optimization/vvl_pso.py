@@ -134,7 +134,8 @@ def generate_params(length):
     global ALL_TOKENS
     arr = []
     
-    arr.extend(np.random.choice(ALL_TOKENS, length, replace=False))
+    for _ in range(length):
+        arr.append(np.random.randint(0, len(ALL_TOKENS) + 1))
     
     return arr
         
