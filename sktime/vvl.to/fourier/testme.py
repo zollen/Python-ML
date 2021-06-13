@@ -42,6 +42,8 @@ def get_stock(TICKER):
 
 y = get_stock('VVL.TO')
 
+y['Prices']= y['Prices'] - y['Prices'].mean()
+
 
 # How many time points are needed i,e., Sampling Frequency
 
@@ -95,7 +97,8 @@ axis[1].set_title('Fourier transform depicting the frequency components')
 axis[1].plot(frequencies, abs(fourierTransform))
 axis[1].set_xlabel('Frequency')
 axis[1].set_ylabel('Amplitude')
-axis[1].set_xlim(0, 20)
+axis[1].set_xlim(0, 50)
+axis[1].set_xticks(range(0, 50))
  
 plt.tight_layout()
 plt.show()
