@@ -18,6 +18,7 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.seasonal import STL
 from datetime import datetime, timedelta
+import time
 import pandas_datareader.data as web
 import threading
 import pandas as pd
@@ -122,20 +123,27 @@ class Worker(threading.Thread):
         wlock.release()
 
 
+
+np.random.seed(int(round(time.time())))
+
 best_params = None
 best_score = 99999999
 wlock = threading.Lock()
 
 karts = []
-all_coeffs = [20, 81, 86, 94, 101, 102, 107, 148, 206, 296, 297,
-              306, 307, 349, 352, 367, 379, 392, 419, 420, 425, 467, 472 ]
 
-start_param = 0
-count = 0
-for coeffs in list(itertools.combinations(all_coeffs, 10)):
-    if count >= start_param:
-        karts.append(coeffs)
-    count = count + 1
+ALL_TOKENS = [
+    20, 81, 86, 94, 101, 102, 103, 106, 107, 120, 122, 146, 147, 148, 151, 154,
+    160, 166, 172, 173, 176, 177, 178, 182, 193, 202, 206, 207, 211, 227, 252, 260, 
+    261, 262, 263, 264, 265, 267, 269, 271, 296, 297, 305, 306, 307, 309, 348, 
+    349, 351, 352, 365, 366, 367, 392, 419, 420, 425, 434, 459, 466, 467, 468, 
+    469, 472, 473, 478, 507, 516, 519, 523, 524, 531, 541, 543, 544, 547 
+    ]
+
+
+for _ in range(50000):
+    karts.append(np.random.choice(ALL_TOKENS, 10))
+ 
   
 orig_size = len(karts) 
 print("total: ", orig_size)  
