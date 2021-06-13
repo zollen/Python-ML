@@ -171,13 +171,16 @@ def updateParticle(part, best, phi1, phi2):
             part.speed[i] = math.copysign(part.smin, speed)
         elif abs(speed) > part.smax:
             part.speed[i] = math.copysign(part.smax, speed)
-    part[:] = list(map(operator.add, part, part.speed))
+    
+    if best.fitness.values != part.fitness.values:
+        part[:] = list(map(operator.add, part, part.speed))
+        
 
 
 toolbox = base.Toolbox()
-toolbox.register("particle", generate, size=3, smin=-3, smax=3)
+toolbox.register("particle", generate, size=3, smin=-15, smax=15)
 toolbox.register("population", tools.initRepeat, list, toolbox.particle)
-toolbox.register("update", updateParticle, phi1=1, phi2=1)
+toolbox.register("update", updateParticle, phi1=1, phi2=2)
 toolbox.register("evaluate", evaluate)
 toolbox.decorate("evaluate", tools.DeltaPenality(fesiable, (99999,)))
 
