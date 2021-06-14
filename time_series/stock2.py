@@ -7,14 +7,13 @@ Created on Jun. 14, 2021
 '''
 
 import yfinance as yf
-from datetime import datetime, timedelta
+from datetime import datetime
 import matplotlib.pyplot as plt
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.arima_model import ARIMA
 import numpy as np
 import seaborn as sb
 from tqdm import tqdm
-import pandas as pd
 from statsmodels.tools.sm_exceptions import ValueWarning, HessianInversionWarning, ConvergenceWarning
 import warnings
 
