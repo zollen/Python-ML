@@ -90,7 +90,7 @@ fh = ForecastingHorizon(y_to_test.index, is_relative=False)
 '''
 0.0084
 '''
-model = ExponentialSmoothing(trend="add", seasonal="additive", sp=8)
+model = ExponentialSmoothing(trend="add", seasonal="additive", use_boxcox=True, sp=8)
 model.fit(y_to_train['Prices'])
 
 y_forecast = model.predict(fh)
