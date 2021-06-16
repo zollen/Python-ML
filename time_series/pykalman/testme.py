@@ -4,6 +4,9 @@ Created on Jun. 15, 2021
 @author: zollen
 @title: Kalman Filter for Time Series Data
 @url: https://medium.com/dataman-in-ai/kalman-filter-explained-4d65b47916bf
+
+(Full Explaination)
+@url: https://www.kalmanfilter.net/background.html
 '''
 
 import yfinance as yf
