@@ -77,12 +77,12 @@ data = yf.download("SPY", start="2017-01-01", end="2021-12-31")
 print(data.head())
 
 # Construct a Kalman filter
-kf = KalmanFilter(transition_matrices = [1],    # The value for At. It is a random walk so is set to 1.0
-                  observation_matrices = [1],   # The value for Ht.
+kf = KalmanFilter(transition_matrices = [1],    # (F) The value for At. It is a random walk so is set to 1.0
+                  observation_matrices = [1],   # (H) The value for Ht.
                   initial_state_mean = 0,       # Any initial value. It will converge to the true state value.
                   initial_state_covariance = 1, # Sigma value for the Qt in Equation (1) the Gaussian distribution
-                  observation_covariance=1,     # Sigma value for the Rt in Equation (2) the Gaussian distribution
-                  transition_covariance=.01)    # A small turbulence in the random walk parameter 1.0
+                  observation_covariance=1,     # (R) Sigma value for the Rt in Equation (2) the Gaussian distribution
+                  transition_covariance=.01)    # (Q) A small turbulence in the random walk parameter 1.0
 # Get the Kalman smoothing
 state_means, _ = kf.filter(data['Adj Close'].values)
 
