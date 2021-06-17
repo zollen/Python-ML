@@ -77,7 +77,7 @@ r = 0.01      # measurement error
 q = 0.15      # process noise variance
     
 
-#initialization (will be removed later)
+#initialization: guess (will be removed later)
 estims = [ 10.0 ]
 estims_uncertainty = [ 100.0 * 100.0  + q ]
 
