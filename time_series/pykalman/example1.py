@@ -87,12 +87,13 @@ for rnd in range(0, 10):
     next_estims = estims[-1] + K * (measurements[rnd] - estims[-1])
     next_estims_uncertainty = (1 - K) * estims_uncertainty[-1]
     
-    if rnd == 8:
-        print(K, next_estims, next_estims_uncertainty)
-    
     # predict
     estims.append(next_estims)  # constant dynamic model
     estims_uncertainty.append(next_estims_uncertainty + q)
+    
+# remove initial guesses
+estims = estims[1:]
+estims_uncertainty = estims_uncertainty[1:]
     
 
 np.set_printoptions(formatter={"float_kind": lambda x: "%0.4f" % x})
@@ -100,9 +101,6 @@ print(np.array(estims))
 print(np.array(estims_uncertainty))
 
 
-# remove initial guesses
-estims = estims[1:]
-estims_uncertainty = estims_uncertainty[1:]
 
 x = range(1, 11)
 plt.plot(x, true_values, marker='o')
