@@ -80,7 +80,7 @@ system.
 We assume a constant acceleration dynamics.
 
 Thus, the state extrapolation equation can be simplified to:
-    X_estim(n+1,n) = F * X_estim(n,n-1)
+    X_estim(n+1,n) = F * X_estim(n,n)
     
 The system state x(n) is defined by:
     x1 = position(x)         y1 = position(y)
