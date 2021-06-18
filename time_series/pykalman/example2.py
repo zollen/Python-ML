@@ -241,20 +241,21 @@ for rnd in range(1, len(z_xy)):
     K = np.matmul(
             np.matmul(estims_uncertainty[-1], np.matrix.transpose(H)), 
             np.linalg.inv(
-                np.matmul(H, 
-                    np.matmul(estims_uncertainty[-1], np.matrix.transpose(H))
+                np.matmul(
+                    np.matmul(H, estims_uncertainty[-1]),
+                    np.matrix.transpose(H)
                     ) + R
+                )
             )
-        )
     
     next_estims = estims[-1] + np.matmul(K, z_xy[rnd] - np.matmul(H, estims[-1]))
     next_estims_uncertainty = np.matmul(
-                                (I - np.matmul(K, H)),
                                 np.matmul(
-                                    estims_uncertainty[-1],
-                                    np.transpose(I - np.matmul(K, H))
-                                )
-                              ) + np.matmul(K, np.matmul(R, np.transpose(K)))
+                                    (I - np.matmul(K, H)),
+                                    estims_uncertainty[-1]
+                                    ),
+                                np.transpose(I - np.matmul(K, H))
+                                ) + np.matmul(K, np.matmul(R, np.transpose(K)))
     
     # predict
     estims.append(next_estims)  # constant dynamic model
