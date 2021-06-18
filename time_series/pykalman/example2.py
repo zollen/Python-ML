@@ -273,8 +273,6 @@ estims_uncertainty = estims_uncertainty[1:]
 estims_x = [ x[0] for x in estims ]
 extims_y = [ x[3] for x in estims ]
 
-print(estims)
-
 
 plt.plot(z_x, z_y, marker='o')
 plt.plot(estims_x, extims_y, marker='x', color='r')
