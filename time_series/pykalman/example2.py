@@ -110,6 +110,7 @@ Matrix Form
 The process noise matrix
     
 w - provided by the problem - random vaiance in accelaration
+https://www.kalmanfilter.net/covextrap.html#withQ
 Q(n) = E(w(n) * transpose(w(n)))
       0.25Δt^4  0.5Δt^3  0.5Δt^2           0        0        0
        0.5Δt^3      Δt^2       Δt          0        0        0 
