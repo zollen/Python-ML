@@ -317,7 +317,7 @@ P0 = np.array([ [ 500,   0 ],
 Prediction
 Now, we can predict the next state based on the initialization values.
 '''
-estims = [ np.matmul(F, x0) + G * (1 + g) ]
+estims = [ np.matmul(F, x0) + G * (0 + g) ]
 estims_uncertainty = [ np.matmul(np.matmul(F, P0), np.transpose(F)) + Q ]
 
 for rnd in range(0, len(z_alt)):
