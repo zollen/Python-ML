@@ -273,17 +273,17 @@ np.set_printoptions(formatter={"float_kind": lambda x: "%0.4f" % x})
 
 z_alt = np.array([ -32.4, -11.1, 18, 22.9, 19.5, 28.5, 46.5, 68.9, 48.2, 56.1, 90.5, 104.9,
           140.9, 148, 187.6, 209.2, 244.6, 276.4, 323.5, 357.3, 357.4, 398.3, 446.7,
-          465.1, 529.4, 570.4, 636.8, 693.3, 707.3, 748.5 ]).reshape(-1, 1)
+          465.1, 529.4, 570.4, 636.8, 693.3, 707.3, 748.5 ])
 z_accl = np.array([ 39.72, 40.02, 39.97, 39.81, 39.75, 39.6, 39.77, 39.83, 39.73, 39.87, 
           39.81, 39.92, 39.78, 39.98, 39.76, 39.86, 39.61, 39.86, 39.74, 39.87, 
-          39.63, 39.67, 39.96, 39.8, 39.89, 39.85, 39.9, 39.81, 39.81, 39.68 ]).reshape(-1, 1)
+          39.63, 39.67, 39.96, 39.8, 39.89, 39.85, 39.9, 39.81, 39.81, 39.68 ])
 
 
 F = np.array([ [ 1, 0.25 ], 
                [ 0,    1 ] ])
-G = np.array([ 0.0313, 0.25 ])
+G = np.array([ 0.5 * (0.25**2), 0.25 ])
 Q = np.array([ [ 0.25 * (0.25)**4, 0.5 * (0.25)**3 ], 
-               [  0.5 * (0.25)**3,         0.25**2 ] ]) * 0.1**2
+               [  0.5 * (0.25)**3,         0.25**2 ] ]) * (0.1**2)
 P = np.array( [ [ 500,   0 ],
                 [   0, 500 ] ])
 
@@ -304,7 +304,6 @@ We also don't know what the rocket acceleration is, however we can assume that
 acceleration is greater than zero, let's assume:
 '''
 g = 9.8
-u0 = g
 
 '''
 Since our initial state vector is a guess, we will set very high estimate uncertainty. 
@@ -318,7 +317,7 @@ P0 = np.array([ [ 500,   0 ],
 Prediction
 Now, we can predict the next state based on the initialization values.
 '''
-estims = [ np.matmul(F, x0) + G * u0 ]
+estims = [ np.matmul(F, x0) + G * (1 + g) ]
 estims_uncertainty = [ np.matmul(np.matmul(F, P0), np.transpose(F)) + Q ]
 
 for rnd in range(0, len(z_alt)):
@@ -330,8 +329,9 @@ for rnd in range(0, len(z_alt)):
                     np.matrix.transpose(H)
                     ) + R
             )
-   
-    next_estims = estims[-1] + K * (z_alt[rnd] - (H * estims[-1]))  
+    
+    # Δt = 0.25, Δt * accel = velocity
+    next_estims = estims[-1] + K * ( [z_alt[rnd], (z_accl[rnd] * 0.25) ] - estims[-1])  
    
     next_estims_uncertainty = np.matmul(
                                 np.matmul(
@@ -343,8 +343,8 @@ for rnd in range(0, len(z_alt)):
                                 
     # predict
     estims.append( 
-            np.matmul(F, next_estims) + G * (z_accl[rnd] - 9.8) 
-        )  
+            np.matmul(F, next_estims) + G * (z_accl[rnd] + g)
+        )
     
     estims_uncertainty.append(
             np.matmul(np.matmul(F, next_estims_uncertainty), np.transpose(F)) + Q
