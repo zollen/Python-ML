@@ -239,6 +239,7 @@ estims_uncertainty = [ np.matmul(F, np.matmul(P0, np.transpose(F))) + Q ]
 
 for rnd in range(1, len(z_xy)):
     # state update
+    # K = P * H' * ( H * P * H' + R )^(-1)
     K = np.matmul(
             np.matmul(estims_uncertainty[-1], np.matrix.transpose(H)), 
             np.linalg.inv(
@@ -249,7 +250,10 @@ for rnd in range(1, len(z_xy)):
                 )
             )
     
+    # x(n:n) = x(n:n-1) + K ( z(n) - H * x(n:n-1)
     next_estims = estims[-1] + np.matmul(K, z_xy[rnd] - np.matmul(H, estims[-1]))
+    
+    # P(n:n) = (I - K * H) * P(n:n-1) * (I - K * H)' + K * R * K' 
     next_estims_uncertainty = np.matmul(
                                 np.matmul(
                                     (I - np.matmul(K, H)),
@@ -259,7 +263,10 @@ for rnd in range(1, len(z_xy)):
                                 ) + np.matmul(K, np.matmul(R, np.transpose(K)))
     
     # predict
+    # x(n+1:n) = X(n:n)   <- constant dynamic model
     estims.append(next_estims)  # constant dynamic model
+    
+    # P(n+1:n) = F * P(n:n) * F' + Q
     estims_uncertainty.append(
             np.matmul(F, np.matmul(
                             next_estims_uncertainty,
