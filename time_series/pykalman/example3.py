@@ -322,6 +322,7 @@ estims_uncertainty = [ np.matmul(np.matmul(F, P0), np.transpose(F)) + Q ]
 
 for rnd in range(0, len(z_alt)):
     # state update
+    # K = P * H' ( H * P * H' + R)^-1
     K = np.matmul(estims_uncertainty[-1], np.matrix.transpose(H)) /  \
             (
                 np.matmul(
@@ -331,8 +332,10 @@ for rnd in range(0, len(z_alt)):
             )
     
     # Δt = 0.25, Δt * accel = velocity
+    # x(n:n) = x(n:n-1) + K ( z(n) - x(n:n-1) )
     next_estims = estims[-1] + K * ( [z_alt[rnd], (z_accl[rnd] * 0.25) ] - estims[-1])  
    
+    # P = (I - K * H) * P * (I - K * H)' + K * R * K'
     next_estims_uncertainty = np.matmul(
                                 np.matmul(
                                     (I - K.reshape(-1, 1) * H),
@@ -342,10 +345,12 @@ for rnd in range(0, len(z_alt)):
                                 ) + K.reshape(-1, 1) * R * K
                                 
     # predict
+    # x(n+1:n) = F * x(n:n) + G * u(n)
     estims.append( 
             np.matmul(F, next_estims) + G * (z_accl[rnd] + g)
         )
     
+    # P(n+1) = F * P(n) * F' + Q
     estims_uncertainty.append(
             np.matmul(np.matmul(F, next_estims_uncertainty), np.transpose(F)) + Q
         )
