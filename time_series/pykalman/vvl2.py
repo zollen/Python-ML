@@ -72,7 +72,7 @@ print(np.array(estims_uncertainty))
 
 plt.figure(figsize=(16, 10))
 plt.plot(data.index, data['Prices'], marker='o')
-plt.plot(data.index, estims, marker='x', color='r')
+plt.plot(data.index, estims, marker='x', color='r', alpha=0.4)
 plt.title('VVL.TO')
 plt.legend(['Prices', 'Estimates'])
 plt.xlabel('Date')
