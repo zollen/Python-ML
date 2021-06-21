@@ -95,7 +95,6 @@ if __name__ == "__main__":
         #posterior
         trace = pm.sample(1000, cores=2) # gives me 1000 samples and 2 independent runs
         
-        plt.figure(figsize=(7, 7))
         pm.traceplot(trace)
         plt.tight_layout()
     
