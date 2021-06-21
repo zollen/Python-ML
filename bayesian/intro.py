@@ -94,7 +94,7 @@ if __name__ == "__main__":
         #Likelihood
         likelihood = pm.Normal("y", mu=slope*x_vals + intercept, sigma=sigma, observed=y_vals)
     
-        #posterior
+        #posterior - draw 1000 samples from the posterior, 4 times independently
         trace = pm.sample(1000, cores=4)
 
     if False:
