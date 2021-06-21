@@ -47,8 +47,9 @@ The esimated coef of:
     L1 is -0.15, kind of close to the true phi1 -0.2
     L2 is 0.4722, pretty close to the true phi2 0.5
 
-These are just estimates, the confident interval gives us some ideas the range of the
-values. This is why we move to bayesian analysis
+These are just point estimates, the confident interval gives us some ideas the range 
+of the values. We want to get the full distribution of values for these 3 parameters.
+This is why we move to bayesian analysis
 '''
 
 if False:
@@ -69,6 +70,9 @@ if False:
 '''
 Baylesian Analysis with PyMC3
 =============================
+Since we have 3 parameters, we have 3 priors
+Because I don't know the answer beforehand, so I am going to keep it open and 
+initialize a large range: mean=0, std=20
 
 Priors:
 Ø1  => N(0, 20)   (normal dist(mean=0, std=20)
@@ -78,7 +82,8 @@ Priors:
 Likelihood:
 x(t)|Ø1, Ø2, σ, x(t-1), x(t-2) => N(Ø1 * x(t-1) + Ø2 * x(t-2), σ)
 
-Posterior (given the entire time series, what is Ø1, Ø2, σ?)
+Posterior 
+Given the entire time series, what is the distriubtion of these parameters: Ø1, Ø2, σ?
 Ø1, Ø2, σ|x => ?
 '''
 
