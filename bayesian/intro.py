@@ -18,6 +18,9 @@ sb.set_style('whitegrid')
 
 
 '''
+m - slope
+b - intercept
+σ - standard deviation of the noise
 
 y(true) = mx + b
 y = y(true) + N(0, σ)
@@ -44,6 +47,9 @@ if False:
     plt.ylabel('y', fontsize=20)
     plt.legend((p1, p2), ('samples', 'true line'), fontsize=18)
 
+'''
+Let's fit with a linear model and see if it does better!
+'''
 clf = LinearRegression()
 clf.fit(x_vals.reshape(-1,1), y_vals)
 preds = clf.predict(x_vals.reshape(-1,1))
@@ -95,9 +101,9 @@ if __name__ == "__main__":
     
     if True:    
         for var in ['slope', 'intercept', 'sigma']:
-            plt.figure(figsize=(10,4))
+            plt.figure(figsize=(10, 10))
             vals = trace.get_values(var)
-            mean, lower, upper = round(vals.mean(),2), round(vals.mean()-vals.std(),2), round(vals.mean()+vals.std(),2)
+            mean, lower, upper = round(vals.mean(), 2), round(vals.mean()-vals.std(), 2), round(vals.mean()+vals.std(), 2)
             sb.distplot(vals)
             posterior_est = plt.axvline(mean, color='b')
             mle_est = plt.axvline(mle_estimates[var], color='b', linestyle='dotted')
