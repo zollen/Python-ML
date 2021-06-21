@@ -81,7 +81,8 @@ if __name__ == "__main__":
     Posterior
     =========
     m, b, σ | y => ?
-    P(m, b, σ | y) = P(y | m, b, σ) x P(m) x P(b) x P(σ)
+    ∝ - proportional
+    P(m, b, σ | y) ∝ P(y | m, b, σ) x P(m) x P(b) x P(σ)
     '''
     
     with pm.Model() as model:
