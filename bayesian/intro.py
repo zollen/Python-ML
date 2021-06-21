@@ -33,56 +33,57 @@ true_sigma = 1
 
 num_points = 10
 
-x_vals = np.linspace(0, 1, num_points)
-true_y_vals = true_slope * x_vals + true_intercept
-y_vals = true_y_vals + np.random.normal(scale=true_sigma, size=num_points)
+if __name__ == "__main__":
 
-true_params = {'slope': true_slope, 'intercept': true_intercept, 'sigma': true_sigma}
-
-if False:
-    plt.figure(figsize=(7,7))
-    p1 = plt.scatter(x_vals, y_vals)
-    p2, = plt.plot(x_vals, true_y_vals, color='r')
-    plt.xlabel('x', fontsize=20)
-    plt.ylabel('y', fontsize=20)
-    plt.legend((p1, p2), ('samples', 'true line'), fontsize=18)
-
-'''
-Let's fit with a linear model and see if it does better!
-'''
-clf = LinearRegression()
-clf.fit(x_vals.reshape(-1,1), y_vals)
-preds = clf.predict(x_vals.reshape(-1,1))
-resids = preds - y_vals
-
-print('True Model:')
-print('y_true = %s*x + %s'%(true_slope, true_intercept))
-print('True sigma: %s\n'%true_params['sigma'])
-
-print('Estimated Model:')
-print('y_hat = %s*x + %s'%(clf.coef_[0], clf.intercept_))
-print('Sd Residuals: %s'%(resids.std()))
-
-mle_estimates = {'slope': clf.coef_[0], 'intercept': clf.intercept_, 'sigma': resids.std()}
-
-'''
-Priors
-======
-m => N(0, 20)
-b => N(0, 20)
-σ => Exp(1)
-
-Likelihood
-==========
-y | m, b σ => N(mx + b, σ)
-
-Posterior
-=========
-m, b, σ | y => ?
-P(m, b, σ | y) = P(y | m, b, σ) x P(m) x P(b) x P(σ)
-'''
-
-if __name__ == "__main__":  
+    x_vals = np.linspace(0, 1, num_points)
+    true_y_vals = true_slope * x_vals + true_intercept
+    y_vals = true_y_vals + np.random.normal(scale=true_sigma, size=num_points)
+    
+    true_params = {'slope': true_slope, 'intercept': true_intercept, 'sigma': true_sigma}
+    
+    if False:
+        plt.figure(figsize=(7,7))
+        p1 = plt.scatter(x_vals, y_vals)
+        p2, = plt.plot(x_vals, true_y_vals, color='r')
+        plt.xlabel('x', fontsize=20)
+        plt.ylabel('y', fontsize=20)
+        plt.legend((p1, p2), ('samples', 'true line'), fontsize=18)
+    
+    '''
+    Let's fit with a linear model and see if it does better!
+    '''
+    clf = LinearRegression()
+    clf.fit(x_vals.reshape(-1,1), y_vals)
+    preds = clf.predict(x_vals.reshape(-1,1))
+    resids = preds - y_vals
+    
+    print('True Model:')
+    print('y_true = %s*x + %s'%(true_slope, true_intercept))
+    print('True sigma: %s\n'%true_params['sigma'])
+    
+    print('Estimated Model:')
+    print('y_hat = %s*x + %s'%(clf.coef_[0], clf.intercept_))
+    print('Sd Residuals: %s'%(resids.std()))
+    
+    mle_estimates = {'slope': clf.coef_[0], 'intercept': clf.intercept_, 'sigma': resids.std()}
+    
+    '''
+    Priors
+    ======
+    m => N(0, 20)
+    b => N(0, 20)
+    σ => Exp(1)
+    
+    Likelihood
+    ==========
+    y | m, b σ => N(mx + b, σ)
+    
+    Posterior
+    =========
+    m, b, σ | y => ?
+    P(m, b, σ | y) = P(y | m, b, σ) x P(m) x P(b) x P(σ)
+    '''
+    
     with pm.Model() as model:
         #priors
         sigma = pm.Exponential("sigma", lam=1.0)
