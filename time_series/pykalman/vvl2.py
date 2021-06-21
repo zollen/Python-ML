@@ -9,6 +9,7 @@ import pandas_datareader.data as web
 import pandas as pd
 import seaborn as sb
 import numpy as np
+from sktime.performance_metrics.forecasting import mean_absolute_percentage_error
 import matplotlib.pyplot as plt
 import warnings
 
@@ -67,7 +68,8 @@ estims_uncertainty = estims_uncertainty[1:]
 np.set_printoptions(formatter={"float_kind": lambda x: "%0.4f" % x})
 print(np.array(estims))   
 print(np.array(estims_uncertainty))
-
+print("RMSE: %0.4f" % mean_absolute_percentage_error(data['Prices'], estims))
+ 
 
 
 plt.figure(figsize=(16, 10))
