@@ -81,23 +81,23 @@ x(t)|Ø1, Ø2, σ, x(t-1), x(t-2) => N(Ø1 * x(t-1) + Ø2 * x(t-2), σ)
 Posterior (given the entire time series, what is Ø1, Ø2, σ?)
 Ø1, Ø2, σ|x => ?
 '''
-    
-with pm.Model() as bayes_model:
-    #priors
-    # let's define the search area of mu=0, sigma=20
-    phi = pm.Normal("phi", mu=0, sigma=20, shape=2) # shape=2 two phi values to return to phi
-    sigma = pm.Exponential("sigma", lam=1)
-    
-    #likelihood
-    likelihood = pm.AR("x", phi, sigma, observed=xvals) # autoregressive 
-    
-    #posterior
-    trace = pm.sample(1000, cores=2) # gives me 1000 samples and 2 independent runs
-    
-if True:
-    plt.figure(figsize=(7, 7))
-    pm.traceplot(trace)
-    plt.tight_layout()
+
+if __name__ == "__main__":    
+    with pm.Model() as bayes_model:
+        #priors
+        # let's define the search area of mu=0, sigma=20
+        phi = pm.Normal("phi", mu=0, sigma=20, shape=2) # shape=2 two phi values to return to phi
+        sigma = pm.Exponential("sigma", lam=1)
+        
+        #likelihood
+        likelihood = pm.AR("x", phi, sigma, observed=xvals) # autoregressive 
+        
+        #posterior
+        trace = pm.sample(1000, cores=2) # gives me 1000 samples and 2 independent runs
+        
+        plt.figure(figsize=(7, 7))
+        pm.traceplot(trace)
+        plt.tight_layout()
     
 '''
 The returned 'trace' will have a distriubtion of sigma, phi1 and phi2.
