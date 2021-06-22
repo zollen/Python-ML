@@ -112,11 +112,46 @@ if __name__ == "__main__":
         It is pretty close to coeffs in the ARIMA summary
         '''
         
+        phi1_vals = trace.get_values('phi')[:,0]
+        phi2_vals = trace.get_values('phi')[:,1]
+        sigma_vals = trace.get_values('sigma')
+        
         print('Bayesian Estimated Model:')
-        print('Phi[0]: ', trace.get_values('phi')[:,0].mean())
-        print('Phi[1]: ', trace.get_values('phi')[:,1].mean())
-        print('Sd Residuals: ', trace.get_values('sigma').mean())
-    
+        print('Phi#1: ', phi1_vals.mean())
+        print('Phi#2: ', phi2_vals.mean())
+        print('Sd Residuals: ', sigma_vals.mean())
+        
+        '''
+        Forecast Next Value
+        '''
+        num_samples = 10000
+        forecasted_vals = []
+        num_periods = 5
+        
+        for _ in range(num_samples):
+            curr_vals = list(xvals.copy())
+            
+            phi1_val = np.random.choice(phi1_vals)
+            phi2_val = np.random.choice(phi2_vals)
+            sigma_val = np.random.choice(sigma_vals)
+            
+            for _ in range(num_periods):
+                curr_vals.append(curr_vals[-1]*phi1_val + curr_vals[-2]*phi2_val + np.random.normal(0, sigma_val))
+            forecasted_vals.append(curr_vals[-num_periods:]) 
+        forecasted_vals = np.array(forecasted_vals)
+        
+        forecast = model.forecast(5)
+        
+        for i in range(num_periods):
+            plt.figure(figsize=(10,4))
+            vals = forecasted_vals[:,i]
+            mu, dev = round(vals.mean(), 3), round(vals.std(), 3)
+            sb.distplot(vals)
+            p1 = plt.axvline(forecast[0][i], color='k')
+            p2 = plt.axvline(vals.mean(), color='b')
+            plt.legend((p1,p2), ('MLE', 'Posterior Mean'), fontsize=20)
+            plt.title('Forecasted t+%s\nPosterior Mean: %s\nMLE: %s\nSD Bayes: %s\nSD MLE: %s'%((i+1), mu, round(forecast[0][i],3), dev, round(forecast[1][i],3)), fontsize=20)
+            
 
     
 plt.show()
