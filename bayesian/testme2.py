@@ -5,6 +5,7 @@ Created on Jun. 22, 2021
 @url: https://colab.research.google.com/drive/1pM8DqiMO1QjvZ0Y_LzJbJ_jIryeU5O7o#scrollTo=FF7UohbyyKeM
 '''
 import pymc3 as pm
+import arviz as az
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sb
@@ -51,6 +52,7 @@ if __name__ == "__main__":
         trace = pm.sample(1000)
         
         print('[mu]: ', trace.get_values('mu').mean())
+        print('[mu]: ', trace.get_values('sigma').mean())
         
         pm.traceplot(trace)
         plt.tight_layout() 
