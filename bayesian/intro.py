@@ -61,7 +61,7 @@ if __name__ == "__main__":
     print('y_true = %s*x + %s'%(true_slope, true_intercept))
     print('True sigma: %s\n'%true_params['sigma'])
     
-    print('Estimated Model:')
+    print('LinearRegression Estimated Model:')
     print('y_hat = %s*x + %s'%(clf.coef_[0], clf.intercept_))
     print('Sd Residuals: %s'%(resids.std()))
     
@@ -96,6 +96,11 @@ if __name__ == "__main__":
     
         #posterior - draw 1000 samples from the posterior, 4 times independently
         trace = pm.sample(1000, cores=4)
+        
+    print('Bayesian Estimated Model:')
+    print('y_hat = %s*x + %s'%(trace.get_values('slope').mean(), 
+                               trace.get_values('intercept').mean()))
+    print('Sd Residuals: %s'%(trace.get_values('sigma').mean()))
 
     if False:
         pm.traceplot(trace)
