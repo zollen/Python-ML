@@ -42,10 +42,10 @@ if __name__ == "__main__":
     with pm.Model() as model:
         
         # Prior - search space of mu, σ
-        guessed_μ = pm.Normal('mu', mu=0, sd=σ_μ)
-        σ = pm.Exponential('sigma', lam=1/5)
+        dist_μ = pm.Normal('mu', mu=0, sd=σ_μ)
+        dist_σ = pm.Exponential('sigma', lam=1/5)
         
-        likelihood = pm.Normal('y', mu=guessed_μ, sd=σ, observed=y)
+        likelihood = pm.Normal('y', mu=dist_μ, sd=dist_σ, observed=y)
         
         # sampling 1000 random guessed_μ and σ, then later calulate the mean
         trace = pm.sample(1000)
