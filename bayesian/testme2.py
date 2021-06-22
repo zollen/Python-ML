@@ -38,37 +38,21 @@ if __name__ == "__main__":
     σ_μ = 20                     
     y = μ + np.random.randn(100)
     
-    if False:
-        # simple model for μ only
-        with pm.Model() as model:
-            
-            # Prior - search space of mu
-            guessed_μ = pm.Normal('mu', mu=0, sd=σ_μ)
-            
-            likelihood = pm.Normal('y', mu=guessed_μ, sd=1, observed=y)
-            
-            trace = pm.sample(1000)
-            
-            print('[mu]: ', trace.get_values('mu').mean())
-            
-            pm.traceplot(trace)
-            plt.tight_layout() 
-    
-    if True:
-        # simple model for μ and σ
-        with pm.Model() as model:
-            
-            # Prior - search space of mu, σ
-            guessed_μ = pm.Normal('mu', mu=0, sd=σ_μ)
-            σ = pm.Exponential('sigma', lam=1/5)
-            
-            likelihood = pm.Normal('y', mu=guessed_μ, sd=σ, observed=y)
-            
-            trace = pm.sample(1000)
-            
-            print('[mu]: ', trace.get_values('mu').mean())
-            
-            pm.traceplot(trace)
-            plt.tight_layout() 
+    # simple model for μ and σ
+    with pm.Model() as model:
+        
+        # Prior - search space of mu, σ
+        guessed_μ = pm.Normal('mu', mu=0, sd=σ_μ)
+        σ = pm.Exponential('sigma', lam=1/5)
+        
+        likelihood = pm.Normal('y', mu=guessed_μ, sd=σ, observed=y)
+        
+        # sampling 1000 random guessed_μ and σ, then later calulate the mean
+        trace = pm.sample(1000)
+        
+        print('[mu]: ', trace.get_values('mu').mean())
+        
+        pm.traceplot(trace)
+        plt.tight_layout() 
 
 plt.show()
