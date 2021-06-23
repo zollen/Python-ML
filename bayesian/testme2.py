@@ -52,7 +52,7 @@ if __name__ == "__main__":
         trace = pm.sample(1000)
         
         print('[mu]: ', trace.get_values('mu').mean())
-        print('[mu]: ', trace.get_values('sigma').mean())
+        print('[signa]: ', trace.get_values('sigma').mean())
         
         pm.traceplot(trace)
         plt.tight_layout() 
