@@ -55,6 +55,7 @@ if __name__ == "__main__":
         print('[signa]: ', trace.get_values('sigma').mean())
         
         pm.traceplot(trace)
+        pm.plot_posterior(trace)
         plt.tight_layout() 
 
 plt.show()
