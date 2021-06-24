@@ -81,6 +81,10 @@ if __name__ == "__main__":
         
     For more information about available kernels, please refer to the covariance 
     functions documentation.
+    
+    Since this is count data, we are looking at a Poisson process, which assumes a 
+    different underlying distribution than that of Gaussian. Poisson models are based 
+    on counts, and therefore the lowest possible value is 0. 
     '''
     
     with pm.Model() as model:
