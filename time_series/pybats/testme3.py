@@ -58,7 +58,7 @@ print("Shape(sample_1step): ", samples_1step.shape)
 
 preds = []
 for i in range(plot_length):
-    preds.append(np.median(samples_1step[:,i]))
+    preds.append(np.mean(samples_1step[:,i]))
 
 print("RMSE: %0.4f" % mean_absolute_percentage_error(data_1step, preds))
 
