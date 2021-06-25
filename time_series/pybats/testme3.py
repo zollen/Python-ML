@@ -32,7 +32,7 @@ forecast_end = y.index[-1]
 Y = y.values
 
 exog = pd.DataFrame()
-for i in range(1, 8):
+for i in range(1, 9):
     exog['sin' + str(i)] = np.sin(i * np.pi * y.index.dayofyear / 365.25)
     exog['cos' + str(i)] = np.cos(i * np.pi * y.index.dayofyear / 365.25)
 exog = exog.values
