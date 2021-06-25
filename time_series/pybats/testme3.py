@@ -40,6 +40,7 @@ exog = exog.values
 mod, samples = analysis(Y, exog,
             k, forecast_start, forecast_end,
             family='poisson',
+            ntrend=2,  
             prior_length=prior_length, 
             dates=y.index,
             rho=rho,
