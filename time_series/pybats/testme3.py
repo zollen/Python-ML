@@ -27,12 +27,12 @@ prior_length = 5    # Number of days of data used to set prior
 k = 1               # Forecast horizon
 rho = 0.8           # Random effect discount factor to increase variance of forecast distribution
 
-forecast_start = y.index[-31] 
+forecast_start = y.index[-36] 
 forecast_end = y.index[-1] 
 Y = y.values
 
 exog = pd.DataFrame()
-for i in range(1, 10):
+for i in range(1, 5):
     exog['sin' + str(i)] = np.sin(i * np.pi * y.index.dayofyear / 365.25)
     exog['cos' + str(i)] = np.cos(i * np.pi * y.index.dayofyear / 365.25)
 exog = exog.values
@@ -51,7 +51,7 @@ print(mod.get_coef())
 forecast = median(samples)  
 
 
-plot_length = 30
+plot_length = 36
 data_1step = Y[-plot_length:]
 samples_1step = samples[:,-plot_length:,0]
 print("Shape(samples): ", samples.shape)
