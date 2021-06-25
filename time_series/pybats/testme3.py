@@ -53,7 +53,7 @@ forecast = median(samples)
 
 plot_length = 30
 data_1step = Y[-plot_length:]
-samples_1step = samples[:,-plot_length-1:-1,0]
+samples_1step = samples[:,-plot_length:,0]
 print("Shape(samples): ", samples.shape)
 print("Shape(sample_1step): ", samples_1step.shape)
 
