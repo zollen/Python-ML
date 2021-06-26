@@ -35,26 +35,26 @@ forecast_start = y_to_train.index[-TRAINING_SIZE]
 forecast_end = y_to_train.index[-1] 
 
 
-
-exog = pd.DataFrame()
-for i in range(1, 4):
-    exog['sin' + str(i)] = np.sin(i * np.pi * y.index.dayofyear / 365.25)
-    exog['cos' + str(i)] = np.cos(i * np.pi * y.index.dayofyear / 365.25)
-
-
 prior_length = 5    # Number of days of data used to set prior
 k = 36              # Forecast horizon
 rho = 0.5           # Random effect discount factor to increase variance of forecast distribution
+seasPeriods=[12]
+seasHarmComponents = [[1,3,6]]
 
-mod, samples = analysis(y_to_train.values, exog.values,
+mod, samples = analysis(y_to_train.values, 
             k=k, 
             forecast_start=forecast_start, 
             forecast_end=forecast_end,
             family='poisson',
+            seasPeriods=seasPeriods, 
+            seasHarmComponents=seasHarmComponents,
             ntrend=2,  
             prior_length=prior_length, 
             dates=y_to_train.index,
             rho=rho,
+            deltrend=0.95,      # Discount factor on the trend component (the intercept)
+            delregn=0.95,       # Discount factor on the regression component
+            delseas=0.98,       # Discount factor on the seasonal component
             ret = ['model', 'forecast'])
 
 print(mod.get_coef())
