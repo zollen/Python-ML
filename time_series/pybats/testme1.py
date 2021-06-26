@@ -2,6 +2,9 @@
 Created on Jun. 24, 2021
 
 @author: zollen
+@url: https://lavinei.github.io/pybats//
+@url: https://lavinei.github.io/pybats/analysis.html#analysis
+
 '''
 
 
