@@ -35,7 +35,7 @@ forecast_start = y_to_train.index[-TRAINING_SIZE]
 forecast_end = y_to_train.index[-1] 
 
 
-prior_length = 5    # Number of days of data used to set prior
+prior_length = 8    # Number of days of data used to set prior
 k = 36              # Forecast horizon
 rho = 0.5           # Random effect discount factor to increase variance of forecast distribution
 seasPeriods=[12]
