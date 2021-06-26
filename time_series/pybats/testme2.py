@@ -71,6 +71,12 @@ mod, samples = analysis(Y, X,
 print(mod.get_coef())
 
 # Take the median as the point forecast
+'''
+The samples are stored in a 3-dimensional array, with axes nsamps * forecast length * k
+ - nsamps is the number of samples drawn from the forecast distribution
+ - forecast length is the number of time steps between forecast_start and forecast_end
+ - k is the forecast horizon, or the number of steps that were forecast ahead
+'''
 forecast = median(samples)
                            
 
