@@ -29,7 +29,10 @@ prior_length = 5    # Number of days of data used to set prior
 k = 1               # Forecast horizon
 rho = 0.8           # Random effect discount factor to increase variance of forecast distribution
 
-forecast_start = y.index[-36] 
+TRAINING_SIZE=36
+TEST_SIZE = 36
+
+forecast_start = y.index[-TRAINING_SIZE] 
 forecast_end = y.index[-1] 
 Y = y.values
 
@@ -62,9 +65,8 @@ The samples are stored in a 3-dimensional array, with axes nsamps * forecast len
 forecast = median(samples)  
 
 
-plot_length = 36
-data_steps = Y[-plot_length:]
-forecast = forecast.flatten()
+data_steps = Y[-TEST_SIZE:]
+forecast = forecast.flatten()[-TEST_SIZE:]
 
 print("Shape(samples): ", samples.shape)
 print("Shape(forecast): ", forecast.shape)
