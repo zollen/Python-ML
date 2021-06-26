@@ -39,7 +39,7 @@ prior_length = 5    # Number of days of data used to set prior
 k = 36              # Forecast horizon
 rho = 0.5           # Random effect discount factor to increase variance of forecast distribution
 seasPeriods=[12]
-seasHarmComponents = [[1,3,6]]
+seasHarmComponents = [[1, 5, 6]]
 
 mod, samples = analysis(y_to_train.values, 
             k=k, 
