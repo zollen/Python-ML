@@ -2,6 +2,8 @@
 Created on Jun. 25, 2021
 
 @author: zollen
+@url: https://lavinei.github.io/pybats//
+@url: https://lavinei.github.io/pybats/analysis.html#analysis
 '''
 
 from sktime.datasets import load_airline
