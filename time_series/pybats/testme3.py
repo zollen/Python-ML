@@ -66,6 +66,9 @@ plot_length = 36
 data_steps = Y[-plot_length:]
 forecast = forecast.flatten()
 
+print("Shape(samples): ", samples.shape)
+print("Shape(forecast): ", forecast.shape)
+
 
 print("RMSE: %0.4f" % mean_absolute_percentage_error(data_steps, forecast))
 
