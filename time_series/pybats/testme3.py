@@ -63,19 +63,14 @@ forecast = median(samples)
 
 
 plot_length = 36
-data_1step = Y[-plot_length:]
-samples_1step = samples[:,-plot_length:,0]
-print("Shape(samples): ", samples.shape)
-print("Shape(sample_1step): ", samples_1step.shape)
+data_steps = Y[-plot_length:]
+forecast = forecast.flatten()
 
-preds = []
-for i in range(plot_length):
-    preds.append(np.mean(samples_1step[:,i]))
 
-print("RMSE: %0.4f" % mean_absolute_percentage_error(data_1step, preds))
+print("RMSE: %0.4f" % mean_absolute_percentage_error(data_steps, forecast))
 
-plt.plot(data_1step)
-plt.plot(preds)
+plt.plot(data_steps)
+plt.plot(forecast)
 
 plt.legend(('Airline', 'Predictions'))
 
