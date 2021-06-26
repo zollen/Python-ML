@@ -38,7 +38,9 @@ for i in range(1, 6):
 exog = exog.values
 
 mod, samples = analysis(Y, exog,
-            k, forecast_start, forecast_end,
+            k=k, 
+            forecast_start=forecast_start, 
+            forecast_end=forecast_end,
             family='poisson',
             ntrend=2,  
             prior_length=prior_length, 
