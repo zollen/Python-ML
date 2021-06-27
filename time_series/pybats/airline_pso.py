@@ -77,7 +77,7 @@ class Worker(threading.Thread):
         
     def evaluate(self, part):
         
-        global TEST_SIZE
+        global TEST_SIZE, y_to_train, y_to_test
         
         scores = []
         for _ in range(0, 5):
@@ -194,7 +194,7 @@ def main():
     
     start_time = time.time()
     
-    pop = toolbox.population(n=2000)
+    pop = toolbox.population(n=100)
  
     GEN = 3
 
@@ -203,7 +203,7 @@ def main():
         qq = pop.copy()
         threads = []
         
-        for id in range(0, 200):
+        for id in range(0, 2):
             threads.append(Worker(id, g, qq))
 
         for thread in threads:
