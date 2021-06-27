@@ -38,15 +38,6 @@ warnings.filterwarnings('ignore')
 
 np.random.seed(int(round(time.time())))
 
-@contextmanager
-def suppress_stdout():
-    with open(os.devnull, "w") as devnull:
-        old_stdout = sys.stdout
-        sys.stdout = devnull
-        try:  
-            yield
-        finally:
-            sys.stdout = old_stdout
 
 creator.create("FitnessMin", base.Fitness, weights=(-1.0,))
 creator.create("Particle", list, fitness=creator.FitnessMin, speed=list, 
@@ -82,22 +73,21 @@ class Worker(threading.Thread):
         scores = []
         for _ in range(0, 5):
       
-            with suppress_stdout():
-                samples = analysis(y_to_train.values, 
-                    k=36, 
-                    forecast_start=forecast_start, 
-                    forecast_end=forecast_end,
-                    family='poisson',
-                    seasPeriods=[12], 
-                    seasHarmComponents=[ part ],
-                    ntrend=2,  
-                    prior_length=5, 
-                    dates=y_to_train.index,
-                    rho=0.5,
-                    deltrend=0.95,      # Discount factor on the trend component (the intercept)
-                    delregn=0.98,       # Discount factor on the regression component
-                    delseas=0.98,       # Discount factor on the seasonal component
-                    ret = ['forecast'])
+            samples = analysis(y_to_train.values, 
+                k=36, 
+                forecast_start=forecast_start, 
+                forecast_end=forecast_end,
+                family='poisson',
+                seasPeriods=[12], 
+                seasHarmComponents=[ part ],
+                ntrend=2,  
+                prior_length=5, 
+                dates=y_to_train.index,
+                rho=0.5,
+                deltrend=0.95,      # Discount factor on the trend component (the intercept)
+                delregn=0.98,       # Discount factor on the regression component
+                delseas=0.98,       # Discount factor on the seasonal component
+                ret = ['forecast'])
             
             forecast = median(samples).flatten()[-TEST_SIZE:] 
             scores.append(mean_absolute_percentage_error(y_to_test.values, forecast))
@@ -203,7 +193,7 @@ def main():
         qq = pop.copy()
         threads = []
         
-        for id in range(0, 2):
+        for id in range(0, 10):
             threads.append(Worker(id, g, qq))
 
         for thread in threads:
