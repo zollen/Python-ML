@@ -9,9 +9,6 @@ Created on Jun. 25, 2021
 from sktime.datasets import load_airline
 from sktime.performance_metrics.forecasting import mean_absolute_percentage_error
 from sktime.forecasting.model_selection import temporal_train_test_split
-from datetime import timedelta
-import pandas as pd
-import numpy as np
 from pybats.analysis import *
 from pybats.point_forecast import *
 from pybats.plot import *
