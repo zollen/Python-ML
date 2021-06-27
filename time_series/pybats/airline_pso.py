@@ -71,7 +71,7 @@ class Worker(threading.Thread):
         global TEST_SIZE, y_to_train, y_to_test
         
         scores = []
-        for _ in range(0, 5):
+        for _ in range(0, 10):
       
             samples = analysis(y_to_train.values, 
                 k=36, 
