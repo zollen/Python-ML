@@ -81,45 +81,24 @@ all_dates.remove('2015-12-31')
 there are lot more combos don't show up in test data
 Mismatch 307437  total:  418908
 26% of training combo are in the test data
-
-cnt = 0
-done = {}
-for _, trrow in training.iterrows():
-    if (trrow['shop_id'], trrow['item_id']) not in done.keys():
-        k = testing[(testing['shop_id'] == trrow['shop_id']) & (testing['item_id'] == trrow['item_id'])]
-        if len(k) <= 0:
-            cnt += 1
-        done[(trrow['shop_id'], trrow['item_id'])] = 1
-    
-print(f"Mismatch {cnt}", " total: ", len(done))
-exit()
 '''
 
 def buildData(data):
 
     index = 0    
-    all_shops = training['shop_id'].unique()
-    all_items = training['item_id'].unique()
-    all_params = list(itertools.product(all_shops, all_items))
+    all_data = training.groupby(['shop_id', 'item_id'])
     
-    print("TOTAL: ", len(all_params))
-    
-    for params in all_params[:200]:
-        index, data = buildCombo(data, index, params[0], params[1])
+    for _, rows in all_data:
+        index, data = buildCombo(data, index, rows)
     
        
-def buildCombo(data, indx, shopId, itemId):
-    
-    k = training[(training['shop_id'] == shopId) & (training['item_id'] == itemId)]
-   
-    if len(k) <= 0:
-        return indx, data
-    
-    recRef = k.iloc[0]
+def buildCombo(data, indx, rows):
+     
+    recRef = rows.iloc[0]
 
     for i in range(len(all_dates) - 1):
         
-        targets = k[(k['date'] > all_dates[i]) & (k['date'] <= all_dates[i + 1])]   
+        targets = rows[(rows['date'] > all_dates[i]) & (rows['date'] <= all_dates[i + 1])]   
               
         rec = {}
         rec['date'] = pd.to_datetime(all_dates[i + 1], format='%Y-%m-%d')
@@ -160,7 +139,7 @@ trainData['item_price'] = trainData['item_price'].astype('float64')
 trainData['item_cnt_day'] = trainData['item_cnt_day'].astype('int64')
 
 trainData.to_csv('../data/train_data.csv', index = False)
-
+    
 print("Done")
 
 plt.show()
