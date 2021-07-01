@@ -133,7 +133,7 @@ trainData['item_id'] = trainData['item_id'].astype('int64')
 trainData['item_price'] = trainData['item_price'].astype('float64')
 trainData['item_cnt_day'] = trainData['item_cnt_day'].astype('int64')
 
-print(trainData)
+print(len(trainData))
 
 trainData.to_csv('../data/train_data.csv', index = False)
 
