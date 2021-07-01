@@ -88,27 +88,20 @@ def buildCombo(data, indx, rows):
         indx += 1
          
     return indx
-    
-
-'''
-TIME:
-targets = rows[(rows['date'] > all_dates[i]) & (rows['date'] <= all_dates[i + 1])]   
-TOTAL TIME:  7249.417484521866
-
-targets = rows[(rows['date_block_num'] == i)]  
-TOTAL TIME:  4570.942203760147
-'''
-import time
-
-nn = np.zeros((len(training) * len(all_dates), 6))
-index = 0
 
 def process(rows):
     global nn, index
     index = buildCombo(nn, index, rows)
+    
+def convDate(date):
+    return pd.to_datetime(all_dates[date], format='%Y-%m-%d')
 
 
-ts = time.time()   
+        
+nn = np.zeros((len(training) * len(all_dates), 6))
+index = 0
+
+ 
 
 training.groupby(['shop_id', 'item_id']).apply(process)
 
@@ -117,11 +110,7 @@ nn = nn[~np.all(nn == 0, axis = 1)]
 trainData = pd.DataFrame(data=nn, columns=training.columns)
 trainData['date_block_num'] = trainData['date_block_num'].astype('int64')
 
-print("TOTAL TIME: ", time.time() - ts)   
 
-
-def convDate(date):
-    return pd.to_datetime(all_dates[date], format='%Y-%m-%d')
 
     
 trainData['date'] = trainData['date_block_num'].apply(convDate) 
