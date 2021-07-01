@@ -82,16 +82,7 @@ there are lot more combos don't show up in test data
 Mismatch 307437  total:  418908
 26% of training combo are in the test data
 '''
-
-def buildData(data):
-
-    index = 0    
-    all_data = training.groupby(['shop_id', 'item_id'])
     
-    for _, rows in all_data:
-        index, data = buildCombo(data, index, rows)
-    
-       
 def buildCombo(data, indx, rows):
      
     recRef = rows.iloc[0]
@@ -106,7 +97,6 @@ def buildCombo(data, indx, rows):
         rec['shop_id'] = recRef['shop_id']
         rec['item_id'] = recRef['item_id']
         rec['item_price'] = recRef['item_price']
-        
         
         if len(targets) <= 0:
             rec['item_cnt_day'] = 0
@@ -129,6 +119,8 @@ def buildCombo(data, indx, rows):
     
 
 trainData = pd.DataFrame(columns=training.columns)
+index = 0
+'''
 buildData(trainData)
 
 trainData['date'] = trainData['date'].astype('datetime64')
@@ -139,7 +131,15 @@ trainData['item_price'] = trainData['item_price'].astype('float64')
 trainData['item_cnt_day'] = trainData['item_cnt_day'].astype('int64')
 
 trainData.to_csv('../data/train_data.csv', index = False)
+'''
+def func(rows):
+    global trainData, index
+    index, trainData = buildCombo(trainData, index, rows)
     
+training.groupby(['shop_id', 'item_id']).apply(func)
+print(trainData)
+
+   
 print("Done")
 
 plt.show()
