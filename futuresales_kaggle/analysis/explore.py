@@ -109,9 +109,6 @@ nn = nn[~np.all(nn == 0, axis = 1)]
 
 trainData = pd.DataFrame(data=nn, columns=training.columns)
 trainData['date_block_num'] = trainData['date_block_num'].astype('int64')
-
-
-
     
 trainData['date'] = trainData['date_block_num'].apply(convDate) 
 
