@@ -96,9 +96,11 @@ def process(rows):
 def convDate(date):
     return pd.to_datetime(all_dates[date], format='%Y-%m-%d')
 
-
+print("Begin...")
         
-nn = np.zeros((len(training) * len(all_dates), 6))
+nn = np.zeros((len(training['shop_id'].unique()) * 
+               len(training['item_id'].unique()) * 
+               len(all_dates), 6))
 index = 0
 
  
