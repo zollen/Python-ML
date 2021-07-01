@@ -42,13 +42,6 @@ training.loc[training.shop_id == 10, 'shop_id'] = 11
 testing.loc[testing.shop_id == 10, 'shop_id'] = 11
 
 '''
-I need baseline evaluation!!!!!!!!!!!!!!
-
-2013-01-01 00:00:00
-2015-10-31 00:00:00
-'''
-
-'''
 there are lot more combos don't show up in test data
 Mismatch 307437  total:  418908
 26% of training combo are in the test data
@@ -63,13 +56,12 @@ for yr in  [ 2013, 2014, 2015 ]:
 all_dates.remove('2015-11-30')
 all_dates.remove('2015-12-31')
 
-
     
 def buildCombo(data, indx, rows):
      
     recRef = rows.iloc[0]
 
-    for i in range(len(all_dates) + 1):
+    for i in range(len(all_dates)):
         
         targets = rows[rows['date_block_num'] == i]   
               
@@ -118,7 +110,6 @@ def process(rows):
 
 ts = time.time()   
 
-
 training.groupby(['shop_id', 'item_id']).apply(process)
 
 nn = nn[~np.all(nn == 0, axis = 1)]
@@ -131,6 +122,7 @@ print("TOTAL TIME: ", time.time() - ts)
 
 def convDate(date):
     return pd.to_datetime(all_dates[date], format='%Y-%m-%d')
+
     
 trainData['date'] = trainData['date_block_num'].apply(convDate) 
 
