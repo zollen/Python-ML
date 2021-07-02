@@ -73,11 +73,13 @@ def buildCombo(data, indx, rows):
         
 
         if len(targets) <= 0:
+            rec['item_price'] = recRef['item_price']
             rec['item_cnt_day'] = 0
         else:
             cnt = 0
             for _, row in targets.iterrows():
                 recRef = row
+                rec['item_price'] = row['item_price']
                 cnt = cnt + row['item_cnt_day'] 
             rec['item_cnt_day'] = cnt
             
