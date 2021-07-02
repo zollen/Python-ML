@@ -85,7 +85,7 @@ def buildCombo(data, indx, rows):
                 cnt = cnt + row['item_cnt_day'] 
             rec['item_cnt_day'] = cnt
             
-        data[indx] = [ 0, rec['date_block_num'],
+        data[indx] = [ rec['date_block_num'],
                         rec['shop_id'], rec['item_id'], 
                         rec['item_price'], rec['item_cnt_day'] ] 
 
@@ -97,14 +97,12 @@ def process(rows):
     global nn, index
     index = buildCombo(nn, index, rows)
     
-def convDate(date):
-    return pd.to_datetime(all_dates[date], format='%Y-%m-%d')
 
 print("Begin...")
         
 nn = np.zeros((len(training['shop_id'].unique()) * 
                len(training['item_id'].unique()) * 
-               len(all_dates), 6))
+               len(all_dates), 5))
 index = 0
 
  
@@ -114,11 +112,6 @@ training.groupby(['shop_id', 'item_id']).apply(process)
 nn = nn[~np.all(nn == 0, axis = 1)]
 
 trainData = pd.DataFrame(data=nn, columns=training.columns)
-trainData['date_block_num'] = trainData['date_block_num'].astype('int64')
-    
-trainData['date'] = trainData['date_block_num'].apply(convDate) 
-
-trainData['date'] = trainData['date'].astype('datetime64')
 trainData['date_block_num'] = trainData['date_block_num'].astype('int64')
 trainData['shop_id'] = trainData['shop_id'].astype('int64')
 trainData['item_id'] = trainData['item_id'].astype('int64')
