@@ -62,7 +62,7 @@ all_dates.remove('2015-11-30')
 all_dates.remove('2015-12-31')
 
     
-def buildCombo(data, indx, rows):
+def buildCombo(data, prices, indx, rows):
      
     recRef = rows.iloc[0]
 
@@ -91,14 +91,22 @@ def buildCombo(data, indx, rows):
         data[indx] = [ rec['date_block_num'],
                         rec['shop_id'], rec['item_id'], 
                         rec['item_price'], rec['item_cnt_day'] ] 
+        
+        if i == 33:
+            prices[(rec['shop_id'], rec['item_id'])] = rec['item_price']
 
         indx += 1
          
     return indx
 
+
+def get_price(rec):
+    global prices
+    return prices[(rec['shop_id'], rec['item_id'])]
+
 def process(rows):
-    global nn, index
-    index = buildCombo(nn, index, rows)
+    global nn, index, prices
+    index = buildCombo(nn, prices, index, rows)
     
 
 print("Begin...")
@@ -107,7 +115,7 @@ nn = np.zeros((len(training['shop_id'].unique()) *
                len(training['item_id'].unique()) * 
                len(all_dates), 5))
 index = 0
-
+prices = {}
  
 
 training.groupby(['shop_id', 'item_id']).apply(process)
@@ -121,9 +129,13 @@ trainData['item_id'] = trainData['item_id'].astype('int64')
 trainData['item_price'] = trainData['item_price'].astype('float64')
 trainData['item_cnt_day'] = trainData['item_cnt_day'].astype('int64')
 
+testing['item_price'] = testing.apply(get_price, axis=1)
+
 print(len(trainData))
 
+
 trainData.to_csv('../data/train_data.csv', index = False)
+testing.to_csv('../data/test_data.csv', index = False)
 
 print("Done")
 
