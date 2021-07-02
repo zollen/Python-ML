@@ -41,6 +41,8 @@ testing.loc[testing.shop_id == 1, 'shop_id'] = 58
 training.loc[training.shop_id == 10, 'shop_id'] = 11
 testing.loc[testing.shop_id == 10, 'shop_id'] = 11
 
+training.loc[training.item_price < 0, 'item_price'] = 2499
+
 '''
 there are lot more combos don't show up in test data
 Mismatch 307437  total:  418908
