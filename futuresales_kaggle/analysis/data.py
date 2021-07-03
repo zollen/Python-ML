@@ -117,12 +117,11 @@ nn = np.zeros((len(training['shop_id'].unique()) *
 index = 0
 prices = {}
  
-
 training.groupby(['shop_id', 'item_id']).apply(process)
 
 nn = nn[~np.all(nn == 0, axis = 1)]
 
-trainData = pd.DataFrame(data=nn, columns=training.columns)
+trainData = pd.DataFrame(data=nn, columns=['date_block_num', 'shop_id', 'item_id', 'item_price', 'item_cnt_day'])
 trainData['date_block_num'] = trainData['date_block_num'].astype('int64')
 trainData['shop_id'] = trainData['shop_id'].astype('int64')
 trainData['item_id'] = trainData['item_id'].astype('int64')
