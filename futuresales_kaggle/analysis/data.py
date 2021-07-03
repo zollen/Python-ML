@@ -23,12 +23,12 @@ training = pd.read_csv('../data/sales_train.csv')
 testing = pd.read_csv('../data/test.csv')
 
 
-training['date'] = pd.to_datetime(training['date'], format="%d.%m.%Y")    
+training.drop(columns='date', inplace = True)    
 
 training = training[(training.item_price < 300000 ) & (training.item_cnt_day < 1000)]
 
 training = training[training.item_price > 0].reset_index(drop = True)
-training.loc[training.item_cnt_day < 1, "item_cnt_day"] = 0
+#training.loc[training.item_cnt_day < 1, "item_cnt_day"] = 0
 
 
 # Якутск Орджоникидзе, 56
@@ -116,7 +116,8 @@ nn = np.zeros((len(training['shop_id'].unique()) *
                len(all_dates), 5))
 index = 0
 prices = {}
- 
+
+
 training.groupby(['shop_id', 'item_id']).apply(process)
 
 nn = nn[~np.all(nn == 0, axis = 1)]
