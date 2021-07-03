@@ -6,6 +6,8 @@ Created on Jun. 27, 2021
 
 import pandas as pd
 import numpy as np
+import itertools
+from collections import defaultdict
 import calendar
 import warnings
 
@@ -45,6 +47,10 @@ training.loc[training.item_price < 0, 'item_price'] = 2499
 
 testing['date_block_num'] = 34
 
+
+testkeys = set(itertools.product(
+            testing['shop_id'].unique(), 
+            testing['item_id'].unique()))
 
 '''
 there are lot more combos don't show up in test data
@@ -92,7 +98,7 @@ def buildCombo(data, prices, indx, rows):
                         rec['shop_id'], rec['item_id'], 
                         rec['item_price'], rec['item_cnt_day'] ] 
         
-        if i == 33:
+        if i == 33 and (rec['shop_id'], rec['item_id']) in testkeys:
             prices[(rec['shop_id'], rec['item_id'])] = rec['item_price']
 
         indx += 1
@@ -115,8 +121,7 @@ nn = np.zeros((len(training['shop_id'].unique()) *
                len(training['item_id'].unique()) * 
                len(all_dates), 5))
 index = 0
-prices = {}
-
+prices = defaultdict(lambda : 0)
 
 training.groupby(['shop_id', 'item_id']).apply(process)
 
