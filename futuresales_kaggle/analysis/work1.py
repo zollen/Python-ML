@@ -19,7 +19,7 @@ pd.set_option('display.width', 1000)
 np.random.seed(0)
 
 features = ['date_block_num', 'shop_id', 'item_id', 'item_price']
-label = 'item_cnt_day'
+label = 'item_cnt_month'
 
 sales = pd.read_csv('../data/monthly_train.csv')
 test = pd.read_csv('../data/monthly_test.csv')
@@ -31,14 +31,15 @@ model = XGBRegressor()
 model.fit(sales[features], sales[label])
 preds = model.predict(test[features])
 
-test['item_cnt_month'] = preds
-test['item_cnt_month'] = test['item_cnt_month'].astype('int64')
-test[['ID', label]].to_csv('../data/prediction.csv', index = False)
-
+test[label] = preds
+test[label] = test[label].astype('int64')
 
 test.loc[(test['shop_id'] == 55) & (test['item_id'] == 8516), 'item_cnt_month'] = 1
 
 test.loc[test['item_cnt_month'] < 0, 'item_cnt_month'] = 0
+
+
+test[['ID', label]].to_csv('../data/prediction.csv', index = False)
 
 
 print("TIME: ", time.time() - ts)
