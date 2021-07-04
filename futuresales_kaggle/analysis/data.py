@@ -132,7 +132,8 @@ trainData['date_block_num'] = trainData['date_block_num'].astype('int64')
 trainData['shop_id'] = trainData['shop_id'].astype('int64')
 trainData['item_id'] = trainData['item_id'].astype('int64')
 trainData['item_price'] = trainData['item_price'].astype('float64')
-trainData['item_cnt_day'] = trainData['item_cnt_day'].astype('int64')
+trainData['item_cnt_month'] = trainData['item_cnt_day'].astype('int64')
+trainData.drop(column=['item_cnt_day'], inplace = True)
 
 testing['item_price'] = testing.apply(get_price, axis=1)
 

@@ -35,6 +35,12 @@ test['item_cnt_month'] = preds
 test['item_cnt_month'] = test['item_cnt_month'].astype('int64')
 test[['ID', label]].to_csv('../data/prediction.csv', index = False)
 
+
+test.loc[(test['shop_id'] == 55) & (test['item_id'] == 8516), 'item_cnt_month'] = 1
+
+test.loc[test['item_cnt_month'] < 0, 'item_cnt_month'] = 0
+
+
 print("TIME: ", time.time() - ts)
 
 print("Done")
