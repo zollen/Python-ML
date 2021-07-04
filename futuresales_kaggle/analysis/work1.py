@@ -7,7 +7,7 @@ Created on Jul. 2, 2021
 import pandas as pd
 import numpy as np
 import time
-from xgboost import XGBRegressor
+from lightgbm import LGBMRegressor
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -23,20 +23,23 @@ label = 'item_cnt_month'
 
 sales = pd.read_csv('../data/monthly_train.csv')
 test = pd.read_csv('../data/monthly_test.csv')
+items = pd.read_csv('../data/items.csv')
+cats = pd.read_csv('../data/monthly_cats.csv')
+shops = pd.read_csv('../data/monthly_shops.csv')
+
 
 
 ts = time.time()
 
-model = XGBRegressor()
+model = LGBMRegressor()
 model.fit(sales[features], sales[label])
 preds = model.predict(test[features])
 
 test[label] = preds
 test[label] = test[label].astype('int64')
 
-test.loc[(test['shop_id'] == 55) & (test['item_id'] == 8516), 'item_cnt_month'] = 1
-
-test.loc[test['item_cnt_month'] < 0, 'item_cnt_month'] = 0
+#test.loc[(test['shop_id'] == 55) & (test['item_id'] == 8516), 'item_cnt_month'] = 1
+#test.loc[test['item_cnt_month'] < 0, 'item_cnt_month'] = 0
 
 
 test[['ID', label]].to_csv('../data/prediction.csv', index = False)

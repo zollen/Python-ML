@@ -17,10 +17,6 @@ pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 
 
-
-categories = pd.read_csv('../data/item_categories.csv')
-items = pd.read_csv('../data/items.csv')
-shops = pd.read_csv('../data/shops.csv')
 training = pd.read_csv('../data/sales_train.csv')
 testing = pd.read_csv('../data/test.csv')
 
