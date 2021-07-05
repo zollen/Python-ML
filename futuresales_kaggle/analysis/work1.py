@@ -40,6 +40,7 @@ test_item_cats = pd.merge(test, items_cats, how='left', on='item_id')
 train_item_cats_shops = pd.merge(train_item_cats, shops, how='left', on='shop_id')
 test_item_cats_shops = pd.merge(test_item_cats, shops, how='left', on='shop_id')
 
+train_item_cats_shops[label] = train_item_cats_shops[label].clip(0, 20)
 
 model = LGBMRegressor()
 model.fit(train_item_cats_shops[features], train_item_cats_shops[label])
@@ -47,8 +48,7 @@ preds = model.predict(test_item_cats_shops[features])
 
 test[label] = preds
 test[label] = test[label].astype('int64')
-
-test.loc[test[label] < 0, 'label'] = 0
+test[label] = test[label].clip(0, 20)
 
 test[['ID', label]].to_csv('../data/prediction.csv', index = False)
 
