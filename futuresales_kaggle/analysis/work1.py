@@ -18,32 +18,39 @@ pd.set_option('display.width', 1000)
 
 np.random.seed(0)
 
-features = ['date_block_num', 'shop_id', 'item_id', 'item_price']
+features = ['date_block_num', 'shop_id', 'item_id', 
+            'item_price', 'item_category_id', 'name2', 
+            'name3', 'subtype_code', 'type_code', 'shop_id', 
+            'shop_category', 'shop_city']
 label = 'item_cnt_month'
 
-sales = pd.read_csv('../data/monthly_train.csv')
+train = pd.read_csv('../data/monthly_train.csv')
 test = pd.read_csv('../data/monthly_test.csv')
-items = pd.read_csv('../data/items.csv')
+items = pd.read_csv('../data/monthly_items.csv')
 cats = pd.read_csv('../data/monthly_cats.csv')
 shops = pd.read_csv('../data/monthly_shops.csv')
 
 
-
 ts = time.time()
 
+
+items_cats = pd.merge(items, cats, how='left', on='item_category_id')
+train_item_cats = pd.merge(train, items_cats, how='left', on='item_id')
+test_item_cats = pd.merge(test, items_cats, how='left', on='item_id')
+train_item_cats_shops = pd.merge(train_item_cats, shops, how='left', on='shop_id')
+test_item_cats_shops = pd.merge(test_item_cats, shops, how='left', on='shop_id')
+
+
 model = LGBMRegressor()
-model.fit(sales[features], sales[label])
-preds = model.predict(test[features])
+model.fit(train_item_cats_shops[features], train_item_cats_shops[label])
+preds = model.predict(test_item_cats_shops[features])
 
 test[label] = preds
 test[label] = test[label].astype('int64')
 
-#test.loc[(test['shop_id'] == 55) & (test['item_id'] == 8516), 'item_cnt_month'] = 1
-#test.loc[test['item_cnt_month'] < 0, 'item_cnt_month'] = 0
-
+test.loc[test[label] < 0, 'label'] = 0
 
 test[['ID', label]].to_csv('../data/prediction.csv', index = False)
-
 
 print("TIME: ", time.time() - ts)
 
