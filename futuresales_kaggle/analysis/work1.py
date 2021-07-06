@@ -18,10 +18,17 @@ pd.set_option('display.width', 1000)
 
 np.random.seed(0)
 
+'''
+1. remove item_price column
+2. use clip(0, 21), clip(0, 19)
+3. Reassign numeric labels based on high item_cnt_month
+4. rename column name2, name3, subtype_code and type_code
+'''
+
 features = ['date_block_num', 'shop_id', 'item_id', 
+            'shop_category', 'shop_city',
             'item_price', 'item_category_id', 'name2', 
-            'name3', 'subtype_code', 'type_code', 'shop_id', 
-            'shop_category', 'shop_city']
+            'name3', 'subtype_code', 'type_code']
 label = 'item_cnt_month'
 
 train = pd.read_csv('../data/monthly_train.csv')
@@ -30,9 +37,7 @@ items = pd.read_csv('../data/monthly_items.csv')
 cats = pd.read_csv('../data/monthly_cats.csv')
 shops = pd.read_csv('../data/monthly_shops.csv')
 
-
 ts = time.time()
-
 
 items_cats = pd.merge(items, cats, how='left', on='item_category_id')
 train_item_cats = pd.merge(train, items_cats, how='left', on='item_id')
@@ -41,6 +46,8 @@ train_item_cats_shops = pd.merge(train_item_cats, shops, how='left', on='shop_id
 test_item_cats_shops = pd.merge(test_item_cats, shops, how='left', on='shop_id')
 
 train_item_cats_shops[label] = train_item_cats_shops[label].clip(0, 20)
+
+print(train_item_cats_shops.head())
 
 model = LGBMRegressor()
 model.fit(train_item_cats_shops[features], train_item_cats_shops[label])
