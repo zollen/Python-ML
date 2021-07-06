@@ -19,10 +19,12 @@ pd.set_option('display.width', 1000)
 np.random.seed(0)
 
 '''
-1. remove item_price column
-2. use clip(0, 21), clip(0, 19)
-3. Reassign numeric labels based on high item_cnt_month
-4. rename column name2, name3, subtype_code and type_code
+1. use clip(0, 21), clip(0, 19), clip(0,15) yield lower rmse. Need to revisit
+'''
+
+'''
+1. Reassign numeric labels based on high item_cnt_month
+2. rename column name2, name3, subtype_code and type_code
 '''
 
 features = ['date_block_num', 'shop_id', 'item_id', 
