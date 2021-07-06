@@ -22,11 +22,6 @@ np.random.seed(0)
 1. use clip(0, 21), clip(0, 19), clip(0,15) yield lower rmse. Need to revisit
 '''
 
-'''
-1. Reassign numeric labels based on high item_cnt_month
-2. rename column name2, name3, subtype_code and type_code
-'''
-
 features = ['date_block_num', 'shop_id', 'item_id', 
             'shop_category', 'shop_city',
             'item_price', 'item_category_id', 'name2', 
