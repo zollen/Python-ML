@@ -39,20 +39,20 @@ shops = shops[["shop_id", "shop_category", "shop_city"]]
 
 
 
-cats["type_code"] = cats.item_category_name.apply( lambda x: x.split(" ")[0] ).astype(str)
-cats.loc[ (cats.type_code == "Игровые")| (cats.type_code == "Аксессуары"), "category" ] = "Игры"
+cats["item_type"] = cats.item_category_name.apply( lambda x: x.split(" ")[0] ).astype(str)
+cats.loc[ (cats['item_type'] == "Игровые")| (cats['item_type'] == "Аксессуары"), "category" ] = "Игры"
 
 category = []
-for cat in cats.type_code.unique():
-    if len(cats[cats.type_code == cat]) >= 5: 
+for cat in cats['item_type'].unique():
+    if len(cats[cats['item_type'] == cat]) >= 5: 
         category.append( cat )
-cats.type_code = cats.type_code.apply(lambda x: x if (x in category) else "etc")
+cats['item_type'] = cats['item_type'].apply(lambda x: x if (x in category) else "etc")
 
-cats.type_code = LabelEncoder().fit_transform(cats.type_code)
+cats['item_type'] = LabelEncoder().fit_transform(cats['item_type'])
 cats["split"] = cats.item_category_name.apply(lambda x: x.split("-"))
 cats["subtype"] = cats.split.apply(lambda x: x[1].strip() if len(x) > 1 else x[0].strip())
-cats["subtype_code"] = LabelEncoder().fit_transform( cats["subtype"] )
-cats = cats[["item_category_id", "subtype_code", "type_code"]]
+cats["item_subtype"] = LabelEncoder().fit_transform( cats["subtype"] )
+cats = cats[["item_category_id", "item_type", "item_subtype"]]
 
 
 
@@ -101,6 +101,7 @@ items.name2 = LabelEncoder().fit_transform(items.name2)
 items.name3 = LabelEncoder().fit_transform(items.name3)
 
 items.drop(["item_name", "name1"],axis = 1, inplace= True)
+
 
 shops.to_csv('../data/monthly_shops.csv', index = False)
 cats.to_csv('../data/monthly_cats.csv', index = False)

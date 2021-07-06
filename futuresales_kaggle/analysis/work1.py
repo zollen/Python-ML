@@ -30,7 +30,7 @@ np.random.seed(0)
 features = ['date_block_num', 'shop_id', 'item_id', 
             'shop_category', 'shop_city',
             'item_price', 'item_category_id', 'name2', 
-            'name3', 'subtype_code', 'type_code']
+            'name3', 'item_type', 'item_subtype']
 label = 'item_cnt_month'
 
 train = pd.read_csv('../data/monthly_train.csv')
