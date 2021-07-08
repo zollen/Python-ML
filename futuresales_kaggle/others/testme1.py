@@ -351,6 +351,8 @@ matrix.drop(features_to_drop, axis = 1, inplace = True)
 time.time() - ts
 
 
+
+
 # sum daily revenue into monthly revenue per shop
 ts = time.time()
 group = train.groupby( ["date_block_num","shop_id"] ).agg({"revenue": ["sum"] })
@@ -402,3 +404,43 @@ matrix = matrix[matrix["date_block_num"] > 3]
 time.time() - ts
 
 print(matrix.head())
+'''
+item_cnt_month_lag_1               = t.loc[t + 1]
+item_cnt_month_lag_2               = t.loc[t + 2]
+item_cnt_month_lag_3               = t.loc[t + 3]
+
+date_avg_item_cnt_lag_1            = groupby("date_block_num").agg({"item_cnt_month" : ["mean"]}).loc[t + 1]
+date_item_avg_item_cnt_lag_1       = groupby(['date_block_num', 'item_id']).agg({'item_cnt_month': ['mean']}).loc[t + 1]
+date_item_avg_item_cnt_lag_2       = groupby(['date_block_num', 'item_id']).agg({'item_cnt_month': ['mean']}).loc[t + 2]
+date_item_avg_item_cnt_lag_3       = groupby(['date_block_num', 'item_id']).agg({'item_cnt_month': ['mean']}).loc[t + 3]
+
+date_shop_avg_item_cnt_lag_1       = groupby( ["date_block_num","shop_id"] ).agg({"item_cnt_month" : ["mean"]}).loc[t + 1]
+date_shop_avg_item_cnt_lag_2       = groupby( ["date_block_num","shop_id"] ).agg({"item_cnt_month" : ["mean"]}).loc[t + 2]
+date_shop_avg_item_cnt_lag_3       = groupby( ["date_block_num","shop_id"] ).agg({"item_cnt_month" : ["mean"]}).loc[t + 3]
+
+date_shop_item_avg_item_cnt_lag_1  = groupby( ["date_block_num","shop_id","item_id"] ).agg({"item_cnt_month" : ["mean"]}).loc[t + 1]
+date_shop_item_avg_item_cnt_lag_2  = groupby( ["date_block_num","shop_id","item_id"] ).agg({"item_cnt_month" : ["mean"]}).loc[t + 2]
+date_shop_item_avg_item_cnt_lag_3  = groupby( ["date_block_num","shop_id","item_id"] ).agg({"item_cnt_month" : ["mean"]}).loc[t + 3]
+
+date_shop_subtype_avg_item_cnt_lag_1  = groupby(['date_block_num', 'shop_id', 'subtype_code']).agg({'item_cnt_month': ['mean']}).loc[t + 1]
+date_city_avg_item_cnt_lag_1         = groupby(['date_block_num', 'shop_city']).agg({'item_cnt_month': ['mean']}).loc[t + 1]
+date_item_city_avg_item_cnt_lag_1    = groupby(['date_block_num', 'item_id', 'shop_city']).agg({'item_cnt_month': ['mean']}).loc[t + 1]
+
+delta_price_lag  = 
+    a = groupby( ["item_id"] ).agg({"item_price": ["mean"]})
+    b = groupby( ["date_block_num","item_id"] ).agg( {"item_price": ["mean"]} )
+    k = [(a - b) / b].loc[t+1, t+2, t+3]
+    l = first_non_empty(k[t+1], k[t+2], k[t+3])
+
+delta_revenue_lag_1  
+    revenue = item_cnt_day * item_price   # daily revenue
+    a = groupby( ["date_block_num","shop_id"] ).agg({"revenue": ["sum"] })
+    b = groupby(["shop_id"]).agg({ "revenue":["mean"] })
+    k = [(a - b) / b].loc[t + 1, result]
+    
+month   = t[date_block_num] % 12
+days    = total_day_in_month(date_block_num)
+
+item_shop_first_sale  = groupby(["item_id","shop_id"])["date_block_num"].transform('min')
+item_first_sale       = groupby(["item_id"])["date_block_num"].transform('min')
+'''
