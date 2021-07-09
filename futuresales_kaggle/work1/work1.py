@@ -69,13 +69,22 @@ train_item_cats_shops[label] = train_item_cats_shops[label].clip(0, 20)
 adding new features
 '''
 
-# 1. date_item_avg_cnt (groupby(['date_block_num', 'item_id']).agg({'item_cnt_month': ['mean']})
+# 1. groupby(['date_block_num', 'item_id']).agg({'item_cnt_month': ['mean']})
 f1 = raw.groupby(['date_block_num', 'item_id']).agg({'item_cnt_day': ['mean']})
 f1.columns = [ 'date_item_avg_cnt' ]
 train_item_cats_shops = train_item_cats_shops.merge(f1, on=['date_block_num', 'item_id'], how='left')
 train_item_cats_shops.fillna(0, inplace = True)
 test_item_cats_shops = test_item_cats_shops.merge(f1, on=['date_block_num', 'item_id'], how='left')
 test_item_cats_shops.fillna(0, inplace = True)
+
+# 2. groupby( ["date_block_num","shop_id","item_id"] ).agg({"item_cnt_month" : ["mean"]})
+f2 = raw.groupby(['date_block_num', 'shop_id', 'item_id']).agg({'item_cnt_day': ['mean']})
+f2.columns = [ 'date_shop_item_avg_cnt' ]
+train_item_cats_shops = train_item_cats_shops.merge(f2, on=['date_block_num', 'shop_id', 'item_id'], how='left')
+train_item_cats_shops.fillna(0, inplace = True)
+test_item_cats_shops = test_item_cats_shops.merge(f2, on=['date_block_num', 'shop_id', 'item_id'], how='left')
+test_item_cats_shops.fillna(0, inplace = True)
+
 
 
 
@@ -92,17 +101,18 @@ features = ['date_block_num', 'shop_id', 'item_id',
             'item_price', 'item_category_id', 'name2', 
             'name3', 'item_type', 'item_subtype',
             'item_cnt_month_lag1', 'item_cnt_month_lag2', 'item_cnt_month_lag3',
-            'date_item_avg_cnt_lag1', 'date_item_avg_cnt_lag2', 'date_item_avg_cnt_lag3'
+            'date_item_avg_cnt_lag1', 'date_item_avg_cnt_lag2', 'date_item_avg_cnt_lag3',
+            'date_shop_item_avg_cnt_lag1', 'date_shop_item_avg_cnt_lag2', 'date_shop_item_avg_cnt_lag3'
             ]
             
 keys = ['shop_id', 'item_id']
-targets = ['item_cnt_month', 'date_item_avg_cnt' ]
+targets = ['item_cnt_month', 'date_item_avg_cnt', 'date_shop_item_avg_cnt' ]
 
 all_df.loc[all_df['date_block_num'] == 34, 'item_cnt_month'] = 0
 
 pp = lag_features(all_df, 3, keys, targets)
 
-pp.drop(columns=['date_item_avg_cnt'], inplace = True)
+pp.drop(columns=['date_item_avg_cnt', 'date_shop_item_avg_cnt'], inplace = True)
 
 
 t1 = pp[pp['date_block_num'] < 34]
@@ -111,7 +121,8 @@ t2 = pp.loc[pp['date_block_num'] == 34,
                     'shop_id', 'item_id', 'item_cnt_month_lag1', 
                     'item_cnt_month_lag2', 'item_cnt_month_lag3',
                     'date_item_avg_cnt_lag1', 'date_item_avg_cnt_lag2', 
-                    'date_item_avg_cnt_lag3'
+                    'date_item_avg_cnt_lag3', 'date_shop_item_avg_cnt_lag1',
+                    'date_shop_item_avg_cnt_lag2', 'date_shop_item_avg_cnt_lag3'
                 ]]
 
 print(t1.head())
