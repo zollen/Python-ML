@@ -18,14 +18,23 @@ pd.set_option('display.width', 1000)
 
 np.random.seed(0)
 
+def lag_features(df, trailing_window_size, columns, targets):
+    
+    df_lagged = df.copy()
+   
+    for window in range(1, trailing_window_size + 1):
+        shifted = df[columns + targets ].groupby(columns).shift(window)
+        shifted.columns = [x + "_lag" + str(window) for x in df[targets]]
+        df_lagged = pd.concat((df_lagged, shifted), axis=1)
+    df_lagged.dropna(inplace=True)
+    
+    return df_lagged
+
+
 '''
 1. use clip(0, 21), clip(0, 19), clip(0,15) yield lower rmse. Need to revisit
 '''
 
-features = ['date_block_num', 'shop_id', 'item_id', 
-            'shop_category', 'shop_city',
-            'item_price', 'item_category_id', 'name2', 
-            'name3', 'item_type', 'item_subtype']
 label = 'item_cnt_month'
 
 train = pd.read_csv('../data/monthly_train.csv')
@@ -44,11 +53,39 @@ test_item_cats_shops = pd.merge(test_item_cats, shops, how='left', on='shop_id')
 
 train_item_cats_shops[label] = train_item_cats_shops[label].clip(0, 20)
 
-print(train_item_cats_shops.head())
+
+all_df = pd.concat([train_item_cats_shops, test_item_cats_shops])
+all_df.drop(columns=['ID'], inplace=True)
+
+features = ['date_block_num', 'shop_id', 'item_id', 
+            'shop_category', 'shop_city',
+            'item_price', 'item_category_id', 'name2', 
+            'name3', 'item_type', 'item_subtype',
+            'item_cnt_month_lag1', 'item_cnt_month_lag2', 
+            'item_cnt_month_lag3' ]
+            
+keys = ['shop_id', 'item_id']
+targets = ['item_cnt_month' ]
+
+all_df.loc[all_df['date_block_num'] == 34, 'item_cnt_month'] = 0
+
+postprossed = lag_features(all_df, 3, keys, targets)
+
+
+t1 = postprossed[postprossed['date_block_num'] < 34]
+t2 = postprossed.loc[postprossed['date_block_num'] == 34, 
+                                ['shop_id', 'item_id', 'item_cnt_month_lag1', 
+                                'item_cnt_month_lag2', 'item_cnt_month_lag3']]
+
+print(t1.head())
+
+posttest = test_item_cats_shops.merge(t2, on=['shop_id', 'item_id'], how='left')
+posttest.fillna(0, inplace=True)
+
 
 model = LGBMRegressor()
-model.fit(train_item_cats_shops[features], train_item_cats_shops[label])
-preds = model.predict(test_item_cats_shops[features])
+model.fit(t1[features], t1[label])
+preds = model.predict(posttest[features])
 
 test[label] = preds
 test[label] = test[label].astype('int64')
