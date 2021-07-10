@@ -133,6 +133,9 @@ posttest.fillna(0, inplace=True)
 
 model = LGBMRegressor()
 model.fit(t1[features], t1[label])
+
+print(pd.Series(index=features, data=model.feature_importances_).sort_values(ascending=False))
+
 preds = model.predict(posttest[features])
 
 test[label] = preds
