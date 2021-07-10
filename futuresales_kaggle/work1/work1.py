@@ -10,6 +10,7 @@ import time
 from lightgbm import LGBMRegressor
 import warnings
 
+
 warnings.filterwarnings('ignore')
 
 pd.set_option('max_columns', None)
@@ -140,6 +141,24 @@ print(t1.head())
 
 posttest = test_item_cats_shops.merge(t2, on=['shop_id', 'item_id'], how='left')
 posttest.fillna(0, inplace=True)
+
+
+del raw
+del train
+del items
+del cats
+del shops
+del items_cats
+del train_item_cats
+del raw_item_cats
+del test_item_cats
+del train_item_cats_shops
+del test_item_cats_shops
+del pp
+del t2
+del all_df
+
+
 
 
 model = LGBMRegressor()
