@@ -52,6 +52,7 @@ merge cats, shops and items
 '''
 items_cats = pd.merge(items, cats, how='left', on='item_category_id')
 train_item_cats = pd.merge(train, items_cats, how='left', on='item_id')
+raw_item_cats = pd.merge(raw, items_cats, how='left', on='item_id')
 test_item_cats = pd.merge(test, items_cats, how='left', on='item_id')
 train_item_cats_shops = pd.merge(train_item_cats, shops, how='left', on='shop_id')
 test_item_cats_shops = pd.merge(test_item_cats, shops, how='left', on='shop_id')
@@ -85,7 +86,13 @@ train_item_cats_shops.fillna(0, inplace = True)
 test_item_cats_shops = test_item_cats_shops.merge(f2, on=['date_block_num', 'shop_id', 'item_id'], how='left')
 test_item_cats_shops.fillna(0, inplace = True)
 
-
+# 3. groupby(['date_block_num', 'shop_id', 'subtype_code']).agg({'item_cnt_day': ['mean']})
+f3 = raw_item_cats.groupby(['date_block_num', 'shop_id', 'item_subtype']).agg({'item_cnt_day': ['mean']})
+f3.columns = [ 'date_shop_subtype_avg_cnt' ]
+train_item_cats_shops = train_item_cats_shops.merge(f3, on=['date_block_num', 'shop_id', 'item_subtype'], how='left')
+train_item_cats_shops.fillna(0, inplace = True)
+test_item_cats_shops = test_item_cats_shops.merge(f3, on=['date_block_num', 'shop_id', 'item_subtype'], how='left')
+test_item_cats_shops.fillna(0, inplace = True)
 
 
 
@@ -102,11 +109,13 @@ features = ['date_block_num', 'shop_id', 'item_id',
             'name3', 'item_type', 'item_subtype',
             'item_cnt_month_lag1', 'item_cnt_month_lag2', 'item_cnt_month_lag3',
             'date_item_avg_cnt_lag1', 'date_item_avg_cnt_lag2', 'date_item_avg_cnt_lag3',
-            'date_shop_item_avg_cnt_lag1', 'date_shop_item_avg_cnt_lag2', 'date_shop_item_avg_cnt_lag3'
+            'date_shop_item_avg_cnt_lag1', 'date_shop_item_avg_cnt_lag2', 'date_shop_item_avg_cnt_lag3',
+            'date_shop_subtype_avg_cnt_lag1', 'date_shop_subtype_avg_cnt_lag2', 'date_shop_subtype_avg_cnt_lag3'
             ]
             
 keys = ['shop_id', 'item_id']
-targets = ['item_cnt_month', 'date_item_avg_cnt', 'date_shop_item_avg_cnt' ]
+targets = ['item_cnt_month', 'date_item_avg_cnt', 
+           'date_shop_item_avg_cnt', 'date_shop_subtype_avg_cnt' ]
 
 all_df.loc[all_df['date_block_num'] == 34, 'item_cnt_month'] = 0
 
@@ -122,7 +131,9 @@ t2 = pp.loc[pp['date_block_num'] == 34,
                     'item_cnt_month_lag2', 'item_cnt_month_lag3',
                     'date_item_avg_cnt_lag1', 'date_item_avg_cnt_lag2', 
                     'date_item_avg_cnt_lag3', 'date_shop_item_avg_cnt_lag1',
-                    'date_shop_item_avg_cnt_lag2', 'date_shop_item_avg_cnt_lag3'
+                    'date_shop_item_avg_cnt_lag2', 'date_shop_item_avg_cnt_lag3',
+                    'date_shop_subtype_avg_cnt_lag1', 'date_shop_subtype_avg_cnt_lag2', 
+                    'date_shop_subtype_avg_cnt_lag3'
                 ]]
 
 print(t1.head())
