@@ -66,6 +66,7 @@ t = lag_features(k, 3, ['A'], ['B'], False)
 print(t.dropna())
 t = lag_features(t, 2, ['A'], ['C'])
 t.drop(columns=['C_lag1'], inplace=True)
-
-
 print(t)
+
+g = lag_features(k, 3, ['A'], ['B', 'C'])
+print(g.drop(columns=['C_lag1', 'C_lag3']))
