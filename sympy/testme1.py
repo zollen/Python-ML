@@ -9,6 +9,7 @@ from sympy import *
 init_printing(use_unicode=True)
 
 print(sqrt(8))
+print(sqrt(8).evalf())
 
 x, y = symbols('x y')
 expr = x + 2 * y
