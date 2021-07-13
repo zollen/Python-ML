@@ -122,7 +122,8 @@ all_df.loc[all_df['date_block_num'] == 34, 'item_cnt_month'] = 0
 
 pp = lag_features(all_df, 3, keys, targets)
 
-pp.drop(columns=['date_item_avg_cnt', 'date_shop_item_avg_cnt'], inplace = True)
+pp.drop(columns=['date_item_avg_cnt', 'date_shop_item_avg_cnt',
+                 'date_shop_subtype_avg_cnt'], inplace = True)
 
 
 t1 = pp[pp['date_block_num'] < 34]
