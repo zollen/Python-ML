@@ -96,24 +96,15 @@ test_item_cats_shops = test_item_cats_shops.merge(f3, on=['date_block_num', 'sho
 test_item_cats_shops.fillna(0, inplace = True)
 
 
+all_df = pd.concat([train_item_cats_shops, test_item_cats_shops])
+all_df.drop(columns=['ID'], inplace=True)
+
+
 
 
 '''
 adding lag features
-'''
-all_df = pd.concat([train_item_cats_shops, test_item_cats_shops])
-all_df.drop(columns=['ID'], inplace=True)
-
-features = ['date_block_num', 'shop_id', 'item_id', 
-            'shop_category', 'shop_city',
-            'item_price', 'item_category_id', 'name2', 
-            'name3', 'item_type', 'item_subtype',
-            'item_cnt_month_lag1', 'item_cnt_month_lag2', 'item_cnt_month_lag3',
-            'date_item_avg_cnt_lag1', 'date_item_avg_cnt_lag2', 'date_item_avg_cnt_lag3',
-            'date_shop_item_avg_cnt_lag1', 'date_shop_item_avg_cnt_lag2', 'date_shop_item_avg_cnt_lag3',
-            'date_shop_subtype_avg_cnt_lag1', 'date_shop_subtype_avg_cnt_lag2', 'date_shop_subtype_avg_cnt_lag3'
-            ]
-            
+'''            
 keys = ['shop_id', 'item_id']
 targets = ['item_cnt_month', 'date_item_avg_cnt', 
            'date_shop_item_avg_cnt', 'date_shop_subtype_avg_cnt' ]
@@ -125,6 +116,15 @@ pp = lag_features(all_df, 3, keys, targets)
 pp.drop(columns=['date_item_avg_cnt', 'date_shop_item_avg_cnt',
                  'date_shop_subtype_avg_cnt'], inplace = True)
 
+features = ['date_block_num', 'shop_id', 'item_id', 
+            'shop_category', 'shop_city',
+            'item_price', 'item_category_id', 'name2', 
+            'name3', 'item_type', 'item_subtype',
+            'item_cnt_month_lag1', 'item_cnt_month_lag2', 'item_cnt_month_lag3',
+            'date_item_avg_cnt_lag1', 'date_item_avg_cnt_lag2', 'date_item_avg_cnt_lag3',
+            'date_shop_item_avg_cnt_lag1', 'date_shop_item_avg_cnt_lag2', 'date_shop_item_avg_cnt_lag3',
+            'date_shop_subtype_avg_cnt_lag1', 'date_shop_subtype_avg_cnt_lag2', 'date_shop_subtype_avg_cnt_lag3'
+            ]
 
 t1 = pp[pp['date_block_num'] < 34]
 t2 = pp.loc[pp['date_block_num'] == 34, 
