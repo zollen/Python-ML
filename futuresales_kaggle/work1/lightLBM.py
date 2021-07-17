@@ -26,7 +26,7 @@ np.random.seed(0)
 1. use clip(0, 21), clip(0, 19), clip(0,15) yield lower rmse. Need to revisit
 '''
 base_features = ['date_block_num', 'shop_id', 'item_id', 
-            'shop_category', 'shop_city', 'item_price'
+            'shop_category', 'shop_city', 'item_price',
             'item_category_id', 'name2', 
             'name3', 'item_type', 'item_subtype']
 label = 'item_cnt_month'
@@ -81,7 +81,6 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_item_avg_cnt(lag_featu
 # 3. groupby(['date_block_num', 'shop_id', 'subtype_code']).agg({'item_cnt_day': ['mean']})
 train_item_cats_shops, test_item_cats_shops = ft.add_date_shop_subtype_avg_cnt(lag_features, 
                                     raw_item_cats, train_item_cats_shops, test_item_cats_shops)
-
 
 # 4. groupby( ["item_id"] ).agg({"item_price": ["mean"]}
 # 4. groupby( ["date_block_num","item_id"] ).agg( {"item_price": ["mean"]} )
@@ -160,8 +159,8 @@ test_item_cats_shops.drop(columns=['item_price'], inplace = True)
 
 del t2
 
-print(t1[features])
-print(test_item_cats_shops[features])
+print(t1[features].head())
+print(test_item_cats_shops[features].head())
 
 
 model = LGBMRegressor()
