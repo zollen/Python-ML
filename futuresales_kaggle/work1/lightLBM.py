@@ -26,7 +26,7 @@ np.random.seed(0)
 1. use clip(0, 21), clip(0, 19), clip(0,15) yield lower rmse. Need to revisit
 '''
 base_features = ['date_block_num', 'shop_id', 'item_id', 
-            'shop_category', 'shop_city', 'item_price',
+            'shop_category', 'shop_city', 'item_price'
             'item_category_id', 'name2', 
             'name3', 'item_type', 'item_subtype']
 label = 'item_cnt_month'
@@ -69,6 +69,7 @@ train_item_cats_shops[label] = train_item_cats_shops[label].clip(0, 20)
 '''
 adding new features
 '''
+
 # 1. groupby(['date_block_num', 'item_id']).agg({'item_cnt_month': ['mean']})
 train_item_cats_shops, test_item_cats_shops = ft.add_item_avg_cnt(lag_features, 
                                     raw, train_item_cats_shops, test_item_cats_shops)
@@ -80,6 +81,13 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_item_avg_cnt(lag_featu
 # 3. groupby(['date_block_num', 'shop_id', 'subtype_code']).agg({'item_cnt_day': ['mean']})
 train_item_cats_shops, test_item_cats_shops = ft.add_date_shop_subtype_avg_cnt(lag_features, 
                                     raw_item_cats, train_item_cats_shops, test_item_cats_shops)
+
+
+# 4. groupby( ["item_id"] ).agg({"item_price": ["mean"]}
+# 4. groupby( ["date_block_num","item_id"] ).agg( {"item_price": ["mean"]} )
+train_item_cats_shops, test_item_cats_shops = ft.add_delta_price(lag_features, 
+                                    raw, train_item_cats_shops, test_item_cats_shops)
+
 
 
 
@@ -110,20 +118,35 @@ pp = ft.add_lag_features(all_df, LAGS, keys, lag_features)
 del all_df
 
 
-pp.drop(columns=lag_features[1:], inplace = True)
+def select_trends(row) :
+    for i in range(1, LAGS+1):
+        if row["delta_price_lag" + str(i)]:
+            return row["delta_price_lag" + str(i)]
+    return 0
+
+delta_del = []
+if False:
+    pp["delta_price_lag"] = pp.apply(select_trends, axis = 1)
+    pp["delta_price_lag"] = pp['delta_price_lag'].astype( 'float64' )
+    delta_del = ['delta_price_lag1', 'delta_price_lag2', 'delta_price_lag3']
+
+pp.drop(columns=lag_features[1:] + delta_del, inplace = True)
 
 new_features = []
 for feature in lag_features:
     for i in range(1, LAGS+1):
-        new_features.append(feature + "_lag" + str(i))       
-
+        new_features.append(feature + "_lag" + str(i))
+new_features.append('delta_price_lag')
 
 
 features = base_features + new_features
 
 t1 = pp[pp['date_block_num'] < 34]
-t2 = pp.loc[pp['date_block_num'] == 34, keys + new_features]
+t2 = pp.loc[pp['date_block_num'] == 34, keys + new_features] 
+
+
 del pp
+
 
 
 
@@ -131,15 +154,14 @@ del pp
 test_item_cats_shops = test_item_cats_shops.merge(t2, on=keys, how='left')
 test_item_cats_shops.fillna(0, inplace=True)
 
-
-print(t1[features].head())
-print(test_item_cats_shops[features].head())
+t1.drop(columns=['item_price'], inplace = True)
+test_item_cats_shops.drop(columns=['item_price'], inplace = True)
 
 
 del t2
 
-
-
+print(t1[features])
+print(test_item_cats_shops[features])
 
 
 model = LGBMRegressor()
