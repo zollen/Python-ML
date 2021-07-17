@@ -29,6 +29,7 @@ base_features = ['date_block_num', 'shop_id', 'item_id',
             'shop_category', 'shop_city', 'item_price',
             'item_category_id', 'name2', 
             'name3', 'item_type', 'item_subtype']
+removed_features = ['delta_price_lag1', 'delta_price_lag2', 'delta_price_lag3']
 label = 'item_cnt_month'
 keys = ['shop_id', 'item_id']
 lag_features = [ label ]
@@ -69,7 +70,6 @@ train_item_cats_shops[label] = train_item_cats_shops[label].clip(0, 20)
 '''
 adding new features
 '''
-
 # 1. groupby(['date_block_num', 'item_id']).agg({'item_cnt_month': ['mean']})
 train_item_cats_shops, test_item_cats_shops = ft.add_item_avg_cnt(lag_features, 
                                     raw, train_item_cats_shops, test_item_cats_shops)
@@ -86,9 +86,6 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_shop_subtype_avg_cnt(l
 # 4. groupby( ["date_block_num","item_id"] ).agg( {"item_price": ["mean"]} )
 train_item_cats_shops, test_item_cats_shops = ft.add_delta_price(lag_features, 
                                     raw, train_item_cats_shops, test_item_cats_shops)
-
-
-
 
 
 
@@ -116,36 +113,38 @@ adding lag features
 pp = ft.add_lag_features(all_df, LAGS, keys, lag_features)
 del all_df
 
-
 def select_trends(row) :
     for i in range(1, LAGS+1):
         if row["delta_price_lag" + str(i)]:
             return row["delta_price_lag" + str(i)]
     return 0
 
-delta_del = []
-if False:
-    pp["delta_price_lag"] = pp.apply(select_trends, axis = 1)
-    pp["delta_price_lag"] = pp['delta_price_lag'].astype( 'float64' )
-    delta_del = ['delta_price_lag1', 'delta_price_lag2', 'delta_price_lag3']
+pp["delta_price_lag"] = pp.apply(select_trends, axis = 1)
+pp["delta_price_lag"] = pp['delta_price_lag'].astype( 'float64' )
 
-pp.drop(columns=lag_features[1:] + delta_del, inplace = True)
+
 
 new_features = []
 for feature in lag_features:
     for i in range(1, LAGS+1):
-        new_features.append(feature + "_lag" + str(i))
-new_features.append('delta_price_lag')
+        new_features.append(feature + "_lag" + str(i))    
+
+
+        
+for feature in removed_features:   
+    new_features.remove(feature)
+pp.drop(columns=lag_features[1:] + removed_features, inplace = True)
+
+
 
 
 features = base_features + new_features
 
+
+
 t1 = pp[pp['date_block_num'] < 34]
-t2 = pp.loc[pp['date_block_num'] == 34, keys + new_features] 
-
-
+t2 = pp.loc[pp['date_block_num'] == 34, keys + new_features]
 del pp
-
 
 
 
@@ -153,14 +152,15 @@ del pp
 test_item_cats_shops = test_item_cats_shops.merge(t2, on=keys, how='left')
 test_item_cats_shops.fillna(0, inplace=True)
 
-t1.drop(columns=['item_price'], inplace = True)
-test_item_cats_shops.drop(columns=['item_price'], inplace = True)
+
+print(t1[features].head())
+print(test_item_cats_shops[features].head())
 
 
 del t2
 
-print(t1[features].head())
-print(test_item_cats_shops[features].head())
+
+
 
 
 model = LGBMRegressor()
