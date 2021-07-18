@@ -37,7 +37,7 @@ LAGS = 3
 
 raw = pd.read_csv('../data/sales_train.csv')
 train = pd.read_csv('../data/monthly_train.csv')
-test = pd.read_csv('../data/monthly_test.csv')
+test = pd.read_csv('../data/monthly_test2.csv')
 items = pd.read_csv('../data/monthly_items.csv')
 cats = pd.read_csv('../data/monthly_cats.csv')
 shops = pd.read_csv('../data/monthly_shops.csv')
