@@ -34,7 +34,9 @@ lag_features = []
 
 features = base_features + ['item_price_lag1', 
                             'item_price_lag2', 
-                            'item_price_lag3'] + lag_features
+                            'item_price_lag3',
+                            'item_price_lag4',
+                            'item_price_lag5'] + lag_features
 
 train = pd.read_csv('../data/monthly_train.csv')
 raw = pd.read_csv('../data/sales_train.csv')
@@ -63,7 +65,7 @@ train_item_cats_shops[label] = train_item_cats_shops[label].clip(0, 20)
 all_df = pd.concat([train_item_cats_shops, test_item_cats_shops])
 all_df.drop(columns=['ID'], inplace=True)
 
-pp = ft.add_lag_features(all_df, 3, keys, ['item_price' ] + lag_features)
+pp = ft.add_lag_features(all_df, 5, keys, ['item_price' ] + lag_features)
 
 pp.drop(columns=lag_features, inplace = True)
 
