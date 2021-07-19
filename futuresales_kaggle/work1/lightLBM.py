@@ -26,10 +26,10 @@ np.random.seed(0)
 1. use clip(0, 21), clip(0, 19), clip(0,15) yield lower rmse. Need to revisit
 '''
 base_features = ['date_block_num', 'shop_id', 'item_id', 
-            'shop_category', 'shop_city', 'item_price',
+            'shop_category', 'shop_city', 
             'item_category_id', 'name2', 
             'name3', 'item_type', 'item_subtype']
-removed_features = ['delta_price_lag1', 'delta_price_lag2', 'delta_price_lag3']
+removed_features = ['delta_price_lag1', 'delta_price_lag2', 'delta_price_lag3', 'item_price']
 label = 'item_cnt_month'
 keys = ['shop_id', 'item_id']
 lag_features = [ label ]
@@ -38,7 +38,7 @@ LAGS = 3
 
 raw = pd.read_csv('../data/sales_train.csv')
 train = pd.read_csv('../data/monthly_train.csv')
-test = pd.read_csv('../data/monthly_test.csv')
+test = pd.read_csv('../data/monthly_test2.csv')
 items = pd.read_csv('../data/monthly_items.csv')
 cats = pd.read_csv('../data/monthly_cats.csv')
 shops = pd.read_csv('../data/monthly_shops.csv')
@@ -132,7 +132,8 @@ for feature in lag_features:
 
         
 for feature in removed_features:   
-    new_features.remove(feature)
+    if feature in new_features:
+        new_features.remove(feature)
 pp.drop(columns=lag_features[1:] + removed_features, inplace = True)
 
 
