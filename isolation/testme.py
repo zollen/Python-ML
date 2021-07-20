@@ -32,8 +32,7 @@ sb.set_style("whitegrid")
 
 df = pd.DataFrame({
         'x': [1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 2.0],
-        'y': [2.1, 2.2, 3.0, 2.6, 2.2, 2.8, 3.7],
-        'cc' : [0, 0, 0, 0, 0, 0, 1]
+        'y': [2.1, 2.2, 3.0, 2.6, 2.2, 2.8, 3.7]
     }, index = ['A', 'B', 'C', 'D', 'E', 'F', 'G'])
 
 
@@ -43,7 +42,7 @@ The plot shows that 'G': (2.0, 3.7) is the outlier
 ax = sb.scatterplot(x = 'x',y = 'y', data = df, color='blue')
 #plt.gca().legend(['normal', 'outlier'])
 for i, point in df.iterrows():
-    ax.text(point['x'] - 0.03, point['y'] + 0.03, s='normal' if point['cc'] == 0 else 'outlier')
+    ax.text(point['x'] - 0.03, point['y'] + 0.03, s='normal' if i != 'G' else 'outlier')
 
 
 iforest = IsolationForest(n_estimators = 100).fit(df)
