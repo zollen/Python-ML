@@ -40,8 +40,10 @@ df = pd.DataFrame({
 '''
 The plot shows that 'G': (2.0, 3.7) is the outlier
 '''
-sb.scatterplot(x = 'x',y = 'y', data = df, color='blue', hue='cc')
-plt.gca().legend(['normal', 'outlier'])
+ax = sb.scatterplot(x = 'x',y = 'y', data = df, color='blue')
+#plt.gca().legend(['normal', 'outlier'])
+for i, point in df.iterrows():
+    ax.text(point['x'] - 0.03, point['y'] + 0.03, s='normal' if point['cc'] == 0 else 'outlier')
 
 
 iforest = IsolationForest(n_estimators = 100).fit(df)
