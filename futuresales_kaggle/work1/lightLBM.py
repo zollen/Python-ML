@@ -28,8 +28,8 @@ np.random.seed(0)
 base_features = ['date_block_num', 'shop_id', 'item_id', 
             'shop_category', 'shop_city', 
             'item_category_id', 'name2', 
-            'name3', 'item_type', 'item_subtype']
-removed_features = ['delta_price_lag1', 'delta_price_lag2', 'delta_price_lag3', 'item_price']
+            'name3', 'item_type', 'item_subtype', 'item_price']
+removed_features = ['delta_reveune_lag1', 'delta_reveune_lag3']
 label = 'item_cnt_month'
 keys = ['shop_id', 'item_id']
 lag_features = [ label ]
@@ -84,8 +84,20 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_shop_subtype_avg_cnt(l
 
 # 4. groupby( ["item_id"] ).agg({"item_price": ["mean"]}
 # 4. groupby( ["date_block_num","item_id"] ).agg( {"item_price": ["mean"]} )
-train_item_cats_shops, test_item_cats_shops = ft.add_delta_price(lag_features, 
-                                    raw, train_item_cats_shops, test_item_cats_shops)
+#train_item_cats_shops, test_item_cats_shops = ft.add_delta_price(lag_features, 
+#                                    train_item_cats_shops, test_item_cats_shops)
+
+# 5. groupby( ["date_block_num","shop_id"] ).agg({"revenue": ["sum"] })
+# 5. groupby(["shop_id"]).agg({ "revenue":["mean"] })
+train_item_cats_shops, test_item_cats_shops = ft.add_delta_revenue(lag_features, 
+                                    raw_item_cats, train_item_cats_shops, test_item_cats_shops)
+
+
+
+train_item_cats_shops['month'] = train_item_cats_shops['date_block_num'] % 12
+test_item_cats_shops['month'] = test_item_cats_shops['date_block_num'] % 12
+
+
 
 
 
@@ -119,8 +131,8 @@ def select_trends(row) :
             return row["delta_price_lag" + str(i)]
     return 0
 
-pp["delta_price_lag"] = pp.apply(select_trends, axis = 1)
-pp["delta_price_lag"] = pp['delta_price_lag'].astype( 'float64' )
+#pp["delta_price_lag"] = pp.apply(select_trends, axis = 1)
+#pp["delta_price_lag"] = pp['delta_price_lag'].astype( 'float64' )
 
 
 
