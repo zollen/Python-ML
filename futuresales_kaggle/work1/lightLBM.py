@@ -82,20 +82,11 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_item_avg_cnt(lag_featu
 train_item_cats_shops, test_item_cats_shops = ft.add_date_shop_subtype_avg_cnt(lag_features, 
                                     raw_item_cats, train_item_cats_shops, test_item_cats_shops)
 
-# 4. groupby( ["item_id"] ).agg({"item_price": ["mean"]}
-# 4. groupby( ["date_block_num","item_id"] ).agg( {"item_price": ["mean"]} )
-#train_item_cats_shops, test_item_cats_shops = ft.add_delta_price(lag_features, 
-#                                    train_item_cats_shops, test_item_cats_shops)
-
-# 5. groupby( ["date_block_num","shop_id"] ).agg({"revenue": ["sum"] })
-# 5. groupby(["shop_id"]).agg({ "revenue":["mean"] })
+# 4. groupby( ["date_block_num","shop_id"] ).agg({"revenue": ["sum"] })
+# 4. groupby(["shop_id"]).agg({ "revenue":["mean"] })
 train_item_cats_shops, test_item_cats_shops = ft.add_delta_revenue(lag_features, 
                                     raw_item_cats, train_item_cats_shops, test_item_cats_shops)
 
-
-
-train_item_cats_shops['month'] = train_item_cats_shops['date_block_num'] % 12
-test_item_cats_shops['month'] = test_item_cats_shops['date_block_num'] % 12
 
 
 
@@ -125,14 +116,7 @@ adding lag features
 pp = ft.add_lag_features(all_df, LAGS, keys, lag_features)
 del all_df
 
-def select_trends(row) :
-    for i in range(1, LAGS+1):
-        if row["delta_price_lag" + str(i)]:
-            return row["delta_price_lag" + str(i)]
-    return 0
 
-#pp["delta_price_lag"] = pp.apply(select_trends, axis = 1)
-#pp["delta_price_lag"] = pp['delta_price_lag'].astype( 'float64' )
 
 
 
