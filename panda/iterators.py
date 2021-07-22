@@ -17,8 +17,9 @@ df.fillna('NA', inplace=True)
 iterrows():
 Iterate over DataFrame rows as (index, Series) pairs.
 '''
+kk = df.iterrows()
 start_time = time.time()
-for idx, row in df.iterrows():
+for idx, row in kk:
     temp = row['Fee'] + row['PhotoAmt']
     
 end_time = time.time()
@@ -30,8 +31,9 @@ print("PANDAS iterrows() takes  : ", end_time - start_time)
 itertuples():
 Iterate over DataFrame rows as namedtuples.
 '''
+kk = df.itertuples()
 start_time = time.time()
-for row in df.itertuples():
+for row in kk:
     temp = row.Fee + row.PhotoAmt
     
 end_time = time.time()
