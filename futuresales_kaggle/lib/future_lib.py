@@ -40,18 +40,20 @@ def add_date_shop_subtype_avg_cnt(tokens, src, train, test):
     del f1
     return train, test
     
-def add_delta_price(tokens, train, test):
-    all_dff = pd.concat([train, test])
-    
-    f1 = all_dff.groupby(['item_id']).agg({"item_price": ["mean"]})
+def add_delta_price(tokens, raw, train, test):
+    f1 = raw.groupby(['item_id']).agg({"item_price": ["mean"]})
     f1.columns = ['item_avg']
-    f2 = all_dff.groupby(['date_block_num', 'item_id']).agg({"item_price": ["mean"]})
+    f2 = raw.groupby(['date_block_num', 'item_id']).agg({"item_price": ["mean"]})
     f2.columns = ['date_item_avg']
+            
+    all_dff = pd.concat([raw[raw['date_block_num'] == 33], test])
+    f3 = all_dff.groupby('item_id').agg({"item_price": ["mean"]})
+    f3.columns = ['date_item_avg']
    
     train = train.merge(f1, on=['item_id'], how='left')
     train = train.merge(f2, on=['date_block_num', 'item_id'], how='left')
     test = test.merge(f1, on=['item_id'], how='left')
-    test = test.merge(f2, on=['date_block_num', 'item_id'], how='left')
+    test = test.merge(f3, on=['item_id'], how='left')
     
     train.fillna(0, inplace=True)
     test.fillna(0, inplace=True)
@@ -59,16 +61,13 @@ def add_delta_price(tokens, train, test):
     train['delta_price'] = (train['date_item_avg'] - train['item_avg']) / train['item_avg']
     test['delta_price'] = (test['date_item_avg'] - test['item_avg']) / test['item_avg']
     
-    scaler = MinMaxScaler()
-    train['delta_price'] = scaler.fit_transform(train['delta_price'].values.reshape(-1, 1))
-    test['delta_price'] = scaler.transform(test['delta_price'].values.reshape(-1, 1))
-    
     train.drop(columns=['date_item_avg', 'item_avg'], inplace = True)
     test.drop(columns=['date_item_avg', 'item_avg'], inplace = True)
     
     tokens.append('delta_price')
     del f1
     del f2
+    del f3
     del all_dff
     return train, test
     

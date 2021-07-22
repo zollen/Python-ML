@@ -72,23 +72,25 @@ adding new features
 '''
 # 1. groupby(['date_block_num', 'item_id']).agg({'item_cnt_month': ['mean']})
 train_item_cats_shops, test_item_cats_shops = ft.add_item_avg_cnt(lag_features, 
-                                    raw, train_item_cats_shops, test_item_cats_shops)
+                        raw, train_item_cats_shops, test_item_cats_shops)
 
 # 2. groupby( ["date_block_num","shop_id","item_id"] ).agg({"item_cnt_month" : ["mean"]})
 train_item_cats_shops, test_item_cats_shops = ft.add_date_item_avg_cnt(lag_features, 
-                                    raw, train_item_cats_shops, test_item_cats_shops)
+                        raw, train_item_cats_shops, test_item_cats_shops)
 
 # 3. groupby(['date_block_num', 'shop_id', 'subtype_code']).agg({'item_cnt_day': ['mean']})
 train_item_cats_shops, test_item_cats_shops = ft.add_date_shop_subtype_avg_cnt(lag_features, 
-                                    raw_item_cats, train_item_cats_shops, test_item_cats_shops)
+                        raw_item_cats, train_item_cats_shops, test_item_cats_shops)
 
 # 4. groupby( ["date_block_num","shop_id"] ).agg({"revenue": ["sum"] })
 # 4. groupby(["shop_id"]).agg({ "revenue":["mean"] })
 train_item_cats_shops, test_item_cats_shops = ft.add_delta_revenue(lag_features, 
-                                    raw_item_cats, train_item_cats_shops, test_item_cats_shops)
+                        raw_item_cats, train_item_cats_shops, test_item_cats_shops)
 
-
-
+# 5. groupby(['item_id']).agg({"item_price": ["mean"]})
+# 5. groupby(['date_block_num', 'item_id']).agg({"item_price": ["mean"]})
+train_item_cats_shops, test_item_cats_shops = ft.add_delta_price(lag_features, 
+                        raw_item_cats, train_item_cats_shops, test_item_cats_shops)
 
 
 
