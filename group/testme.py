@@ -19,14 +19,6 @@ df = pd.DataFrame({
 
 
 
-def calculate(data):   
-    score = 0
-    lgth = len(data)
-    total = lgth**2
-    for idx, row in zip(range(1, lgth + 1), data):
-        score += row * idx**2 / total
-        
-    return score
     
 
 grps = df.groupby('key')
@@ -35,7 +27,6 @@ for grp in grps.groups:
     members = grps.get_group(grp).sort_values('month')
     print("Group: ", grp)
     print(members)
-    print("SCORE: ", calculate(members['cnt'].values))
 
 
 
