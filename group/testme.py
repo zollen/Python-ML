@@ -5,6 +5,7 @@ Created on Jul. 22, 2021
 '''
 
 import pandas as pd
+import time
 
 df = pd.DataFrame({
         'key'   : [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
@@ -22,13 +23,23 @@ df = pd.DataFrame({
     
 
 grps = df.groupby('key')
-
+start_time = time.time()
 for grp in grps.groups:
     members = grps.get_group(grp).sort_values('month')
     print("Group: ", grp)
     print(members)
+end_time = time.time()
+print("Time: ", end_time - start_time)
 
 
+def process(grp):
+    members = grp.sort_values('month')
+    print(members)
+    
+start_time = time.time()    
+grps.apply(process)
+end_time = time.time()
+print("Time: ", end_time - start_time)
 
 print("Number of groups: ", grps.ngroups)
 
