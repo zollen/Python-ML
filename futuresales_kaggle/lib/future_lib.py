@@ -4,7 +4,7 @@ Created on Jul. 17, 2021
 @author: zollen
 '''
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
+import numpy as np
 
 
 def add_item_avg_cnt(tokens, src, train, test):
@@ -101,7 +101,56 @@ def add_delta_revenue(tokens, src, train, test):
     del f3
     return train, test
 
+def add_sales_proximity(window, train, test):
+    
+    def calculate_proximity(vals):   
+        score = 0
+        lgth = len(vals)
+        total = lgth**2
+        for idx, row in zip(range(1, lgth + 1), vals):
+            score += row * idx**2 / total     
+        return score
+    
+    def apply_proximity(df):
+        cnts = []
+        for idx in range(0, len(df)):
+            cnts.append(calculate_proximity(df.values[0:idx+1]))
+        return cnts
+    
+    def populate_proximity(rec):
+        populate_proximity.all_data[populate_proximity.indx] = rec.values
+        populate_proximity.indx += 1
+        
+    def apply_groups(grp):
+        dates = grp.sort_values('date_block_num')
+        dates['sales_proximity'] = dates['item_cnt_month'].rolling(window).apply(calculate_proximity)
+        dates.loc[dates['sales_proximity'].isna(), 'sales_proximity'] = apply_proximity(dates.loc[dates['sales_proximity'].isna(), 'item_cnt_month'])
+        dates.apply(populate_proximity, axis=1)
 
+
+    populate_proximity.all_data = np.zeros((len(train), len(train.columns) + 1))
+    populate_proximity.indx = 0
+    train.groupby(['shop_id', 'item_id']).apply(apply_groups)
+     
+    columns = list(train.columns) + ['sales_proximity']
+    tmp = pd.DataFrame(populate_proximity.all_data, columns=columns)
+   
+    train = train.merge(tmp[['date_block_num', 'item_id', 'shop_id', 'sales_proximity']], 
+            on=['date_block_num', 'item_id', 'shop_id'], how='left')
+        
+    test = test.merge(
+        train.loc[train['date_block_num'] == 33, ['shop_id', 'item_id', 'sales_proximity']],
+        on=['shop_id', 'item_id'], how='left')
+    
+    test['sales_proximity'].fillna(0, inplace = True) 
+    
+    del tmp
+    del populate_proximity.all_data
+    
+    return train, test
+
+    
+    
 def add_lag_features(df, trailing_window_size, columns, targets):
     
     df_lagged = df.copy()
