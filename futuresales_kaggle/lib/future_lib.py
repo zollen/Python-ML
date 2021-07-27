@@ -28,7 +28,7 @@ def add_date_item_avg_cnt(tokens, src, train, test):
     tokens.append('date_shop_item_avg_cnt')
     del f1
     return train, test
-    
+   
 def add_date_shop_subtype_avg_cnt(tokens, src, train, test):
     f1 = src.groupby(['date_block_num', 'shop_id', 'item_subtype']).agg({'item_cnt_day': ['mean']})
     f1.columns = [ 'date_shop_subtype_avg_cnt' ]
@@ -106,7 +106,7 @@ def add_sales_proximity(window, train, test):
     def calculate_proximity(vals):   
         score = 0
         lgth = len(vals)
-        total = lgth**2
+        total = 11440   # np.sum(range(1^2, 33^2))
         for idx, row in zip(range(1, lgth + 1), vals):
             score += row * idx**2 / total     
         return score
