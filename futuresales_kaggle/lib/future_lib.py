@@ -126,24 +126,35 @@ def add_sales_proximity(window, train, test):
         dates['sales_proximity'] = dates['item_cnt_month'].rolling(window).apply(calculate_proximity)
         dates.loc[dates['sales_proximity'].isna(), 'sales_proximity'] = apply_proximity(dates.loc[dates['sales_proximity'].isna(), 'item_cnt_month'])
         dates.apply(populate_proximity, axis=1)
+        
+    best = pd.read_csv('../data/best_prediction.csv')
+    test = test.merge(best[['ID', 'item_cnt_month']], on=['ID'], how='left')    
+  
+    columns = ['date_block_num', 'shop_id', 'item_id', 'item_cnt_month']
+    all_dff = pd.concat([train, test])
+    all_dff = all_dff[columns]
 
-
-    populate_proximity.all_data = np.zeros((len(train), len(train.columns) + 1))
+    populate_proximity.all_data = np.zeros((len(all_dff), len(columns) + 1))
     populate_proximity.indx = 0
-    train.groupby(['shop_id', 'item_id']).apply(apply_groups)
+    all_dff.groupby(['shop_id', 'item_id']).apply(apply_groups)
      
-    columns = list(train.columns) + ['sales_proximity']
+    columns = columns + ['sales_proximity']
     tmp = pd.DataFrame(populate_proximity.all_data, columns=columns)
+    tmp['sales_proximity'].fillna(0, inplace=True)
    
-    train = train.merge(tmp[['date_block_num', 'item_id', 'shop_id', 'sales_proximity']], 
+    train = train.merge(
+        tmp.loc[tmp['date_block_num'] < 34, ['date_block_num', 'item_id', 'shop_id', 'sales_proximity']], 
             on=['date_block_num', 'item_id', 'shop_id'], how='left')
+    
         
     test = test.merge(
-        train.loc[train['date_block_num'] == 33, ['shop_id', 'item_id', 'sales_proximity']],
+        tmp.loc[tmp['date_block_num'] == 34, ['shop_id', 'item_id', 'sales_proximity']],
         on=['shop_id', 'item_id'], how='left')
-    
+        
     test['sales_proximity'].fillna(0, inplace = True) 
     
+    del best
+    del all_dff
     del tmp
     del populate_proximity.all_data
     
