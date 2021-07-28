@@ -25,7 +25,7 @@ np.random.seed(0)
 '''
 1. use clip(0, 21), clip(0, 19), clip(0,15) yield lower rmse. Need to revisit
 2. retest sales_proximity but without the square (done)
-3. lag item_type
+3. lag item_type  (good with lag1)
 4. lag (item_type, item_subtype)
 5. lag shop_category
 6. Remove shop_category, shop_city, name2, or name3
@@ -34,7 +34,8 @@ base_features = ['date_block_num', 'shop_id', 'item_id',
             'shop_category', 'shop_city', 
             'item_category_id', 'name2', 
             'name3', 'item_type', 'item_subtype', 'item_price']
-removed_features = ['delta_reveune_lag1', 'delta_reveune_lag3']
+removed_features = ['delta_reveune_lag1', 'delta_reveune_lag3',
+                    'date_itemtype_avg_cnt_lag2', 'date_itemtype_avg_cnt_lag3']
 label = 'item_cnt_month'
 keys = ['shop_id', 'item_id']
 lag_features = [ label ]
@@ -97,8 +98,9 @@ train_item_cats_shops, test_item_cats_shops = ft.add_delta_revenue(lag_features,
 train_item_cats_shops, test_item_cats_shops = ft.add_delta_price(lag_features, 
                         raw_item_cats, train_item_cats_shops, test_item_cats_shops)
 
-
-
+# 6. groupby( ["date_block_num","item_type"] ).agg({"item_cnt_month" : ["mean"]})
+train_item_cats_shops, test_item_cats_shops = ft.add_date_itemtype_cnt(lag_features, 
+                        raw_item_cats, train_item_cats_shops, test_item_cats_shops)
 
 
 
