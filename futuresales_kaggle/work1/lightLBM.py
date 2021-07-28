@@ -24,6 +24,11 @@ np.random.seed(0)
 
 '''
 1. use clip(0, 21), clip(0, 19), clip(0,15) yield lower rmse. Need to revisit
+2. retest sales_proximity but without the square (done)
+3. lag item_type
+4. lag (item_type, item_subtype)
+5. lag shop_category
+6. Remove shop_category, shop_city, name2, or name3
 '''
 base_features = ['date_block_num', 'shop_id', 'item_id', 
             'shop_category', 'shop_city', 
@@ -91,6 +96,10 @@ train_item_cats_shops, test_item_cats_shops = ft.add_delta_revenue(lag_features,
 # 5. groupby(['date_block_num', 'item_id']).agg({"item_price": ["mean"]})
 train_item_cats_shops, test_item_cats_shops = ft.add_delta_price(lag_features, 
                         raw_item_cats, train_item_cats_shops, test_item_cats_shops)
+
+
+
+
 
 
 
