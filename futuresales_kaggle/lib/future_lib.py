@@ -146,12 +146,9 @@ def add_sales_proximity(window, train, test):
         tmp.loc[tmp['date_block_num'] < 34, ['date_block_num', 'item_id', 'shop_id', 'sales_proximity']], 
             on=['date_block_num', 'item_id', 'shop_id'], how='left')
     
-        
     test = test.merge(
         tmp.loc[tmp['date_block_num'] == 34, ['shop_id', 'item_id', 'sales_proximity']],
         on=['shop_id', 'item_id'], how='left')
-        
-    test['sales_proximity'].fillna(0, inplace = True) 
     
     del best
     del all_dff
