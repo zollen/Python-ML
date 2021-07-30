@@ -27,8 +27,9 @@ np.random.seed(0)
 2. retest sales_proximity but without the square (done)
 3. lag item_type  (good with lag1)
 4. lag (item_type, item_subtype)  (done)
-5. lag shop_category
-6. Remove shop_category, shop_city, name2, or name3
+5. lag item_category_id  
+6. lag shop_category
+7. Remove shop_category, shop_city, name2, or name3
 '''
 base_features = ['date_block_num', 'shop_id', 'item_id', 
             'shop_category', 'shop_city', 
