@@ -104,6 +104,10 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_itemtype_cnt(lag_featu
                         raw_item_cats, train_item_cats_shops, test_item_cats_shops)
 
 
+# 7. groupby( ["date_block_num","item_category_id"] ).agg({"item_cnt_month" : ["mean"]})
+train_item_cats_shops, test_item_cats_shops = ft.add_date_itemcat_cnt(lag_features, 
+                        raw_item_cats, train_item_cats_shops, test_item_cats_shops)
+
 
 
 all_df = pd.concat([train_item_cats_shops, test_item_cats_shops])
