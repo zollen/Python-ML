@@ -28,7 +28,7 @@ np.random.seed(0)
 3. lag item_type  (good with lag1)
 4. lag (item_type, item_subtype)  (done)
 5. lag item_category_id  (good with lag1,2,3)
-6. lag shop_category
+6. lag shop_category  (done)
 7. Remove shop_category, shop_city, name2, or name3
 '''
 base_features = ['date_block_num', 'shop_id', 'item_id', 
