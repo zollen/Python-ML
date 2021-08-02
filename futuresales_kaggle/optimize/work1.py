@@ -86,14 +86,12 @@ def updateParticle(part, best, phi1, phi2):
     if best.fitness.values != part.fitness.values:
         part[:] = list(map(operator.add, part, part.speed))
 
-
 '''
 np.apply_along_axis               - TIME:  109.6327314376831
 native array with inline for loop - TIME:  14.25113844871521
-'''       
-def evaluate(p):
-    global data
-       
+'''
+def evaluate(p, data):
+    
     score = sum( x[11] - (p[0] + 
                     p[1]  * x[0] + 
                     p[2]  * x[1] + 
@@ -106,8 +104,9 @@ def evaluate(p):
                     p[9]  * x[8] +
                     p[10] * x[9] + 
                     p[11] * x[10]) for x in data )
-    
+
     return score, 
+
 
 
 
@@ -130,14 +129,14 @@ def main():
 
     for g in range(GEN):
         for part in pop:
-            part.fitness.values = toolbox.evaluate(part)
+            part.fitness.values = toolbox.evaluate(part, data)
             if not part.best or part.best.fitness < part.fitness:
                 part.best = creator.Particle(part)
                 part.best.fitness.values = part.fitness.values
             if not best or best.fitness < part.fitness:
                 best = creator.Particle(part)
                 best.fitness.values = part.fitness.values
-        
+           
         for part in pop:
             toolbox.update(part, best)
 
@@ -150,3 +149,5 @@ if __name__ == "__main__":
     end_t = time.time()
     print(best)
     print("ELAPSE TIME: ", end_t - start_t)
+    
+    
