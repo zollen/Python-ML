@@ -61,6 +61,17 @@ def add_date_shop_subtype_avg_cnt(tokens, src, train, test):
     tokens.append('date_shop_subtype_avg_cnt')
     del f1
     return train, test
+
+def add_date_name23_avg_cnt(tokens, src, train, test):
+    f1 = src.groupby(['date_block_num', 'name2', 'name3']).agg({'item_cnt_day': ['mean']})
+    f1.columns = [ 'date_name23_avg_cnt' ]
+    train = train.merge(f1, on=['date_block_num', 'name2', 'name3'], how='left')
+    train.fillna(0, inplace = True)
+    test = test.merge(f1, on=['date_block_num', 'name2', 'name3'], how='left')
+    test.fillna(0, inplace = True)    
+    tokens.append('date_name23_avg_cnt')
+    del f1
+    return train, test
     
 def add_delta_price(tokens, raw, train, test):
     f1 = raw.groupby(['item_id']).agg({"item_price": ["mean"]})
