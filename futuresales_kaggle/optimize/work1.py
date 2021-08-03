@@ -134,7 +134,7 @@ class Worker(threading.Thread):
         if not best or best.fitness < part.fitness:
             best = creator.Particle(part)
             best.fitness.values = part.fitness.values
-            print("InProgress[%3d][%3d][%3s] => Score: %0.8f" % 
+            print("InProgress[%3d][%3d][%3s] => Score: %15.4f" % 
                   (self.rnd, threading.activeCount(), str(self.threadID), score), 
                   " params: ", part)
              
@@ -182,9 +182,11 @@ def main():
             
         end_time = time.time()
                 
-        print("Gen: ", g, " Output: ", len(processed), " Round: ", end_time - start_time)
-           
-        for part in processed:
+        print("Gen: ", g, " Output: ", len(processed), " Time: ", end_time - start_time)
+        
+        pop = processed
+        
+        for part in pop:
             toolbox.update(part, best)
 
     return pop, best
@@ -194,7 +196,7 @@ if __name__ == "__main__":
     start_t = time.time()
     children, best = main()
     end_t = time.time()
-    print(best)
+    print("BEST: ", best)
     print("SCORE: ",  evaluate(best, data))
     print("ELAPSE TIME: ", end_t - start_t)
     
