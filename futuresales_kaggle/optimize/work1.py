@@ -160,18 +160,18 @@ best = None
 
 
 def main():
-    pop = toolbox.population(n=10)
+    pop = toolbox.population(n=100)
 
-    GEN = 3
+    GEN = 10
     
-    for g in range(GEN):
+    for g in range(1, GEN + 1):
         
         start_time = time.time()
         
         threads = []
         processed = []
         
-        for iid in range(0, 5):
+        for iid in range(0, 20):
             threads.append(Worker(iid, data, g, pop, processed))
 
         for thread in threads:
