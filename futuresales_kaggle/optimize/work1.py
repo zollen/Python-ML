@@ -171,7 +171,7 @@ def main():
         threads = []
         processed = []
         
-        for iid in range(0, 20):
+        for iid in range(0, 40):
             threads.append(Worker(iid, data, g, pop, processed))
 
         for thread in threads:
