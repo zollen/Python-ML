@@ -4,7 +4,6 @@ Created on Aug. 2, 2021
 @author: zollen
 '''
 from deap import base
-from deap import benchmarks
 from deap import creator
 from deap import tools
 import operator
@@ -13,9 +12,8 @@ import math
 import pandas as pd
 import numpy as np
 import time
-import futuresales_kaggle.lib.future_lib as ft
+import threading
 import warnings
-from ngboost import scores
 
 
 warnings.filterwarnings('ignore')
@@ -58,6 +56,8 @@ clip values between 0 and 20
 '''
 train_item_cats_shops[label] = train_item_cats_shops[label].clip(0, 20)
 
+
+
 '''
 Optimization
 '''
@@ -71,7 +71,7 @@ def generate(size, pmin, pmax, smin, smax):
 def updateParticle(part, best, phi1, phi2):
     u1 = ( np.random.uniform(0, phi1) for _ in range(len(part)))
     u2 = ( np.random.uniform(0, phi2) for _ in range(len(part)))
-
+    
     v_u1 = map(operator.mul, u1, map(operator.sub, part.best, part))
     v_u2 = map(operator.mul, u2, map(operator.sub, best, part))
 
@@ -86,26 +86,61 @@ def updateParticle(part, best, phi1, phi2):
     if best.fitness.values != part.fitness.values:
         part[:] = list(map(operator.add, part, part.speed))
 
-'''
-np.apply_along_axis               - TIME:  109.6327314376831
-native array with inline for loop - TIME:  14.25113844871521
-'''
 def evaluate(p, data):
     
-    score = sum( x[11] - (p[0] + 
-                    p[1]  * x[0] + 
-                    p[2]  * x[1] + 
-                    p[3]  * x[2] + 
-                    p[4]  * x[3] + 
-                    p[5]  * x[4] + 
-                    p[6]  * x[5] + 
-                    p[7]  * x[6] + 
-                    p[8]  * x[7] + 
-                    p[9]  * x[8] +
-                    p[10] * x[9] + 
-                    p[11] * x[10]) for x in data )
+        return abs(sum( x[11] - (p[0] +      
+                        p[1]  * x[0] +    
+                        p[2]  * x[1] + 
+                        p[3]  * x[2] + 
+                        p[4]  * x[3] + 
+                        p[5]  * x[4] + 
+                        p[6]  * x[5] + 
+                        p[7]  * x[6] + 
+                        p[8]  * x[7] + 
+                        p[9]  * x[8] +
+                        p[10] * x[9] + 
+                        p[11] * x[10]) for x in data ))
+    
 
-    return score, 
+
+class Worker(threading.Thread):     
+    
+    def __init__(self, threadId, data, rnd, input, output):
+        threading.Thread.__init__(self)
+        self.threadID = threadId
+        self.rnd = rnd
+        self.data = data
+        self.input = input
+        self.output = output
+        
+    def run(self):      
+        try:       
+            while True:
+                self.output.append(self.process(self.input.pop(0)))
+        except:
+            pass
+
+    def process(self, part):
+        score = evaluate(part, self.data)
+        part.fitness.values = score, 
+        
+        global best, wlock
+        
+        wlock.acquire()
+        
+        if not part.best or part.best.fitness < part.fitness:
+            part.best = creator.Particle(part)
+            part.best.fitness.values = part.fitness.values
+        if not best or best.fitness < part.fitness:
+            best = creator.Particle(part)
+            best.fitness.values = part.fitness.values
+            print("InProgress[%3d][%3d][%3s] => Score: %0.8f" % 
+                  (self.rnd, threading.activeCount(), str(self.threadID), score), 
+                  " params: ", part)
+             
+        wlock.release()
+        
+        return part
 
 
 
@@ -120,24 +155,36 @@ toolbox.register("population", tools.initRepeat, list, toolbox.particle)
 toolbox.register("update", updateParticle, phi1=3, phi2=3)
 toolbox.register("evaluate", evaluate)
 
+wlock = threading.Lock()
+best = None
+
 
 def main():
     pop = toolbox.population(n=10)
 
-    GEN = 2
-    best = None
-
+    GEN = 3
+    
     for g in range(GEN):
-        for part in pop:
-            part.fitness.values = toolbox.evaluate(part, data)
-            if not part.best or part.best.fitness < part.fitness:
-                part.best = creator.Particle(part)
-                part.best.fitness.values = part.fitness.values
-            if not best or best.fitness < part.fitness:
-                best = creator.Particle(part)
-                best.fitness.values = part.fitness.values
+        
+        start_time = time.time()
+        
+        threads = []
+        processed = []
+        
+        for iid in range(0, 5):
+            threads.append(Worker(iid, data, g, pop, processed))
+
+        for thread in threads:
+            thread.start()
+        
+        for thread in threads:
+            thread.join() 
+            
+        end_time = time.time()
+                
+        print("Gen: ", g, " Output: ", len(processed), " Round: ", end_time - start_time)
            
-        for part in pop:
+        for part in processed:
             toolbox.update(part, best)
 
     return pop, best
@@ -148,6 +195,7 @@ if __name__ == "__main__":
     children, best = main()
     end_t = time.time()
     print(best)
+    print("SCORE: ",  evaluate(best, data))
     print("ELAPSE TIME: ", end_t - start_t)
     
     
