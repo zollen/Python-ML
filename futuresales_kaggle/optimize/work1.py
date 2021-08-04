@@ -22,7 +22,7 @@ pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 pd.set_option('display.width', 1000)
 
-np.random.seed(0)
+np.random.seed(int(time.time()))
 
 label = 'item_cnt_month'
 base_features = ['date_block_num', 'shop_id', 'item_id', 
@@ -150,9 +150,9 @@ creator.create("Particle", list, fitness=creator.FitnessMin, speed=list,
                smin=None, smax=None, best=None)
 
 toolbox = base.Toolbox()
-toolbox.register("particle", generate, size=12, pmin=-10, pmax=10, smin=-5, smax=5)
+toolbox.register("particle", generate, size=12, pmin=-2, pmax=2, smin=-1, smax=1)
 toolbox.register("population", tools.initRepeat, list, toolbox.particle)
-toolbox.register("update", updateParticle, phi1=3, phi2=3)
+toolbox.register("update", updateParticle, phi1=1, phi2=1)
 toolbox.register("evaluate", evaluate)
 
 wlock = threading.Lock()
@@ -163,8 +163,12 @@ Score:  178297551.8095  params:  [2.811291870424368, 3.772966339674271, 0.849089
 '''
 def main():
     pop = toolbox.population(n=100)
+    
+    fbest = creator.Particle([2.811291870424368, 3.772966339674271, 0.8490897745104498, 0.05241583572693642, -6.024180921413107, -9.16834376712352, -6.336982897871892, -7.9467655023426085, -2.840321262776073, -2.703765155062582, 1.818534510671384, 1.3115486005210784])
 
-    GEN = 10
+    pop.append(fbest)
+
+    GEN = 20
     
     for g in range(1, GEN + 1):
         
@@ -173,7 +177,7 @@ def main():
         threads = []
         processed = []
         
-        for iid in range(0, 40):
+        for iid in range(0, 50):
             threads.append(Worker(iid, data, g, pop, processed))
 
         for thread in threads:
