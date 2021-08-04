@@ -65,4 +65,5 @@ func = lambda trial: objective(trial, X, y, cv=kf, scoring="neg_mean_squared_log
 # Start optimizing with 100 trials
 study.optimize(func, n_trials=100)
 
+print(f"Optimized Params: {study.best_params}")
 print(f"Optimized RMSLE: {study.best_value:.5f}")
