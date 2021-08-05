@@ -88,18 +88,18 @@ def updateParticle(part, best, phi1, phi2):
 
 def evaluate(p, data):
     
-        return np.sqrt(sum((x[11] - (p[0] +      
-                        p[1]  * x[0] +    
-                        p[2]  * x[1] + 
-                        p[3]  * x[2] + 
-                        p[4]  * x[3] + 
-                        p[5]  * x[4] + 
-                        p[6]  * x[5] + 
-                        p[7]  * x[6] + 
-                        p[8]  * x[7] + 
-                        p[9]  * x[8] +
-                        p[10] * x[9] + 
-                        p[11] * x[10]) for x in data)**2))
+        return sum(abs(x[11] - (p[0] +      
+                             p[1]  * x[0] +    
+                             p[2]  * x[1] + 
+                             p[3]  * x[2] + 
+                             p[4]  * x[3] + 
+                             p[5]  * x[4] + 
+                             p[6]  * x[5] + 
+                             p[7]  * x[6] + 
+                             p[8]  * x[7] + 
+                             p[9]  * x[8] +
+                             p[10] * x[9] + 
+                             p[11] * x[10])) for x in data)
     
 
 
