@@ -3,7 +3,6 @@ Created on Aug. 2, 2021
 
 @author: zollen
 @url: https://towardsdatascience.com/why-is-everyone-at-kaggle-obsessed-with-optuna-for-hyperparameter-tuning-7608fdca337c
-
 '''
 import optuna 
 from optuna.samplers import CmaEsSampler
@@ -19,7 +18,6 @@ pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 pd.set_option('display.width', 1000)
 
-np.random.seed(int(time.time()))
 
 label = 'item_cnt_month'
 base_features = ['date_block_num', 'shop_id', 'item_id', 
@@ -81,7 +79,9 @@ def evaluate(trial, data):
 
 start_st = time.time()
 # Create study that minimizes
-study = optuna.create_study(direction="minimize", sampler=CmaEsSampler(seed=0))
+study = optuna.create_study(
+                study_name='futuresales-study', storage=None, load_if_exists=True,
+                direction="minimize", sampler=CmaEsSampler(seed=int(time.time())))
 
 # Pass additional arguments inside another function
 func = lambda trial: evaluate(trial, data)
@@ -97,7 +97,7 @@ print("TIME: ", end_st - start_st)
 
 '''
 Score: 2250073130.00394  params:  {'p0': -0.5474754044323396, 'p1': -0.22365215518548298, 'p2': -1.288031780721671, 'p3': -0.00726546261621994, 'p4': -0.37894192162338103, 'p5': 1.1902314904699083, 'p6': -0.39375544834483, 'p7': -0.0683183202926567, 'p8': -0.11570387695028395, 'p9': 0.9350971601602047, 'p10': -0.6414492712711383, 'p11': 0.06585529945306223}
-
+Score: 
 '''
 
 
