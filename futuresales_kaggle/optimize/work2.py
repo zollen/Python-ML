@@ -5,10 +5,13 @@ Created on Aug. 2, 2021
 @url: https://towardsdatascience.com/why-is-everyone-at-kaggle-obsessed-with-optuna-for-hyperparameter-tuning-7608fdca337c
 '''
 import optuna 
+import joblib
 from optuna.samplers import CmaEsSampler
 import pandas as pd
 import numpy as np
 import time
+import os.path
+from os import path
 import warnings
 
 
@@ -78,9 +81,14 @@ def evaluate(trial, data):
     
 
 start_st = time.time()
+
+file = "futuresales.pkl"
 # Create study that minimizes
-study = optuna.create_study(
-                study_name='futuresales-study', storage=None, load_if_exists=True,
+if path.exists(file):
+    study = joblib.load(file)
+else:
+    study = optuna.create_study(
+                study_name='futuresales-study',
                 direction="minimize", sampler=CmaEsSampler(seed=int(time.time())))
 
 # Pass additional arguments inside another function
@@ -91,9 +99,10 @@ study.optimize(func, n_trials=100)
 
 end_st = time.time()
 
-print(f"Optimized Params: {study.best_params}")
-print(f"Optimized RMSLE: {study.best_value:.5f}")
+print(f"Best Score: {study.best_value:.4f} params: {study.best_params}")
 print("TIME: ", end_st - start_st)
+
+joblib.dump(study, file)
 
 '''
 Score: 2250073130.00394  params:  {'p0': -0.5474754044323396, 'p1': -0.22365215518548298, 'p2': -1.288031780721671, 'p3': -0.00726546261621994, 'p4': -0.37894192162338103, 'p5': 1.1902314904699083, 'p6': -0.39375544834483, 'p7': -0.0683183202926567, 'p8': -0.11570387695028395, 'p9': 0.9350971601602047, 'p10': -0.6414492712711383, 'p11': 0.06585529945306223}
