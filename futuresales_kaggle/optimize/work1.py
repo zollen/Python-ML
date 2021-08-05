@@ -88,7 +88,7 @@ def updateParticle(part, best, phi1, phi2):
 
 def evaluate(p, data):
     
-        return abs(sum( x[11] - (p[0] +      
+        return np.sqrt(sum((x[11] - (p[0] +      
                         p[1]  * x[0] +    
                         p[2]  * x[1] + 
                         p[3]  * x[2] + 
@@ -99,7 +99,7 @@ def evaluate(p, data):
                         p[8]  * x[7] + 
                         p[9]  * x[8] +
                         p[10] * x[9] + 
-                        p[11] * x[10]) for x in data ))
+                        p[11] * x[10]) for x in data)**2))
     
 
 
@@ -164,7 +164,7 @@ Score:    5023095.4341  params:  [0.09615478202863481, 2.789629780067158, 0.8235
 
 '''
 def main():
-    pop = toolbox.population(n=100)
+    pop = toolbox.population(n=200)
     
     fbest = creator.Particle([0.09615478202863481, 2.789629780067158, 0.8235775906629333, 0.01780851560761154, -4.555990430221731, -3.6434438067603763, -4.253546687419635, -2.3914360745301417, -2.1549622899750265, -2.3490020589144183, 0.2226727551740212, 1.1419247882456074])
 
