@@ -8,9 +8,7 @@ import optuna
 import joblib
 from optuna.samplers import CmaEsSampler
 import pandas as pd
-import numpy as np
 import time
-import os.path
 from os import path
 import warnings
 
