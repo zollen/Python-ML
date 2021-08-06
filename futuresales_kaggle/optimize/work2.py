@@ -60,7 +60,8 @@ Optimization
 def evaluate(trial, data):
     
     p = []
-    for i in range(0, 12):
+    p.append(trial.suggest_float("p0", -10, 10))
+    for i in range(1, 12):
         p.append(trial.suggest_float("p" + str(i), -2, 2))     
     
     return sum(abs(x[11] - (p[0] +      
