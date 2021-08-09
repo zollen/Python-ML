@@ -190,6 +190,41 @@ def add_sales_proximity(window, train, test):
     
     return train, test
 
+def add_prepredict(tokens, train, test):
+    
+    guess_coeffs = [ 1.5380592989267657e-10, -9.879036042036577e-13, 
+              -3.926352206002156e-12, -1.6920708677121077e-15, 
+              3.089576979300765e-12, 7.015640157648066e-12, 
+              1.8697303994525835e-12, -9.763763403779746e-13, 
+              -1.3049033340668944e-14, -3.341402651609675e-11, 
+              7.270162231507526e-13, 4.008777494178755e-15 ]
+    
+    def precfunc(rec):
+        return guess_coeffs[0] +                                        \
+                            guess_coeffs[1] * rec['date_block_num'] +   \
+                            guess_coeffs[2] * rec['shop_id'] +          \
+                            guess_coeffs[3] * rec['item_id'] +          \
+                            guess_coeffs[4] * rec['shop_category'] +    \
+                            guess_coeffs[5] * rec['shop_city'] +        \
+                            guess_coeffs[6] * rec['item_category_id'] + \
+                            guess_coeffs[7] * rec['name2'] +            \
+                            guess_coeffs[8] * rec['name3'] +            \
+                            guess_coeffs[9] * rec['item_type'] +        \
+                            guess_coeffs[10] * rec['item_subtype'] +    \
+                            guess_coeffs[11] * rec['item_price']
+                            
+    train['pre_predict'] = train.apply(precfunc, axis = 1).astype('int64').clip(0, 20)
+    test['pre_predict'] = test.apply(precfunc, axis = 1).astype('int64').clip(0, 20)
+    
+    train = train.set_index(['shop_id', 'item_id'])
+    test = test.set_index(['shop_id', 'item_id'])
+    test.loc[~test.index.isin(train.index), 'pre_predict'] = 0
+    train = train.reset_index()
+    test = test.reset_index()
+
+    tokens.append('pre_predict')
+    
+    return train, test
     
     
 def add_lag_features(df, trailing_window_size, columns, targets):
