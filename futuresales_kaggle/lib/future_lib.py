@@ -200,18 +200,18 @@ def add_prepredict(tokens, train, test):
               7.270162231507526e-13, 4.008777494178755e-15 ]
     
     def precfunc(rec):
-        return guess_coeffs[0] +                                        \
-                            guess_coeffs[1] * rec['date_block_num'] +   \
-                            guess_coeffs[2] * rec['shop_id'] +          \
-                            guess_coeffs[3] * rec['item_id'] +          \
-                            guess_coeffs[4] * rec['shop_category'] +    \
-                            guess_coeffs[5] * rec['shop_city'] +        \
-                            guess_coeffs[6] * rec['item_category_id'] + \
-                            guess_coeffs[7] * rec['name2'] +            \
-                            guess_coeffs[8] * rec['name3'] +            \
-                            guess_coeffs[9] * rec['item_type'] +        \
-                            guess_coeffs[10] * rec['item_subtype'] +    \
-                            guess_coeffs[11] * rec['item_price']
+        return guess_coeffs[0] +                            \
+                guess_coeffs[1] * rec['date_block_num'] +   \
+                guess_coeffs[2] * rec['shop_id'] +          \
+                guess_coeffs[3] * rec['item_id'] +          \
+                guess_coeffs[4] * rec['shop_category'] +    \
+                guess_coeffs[5] * rec['shop_city'] +        \
+                guess_coeffs[6] * rec['item_category_id'] + \
+                guess_coeffs[7] * rec['name2'] +            \
+                guess_coeffs[8] * rec['name3'] +            \
+                guess_coeffs[9] * rec['item_type'] +        \
+                guess_coeffs[10] * rec['item_subtype'] +    \
+                guess_coeffs[11] * rec['item_price']
                             
     train['pre_predict'] = train.apply(precfunc, axis = 1).astype('int64').clip(0, 20)
     test['pre_predict'] = test.apply(precfunc, axis = 1).astype('int64').clip(0, 20)
