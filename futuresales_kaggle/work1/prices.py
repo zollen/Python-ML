@@ -13,8 +13,6 @@ delta_price_lag1,2,3
 date_itemtype_avg_cnt_lag1
 date_itemcat_avg_cnt_lag1,2,3
 date_name3_avg_cnt_lag2
-date_type_name3_avg_cnt_lag2
-date_cat_name3_avg_cnt_lag2
 '''
 
 import pandas as pd
