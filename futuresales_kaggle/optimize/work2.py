@@ -6,7 +6,7 @@ Created on Aug. 2, 2021
 '''
 import optuna 
 import joblib
-from optuna.samplers import CmaEsSampler, TPESampler
+from optuna.samplers import CmaEsSampler
 import pandas as pd
 import time
 from os import path
@@ -78,7 +78,7 @@ if path.exists(file):
 else:
     study = optuna.create_study(
                 study_name='futuresales-study',
-                direction="minimize", sampler=TPESampler(seed=int(time.time())))
+                direction="minimize", sampler=CmaEsSampler(seed=int(time.time())))
 
 # Pass additional arguments inside another function
 func = lambda trial: evaluate(trial, data)
