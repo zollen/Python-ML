@@ -2,13 +2,25 @@
 Created on Jul. 17, 2021
 
 @author: zollen
+@score: 
+lag features for the prediction.xsd - output: 1.03740
+item_cnt_month_lag1,2,3
+date_item_avg_cnt_lag1,2,3
+date_shop_item_avg_cnt_lag1,2,3
+date_shop_subtype_avg_cnt_lag1,2,3
+delta_reveune_lag2
+delta_price_lag1,2,3
+date_itemtype_avg_cnt_lag1
+date_itemcat_avg_cnt_lag1,2,3
+date_name3_avg_cnt_lag2
+date_type_name3_avg_cnt_lag2
+date_cat_name3_avg_cnt_lag2
 '''
 
 import pandas as pd
 import numpy as np
 import time
 from xgboost import XGBRegressor
-from sklearn.metrics import mean_squared_error
 import futuresales_kaggle.lib.future_lib as ft
 import warnings
 
