@@ -51,6 +51,11 @@ Optimization
 '''
 def evaluate(trial, data):
     
+    global study, file
+    
+    if trial.number % 5 == 0:
+        joblib.dump(study, file)
+    
     p = []
     p.append(trial.suggest_float("p0", -1000, 1000))
     for i in range(1, 11):
@@ -84,7 +89,7 @@ else:
 func = lambda trial: evaluate(trial, data)
 
 # Start optimizing with 100 trials
-study.optimize(func, n_trials=200)
+study.optimize(func, n_trials=1200)
 
 end_st = time.time()
 
