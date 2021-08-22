@@ -60,6 +60,7 @@ train_item_cats = pd.merge(train, items_cats, how='left', on='item_id')
 raw_item_cats = pd.merge(raw, items_cats, how='left', on='item_id')
 test_item_cats = pd.merge(test, items_cats, how='left', on='item_id')
 train_item_cats_shops = pd.merge(train_item_cats, shops, how='left', on='shop_id')
+raw_item_cats_shops = pd.merge(raw_item_cats, shops, how='left', on='shop_id')
 test_item_cats_shops = pd.merge(test_item_cats, shops, how='left', on='shop_id')
 
 
@@ -118,8 +119,16 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_type_name3_avg_cnt(lag
 train_item_cats_shops, test_item_cats_shops = ft.add_date_cat_name3_avg_cnt(lag_features, 
                         raw_item_cats, train_item_cats_shops, test_item_cats_shops)
 
+# 11. groupby( ["date_block_num","shop_city"] ).agg({"item_cnt_month" : ["mean"]})
+#train_item_cats_shops, test_item_cats_shops = ft.add_date_city(lag_features, 
+#                        raw_item_cats_shops, train_item_cats_shops, test_item_cats_shops)
 
-
+int_cols = ['date_block_num', 'shop_id', 'item_id', 
+            'shop_category', 'shop_city', 
+            'item_category_id', 'name2', 
+            'name3', 'item_type', 'item_subtype']
+ft.typecast(train_item_cats_shops, int_cols)
+ft.typecast(test_item_cats_shops, int_cols)
 
 all_df = pd.concat([train_item_cats_shops, test_item_cats_shops])
 all_df.drop(columns=['ID'], inplace=True)
@@ -136,6 +145,7 @@ del train_item_cats
 del raw_item_cats
 del test_item_cats
 del train_item_cats_shops
+del raw_item_cats_shops
 
 
 
