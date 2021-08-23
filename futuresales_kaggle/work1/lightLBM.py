@@ -34,7 +34,8 @@ removed_features = ['delta_reveune_lag1', 'delta_reveune_lag3',
                     'date_itemtype_avg_cnt_lag2', 'date_itemtype_avg_cnt_lag3',
                     'date_name3_avg_cnt_lag1', 'date_name3_avg_cnt_lag3',
                     'date_type_name3_avg_cnt_lag1', 'date_type_name3_avg_cnt_lag3',
-                    'date_cat_name3_avg_cnt_lag1', 'date_cat_name3_avg_cnt_lag3']
+                    'date_cat_name3_avg_cnt_lag1', 'date_cat_name3_avg_cnt_lag3',
+                    'date_city_avg_cnt_lag2', 'date_city_avg_cnt_lag3']
 label = 'item_cnt_month'
 keys = ['shop_id', 'item_id']
 lag_features = [ label ]
@@ -119,9 +120,12 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_type_name3_avg_cnt(lag
 train_item_cats_shops, test_item_cats_shops = ft.add_date_cat_name3_avg_cnt(lag_features, 
                         raw_item_cats, train_item_cats_shops, test_item_cats_shops)
 
-# 11. groupby( ["date_block_num","shop_city"] ).agg({"item_cnt_month" : ["mean"]})
-#train_item_cats_shops, test_item_cats_shops = ft.add_date_city(lag_features, 
-#                        raw_item_cats_shops, train_item_cats_shops, test_item_cats_shops)
+# 11. groupby( ["date_block_num","shop_id"] ).agg({"item_cnt_month" : ["mean"]})
+train_item_cats_shops, test_item_cats_shops = ft.add_date_shop(lag_features, 
+                        raw_item_cats_shops, train_item_cats_shops, test_item_cats_shops)
+
+
+
 
 int_cols = ['date_block_num', 'shop_id', 'item_id', 
             'shop_category', 'shop_city', 
