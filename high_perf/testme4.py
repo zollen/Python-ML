@@ -39,13 +39,18 @@ def vectorized_func(x):
     return np.where(x['Class'] == 0, x['Class'] + 1, x['Class'] * 2)
 
 start_t = time.time()
+df['Class_1'] = df.apply(non_vectorized_func, axis = 1)
+end_t = time.time()
+print("Non-Vectorized Completed: ", end_t - start_t)
+
+start_t = time.time()
 df['Class_1'] = df.apply(vectorized_func, axis = 1)
 end_t = time.time()
-print("Standard Completed: ", end_t - start_t)
+print("Standard Completed     : ", end_t - start_t)
 
 start_t = time.time()
 df['Class_1'] = df.swifter.apply(vectorized_func, axis = 1)
 end_t = time.time()
-print("Swifter Completed: ", end_t - start_t)
+print("Swifter Completed     : ", end_t - start_t)
 
 
