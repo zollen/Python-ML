@@ -46,6 +46,6 @@ print("Standard Completed: ", end_t - start_t)
 start_t = time.time()
 df['Class_1'] = df.swifter.apply(vectorized_func, axis = 1)
 end_t = time.time()
-print("Standard Completed: ", end_t - start_t)
+print("Swifter Completed: ", end_t - start_t)
 
 
