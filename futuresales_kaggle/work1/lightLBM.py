@@ -127,6 +127,58 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_shop(lag_features,
 
 
 
+
+
+
+# remove delta_price_lag2, delta_price_lag3 - no good
+# remove delta_price_lag1, delta_price_lag3 - no good
+# remove delta_price_lag1, delta_price_lag2 - no good
+# shop_id, name3                 - no good
+# shop_id, shop_category         - no good
+# shop_id, item_category_id      - no good 
+# shop_id, item_type             - no good    
+# shop_id, name3                 - no good   
+# shop_id, item_price            - no good  
+# shop_city, shop_id, item_id    - no good
+# add shop_city into existing    - no good         -
+# item_type, name3               - no good
+# item_id, shop_id               - no good
+# item_type, item_category_id    - no good
+# item_category_id, item_id      - no good
+# item_category_id, item_type    - no good
+# item_category_id, subtype_code - no good
+# item_subtype, shop_id          - no good
+# item_subtype, shop_category    - 
+# item_subtype, item_category_id
+# item_subtype, item_type
+# item_subtype, name3
+# item_subtype, item_price
+# item_type, item_id
+# item_type, item_category_id
+# item_type, item_subtype
+# item_type, item_price
+# shop_category, item_id
+# shop_category, name3
+# shop_category, item_type
+# shop_category, item_subtype
+# name3, item_id
+# name3, item_category_id
+# name3, item_type
+# name3, item_price
+'''
+model = XGBRegressor(
+    max_depth=10,
+    n_estimators=1000,
+    min_child_weight=0.5, 
+    colsample_bytree=0.8, 
+    subsample=0.8, 
+    eta=0.1,
+#     tree_method='gpu_hist',
+    seed=42)
+'''
+
+
+
 int_cols = ['date_block_num', 'shop_id', 'item_id', 
             'shop_category', 'shop_city', 
             'item_category_id', 'name2', 
