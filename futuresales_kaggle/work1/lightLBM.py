@@ -35,7 +35,7 @@ removed_features = ['delta_reveune_lag1', 'delta_reveune_lag3',
                     'date_name3_avg_cnt_lag1', 'date_name3_avg_cnt_lag3',
                     'date_type_name3_avg_cnt_lag1', 'date_type_name3_avg_cnt_lag3',
                     'date_cat_name3_avg_cnt_lag1', 'date_cat_name3_avg_cnt_lag3',
-                    'date_city_avg_cnt_lag2', 'date_city_avg_cnt_lag3']
+                    'date_shop_avg_cnt_lag2', 'date_shop_avg_cnt_lag3']
 label = 'item_cnt_month'
 keys = ['shop_id', 'item_id']
 lag_features = [ label ]
@@ -138,7 +138,7 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_shop(lag_features,
 # shop_id, item_category_id      - no good 
 # shop_id, item_type             - no good    
 # shop_id, name3                 - no good   
-# shop_id, item_price            - no good  
+# shop_id, item_price            - no good
 # shop_city, shop_id, item_id    - no good
 # add shop_city into existing    - no good         -
 # item_type, name3               - no good
@@ -148,9 +148,9 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_shop(lag_features,
 # item_category_id, item_type    - no good
 # item_category_id, subtype_code - no good
 # item_subtype, shop_id          - no good
-# item_subtype, shop_category    - 
-# item_subtype, item_category_id
-# item_subtype, item_type
+# item_subtype, shop_category    - no good
+# item_subtype, item_category_id - no good
+# item_subtype, item_type        - 
 # item_subtype, name3
 # item_subtype, item_price
 # item_type, item_id
@@ -176,6 +176,7 @@ model = XGBRegressor(
 #     tree_method='gpu_hist',
     seed=42)
 '''
+
 
 
 

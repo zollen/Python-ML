@@ -108,12 +108,12 @@ def add_date_cat_name3_avg_cnt(tokens, src, train, test):
 
 def add_date_shop(tokens, src, train, test):
     f1 = src.groupby(['date_block_num', 'shop_id']).agg({'item_cnt_day': ['mean']})
-    f1.columns = [ 'date_city_avg_cnt' ]
+    f1.columns = [ 'date_shop_avg_cnt' ]
     train = train.merge(f1, on=['date_block_num', 'shop_id'], how='left')
     train.fillna(0, inplace = True)
     test = test.merge(f1, on=['date_block_num', 'shop_id'], how='left')
     test.fillna(0, inplace = True)    
-    tokens.append('date_city_avg_cnt')
+    tokens.append('date_shop_avg_cnt')
     del f1
     return train, test
     
