@@ -41,7 +41,7 @@ def add_date_itemtype_cnt(tokens, src, train, test):
     return train, test
 
 def add_date_itemcat_cnt(tokens, src, train, test):
-    f1 = src.groupby(['date_block_num', 'item_category_id']).agg({'item_cnt_day': ['mean']})
+    f1 = src.groupby(['date_block_num', 'item_category_id']).agg({'item_cnt_day': ['median']})
     f1.columns = [ 'date_itemcat_avg_cnt' ]
     train = train.merge(f1, on=['date_block_num', 'item_category_id'], how='left')
     train.fillna(0, inplace = True)
