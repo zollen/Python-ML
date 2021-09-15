@@ -35,7 +35,11 @@ removed_features = ['delta_reveune_lag1', 'delta_reveune_lag3',
                     'date_name3_avg_cnt_lag1', 'date_name3_avg_cnt_lag3',
                     'date_type_name3_avg_cnt_lag1', 'date_type_name3_avg_cnt_lag3',
                     'date_cat_name3_avg_cnt_lag1', 'date_cat_name3_avg_cnt_lag3',
-                    'date_shop_avg_cnt_lag2', 'date_shop_avg_cnt_lag3']
+                    'date_shop_avg_cnt_lag2', 'date_shop_avg_cnt_lag3'
+                    
+                    
+                    ]
+
 label = 'item_cnt_month'
 keys = ['shop_id', 'item_id']
 lag_features = [ label ]
@@ -128,8 +132,12 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_shop(lag_features,
 
 
 
+# Score: 0.7622 params: {'n_estimators': 135, 'max_depth': 19, 'num_leaves': 40, 'min_data_in_leaf': 28, 'max_bin': 37, 'lambda_l1': 3.5006139006621573}
 
 
+# redo all with mediam instead of mean
+# shop_city                                 - no good
+# month, year
 # remove delta_price_lag2, delta_price_lag3 - no good
 # remove delta_price_lag1, delta_price_lag3 - no good
 # remove delta_price_lag1, delta_price_lag2 - no good
@@ -150,21 +158,21 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_shop(lag_features,
 # item_subtype, shop_id          - no good
 # item_subtype, shop_category    - no good
 # item_subtype, item_category_id - no good
-# item_subtype, item_type        - 
-# item_subtype, name3
-# item_subtype, item_price
-# item_type, item_id
-# item_type, item_category_id
-# item_type, item_subtype
-# item_type, item_price
-# shop_category, item_id
-# shop_category, name3
-# shop_category, item_type
-# shop_category, item_subtype
-# name3, item_id
-# name3, item_category_id
-# name3, item_type
-# name3, item_price
+# item_subtype, item_type        - no good
+# item_subtype, name3            - no good
+# item_subtype, item_price       - no good
+# item_type, item_id             - no good
+# item_type, item_category_id    - no good
+# item_type, item_subtype        - no good
+# item_type, item_price          - no good
+# shop_category, item_id         - no good
+# shop_category, name3           - no good
+# shop_category, item_type       - no good
+# shop_category, item_subtype    - no good
+# name3, item_id                 - no good
+# name3, item_category_id        - no good
+# name3, item_type               - no good
+# name3, item_price              - 
 '''
 model = XGBRegressor(
     max_depth=10,
