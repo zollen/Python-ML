@@ -7,8 +7,8 @@ import pandas as pd
 import numpy as np
 
 
-def add_item_avg_cnt(tokens, src, train, test):
-    f1 = src.groupby(['date_block_num', 'item_id']).agg({'item_cnt_day': ['mean']})
+def add_item_avg_cnt(method, tokens, src, train, test):
+    f1 = src.groupby(['date_block_num', 'item_id']).agg({'item_cnt_day': [ method ]})
     f1.columns = [ 'date_item_avg_cnt' ]
     train = train.merge(f1, on=['date_block_num', 'item_id'], how='left')
     train.fillna(0, inplace = True)
@@ -18,8 +18,8 @@ def add_item_avg_cnt(tokens, src, train, test):
     del f1
     return train, test
     
-def add_date_item_avg_cnt(tokens, src, train, test):
-    f1 = src.groupby(['date_block_num', 'shop_id', 'item_id']).agg({'item_cnt_day': ['mean']})
+def add_date_item_avg_cnt(method, tokens, src, train, test):
+    f1 = src.groupby(['date_block_num', 'shop_id', 'item_id']).agg({'item_cnt_day': [ method ]})
     f1.columns = [ 'date_shop_item_avg_cnt' ]
     train = train.merge(f1, on=['date_block_num', 'shop_id', 'item_id'], how='left')
     train.fillna(0, inplace = True)
@@ -29,8 +29,8 @@ def add_date_item_avg_cnt(tokens, src, train, test):
     del f1
     return train, test
 
-def add_date_itemtype_cnt(tokens, src, train, test):
-    f1 = src.groupby(['date_block_num', 'item_type']).agg({'item_cnt_day': ['median']})
+def add_date_itemtype_cnt(method, tokens, src, train, test):
+    f1 = src.groupby(['date_block_num', 'item_type']).agg({'item_cnt_day': [ method ]})
     f1.columns = [ 'date_itemtype_avg_cnt' ]
     train = train.merge(f1, on=['date_block_num', 'item_type'], how='left')
     train.fillna(0, inplace = True)
@@ -40,8 +40,8 @@ def add_date_itemtype_cnt(tokens, src, train, test):
     del f1
     return train, test
 
-def add_date_itemcat_cnt(tokens, src, train, test):
-    f1 = src.groupby(['date_block_num', 'item_category_id']).agg({'item_cnt_day': ['median']})
+def add_date_itemcat_cnt(method, tokens, src, train, test):
+    f1 = src.groupby(['date_block_num', 'item_category_id']).agg({'item_cnt_day': [ method ]})
     f1.columns = [ 'date_itemcat_avg_cnt' ]
     train = train.merge(f1, on=['date_block_num', 'item_category_id'], how='left')
     train.fillna(0, inplace = True)
@@ -51,8 +51,8 @@ def add_date_itemcat_cnt(tokens, src, train, test):
     del f1
     return train, test
    
-def add_date_shop_subtype_avg_cnt(tokens, src, train, test):
-    f1 = src.groupby(['date_block_num', 'shop_id', 'item_subtype']).agg({'item_cnt_day': ['mean']})
+def add_date_shop_subtype_avg_cnt(method, tokens, src, train, test):
+    f1 = src.groupby(['date_block_num', 'shop_id', 'item_subtype']).agg({'item_cnt_day': [ method ]})
     f1.columns = [ 'date_shop_subtype_avg_cnt' ]
     train = train.merge(f1, on=['date_block_num', 'shop_id', 'item_subtype'], how='left')
     train.fillna(0, inplace = True)
@@ -62,8 +62,8 @@ def add_date_shop_subtype_avg_cnt(tokens, src, train, test):
     del f1
     return train, test
 
-def add_date_shop_type_avg_cnt(tokens, src, train, test):
-    f1 = src.groupby(['date_block_num', 'shop_id', 'item_type']).agg({'item_cnt_day': ['mean']})
+def add_date_shop_type_avg_cnt(method, tokens, src, train, test):
+    f1 = src.groupby(['date_block_num', 'shop_id', 'item_type']).agg({'item_cnt_day': [ method ]})
     f1.columns = [ 'date_shop_type_avg_cnt' ]
     train = train.merge(f1, on=['date_block_num', 'shop_id', 'item_type'], how='left')
     train.fillna(0, inplace = True)
@@ -73,8 +73,8 @@ def add_date_shop_type_avg_cnt(tokens, src, train, test):
     del f1
     return train, test
 
-def add_date_name3_avg_cnt(tokens, src, train, test):
-    f1 = src.groupby(['date_block_num', 'name3']).agg({'item_cnt_day': ['mean']})
+def add_date_name3_avg_cnt(method, tokens, src, train, test):
+    f1 = src.groupby(['date_block_num', 'name3']).agg({'item_cnt_day': [ method ]})
     f1.columns = [ 'date_name3_avg_cnt' ]
     train = train.merge(f1, on=['date_block_num', 'name3'], how='left')
     train.fillna(0, inplace = True)
@@ -84,8 +84,8 @@ def add_date_name3_avg_cnt(tokens, src, train, test):
     del f1
     return train, test
 
-def add_date_type_name3_avg_cnt(tokens, src, train, test):
-    f1 = src.groupby(['date_block_num', 'item_type', 'name3']).agg({'item_cnt_day': ['mean']})
+def add_date_type_name3_avg_cnt(method, tokens, src, train, test):
+    f1 = src.groupby(['date_block_num', 'item_type', 'name3']).agg({'item_cnt_day': [ method ]})
     f1.columns = [ 'date_type_name3_avg_cnt' ]
     train = train.merge(f1, on=['date_block_num', 'item_type', 'name3'], how='left')
     train.fillna(0, inplace = True)
@@ -95,8 +95,8 @@ def add_date_type_name3_avg_cnt(tokens, src, train, test):
     del f1
     return train, test
 
-def add_date_cat_name3_avg_cnt(tokens, src, train, test):
-    f1 = src.groupby(['date_block_num', 'item_category_id', 'name3']).agg({'item_cnt_day': ['mean']})
+def add_date_cat_name3_avg_cnt(method, tokens, src, train, test):
+    f1 = src.groupby(['date_block_num', 'item_category_id', 'name3']).agg({'item_cnt_day': [ method ]})
     f1.columns = [ 'date_cat_name3_avg_cnt' ]
     train = train.merge(f1, on=['date_block_num', 'item_category_id', 'name3'], how='left')
     train.fillna(0, inplace = True)
@@ -106,8 +106,8 @@ def add_date_cat_name3_avg_cnt(tokens, src, train, test):
     del f1
     return train, test
 
-def add_date_shop(tokens, src, train, test):
-    f1 = src.groupby(['date_block_num', 'shop_id']).agg({'item_cnt_day': ['mean']})
+def add_date_shop(method, tokens, src, train, test):
+    f1 = src.groupby(['date_block_num', 'shop_id']).agg({'item_cnt_day': [ method ]})
     f1.columns = [ 'date_shop_avg_cnt' ]
     train = train.merge(f1, on=['date_block_num', 'shop_id'], how='left')
     train.fillna(0, inplace = True)
