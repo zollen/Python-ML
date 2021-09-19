@@ -130,49 +130,6 @@ train_item_cats_shops, test_item_cats_shops = ft.add_date_shop('mean',
 
 
 
-
-
-# Score: 0.7622 params: {'n_estimators': 135, 'max_depth': 19, 'num_leaves': 40, 'min_data_in_leaf': 28, 'max_bin': 37, 'lambda_l1': 3.5006139006621573}
-
-
-# redo all with mediam instead of mean
-# shop_city                                 - no good
-# month, year
-# remove delta_price_lag2, delta_price_lag3 - no good
-# remove delta_price_lag1, delta_price_lag3 - no good
-# remove delta_price_lag1, delta_price_lag2 - no good
-# shop_id, name3                 - no good
-# shop_id, shop_category         - no good
-# shop_id, item_category_id      - no good 
-# shop_id, item_type             - no good    
-# shop_id, name3                 - no good   
-# shop_id, item_price            - no good
-# shop_city, shop_id, item_id    - no good
-# add shop_city into existing    - no good         -
-# item_type, name3               - no good
-# item_id, shop_id               - no good
-# item_type, item_category_id    - no good
-# item_category_id, item_id      - no good
-# item_category_id, item_type    - no good
-# item_category_id, subtype_code - no good
-# item_subtype, shop_id          - no good
-# item_subtype, shop_category    - no good
-# item_subtype, item_category_id - no good
-# item_subtype, item_type        - no good
-# item_subtype, name3            - no good
-# item_subtype, item_price       - no good
-# item_type, item_id             - no good
-# item_type, item_category_id    - no good
-# item_type, item_subtype        - no good
-# item_type, item_price          - no good
-# shop_category, item_id         - no good
-# shop_category, name3           - no good
-# shop_category, item_type       - no good
-# shop_category, item_subtype    - no good
-# name3, item_id                 - no good
-# name3, item_category_id        - no good
-# name3, item_type               - no good
-# name3, item_price              - 
 '''
 model = XGBRegressor(
     max_depth=10,
