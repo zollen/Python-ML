@@ -217,31 +217,78 @@ matrix["type_code"] = matrix["type_code"].astype(np.int8)
 
 
 
-'''
-clip values between 0 and 20
-'''
-matrix['item_cnt_month'] = matrix['item_cnt_month'].clip(0, 20)
-
-
-training = matrix[matrix['date_block_num'] < 34]
-testing = matrix[matrix['date_block_num'] == 34]
-
 base_features = [
         'date_block_num', 'shop_id', 'item_id', 'shop_category', 'shop_city',
         'item_category_id', 'name2', 'name3', 'type_code', 'subtype_code'
     ]
 
 label = 'item_cnt_month'
+keys = ['shop_id', 'item_id']
+lag_features = [ label ]
+removed_features = []
+LAGS = 3
 
+training = matrix[matrix['date_block_num'] < 34]
+testing = matrix[matrix['date_block_num'] == 34]
+
+
+
+'''
+adding new features
+'''
+# adding 
+#training, testing = ft.add_item_avg_cnt('mean', lag_features, train, training, testing)
+
+
+
+
+
+
+
+
+'''
+adding lag features
+'''   
+all_df = pd.concat([training, testing], ignore_index=True, sort=False, keys=cols)     
+pp = ft.add_lag_features(all_df, LAGS, keys, lag_features)
+del all_df
+
+new_features = []
+for feature in lag_features:
+    for i in range(1, LAGS+1):
+        new_features.append(feature + "_lag" + str(i))   
+        
+for feature in removed_features:   
+    if feature in new_features:
+        new_features.remove(feature)
+pp.drop(columns=lag_features[1:] + removed_features, inplace = True)
+
+
+pp[label] = pp[label].clip(0, 20)
+training = pp[pp['date_block_num'] < 34]
+testing = pp[pp['date_block_num'] == 34]
+del pp
+
+features = base_features + new_features
+
+
+
+print(training[features].head())
+print(testing[features].head())
+
+
+'''
+Training and Prediction
+'''
 model = LGBMRegressor()
-model.fit(training[base_features], training[label])
+model.fit(training[features], training[label])
 
-print(pd.Series(index=base_features, data=model.feature_importances_).sort_values(ascending=False))
+print(pd.Series(index=features, data=model.feature_importances_).sort_values(ascending=False))
 
-testing['item_cnt_month'] = model.predict(testing[base_features])
+testing[label] = model.predict(testing[features])
 
 
-test = pd.merge(test, testing[['shop_id', 'item_id', 'item_cnt_month']], on = ['shop_id', 'item_id'], how = "left")
+test = pd.merge(test, testing[['shop_id', 'item_id', label]], on = ['shop_id', 'item_id'], how = "left")
 test[label].fillna(0, inplace=True)
 test[label] = test[label].clip(0, 20)
 test[label] = test[label].astype('int16')
