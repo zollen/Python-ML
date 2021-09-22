@@ -11,7 +11,6 @@ import re
 from itertools import product
 from sklearn.preprocessing import LabelEncoder
 from lightgbm import LGBMRegressor
-import futuresales_kaggle.lib.future_lib as ft
 import warnings
 
 
@@ -85,19 +84,19 @@ shops = shops[["shop_id", "shop_category", "shop_city"]]
 '''
 Cleaning item categories data
 '''
-cats["type_code"] = cats.item_category_name.apply( lambda x: x.split(" ")[0] ).astype(str)
-cats.loc[ (cats.type_code == "Игровые")| (cats.type_code == "Аксессуары"), "category" ] = "Игры"
+cats["item_type"] = cats.item_category_name.apply( lambda x: x.split(" ")[0] ).astype(str)
+cats.loc[ (cats['item_type'] == "Игровые")| (cats['item_type'] == "Аксессуары"), "category" ] = "Игры"
 
 category = []
-for cat in cats.type_code.unique():
-    if len(cats[cats.type_code == cat]) >= 5: 
+for cat in cats['item_type'].unique():
+    if len(cats[cats['item_type'] == cat]) >= 5: 
         category.append( cat )
-cats.type_code = cats.type_code.apply(lambda x: x if (x in category) else "etc")
-cats.type_code = LabelEncoder().fit_transform(cats.type_code)
+cats['item_type'] = cats['item_type'].apply(lambda x: x if (x in category) else "etc")
+cats['item_type'] = LabelEncoder().fit_transform(cats['item_type'])
 cats["split"] = cats.item_category_name.apply(lambda x: x.split("-"))
 cats["subtype"] = cats.split.apply(lambda x: x[1].strip() if len(x) > 1 else x[0].strip())
-cats["subtype_code"] = LabelEncoder().fit_transform( cats["subtype"] )
-cats = cats[["item_category_id", "subtype_code", "type_code"]]
+cats["item_subtype"] = LabelEncoder().fit_transform( cats["subtype"] )
+cats = cats[["item_category_id", "item_type", "item_subtype"]]
 
 
 '''
@@ -174,8 +173,8 @@ matrix["shop_id"] = matrix["shop_id"].astype(np.int8)
 matrix["item_id"] = matrix["item_id"].astype(np.int16)
 matrix.sort_values( cols, inplace = True )
 
-# add revenue to train
-train["revenue"] = train["item_cnt_day"] * train["item_price"]
+
+
 
 group = train.groupby( ["date_block_num", "shop_id", "item_id"] ).agg( {"item_cnt_day": ["sum"]} )
 group.columns = ["item_cnt_month"]
@@ -207,88 +206,238 @@ Adding shops, items and categories data into the matrix
 matrix = pd.merge( matrix, shops, on = ["shop_id"], how = "left" )
 matrix = pd.merge(matrix, items, on = ["item_id"], how = "left")
 matrix = pd.merge( matrix, cats, on = ["item_category_id"], how = "left" )
-matrix["shop_city"] = matrix["shop_city"].astype(np.int8)
-matrix["shop_category"] = matrix["shop_category"].astype(np.int8)
-matrix["item_category_id"] = matrix["item_category_id"].astype(np.int8)
-matrix["subtype_code"] = matrix["subtype_code"].astype(np.int8)
-matrix["name2"] = matrix["name2"].astype(np.int8)
+
+matrix["shop_city"] = matrix["shop_city"].astype(np.int16)
+matrix["shop_category"] = matrix["shop_category"].astype(np.int16)
+matrix["item_category_id"] = matrix["item_category_id"].astype(np.int16)
+matrix["item_type"] = matrix["item_type"].astype(np.int16)
+matrix["name2"] = matrix["name2"].astype(np.int16)
 matrix["name3"] = matrix["name3"].astype(np.int16)
-matrix["type_code"] = matrix["type_code"].astype(np.int8)
-
-
-
-base_features = [
-        'date_block_num', 'shop_id', 'item_id', 'shop_category', 'shop_city',
-        'item_category_id', 'name2', 'name3', 'type_code', 'subtype_code'
-    ]
-
-label = 'item_cnt_month'
-keys = ['shop_id', 'item_id']
-lag_features = [ label ]
-removed_features = []
-LAGS = 3
-
-training = matrix[matrix['date_block_num'] < 34]
-testing = matrix[matrix['date_block_num'] == 34]
-
-
-
-'''
-adding new features
-'''
-# adding 
-#training, testing = ft.add_item_avg_cnt('mean', lag_features, train, training, testing)
-
-
-
-
-
+matrix["item_subtype"] = matrix["item_subtype"].astype(np.int16)
 
 
 
 '''
 adding lag features
-'''   
-all_df = pd.concat([training, testing], ignore_index=True, sort=False, keys=cols)     
-pp = ft.add_lag_features(all_df, LAGS, keys, lag_features)
-del all_df
-
-new_features = []
-for feature in lag_features:
-    for i in range(1, LAGS+1):
-        new_features.append(feature + "_lag" + str(i))   
-        
-for feature in removed_features:   
-    if feature in new_features:
-        new_features.remove(feature)
-pp.drop(columns=lag_features[1:] + removed_features, inplace = True)
+'''
+def lag_feature( df, lags, cols ):
+    for col in cols:
+        tmp = df[["date_block_num", "shop_id","item_id", col ]]
+        for i in lags:
+            shifted = tmp.copy()
+            shifted.columns = ["date_block_num", "shop_id", "item_id", col + "_lag_"+str(i)]
+            shifted.date_block_num = shifted.date_block_num + i
+            df = pd.merge(df, shifted, on=['date_block_num','shop_id','item_id'], how='left')
+            df.fillna(0, inplace = True)
+    return df
 
 
-pp[label] = pp[label].clip(0, 20)
-training = pp[pp['date_block_num'] < 34]
-testing = pp[pp['date_block_num'] == 34]
-del pp
+matrix = lag_feature( matrix, [1,2,3], ["item_cnt_month"] )
 
-features = base_features + new_features
+'''
+Add the previous month's average item_cnt.
+'''
+group = matrix.groupby( ["date_block_num"] ).agg({"item_cnt_month" : ["mean"]})
+group.columns = ["date_avg_item_cnt"]
+group.reset_index(inplace = True)
+
+matrix = pd.merge(matrix, group, on = ["date_block_num"], how = "left")
+matrix.date_avg_item_cnt = matrix["date_avg_item_cnt"].astype(np.float16)
+matrix = lag_feature( matrix, [1], ["date_avg_item_cnt"] )
+matrix.drop( ["date_avg_item_cnt"], axis = 1, inplace = True )
+
+
+'''
+adding lag123(item_id)
+'''
+group = matrix.groupby(['date_block_num', 'item_id']).agg({'item_cnt_month': ['mean']})
+group.columns = [ 'date_item_avg_item_cnt' ]
+group.reset_index(inplace=True)
+
+matrix = pd.merge(matrix, group, on=['date_block_num','item_id'], how='left')
+matrix.date_item_avg_item_cnt = matrix['date_item_avg_item_cnt'].astype(np.float16)
+matrix = lag_feature(matrix, [1,2,3], ['date_item_avg_item_cnt'])
+matrix.drop(['date_item_avg_item_cnt'], axis=1, inplace=True)
+
+'''
+adding lag123(shop_id)
+'''
+group = matrix.groupby( ["date_block_num","shop_id"] ).agg({"item_cnt_month" : ["mean"]})
+group.columns = ["date_shop_avg_item_cnt"]
+group.reset_index(inplace = True)
+
+matrix = pd.merge(matrix, group, on = ["date_block_num","shop_id"], how = "left")
+matrix.date_avg_item_cnt = matrix["date_shop_avg_item_cnt"].astype(np.float16)
+matrix = lag_feature( matrix, [1,2,3], ["date_shop_avg_item_cnt"] )
+matrix.drop( ["date_shop_avg_item_cnt"], axis = 1, inplace = True )
+
+
+'''
+adding lag123(shop_id, item_id)
+'''
+group = matrix.groupby( ["date_block_num","shop_id","item_id"] ).agg({"item_cnt_month" : ["mean"]})
+group.columns = ["date_shop_item_avg_item_cnt"]
+group.reset_index(inplace = True)
+
+matrix = pd.merge(matrix, group, on = ["date_block_num","shop_id","item_id"], how = "left")
+matrix.date_avg_item_cnt = matrix["date_shop_item_avg_item_cnt"].astype(np.float16)
+matrix = lag_feature( matrix, [1,2,3], ["date_shop_item_avg_item_cnt"] )
+matrix.drop( ["date_shop_item_avg_item_cnt"], axis = 1, inplace = True )
 
 
 
-print(training[features].head())
-print(testing[features].head())
+'''
+adding lag1(shop_id,item_subtype)
+'''
+group = matrix.groupby(['date_block_num', 'shop_id', 'item_subtype']).agg({'item_cnt_month': ['mean']})
+group.columns = ['date_shop_subtype_avg_item_cnt']
+group.reset_index(inplace=True)
+
+matrix = pd.merge(matrix, group, on=['date_block_num', 'shop_id', 'item_subtype'], how='left')
+matrix.date_shop_subtype_avg_item_cnt = matrix['date_shop_subtype_avg_item_cnt'].astype(np.float16)
+matrix = lag_feature(matrix, [1], ['date_shop_subtype_avg_item_cnt'])
+matrix.drop(['date_shop_subtype_avg_item_cnt'], axis=1, inplace=True)
+
+
+
+'''
+adding lag1(shop_city)
+'''
+group = matrix.groupby(['date_block_num', 'shop_city']).agg({'item_cnt_month': ['mean']})
+group.columns = ['date_city_avg_item_cnt']
+group.reset_index(inplace=True)
+
+matrix = pd.merge(matrix, group, on=['date_block_num', "shop_city"], how='left')
+matrix.date_city_avg_item_cnt = matrix['date_city_avg_item_cnt'].astype(np.float16)
+matrix = lag_feature(matrix, [1], ['date_city_avg_item_cnt'])
+matrix.drop(['date_city_avg_item_cnt'], axis=1, inplace=True)
+
+
+
+'''
+adding lag1(item_id, shop_city)
+'''
+group = matrix.groupby(['date_block_num', 'item_id', 'shop_city']).agg({'item_cnt_month': ['mean']})
+group.columns = [ 'date_item_city_avg_item_cnt' ]
+group.reset_index(inplace=True)
+
+matrix = pd.merge(matrix, group, on=['date_block_num', 'item_id', 'shop_city'], how='left')
+matrix.date_item_city_avg_item_cnt = matrix['date_item_city_avg_item_cnt'].astype(np.float16)
+matrix = lag_feature(matrix, [1], ['date_item_city_avg_item_cnt'])
+matrix.drop(['date_item_city_avg_item_cnt'], axis=1, inplace=True)
+
+
+'''
+adding average item price 
+adding lag values of item price per month
+add delta price values - how current month average price related to global average
+'''
+if False:
+    group = train.groupby( ["item_id"] ).agg({"item_price": ["mean"]})
+    group.columns = ["item_avg_item_price"]
+    group.reset_index(inplace = True)
+    
+    matrix = matrix.merge( group, on = ["item_id"], how = "left" )
+    matrix["item_avg_item_price"] = matrix.item_avg_item_price.astype(np.float16)
+    
+    
+    group = train.groupby( ["date_block_num","item_id"] ).agg( {"item_price": ["mean"]} )
+    group.columns = ["date_item_avg_item_price"]
+    group.reset_index(inplace = True)
+    
+    matrix = matrix.merge(group, on = ["date_block_num","item_id"], how = "left")
+    matrix["date_item_avg_item_price"] = matrix.date_item_avg_item_price.astype(np.float16)
+    
+    
+    lags = [1, 2, 3]
+    matrix = lag_feature( matrix, lags, ["date_item_avg_item_price"] )
+    for i in lags:
+        matrix["delta_price_lag_" + str(i) ] = (matrix["date_item_avg_item_price_lag_" + str(i)]- matrix["item_avg_item_price"] )/ matrix["item_avg_item_price"]
+    
+    def select_trends(row) :
+        for i in lags:
+            if row["delta_price_lag_" + str(i)]:
+                return row["delta_price_lag_" + str(i)]
+        return 0
+    
+    matrix["delta_price_lag"] = matrix.apply(select_trends, axis = 1)
+    matrix["delta_price_lag"] = matrix.delta_price_lag.astype( np.float16 )
+    matrix["delta_price_lag"].fillna( 0 ,inplace = True)
+    
+    features_to_drop = ["item_avg_item_price", "date_item_avg_item_price"]
+    for i in lags:
+        features_to_drop.append("date_item_avg_item_price_lag_" + str(i) )
+        features_to_drop.append("delta_price_lag_" + str(i) )
+    matrix.drop(features_to_drop, axis = 1, inplace = True)
+
+
+
+'''
+add total shop revenue per month to matrix
+add lag values of revenus per month
+add delta revenus values - how current month revene related to global average
+'''
+if False:
+    train["revenue"] = train["item_cnt_day"] * train["item_price"]
+    
+    group = train.groupby( ["date_block_num","shop_id"] ).agg({"revenue": ["sum"] })
+    group.columns = ["date_shop_revenue"]
+    group.reset_index(inplace = True)
+    
+    matrix = matrix.merge( group , on = ["date_block_num", "shop_id"], how = "left" )
+    matrix['date_shop_revenue'] = matrix['date_shop_revenue'].astype(np.float32)
+    
+    group = group.groupby(["shop_id"]).agg({ "date_block_num":["mean"] })
+    group.columns = ["shop_avg_revenue"]
+    group.reset_index(inplace = True )
+    
+    matrix = matrix.merge( group, on = ["shop_id"], how = "left" )
+    
+    matrix["shop_avg_revenue"] = matrix.shop_avg_revenue.astype(np.float32)
+    matrix["delta_revenue"] = (matrix['date_shop_revenue'] - matrix['shop_avg_revenue']) / matrix['shop_avg_revenue']
+    matrix["delta_revenue"] = matrix["delta_revenue"]. astype(np.float32)
+    
+    matrix = lag_feature(matrix, [1], ["delta_revenue"])
+    matrix["delta_revenue_lag_1"] = matrix["delta_revenue_lag_1"].astype(np.float32)
+    matrix.drop( ["date_shop_revenue", "shop_avg_revenue", "delta_revenue"] ,axis = 1, inplace = True)
+
+
+
+
+
+
+
+
 
 
 '''
 Training and Prediction
 '''
+label = 'item_cnt_month'
+
+matrix[label] = matrix[label].clip(0, 20)
+
+trainingX = matrix[matrix['date_block_num'] < 34]
+trainingX.drop(columns=[label], inplace=True)
+trainingY = matrix.loc[matrix['date_block_num'] < 34, label]
+
+testingX = matrix[matrix['date_block_num'] == 34]
+testingX.drop(columns=[label], inplace=True)
+
+print(trainingX.head())
+print(testingX.head())
+
+
 model = LGBMRegressor()
-model.fit(training[features], training[label])
 
-print(pd.Series(index=features, data=model.feature_importances_).sort_values(ascending=False))
+model.fit(trainingX, trainingY);         
 
-testing[label] = model.predict(testing[features])
+print(pd.Series(index=trainingX.columns, data=model.feature_importances_).sort_values(ascending=False))
+
+testingX[label] = model.predict(testingX)
 
 
-test = pd.merge(test, testing[['shop_id', 'item_id', label]], on = ['shop_id', 'item_id'], how = "left")
+test = pd.merge(test, testingX[['shop_id', 'item_id', label]], on = ['shop_id', 'item_id'], how = "left")
 test[label].fillna(0, inplace=True)
 test[label] = test[label].clip(0, 20)
 test[label] = test[label].astype('int16')
