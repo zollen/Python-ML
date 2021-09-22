@@ -3,10 +3,9 @@ Created on Jul. 2, 2021
 
 @author: zollen
 @bug: My lag features was wrong. 
-    I should have include:
-    All combination of (date_block_num, shop_id, item_id) and use this for merging_left 
-    shifted data. My original design did not have all combination and therefore some 
-    rows would never have merged back to the original dataset. 
+    I should have used all combination of (date_block_num, shop_id, item_id) as the
+    left dataset for merging. My original design did not have all combination and 
+    therefore some lagged rows would never have merged back to the left dataset. 
     My lag function also delete the first n rows as the first n rows do not have 
     sufficient previous data. We should have assign 0 to lag features of the 
     first n rows.
