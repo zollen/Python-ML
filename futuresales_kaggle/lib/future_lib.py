@@ -280,7 +280,7 @@ def add_lag_features(df, trailing_window_size, columns, targets):
         shifted.columns = [x + "_lag" + str(window) for x in df[targets]]
         df_lagged = pd.concat((df_lagged, shifted), axis=1)
                
-    return df_lagged.dropna()
+    return df_lagged.fillna(0)
     
 
 def typecast(df, intcolms):
