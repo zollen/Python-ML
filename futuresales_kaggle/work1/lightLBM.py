@@ -166,7 +166,6 @@ all_df.loc[all_df['date_block_num'] == 34, 'item_cnt_month'] = 0
 
 
 del raw
-del train
 del items
 del cats
 del shops
@@ -238,7 +237,13 @@ preds = model.predict(test_item_cats_shops[features])
 
 test[label] = preds
 test[label] = test[label].astype('int64')
+test.set_index(['shop_id', 'item_id'], inplace=True)
+train.set_index(['shop_id', 'item_id'], inplace=True)
+test.loc[~(test.index.isin(train.index)), label] = 0
 test[label] = test[label].clip(0, 20)
+
+train.reset_index(inplace=True)
+test.reset_index(inplace=True)
 
 test[['ID', label]].to_csv('../data/prediction.csv', index = False)
 
