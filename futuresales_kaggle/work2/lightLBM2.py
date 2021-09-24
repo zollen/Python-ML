@@ -217,6 +217,9 @@ matrix["item_subtype"] = matrix["item_subtype"].astype(np.int16)
 
 
 
+
+
+
 '''
 adding lag features
 '''
@@ -403,6 +406,24 @@ if False:
 
 
 
+'''
+add month and days
+'''
+matrix["month"] = matrix["date_block_num"] % 12
+days = pd.Series([31,28,31,30,31,30,31,31,30,31,30,31])
+matrix["days"] = matrix["month"].map(days).astype(np.int8)
+
+
+'''
+add month of each shop
+'''
+matrix["item_shop_first_sale"] = matrix["date_block_num"] - matrix.groupby(["item_id","shop_id"])["date_block_num"].transform('min')
+
+
+'''
+add item first sale
+'''
+matrix["item_first_sale"] = matrix["date_block_num"] - matrix.groupby(["item_id"])["date_block_num"].transform('min')
 
 
 
