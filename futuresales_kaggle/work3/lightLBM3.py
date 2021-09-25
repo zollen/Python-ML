@@ -263,7 +263,14 @@ removed_features.append('date_shop_item_avg_cnt')
 del f1
 
 
-
+f1 = matrix.groupby(['date_block_num', 'shop_category']).agg({'item_cnt_month': [ 'mean' ]})
+f1.columns = [ 'date_shopcat_avg_cnt' ]
+matrix = matrix.merge(f1, on=['date_block_num', 'shop_category'], how='left')
+matrix.fillna(0, inplace = True)
+matrix['date_shopcat_avg_cnt'] = matrix['date_shopcat_avg_cnt'].astype(np.float16)
+lag_features.append('date_shopcat_avg_cnt')
+removed_features.append('date_shopcat_avg_cnt')
+del f1
 
 
 
