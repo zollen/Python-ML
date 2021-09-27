@@ -283,6 +283,19 @@ removed_features.append('date_city_avg_cnt_lag2')
 removed_features.append('date_city_avg_cnt_lag3')
 del f1
 
+f1 = matrix.groupby(['date_block_num', 'item_category_id']).agg({'item_cnt_month': [ 'mean' ]})
+f1.columns = [ 'date_itemcat_avg_cnt' ]
+matrix = matrix.merge(f1, on=['date_block_num', 'item_category_id'], how='left')
+matrix.fillna(0, inplace = True)
+matrix['date_itemcat_avg_cnt'] = matrix['date_itemcat_avg_cnt'].astype(np.float16)
+lag_features.append('date_itemcat_avg_cnt')
+removed_features.append('date_itemcat_avg_cnt')
+removed_features.append('date_itemcat_avg_cnt_lag2')
+removed_features.append('date_itemcat_avg_cnt_lag3')
+del f1
+
+
+
 
 
 
