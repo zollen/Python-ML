@@ -53,4 +53,8 @@ df['Class_1'] = df.swifter.apply(vectorized_func, axis = 1)
 end_t = time.time()
 print("Swifter Completed     : ", end_t - start_t)
 
+start_t = time.time()
+df['Class_1'] = df.swifter.set_npartitions(32).apply(vectorized_func, axis = 1)
+end_t = time.time()
+print("Swifter with Partitions(4 cores * 8 threads) Completed     : ", end_t - start_t)
 
