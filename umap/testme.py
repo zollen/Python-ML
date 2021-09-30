@@ -18,6 +18,10 @@ from sklearn.ensemble import IsolationForest
 import pandas as pd
 import numpy as np
 
+pd.set_option('max_columns', None)
+pd.set_option('max_rows', None)
+pd.set_option('display.width', 1000)
+
 df = pd.read_csv('../data/iris.csv')
 
 df['variety'] = df['variety'].map({'Setosa': 0, 'Versicolor':1, 'Virginica':2})
@@ -35,3 +39,4 @@ labels = iso.fit_predict(X_2d)
 outlier_idx = np.where(labels == -1)[0]
 print("Outlier detected")
 print(outlier_idx)
+print(df.iloc[outlier_idx.tolist()])
