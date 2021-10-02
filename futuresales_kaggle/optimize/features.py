@@ -145,8 +145,8 @@ def display(params):
         }
     
     for i in range(1, num + 1):
-        print(i, " ==> ", labels[params['action' + str(i)]], "(", 
-              tokens[params['param' + str(i)]], ")")
+        print(i, " ==> [", labels[params['action' + str(i)]],  "]",
+              tokens[params['param' + str(i)]])
     
     
 def evaluate(trial, tokens, df):
@@ -155,7 +155,7 @@ def evaluate(trial, tokens, df):
     
     data = df.copy()
     
-    numOfParams = trial.suggest_int(name="numOfParams", low=3, high=7)
+    numOfParams = trial.suggest_int(name="numOfParams", low=3, high=8)
     size = len(tokens)
     params = []
     actions = []
@@ -177,7 +177,7 @@ def evaluate(trial, tokens, df):
 #            print("===> ", tokens[params[i]][0], tokens[params[i]][1], tokens[params[i][2]])
             data = add_three_lag_feature(data, tokens[params[i]][0], tokens[params[i]][1], tokens[params[i]][2], removals, lags, actions[i])
     
-    print(data.head())
+#    print(data.head())
     
     data = ft.add_lag_features(data, 3, ['shop_id', 'item_id'], lags)
     data.drop(columns=removals, inplace = True)
