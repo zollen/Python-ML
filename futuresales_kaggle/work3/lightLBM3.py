@@ -284,6 +284,26 @@ removed_features.append('date_shop_shopcat_avg_cnt_lag2')
 removed_features.append('date_shop_shopcat_avg_cnt_lag3')
 del f1
 
+'''
+add month and days
+'''
+matrix["month"] = matrix["date_block_num"] % 12
+days = pd.Series([31,28,31,30,31,30,31,31,30,31,30,31])
+matrix["days"] = matrix["month"].map(days).astype(np.int8)
+
+
+'''
+add month of each shop
+'''
+matrix["item_shop_first_sale"] = matrix["date_block_num"] - matrix.groupby(["item_id","shop_id"])["date_block_num"].transform('min')
+
+
+'''
+add item first sale
+'''
+matrix["item_first_sale"] = matrix["date_block_num"] - matrix.groupby(["item_id"])["date_block_num"].transform('min')
+
+
 
 
 
