@@ -135,6 +135,7 @@ tokens.remove(('shop_id',))
 tokens.remove(('item_id',))
 tokens.remove(('shop_id', 'item_id'))
 
+
    
 def display(params):
     
@@ -424,7 +425,7 @@ else:
 func = lambda trial: evaluate(trial, tokens, matrix)
 
 # Start optimizing with 100 trials
-study.optimize(func, n_trials=10)
+study.optimize(func, n_trials=100)
 
 end_st = time.time()
 
