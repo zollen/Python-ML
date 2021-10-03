@@ -262,9 +262,52 @@ lag_features.append('date_shop_item_avg_cnt')
 removed_features.append('date_shop_item_avg_cnt')
 del f1
 
+f1 = matrix.groupby(['date_block_num', 'shop_city', 'item_subtype']).agg({'item_cnt_month': [ 'mean' ]})
+f1.columns = [ 'date_city_subtype_avg_cnt' ]
+matrix = matrix.merge(f1, on=['date_block_num', 'shop_city','item_subtype'], how='left')
+matrix.fillna(0, inplace = True)
+matrix['date_city_subtype_avg_cnt'] = matrix['date_city_subtype_avg_cnt'].astype(np.float16)
+lag_features.append('date_city_subtype_avg_cnt')
+removed_features.append('date_city_subtype_avg_cnt')
+removed_features.append('date_city_subtype_avg_cnt_lag2')
+removed_features.append('date_city_subtype_avg_cnt_lag3')
+del f1
+
+f1 = matrix.groupby(['date_block_num', 'item_category_id', 'shop_id']).agg({'item_cnt_month': [ 'mean' ]})
+f1.columns = [ 'date_itemcat_shop_avg_cnt' ]
+matrix = matrix.merge(f1, on=['date_block_num', 'item_category_id','shop_id'], how='left')
+matrix.fillna(0, inplace = True)
+matrix['date_itemcat_shop_avg_cnt'] = matrix['date_itemcat_shop_avg_cnt'].astype(np.float16)
+lag_features.append('date_itemcat_shop_avg_cnt')
+removed_features.append('date_itemcat_shop_avg_cnt')
+removed_features.append('date_itemcat_shop_avg_cnt_lag2')
+removed_features.append('date_itemcat_shop_avg_cnt_lag3')
+del f1
+
+f1 = matrix.groupby(['date_block_num', 'name3', 'item_category_id']).agg({'item_cnt_month': [ 'mean' ]})
+f1.columns = [ 'date_name3_itemcat_avg_cnt' ]
+matrix = matrix.merge(f1, on=['date_block_num', 'name3','item_category_id'], how='left')
+matrix.fillna(0, inplace = True)
+matrix['date_name3_itemcat_avg_cnt'] = matrix['date_name3_itemcat_avg_cnt'].astype(np.float16)
+lag_features.append('date_name3_itemcat_avg_cnt')
+removed_features.append('date_name3_itemcat_avg_cnt')
+removed_features.append('date_name3_itemcat_avg_cnt_lag1')
+removed_features.append('date_name3_itemcat_avg_cnt_lag3')
+del f1
+
+f1 = matrix.groupby(['date_block_num', 'shop_category', 'name3']).agg({'item_cnt_month': [ 'mean' ]})
+f1.columns = [ 'date_shopcat_name3_avg_cnt' ]
+matrix = matrix.merge(f1, on=['date_block_num', 'shop_category', 'name3'], how='left')
+matrix.fillna(0, inplace = True)
+matrix['date_shopcat_name3_avg_cnt'] = matrix['date_shopcat_name3_avg_cnt'].astype(np.float16)
+lag_features.append('date_shopcat_name3_avg_cnt')
+removed_features.append('date_shopcat_name3_avg_cnt')
+removed_features.append('date_shopcat_name3_avg_cnt_lag3')
+del f1
+
 f1 = matrix.groupby(['date_block_num', 'shop_id', 'item_subtype']).agg({'item_cnt_month': [ 'mean' ]})
 f1.columns = [ 'date_shop_subtype_avg_cnt' ]
-matrix = matrix.merge(f1, on=['date_block_num', 'shop_id','item_subtype'], how='left')
+matrix = matrix.merge(f1, on=['date_block_num', 'shop_id', 'item_subtype'], how='left')
 matrix.fillna(0, inplace = True)
 matrix['date_shop_subtype_avg_cnt'] = matrix['date_shop_subtype_avg_cnt'].astype(np.float16)
 lag_features.append('date_shop_subtype_avg_cnt')
@@ -273,16 +316,7 @@ removed_features.append('date_shop_subtype_avg_cnt_lag2')
 removed_features.append('date_shop_subtype_avg_cnt_lag3')
 del f1
 
-f1 = matrix.groupby(['date_block_num', 'shop_category']).agg({'item_cnt_month': [ 'mean' ]})
-f1.columns = [ 'date_shop_shopcat_avg_cnt' ]
-matrix = matrix.merge(f1, on=['date_block_num', 'shop_category'], how='left')
-matrix.fillna(0, inplace = True)
-matrix['date_shop_shopcat_avg_cnt'] = matrix['date_shop_shopcat_avg_cnt'].astype(np.float16)
-lag_features.append('date_shop_shopcat_avg_cnt')
-removed_features.append('date_shop_shopcat_avg_cnt')
-removed_features.append('date_shop_shopcat_avg_cnt_lag2')
-removed_features.append('date_shop_shopcat_avg_cnt_lag3')
-del f1
+
 
 '''
 add month and days
