@@ -350,6 +350,8 @@ matrix.drop(columns=lag_features[1:] + removed_features, inplace = True)
 
 '''
 Training and Prediction
+Score: 2.4892 params: {'n_estimators': 798, 'max_depth': 42, 'num_leaves': 22, 'min_data_in_leaf': 33, 'max_bin': 50, 'lambda_l1': 4.891806155292607}
+
 '''
 label = 'item_cnt_month'
 
