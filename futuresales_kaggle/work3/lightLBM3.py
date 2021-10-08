@@ -386,3 +386,40 @@ print("TIME: ", time.time() - ts)
 
 
 print("DONE")
+
+'''
+Collinearity
+                          variables         VIF
+0                    date_block_num    5.946952
+1                           shop_id  170.171539
+2                           item_id    5.001425
+3                     shop_category    5.063728
+4                         shop_city  181.471562
+5                  item_category_id  172.425908
+6                             name2    2.206011
+7                             name3    1.899919
+8                         item_type  172.434132
+9                      item_subtype    3.276374
+10                            month    3.606924
+11                             days   41.721868
+12             item_shop_first_sale   26.250171
+13                  item_first_sale   26.773111
+14                date_avg_cnt_lag1   22.382493
+15           date_shop_avg_cnt_lag1   15.033166
+16           date_item_avg_cnt_lag1    5.032364
+17      date_shop_item_avg_cnt_lag1    4.221334
+18   date_city_subtype_avg_cnt_lag1    5.276569
+19   date_itemcat_shop_avg_cnt_lag1  184.895777
+20  date_shopcat_name3_avg_cnt_lag1    7.892881
+21   date_shop_subtype_avg_cnt_lag1  186.310781
+22                date_avg_cnt_lag2   28.074756
+23           date_shop_avg_cnt_lag2   24.111312
+24           date_item_avg_cnt_lag2    6.286725
+25      date_shop_item_avg_cnt_lag2    3.987554
+26  date_name3_itemcat_avg_cnt_lag2   13.256601
+27  date_shopcat_name3_avg_cnt_lag2   12.965292
+28                date_avg_cnt_lag3   18.541992
+29           date_shop_avg_cnt_lag3   15.998211
+30           date_item_avg_cnt_lag3    4.310151
+31      date_shop_item_avg_cnt_lag3    3.291685
+'''
