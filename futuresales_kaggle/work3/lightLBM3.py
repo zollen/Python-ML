@@ -422,4 +422,40 @@ Collinearity
 29           date_shop_avg_cnt_lag3   15.998211
 30           date_item_avg_cnt_lag3    4.310151
 31      date_shop_item_avg_cnt_lag3    3.291685
+
+---------------------
+Skew Test
+
+'date_avg_cnt_lag1': 'COXBOX',
+'date_avg_cnt_lag2': 'COXBOX',
+'date_avg_cnt_lag3': 'COXBOX',
+'date_block_num': 'COXBOX',
+'date_city_subtype_avg_cnt_lag1': 'COXBOX',
+'date_item_avg_cnt_lag1': 'COXBOX',
+'date_item_avg_cnt_lag2': 'COXBOX',
+'date_item_avg_cnt_lag3': 'COXBOX',
+'date_itemcat_shop_avg_cnt_lag1': 'COXBOX',
+'date_name3_itemcat_avg_cnt_lag2': 'COXBOX',
+'date_shop_avg_cnt_lag1': 'COXBOX',
+'date_shop_avg_cnt_lag2': 'COXBOX',
+'date_shop_avg_cnt_lag3': 'COXBOX',
+'date_shop_item_avg_cnt_lag1': 'COXBOX',
+'date_shop_item_avg_cnt_lag2': 'COXBOX',
+'date_shop_item_avg_cnt_lag3': 'COXBOX',
+'date_shop_subtype_avg_cnt_lag1': 'COXBOX',
+'date_shopcat_name3_avg_cnt_lag1': 'COXBOX',
+'date_shopcat_name3_avg_cnt_lag2': 'COXBOX',
+'days': 'COXBOX',
+'item_category_id': 'NORM',
+'item_first_sale': 'COXBOX',
+'item_id': 'NORM',
+'item_shop_first_sale': 'COXBOX',
+'item_subtype': 'COXBOX',
+'item_type': 'COXBOX',
+'month': 'COXBOX',
+'name2': 'LOG1P',
+'name3': 'LOG1P',
+'shop_category': 'COXBOX',
+'shop_city': 'NORM',
+'shop_id': 'NORM'
 '''
