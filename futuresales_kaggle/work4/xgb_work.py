@@ -298,36 +298,39 @@ del f1
 
 
 
+
+price_features = False
 '''
 adding average item price 
 adding lag values of item price per month
 add delta price values - how current month average price related to global average
 '''
-group = train.groupby( ["item_id"] ).agg({"item_price": ["mean"]})
-group.columns = ["item_avg_item_price"]
-group.reset_index(inplace = True)
-
-matrix = matrix.merge( group, on = ["item_id"], how = "left" )
-matrix["item_avg_item_price"] = matrix.item_avg_item_price.astype(np.float16)
-
-
-group = train.groupby( ["date_block_num","item_id"] ).agg( {"item_price": ["mean"]} )
-group.columns = ["date_item_avg_item_price"]
-group.reset_index(inplace = True)
-
-matrix = matrix.merge(group, on = ["date_block_num","item_id"], how = "left")
-matrix["date_item_avg_item_price"] = matrix.date_item_avg_item_price.astype(np.float16)
-
-
-lag_features.append('date_item_avg_item_price')
-removed_features.append('item_avg_item_price')
-removed_features.append('date_item_avg_item_price')
-removed_features.append('date_item_avg_item_price_lag1')
-removed_features.append('date_item_avg_item_price_lag2')
-removed_features.append('date_item_avg_item_price_lag3')
-removed_features.append('delta_price_lag1')
-removed_features.append('delta_price_lag2')
-removed_features.append('delta_price_lag3')
+if price_features:
+    group = train.groupby( ["item_id"] ).agg({"item_price": ["mean"]})
+    group.columns = ["item_avg_item_price"]
+    group.reset_index(inplace = True)
+    
+    matrix = matrix.merge( group, on = ["item_id"], how = "left" )
+    matrix["item_avg_item_price"] = matrix.item_avg_item_price.astype(np.float16)
+    
+    
+    group = train.groupby( ["date_block_num","item_id"] ).agg( {"item_price": ["mean"]} )
+    group.columns = ["date_item_avg_item_price"]
+    group.reset_index(inplace = True)
+    
+    matrix = matrix.merge(group, on = ["date_block_num","item_id"], how = "left")
+    matrix["date_item_avg_item_price"] = matrix.date_item_avg_item_price.astype(np.float16)
+    
+    
+    lag_features.append('date_item_avg_item_price')
+    removed_features.append('item_avg_item_price')
+    removed_features.append('date_item_avg_item_price')
+    removed_features.append('date_item_avg_item_price_lag1')
+    removed_features.append('date_item_avg_item_price_lag2')
+    removed_features.append('date_item_avg_item_price_lag3')
+    removed_features.append('delta_price_lag1')
+    removed_features.append('delta_price_lag2')
+    removed_features.append('delta_price_lag3')
 
 
 
@@ -336,31 +339,32 @@ add total shop revenue per month to matrix
 add lag values of revenus per month
 add delta revenus values - how current month revene related to global average
 '''
-train["revenue"] = train["item_cnt_day"] * train["item_price"]
-
-group = train.groupby( ["date_block_num","shop_id"] ).agg({"revenue": ["sum"] })
-group.columns = ["date_shop_revenue"]
-group.reset_index(inplace = True)
-
-matrix = matrix.merge( group , on = ["date_block_num", "shop_id"], how = "left" )
-matrix['date_shop_revenue'] = matrix['date_shop_revenue'].astype(np.float32)
-
-group = group.groupby(["shop_id"]).agg({ "date_block_num":["mean"] })
-group.columns = ["shop_avg_revenue"]
-group.reset_index(inplace = True )
-
-matrix = matrix.merge( group, on = ["shop_id"], how = "left" )
-
-matrix["shop_avg_revenue"] = matrix.shop_avg_revenue.astype(np.float32)
-matrix["delta_revenue"] = (matrix['date_shop_revenue'] - matrix['shop_avg_revenue']) / matrix['shop_avg_revenue']
-matrix["delta_revenue"] = matrix["delta_revenue"]. astype(np.float32)
-
-lag_features.append('delta_revenue')
-removed_features.append('delta_revenue')
-removed_features.append('delta_revenue_lag2')
-removed_features.append('delta_revenue_lag3')
-removed_features.append('date_shop_revenue')
-removed_features.append('shop_avg_revenue')
+if price_features:    
+    train["revenue"] = train["item_cnt_day"] * train["item_price"]
+    
+    group = train.groupby( ["date_block_num","shop_id"] ).agg({"revenue": ["sum"] })
+    group.columns = ["date_shop_revenue"]
+    group.reset_index(inplace = True)
+    
+    matrix = matrix.merge( group , on = ["date_block_num", "shop_id"], how = "left" )
+    matrix['date_shop_revenue'] = matrix['date_shop_revenue'].astype(np.float32)
+    
+    group = group.groupby(["shop_id"]).agg({ "date_block_num":["mean"] })
+    group.columns = ["shop_avg_revenue"]
+    group.reset_index(inplace = True )
+    
+    matrix = matrix.merge( group, on = ["shop_id"], how = "left" )
+    
+    matrix["shop_avg_revenue"] = matrix.shop_avg_revenue.astype(np.float32)
+    matrix["delta_revenue"] = (matrix['date_shop_revenue'] - matrix['shop_avg_revenue']) / matrix['shop_avg_revenue']
+    matrix["delta_revenue"] = matrix["delta_revenue"]. astype(np.float32)
+    
+    lag_features.append('delta_revenue')
+    removed_features.append('delta_revenue')
+    removed_features.append('delta_revenue_lag2')
+    removed_features.append('delta_revenue_lag3')
+    removed_features.append('date_shop_revenue')
+    removed_features.append('shop_avg_revenue')
 
 
 
@@ -395,18 +399,19 @@ matrix = ft.add_lag_features(matrix, LAGS, ['shop_id', 'item_id'], lag_features)
 
 
 
-for i in [1,2,3]:
-    matrix["delta_price_lag" + str(i) ] = (matrix["date_item_avg_item_price_lag" + str(i)]- matrix["item_avg_item_price"] )/ matrix["item_avg_item_price"]
-
-def select_trends(row) :
+if price_features:
     for i in [1,2,3]:
-        if row["delta_price_lag" + str(i)]:
-            return row["delta_price_lag" + str(i)]
-    return 0
-
-matrix["delta_price_lag"] = matrix.apply(select_trends, axis = 1)
-matrix["delta_price_lag"] = matrix.delta_price_lag.astype( np.float16 )
-matrix["delta_price_lag"].fillna( 0 ,inplace = True)
+        matrix["delta_price_lag" + str(i) ] = (matrix["date_item_avg_item_price_lag" + str(i)]- matrix["item_avg_item_price"] )/ matrix["item_avg_item_price"]
+    
+    def select_trends(row) :
+        for i in [1,2,3]:
+            if row["delta_price_lag" + str(i)]:
+                return row["delta_price_lag" + str(i)]
+        return 0
+    
+    matrix["delta_price_lag"] = matrix.apply(select_trends, axis = 1)
+    matrix["delta_price_lag"] = matrix.delta_price_lag.astype( np.float16 )
+    matrix["delta_price_lag"].fillna( 0 ,inplace = True)
 
 
 
