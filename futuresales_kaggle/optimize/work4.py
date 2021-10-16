@@ -405,7 +405,7 @@ if path.exists(file):
     study = joblib.load(file)
 else:
     study = optuna.create_study(
-                study_name='lightgbm-features',
+                study_name='xgb-features',
                 direction="minimize", sampler=RandomSampler(seed=int(time.time())))
 
 # Pass additional arguments inside another function
