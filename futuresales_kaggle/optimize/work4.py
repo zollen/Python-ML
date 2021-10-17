@@ -412,7 +412,7 @@ else:
 func = lambda trial: evaluate(trial, tokens, matrix)
 
 # Start optimizing with 100 trials
-study.optimize(func, n_trials=100)
+study.optimize(func, n_trials=20)
 
 end_st = time.time()
 
