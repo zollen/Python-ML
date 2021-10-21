@@ -343,7 +343,7 @@ matrix["item_first_sale"] = matrix["date_block_num"] - matrix.groupby(["item_id"
 
 matrix = ft.add_lag_features(matrix, LAGS, ['shop_id', 'item_id'], lag_features)
 
-matrix.drop(columns=lag_features[1:] + removed_features, inplace = True)
+matrix.drop(columns=lag_features + removed_features, inplace = True)
 
 
 
