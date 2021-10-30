@@ -187,6 +187,8 @@ def evaluate(trial, tokens, df):
     data = add_lag_features(data, 3, ['shop_id', 'item_id'], lags)
     data.drop(columns=removals, inplace = True)
     
+    data["item_cnt_month"] = data["item_cnt_month"].clip(0, 20)
+    
     datax = data[data['date_block_num'] < 33]
     datax.drop(columns=['date_block_num'], inplace = True)
     datay = data.loc[data['date_block_num'] < 33, 'item_cnt_month'] 
@@ -360,7 +362,6 @@ group.columns = ["item_cnt_month"]
 group.reset_index( inplace = True)
 matrix = pd.merge( matrix, group, on = cols, how = "left" )
 matrix["item_cnt_month"] = matrix["item_cnt_month"].fillna(0).astype(np.float16)
-matrix["item_cnt_month"] = matrix["item_cnt_month"].clip(0, 20)
 del group
 
 
