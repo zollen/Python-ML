@@ -389,6 +389,7 @@ f1.columns = [ 'date_avg_cnt' ]
 matrix = matrix.merge(f1, on=['date_block_num'], how='left')
 matrix.fillna(0, inplace = True)
 matrix['date_avg_cnt'] = matrix['date_avg_cnt'].astype(np.float16)
+matrix['item_cnt_month'] = matrix['item_cnt_month'].clip(0, 20)
 del f1
 
 del train
@@ -412,7 +413,7 @@ else:
 func = lambda trial: evaluate(trial, tokens, matrix)
 
 # Start optimizing with 100 trials
-study.optimize(func, n_trials=30)
+study.optimize(func, n_trials=200)
 
 end_st = time.time()
 
