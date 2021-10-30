@@ -360,6 +360,7 @@ group.columns = ["item_cnt_month"]
 group.reset_index( inplace = True)
 matrix = pd.merge( matrix, group, on = cols, how = "left" )
 matrix["item_cnt_month"] = matrix["item_cnt_month"].fillna(0).astype(np.float16)
+matrix["item_cnt_month"] = matrix["item_cnt_month"].clip(0, 20)
 del group
 
 
@@ -389,7 +390,6 @@ f1.columns = [ 'date_avg_cnt' ]
 matrix = matrix.merge(f1, on=['date_block_num'], how='left')
 matrix.fillna(0, inplace = True)
 matrix['date_avg_cnt'] = matrix['date_avg_cnt'].astype(np.float16)
-matrix['item_cnt_month'] = matrix['item_cnt_month'].clip(0, 20)
 del f1
 
 del train
