@@ -187,7 +187,6 @@ def evaluate(trial, tokens, df):
     data = add_lag_features(data, 3, ['shop_id', 'item_id'], lags)
     data.drop(columns=removals, inplace = True)
     
-    data["item_cnt_month"] = data["item_cnt_month"].clip(0, 20)
     
     datax = data[data['date_block_num'] < 33]
     datax.drop(columns=['date_block_num'], inplace = True)
@@ -196,6 +195,9 @@ def evaluate(trial, tokens, df):
     testx.drop(columns=['date_block_num'], inplace = True)
     testy = data.loc[data['date_block_num'] == 33, 'item_cnt_month'] 
     del data
+    
+    datay = datay.clip(0, 20)
+    testy = testy.clip(0, 20)
     
        
     model = XGBRegressor(verbosity=0)
