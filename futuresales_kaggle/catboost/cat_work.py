@@ -10,7 +10,7 @@ import time
 import re
 from itertools import product
 from sklearn.preprocessing import LabelEncoder
-from lightgbm import LGBMRegressor
+from catboost import CatBoostRegressor
 import futuresales_kaggle.lib.future_lib as ft
 import warnings
 
@@ -366,7 +366,7 @@ print(trainingX.head())
 print(testingX.head())
 
 
-model = LGBMRegressor()
+model = CatBoostRegressor()
 
 model.fit(trainingX, trainingY);         
 
