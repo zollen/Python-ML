@@ -410,7 +410,7 @@ if path.exists(file):
 else:
     study = optuna.create_study(
                 study_name='xgb-features',
-                direction="minimize", sampler=RandomSampler(seed=int(time.time())))
+                direction="minimize", sampler=CmaEsSampler(seed=int(time.time())))
 
 # Pass additional arguments inside another function
 func = lambda trial: evaluate(trial, tokens, matrix)
