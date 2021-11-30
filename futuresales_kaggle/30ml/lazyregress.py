@@ -377,7 +377,6 @@ testingX = matrix[matrix['date_block_num'] == 33]
 testingX.drop(columns=[label], inplace=True)
 testingY = matrix.loc[matrix['date_block_num'] == 33, label]
 
-trainingX = trainingX.sample(frac=0.4)
 
 print(before, " ", after)
 print(trainingX.head())
