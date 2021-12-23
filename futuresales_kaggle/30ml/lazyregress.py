@@ -367,7 +367,7 @@ matrix[label] = matrix[label].clip(0, 20)
 
 trainingX = matrix[matrix['date_block_num'] < 33]
 before = len(trainingX)
-trainingX = trainingX.sample(frac=0.3)
+trainingX = trainingX.sample(frac=0.05)
 after = len(trainingX)
 trainingY = trainingX[label]
 trainingX.drop(columns=[label], inplace=True)

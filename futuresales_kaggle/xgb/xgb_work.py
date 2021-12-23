@@ -299,7 +299,7 @@ del f1
 
 
 
-price_features = False
+price_features = True
 '''
 adding average item price 
 adding lag values of item price per month
@@ -443,7 +443,14 @@ print(trainingX.head())
 print(testingX.head())
 
 
-model = XGBRegressor()
+model = XGBRegressor(max_depth=10,
+                    n_estimators=1000,
+                    min_child_weight=0.5, 
+                    colsample_bytree=0.8, 
+                    subsample=0.8, 
+                    eta=0.1,
+                    #     tree_method='gpu_hist',
+                    seed=42)
 
 model.fit(trainingX, trainingY);         
 
