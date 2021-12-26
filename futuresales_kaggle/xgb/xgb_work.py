@@ -233,6 +233,8 @@ matrix.fillna(0, inplace = True)
 matrix['date_avg_cnt'] = matrix['date_avg_cnt'].astype(np.float16)
 lag_features.append('date_avg_cnt')
 removed_features.append('date_avg_cnt')
+removed_features.append('date_avg_cnt_lag2')
+removed_features.append('date_avg_cnt_lag3')
 del f1
 
 f1 = matrix.groupby(['date_block_num', 'shop_id']).agg({'item_cnt_month': [ 'mean' ]})
