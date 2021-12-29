@@ -222,7 +222,7 @@ matrix["item_subtype"] = matrix["item_subtype"].astype(np.int16)
 add new features
 '''
 LAGS=3
-lag_features = []
+lag_features = [ 'item_cnt_month' ]
 removed_features = []
 
 
