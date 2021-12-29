@@ -331,8 +331,6 @@ matrix["item_shop_first_sale"] = matrix["date_block_num"] - matrix.groupby(["ite
 matrix["item_first_sale"] = matrix["date_block_num"] - matrix.groupby(["item_id"])["date_block_num"].transform('min')
 
 
-matrix = matrix[matrix["date_block_num"] > 3]
-
 
 print(matrix.head().T)
 
