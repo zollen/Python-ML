@@ -29,7 +29,18 @@ pd.set_option('display.width', 1000)
 np.random.seed(0)
 
 
-def add_one_lag_feature(df, feature1, removal, lags, post):
+def lag_feature( df,lags, cols ):
+    for col in cols:
+        print(col)
+        tmp = df[["date_block_num", "shop_id","item_id",col ]]
+        for i in lags:
+            shifted = tmp.copy()
+            shifted.columns = ["date_block_num", "shop_id", "item_id", col + "_lag"+str(i)]
+            shifted.date_block_num = shifted.date_block_num + i
+            df = pd.merge(df, shifted, on=['date_block_num','shop_id','item_id'], how='left')
+    return df.fillna(0)
+
+def add_one_lag_feature(df, feature1, post):
     
     name = feature1 + '_cnt'
     
@@ -42,23 +53,18 @@ def add_one_lag_feature(df, feature1, removal, lags, post):
     df.fillna(0, inplace = True)
     df[name] = df[name].astype(np.float16)
     
-    lags.append(name)
-    removal.append(name)
-    
     if post == 1:      
-        removal.append(name + '_lag2')
-        removal.append(name + '_lag3')
+        df = lag_feature(df, [1], name)
     if post == 2:
-        removal.append(name + '_lag1')
-        removal.append(name + '_lag3')
+        df = lag_feature(df, [1, 2], name)
     if post == 3:
-        removal.append(name + '_lag3')
+        df = lag_feature(df, [1, 2, 3], name)
     
     del f1
     
     return df
 
-def add_two_lag_feature(df, feature1, feature2, removal, lags, post):
+def add_two_lag_feature(df, feature1, feature2, post):
     
     name = feature1 + '_' + feature2 + '_cnt'
     
@@ -71,23 +77,18 @@ def add_two_lag_feature(df, feature1, feature2, removal, lags, post):
     df.fillna(0, inplace = True)
     df[name] = df[name].astype(np.float16)
     
-    lags.append(name)
-    removal.append(name)
-    
     if post == 1:      
-        removal.append(name + '_lag2')
-        removal.append(name + '_lag3')
+        df = lag_feature(df, [1], name)
     if post == 2:
-        removal.append(name + '_lag1')
-        removal.append(name + '_lag3')
+        df = lag_feature(df, [1, 2], name)
     if post == 3:
-        removal.append(name + '_lag3')
+        df = lag_feature(df, [1, 2, 3], name)
     
     del f1
     
     return df
     
-def add_three_lag_feature(df, feature1, feature2, feature3, removal, lags, post):
+def add_three_lag_feature(df, feature1, feature2, feature3, post):
     
     name = feature1 + '_' + feature2 + '_' + feature3 + '_cnt'
     
@@ -100,17 +101,12 @@ def add_three_lag_feature(df, feature1, feature2, feature3, removal, lags, post)
     df.fillna(0, inplace = True)
     df[name] = df[name].astype(np.float16)
     
-    lags.append(name)
-    removal.append(name)
-    
     if post == 1:      
-        removal.append(name + '_lag2')
-        removal.append(name + '_lag3')
+        df = lag_feature(df, [1], name)
     if post == 2:
-        removal.append(name + '_lag1')
-        removal.append(name + '_lag3')
+        df = lag_feature(df, [1, 2], name)
     if post == 3:
-        removal.append(name + '_lag3')
+        df = lag_feature(df, [1, 2, 3], name)
     
     del f1
     
@@ -144,16 +140,7 @@ def display(params):
         print(i, " ==> [", labels[params['action' + str(i)]],  "]",
               tokens[params['param' + str(i)]])
     
-def add_lag_features(df, trailing_window_size, columns, targets):
-    
-    df_lagged = df
-  
-    for window in range(1, trailing_window_size + 1):
-        shifted = df[columns + targets ].groupby(columns).shift(window)
-        shifted.columns = [x + "_lag" + str(window) for x in df[targets]]
-        df_lagged = pd.concat((df_lagged, shifted), axis=1)
-              
-    return df_lagged.fillna(0)
+
       
 def evaluate(trial, tokens, df):
     
@@ -167,25 +154,21 @@ def evaluate(trial, tokens, df):
     for i in range(1, 10):
         params.append(trial.suggest_int(name="param" + str(i), low=0, high=size - 1))
         actions.append(trial.suggest_int(name="action" + str(i), low=0, high=3))
-
-    lags = [ 'item_cnt_month', 'date_avg_cnt' ]
-    removals = [ 'date_avg_cnt', 'date_avg_cnt_lag2', 'date_avg_cnt_lag3' ]
+        
     for i in range(len(params)):
         option = len(tokens[params[i]])
         if option == 1:
 #            print("===> ", tokens[params[i]][0])
-            data = add_one_lag_feature(data, tokens[params[i]][0], removals, lags, actions[i])
+            data = add_one_lag_feature(data, tokens[params[i]][0], actions[i])
         if option == 2:
 #            print("===> ", tokens[params[i]][0], tokens[params[i]][1])
-            data = add_two_lag_feature(data, tokens[params[i]][0], tokens[params[i]][1], removals, lags, actions[i])
+            data = add_two_lag_feature(data, tokens[params[i]][0], tokens[params[i]][1], actions[i])
         if option == 3: 
 #            print("===> ", tokens[params[i]][0], tokens[params[i]][1], tokens[params[i][2]])
-            data = add_three_lag_feature(data, tokens[params[i]][0], tokens[params[i]][1], tokens[params[i]][2], removals, lags, actions[i])
+            data = add_three_lag_feature(data, tokens[params[i]][0], tokens[params[i]][1], tokens[params[i]][2], actions[i])
     
 #    print(data.head())
     
-    data = add_lag_features(data, 3, ['shop_id', 'item_id'], lags)
-    data.drop(columns=removals, inplace = True)
     
     
     datax = data[data['date_block_num'] < 33]
@@ -198,6 +181,8 @@ def evaluate(trial, tokens, df):
     
     datay = datay.clip(0, 20)
     testy = testy.clip(0, 20)
+    
+    print(datax.head())
     
        
     model = XGBRegressor(verbosity=0)
@@ -388,11 +373,16 @@ matrix["item_subtype"] = matrix["item_subtype"].astype(np.int16)
 '''
 add new features
 '''
+matrix = lag_feature( matrix, [1,2,3], ["item_cnt_month"] )
+
+
 f1 = matrix.groupby(['date_block_num']).agg({'item_cnt_month': [ 'mean' ]})
 f1.columns = [ 'date_avg_cnt' ]
 matrix = matrix.merge(f1, on=['date_block_num'], how='left')
 matrix.fillna(0, inplace = True)
 matrix['date_avg_cnt'] = matrix['date_avg_cnt'].astype(np.float16)
+matrix = lag_feature( matrix, [1], ["date_avg_cnt"] )
+matrix.drop( ["date_avg_cnt"], axis = 1, inplace = True )
 del f1
 
 del train
@@ -403,13 +393,13 @@ del shops
 
 start_st = time.time()
 
-file = "xgb_features.pkl"
+file = "lgbm_features.pkl"
 # Create study that minimizes
 if path.exists(file):
     study = joblib.load(file)
 else:
     study = optuna.create_study(
-                study_name='xgb-features',
+                study_name='lgbm-features',
                 direction="minimize", sampler=CmaEsSampler(seed=int(time.time())))
 
 # Pass additional arguments inside another function

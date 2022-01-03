@@ -335,7 +335,7 @@ adding average item price
 adding lag values of item price per month
 add delta price values - how current month average price related to global average
 '''
-if False:
+if True:
     group = train.groupby( ["item_id"] ).agg({"item_price": ["mean"]})
     group.columns = ["item_avg_item_price"]
     group.reset_index(inplace = True)
@@ -380,7 +380,7 @@ add total shop revenue per month to matrix
 add lag values of revenus per month
 add delta revenus values - how current month revene related to global average
 '''
-if False:
+if True:
     train["revenue"] = train["item_cnt_day"] * train["item_price"]
     
     group = train.groupby( ["date_block_num","shop_id"] ).agg({"revenue": ["sum"] })
