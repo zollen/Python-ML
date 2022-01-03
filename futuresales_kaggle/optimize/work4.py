@@ -60,6 +60,7 @@ def add_one_lag_feature(df, feature1, post):
         df = lag_feature(df, [1, 2, 3], [ name ])
     
     del f1
+    df.drop( [ name ], axis = 1, inplace = True )
     
     return df
 
@@ -84,6 +85,7 @@ def add_two_lag_feature(df, feature1, feature2, post):
         df = lag_feature(df, [1, 2, 3], [ name ])
     
     del f1
+    df.drop( [ name ], axis = 1, inplace = True )
     
     return df
     
@@ -108,6 +110,7 @@ def add_three_lag_feature(df, feature1, feature2, feature3, post):
         df = lag_feature(df, [1, 2, 3], [ name ])
     
     del f1
+    df.drop( [ name ], axis = 1, inplace = True )
     
     return df
 
@@ -179,10 +182,7 @@ def evaluate(trial, tokens, df):
     del data
     
     datay = datay.clip(0, 20)
-    testy = testy.clip(0, 20)
-    
-    print(datax.head())
-    
+    testy = testy.clip(0, 20) 
        
     model = XGBRegressor(verbosity=0)
     model.fit(datax, datay)
