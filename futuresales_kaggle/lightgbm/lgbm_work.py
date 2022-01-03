@@ -463,7 +463,6 @@ testingX[label] = model.predict(testingX)
 test = pd.merge(test, testingX[['shop_id', 'item_id', label]], on = ['shop_id', 'item_id'], how = "left")
 test[label].fillna(0, inplace=True)
 test[label] = test[label].clip(0, 20)
-test[label] = test[label].astype('int16')
 
 test[['ID', label]].to_csv('../data/prediction.csv', index = False)
 
