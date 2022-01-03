@@ -68,7 +68,7 @@ def add_two_lag_feature(df, feature1, feature2, post):
     
     name = feature1 + '_' + feature2 + '_cnt'
     
-    if name in df:
+    if name in df or name + "_lag1" in df:
         return df
     
     f1 = df.groupby(['date_block_num', feature1, feature2]).agg({'item_cnt_month': [ 'mean' ]})
