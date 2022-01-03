@@ -31,7 +31,6 @@ np.random.seed(0)
 
 def lag_feature( df,lags, cols ):
     for col in cols:
-        print(col)
         tmp = df[["date_block_num", "shop_id","item_id",col ]]
         for i in lags:
             shifted = tmp.copy()
@@ -54,11 +53,11 @@ def add_one_lag_feature(df, feature1, post):
     df[name] = df[name].astype(np.float16)
     
     if post == 1:      
-        df = lag_feature(df, [1], name)
+        df = lag_feature(df, [1], [ name ])
     if post == 2:
-        df = lag_feature(df, [1, 2], name)
+        df = lag_feature(df, [1, 2], [ name ])
     if post == 3:
-        df = lag_feature(df, [1, 2, 3], name)
+        df = lag_feature(df, [1, 2, 3], [ name ])
     
     del f1
     
@@ -78,11 +77,11 @@ def add_two_lag_feature(df, feature1, feature2, post):
     df[name] = df[name].astype(np.float16)
     
     if post == 1:      
-        df = lag_feature(df, [1], name)
+        df = lag_feature(df, [1], [ name ])
     if post == 2:
-        df = lag_feature(df, [1, 2], name)
+        df = lag_feature(df, [1, 2], [ name ])
     if post == 3:
-        df = lag_feature(df, [1, 2, 3], name)
+        df = lag_feature(df, [1, 2, 3], [ name ])
     
     del f1
     
@@ -102,11 +101,11 @@ def add_three_lag_feature(df, feature1, feature2, feature3, post):
     df[name] = df[name].astype(np.float16)
     
     if post == 1:      
-        df = lag_feature(df, [1], name)
+        df = lag_feature(df, [1], [ name ])
     if post == 2:
-        df = lag_feature(df, [1, 2], name)
+        df = lag_feature(df, [1, 2], [ name ])
     if post == 3:
-        df = lag_feature(df, [1, 2, 3], name)
+        df = lag_feature(df, [1, 2, 3], [ name ])
     
     del f1
     
