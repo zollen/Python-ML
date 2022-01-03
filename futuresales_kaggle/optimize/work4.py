@@ -189,7 +189,7 @@ def evaluate(trial, tokens, df):
     del datax
     del datay
     preds = model.predict(testx)
-    preds = preds.astype('int64').clip(0, 20)
+    preds = preds.clip(0, 20)
     return np.sqrt(mean_squared_error(testy, preds))
 
 
