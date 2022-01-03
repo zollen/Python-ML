@@ -43,7 +43,7 @@ def add_one_lag_feature(df, feature1, post):
     
     name = feature1 + '_cnt'
     
-    if name in df:
+    if name in df or name + "_lag1" in df:
         return df
     
     f1 = df.groupby(['date_block_num', feature1]).agg({'item_cnt_month': [ 'mean' ]})
@@ -93,7 +93,7 @@ def add_three_lag_feature(df, feature1, feature2, feature3, post):
     
     name = feature1 + '_' + feature2 + '_' + feature3 + '_cnt'
     
-    if name in df:
+    if name in df or name + "_lag1" in df:
         return df
     
     f1 = df.groupby(['date_block_num', feature1, feature2, feature3]).agg({'item_cnt_month': [ 'mean' ]})
