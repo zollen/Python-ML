@@ -13,7 +13,7 @@ import time
 import re
 from os import path
 from itertools import permutations, product
-from xgboost import XGBRegressor
+from lightgbm import LGBMRegressor
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_squared_error
 import warnings
@@ -184,7 +184,7 @@ def evaluate(trial, tokens, df):
     datay = datay.clip(0, 20)
     testy = testy.clip(0, 20) 
        
-    model = XGBRegressor(verbosity=0)
+    model = LGBMRegressor()
     model.fit(datax, datay)
     del datax
     del datay
