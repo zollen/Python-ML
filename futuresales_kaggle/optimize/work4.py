@@ -173,11 +173,9 @@ def evaluate(trial, tokens, df):
     
     
     
-    datax = data[data['date_block_num'] < 33]
-    datax.drop(columns=['date_block_num'], inplace = True)
+    datax = data[data['date_block_num'] < 33].drop(['item_cnt_month'], axis=1)
     datay = data.loc[data['date_block_num'] < 33, 'item_cnt_month'] 
-    testx = data[data['date_block_num'] == 33]
-    testx.drop(columns=['date_block_num'], inplace = True)
+    testx = data[data['date_block_num'] == 33].drop(['item_cnt_month'], axis=1)
     testy = data.loc[data['date_block_num'] == 33, 'item_cnt_month'] 
     del data
     
@@ -190,6 +188,9 @@ def evaluate(trial, tokens, df):
     del datay
     preds = model.predict(testx)
     preds = preds.clip(0, 20)
+    
+    del model
+    
     return np.sqrt(mean_squared_error(testy, preds))
 
 
