@@ -54,12 +54,39 @@ def add_one_lag_feature(df, feature1, post):
     
     if post == 1:      
         df = lag_feature(df, [1], [ name ])
-    if post == 2:
-        df = lag_feature(df, [1, 2], [ name ])
-    if post == 3:
-        df = lag_feature(df, [1, 2, 3], [ name ])
-    if post != 0:
         df.drop( [ name ], axis = 1, inplace = True )
+    if post == 2:
+        df = lag_feature(df, [2], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 3:
+        df = lag_feature(df, [3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 4:
+        df = lag_feature(df, [1], [ name ])
+    if post == 5:
+        df = lag_feature(df, [2], [ name ]) 
+    if post == 6:
+        df = lag_feature(df, [3], [ name ])
+    if post == 7:
+        df = lag_feature(df, [1, 2], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 8:
+        df = lag_feature(df, [1, 3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 9:
+        df = lag_feature(df, [2, 3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 10:
+        df = lag_feature(df, [1, 2], [ name ])
+    if post == 11:
+        df = lag_feature(df, [1, 3], [ name ])
+    if post == 12:
+        df = lag_feature(df, [2, 3], [ name ])
+    if post == 13:
+        df = lag_feature(df, [1, 2, 3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 14:
+        df = lag_feature(df, [1, 2, 3], [ name ])
         
     del f1
     
@@ -80,12 +107,39 @@ def add_two_lag_feature(df, feature1, feature2, post):
     
     if post == 1:      
         df = lag_feature(df, [1], [ name ])
-    if post == 2:
-        df = lag_feature(df, [1, 2], [ name ])
-    if post == 3:
-        df = lag_feature(df, [1, 2, 3], [ name ])
-    if post != 0:
         df.drop( [ name ], axis = 1, inplace = True )
+    if post == 2:
+        df = lag_feature(df, [2], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 3:
+        df = lag_feature(df, [3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 4:
+        df = lag_feature(df, [1], [ name ])
+    if post == 5:
+        df = lag_feature(df, [2], [ name ]) 
+    if post == 6:
+        df = lag_feature(df, [3], [ name ])
+    if post == 7:
+        df = lag_feature(df, [1, 2], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 8:
+        df = lag_feature(df, [1, 3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 9:
+        df = lag_feature(df, [2, 3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 10:
+        df = lag_feature(df, [1, 2], [ name ])
+    if post == 11:
+        df = lag_feature(df, [1, 3], [ name ])
+    if post == 12:
+        df = lag_feature(df, [2, 3], [ name ])
+    if post == 13:
+        df = lag_feature(df, [1, 2, 3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 14:
+        df = lag_feature(df, [1, 2, 3], [ name ])
         
     del f1
     
@@ -103,15 +157,42 @@ def add_three_lag_feature(df, feature1, feature2, feature3, post):
     df = df.merge(f1, on=['date_block_num', feature1, feature2, feature3], how='left')
     df.fillna(0, inplace = True)
     df[name] = df[name].astype(np.float16)
-    
+      
     if post == 1:      
         df = lag_feature(df, [1], [ name ])
-    if post == 2:
-        df = lag_feature(df, [1, 2], [ name ])
-    if post == 3:
-        df = lag_feature(df, [1, 2, 3], [ name ])
-    if post != 0:
         df.drop( [ name ], axis = 1, inplace = True )
+    if post == 2:
+        df = lag_feature(df, [2], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 3:
+        df = lag_feature(df, [3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 4:
+        df = lag_feature(df, [1], [ name ])
+    if post == 5:
+        df = lag_feature(df, [2], [ name ]) 
+    if post == 6:
+        df = lag_feature(df, [3], [ name ])
+    if post == 7:
+        df = lag_feature(df, [1, 2], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 8:
+        df = lag_feature(df, [1, 3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 9:
+        df = lag_feature(df, [2, 3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 10:
+        df = lag_feature(df, [1, 2], [ name ])
+    if post == 11:
+        df = lag_feature(df, [1, 3], [ name ])
+    if post == 12:
+        df = lag_feature(df, [2, 3], [ name ])
+    if post == 13:
+        df = lag_feature(df, [1, 2, 3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 14:
+        df = lag_feature(df, [1, 2, 3], [ name ])
         
     del f1
     
@@ -122,12 +203,8 @@ base_features = [
     'shop_id', 'item_id', 'shop_category', 'shop_city',  
     'item_category_id', 'name2', 'name3', 'item_type', 'item_subtype'
     ]
-'''
-0. All three lags.
-1. First lags.
-2. Second Lags.
-3. First and Second lags.
-'''
+
+
 tokens = []
 for length in [1, 2]:
     tokens += list(permutations(base_features, r=length))
@@ -138,10 +215,13 @@ for length in [1, 2]:
 def display(params):
       
     labels = {
-        0 : "Orginal", 1: "1", 2: "12", 3: "123"
+        0: "0",  1: "1",  2: "2",  3: "3",
+        4: "01", 5: "02", 6: "03", 7: "12",
+        8: "13", 9: "23", 10: "012", 11: "013",
+        12: "023", 13: "123", 14: "0123"
         }
     
-    for i in range(1, 8):
+    for i in range(1, 10):
         print(i, " ==> [", labels[params['action' + str(i)]],  "]",
               tokens[params['param' + str(i)]])
     
@@ -158,7 +238,7 @@ def evaluate(trial, tokens, df):
     actions = []
     for i in range(1, 10):
         params.append(trial.suggest_int(name="param" + str(i), low=0, high=size - 1))
-        actions.append(trial.suggest_int(name="action" + str(i), low=0, high=3))
+        actions.append(trial.suggest_int(name="action" + str(i), low=0, high=14))
         
     for i in range(len(params)):
         option = len(tokens[params[i]])
