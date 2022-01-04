@@ -58,9 +58,10 @@ def add_one_lag_feature(df, feature1, post):
         df = lag_feature(df, [1, 2], [ name ])
     if post == 3:
         df = lag_feature(df, [1, 2, 3], [ name ])
-    
+    if post != 0:
+        df.drop( [ name ], axis = 1, inplace = True )
+        
     del f1
-    df.drop( [ name ], axis = 1, inplace = True )
     
     return df
 
@@ -83,9 +84,10 @@ def add_two_lag_feature(df, feature1, feature2, post):
         df = lag_feature(df, [1, 2], [ name ])
     if post == 3:
         df = lag_feature(df, [1, 2, 3], [ name ])
-    
+    if post != 0:
+        df.drop( [ name ], axis = 1, inplace = True )
+        
     del f1
-    df.drop( [ name ], axis = 1, inplace = True )
     
     return df
     
@@ -108,9 +110,10 @@ def add_three_lag_feature(df, feature1, feature2, feature3, post):
         df = lag_feature(df, [1, 2], [ name ])
     if post == 3:
         df = lag_feature(df, [1, 2, 3], [ name ])
-    
+    if post != 0:
+        df.drop( [ name ], axis = 1, inplace = True )
+        
     del f1
-    df.drop( [ name ], axis = 1, inplace = True )
     
     return df
 
@@ -135,7 +138,7 @@ for length in [1, 2]:
 def display(params):
       
     labels = {
-        0 : "123", 1: "1", 2: "2", 3: "12"
+        0 : "Orginal", 1: "1", 2: "12", 3: "123"
         }
     
     for i in range(1, 8):
@@ -406,7 +409,7 @@ else:
 func = lambda trial: evaluate(trial, tokens, matrix)
 
 # Start optimizing with 100 trials
-study.optimize(func, n_trials=200)
+study.optimize(func, n_trials=2)
 
 end_st = time.time()
 
