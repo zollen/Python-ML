@@ -87,6 +87,8 @@ def add_one_lag_feature(df, feature1, post):
         df.drop( [ name ], axis = 1, inplace = True )
     if post == 14:
         df = lag_feature(df, [1, 2, 3], [ name ])
+    if post == 15:
+        df.drop( [ name ], axis = 1, inplace = True )
         
     del f1
     
@@ -140,6 +142,8 @@ def add_two_lag_feature(df, feature1, feature2, post):
         df.drop( [ name ], axis = 1, inplace = True )
     if post == 14:
         df = lag_feature(df, [1, 2, 3], [ name ])
+    if post == 15:
+        df.drop( [ name ], axis = 1, inplace = True )
         
     del f1
     
@@ -193,6 +197,8 @@ def add_three_lag_feature(df, feature1, feature2, feature3, post):
         df.drop( [ name ], axis = 1, inplace = True )
     if post == 14:
         df = lag_feature(df, [1, 2, 3], [ name ])
+    if post == 15:
+        df.drop( [ name ], axis = 1, inplace = True )
         
     del f1
     
@@ -218,7 +224,7 @@ def display(params):
         0: "0",  1: "1",  2: "2",  3: "3",
         4: "01", 5: "02", 6: "03", 7: "12",
         8: "13", 9: "23", 10: "012", 11: "013",
-        12: "023", 13: "123", 14: "0123"
+        12: "023", 13: "123", 14: "0123", 15: "R"
         }
     
     for i in range(1, 10):
@@ -238,7 +244,7 @@ def evaluate(trial, tokens, df):
     actions = []
     for i in range(1, 10):
         params.append(trial.suggest_int(name="param" + str(i), low=0, high=size - 1))
-        actions.append(trial.suggest_int(name="action" + str(i), low=0, high=14))
+        actions.append(trial.suggest_int(name="action" + str(i), low=0, high=15))
         
     for i in range(len(params)):
         option = len(tokens[params[i]])
