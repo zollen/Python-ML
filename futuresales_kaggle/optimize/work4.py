@@ -224,7 +224,7 @@ def display(params):
         0: "0",  1: "1",  2: "2",  3: "3",
         4: "01", 5: "02", 6: "03", 7: "12",
         8: "13", 9: "23", 10: "012", 11: "013",
-        12: "023", 13: "123", 14: "0123", 15: "R"
+        12: "023", 13: "123", 14: "R"
         }
     
     for i in range(1, 7):
@@ -244,7 +244,7 @@ def evaluate(trial, tokens, df):
     actions = []
     for i in range(1, 7):
         params.append(trial.suggest_int(name="param" + str(i), low=0, high=size - 1))
-        actions.append(trial.suggest_int(name="action" + str(i), low=0, high=15))
+        actions.append(trial.suggest_int(name="action" + str(i), low=0, high=14))
         
     for i in range(len(params)):
         option = len(tokens[params[i]])
