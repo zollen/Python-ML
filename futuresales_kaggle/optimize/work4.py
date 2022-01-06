@@ -227,7 +227,7 @@ def display(params):
         12: "023", 13: "123", 14: "0123", 15: "R"
         }
     
-    for i in range(1, 7):
+    for i in range(1, 8):
         print(i, " ==> [", labels[params['action' + str(i)]],  "]",
               tokens[params['param' + str(i)]])
     
@@ -242,7 +242,7 @@ def evaluate(trial, tokens, df):
     size = len(tokens)
     params = []
     actions = []
-    for i in range(1, 7):
+    for i in range(1, 8):
         params.append(trial.suggest_int(name="param" + str(i), low=0, high=size - 1))
         actions.append(trial.suggest_int(name="action" + str(i), low=0, high=15))
         
