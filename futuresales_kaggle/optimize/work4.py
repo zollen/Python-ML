@@ -172,32 +172,18 @@ def add_three_lag_feature(df, feature1, feature2, feature3, post):
         df = lag_feature(df, [3], [ name ])
         df.drop( [ name ], axis = 1, inplace = True )
     if post == 4:
-        df = lag_feature(df, [1], [ name ])
-    if post == 5:
-        df = lag_feature(df, [2], [ name ]) 
-    if post == 6:
-        df = lag_feature(df, [3], [ name ])
-    if post == 7:
         df = lag_feature(df, [1, 2], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 5:
+        df = lag_feature(df, [1, 3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 6:
+        df = lag_feature(df, [2, 3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 7:
+        df = lag_feature(df, [1, 2, 3], [ name ])
         df.drop( [ name ], axis = 1, inplace = True )
     if post == 8:
-        df = lag_feature(df, [1, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 9:
-        df = lag_feature(df, [2, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 10:
-        df = lag_feature(df, [1, 2], [ name ])
-    if post == 11:
-        df = lag_feature(df, [1, 3], [ name ])
-    if post == 12:
-        df = lag_feature(df, [2, 3], [ name ])
-    if post == 13:
-        df = lag_feature(df, [1, 2, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 14:
-        df = lag_feature(df, [1, 2, 3], [ name ])
-    if post == 15:
         df.drop( [ name ], axis = 1, inplace = True )
         
     del f1
@@ -222,12 +208,10 @@ def display(params):
       
     labels = {
         0: "0",  1: "1",  2: "2",  3: "3",
-        4: "01", 5: "02", 6: "03", 7: "12",
-        8: "13", 9: "23", 10: "012", 11: "013",
-        12: "023", 13: "123", 14: "R"
+        4: "12", 5: "13", 6: "23", 7: "123", 8: "R"
         }
     
-    for i in range(1, 8):
+    for i in range(1, 9):
         print(i, " ==> [", labels[params['action' + str(i)]],  "]",
               tokens[params['param' + str(i)]])
     
@@ -242,9 +226,9 @@ def evaluate(trial, tokens, df):
     size = len(tokens)
     params = []
     actions = []
-    for i in range(1, 8):
+    for i in range(1, 9):
         params.append(trial.suggest_int(name="param" + str(i), low=0, high=size - 1))
-        actions.append(trial.suggest_int(name="action" + str(i), low=0, high=14))
+        actions.append(trial.suggest_int(name="action" + str(i), low=0, high=8))
         
     for i in range(len(params)):
         option = len(tokens[params[i]])
