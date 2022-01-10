@@ -39,18 +39,7 @@ def lag_feature( df,lags, cols ):
             df = pd.merge(df, shifted, on=['date_block_num','shop_id','item_id'], how='left')
     return df.fillna(0)
 
-def add_one_lag_feature(df, feature1, post):
-    
-    name = feature1 + '_cnt'
-    
-    if name in df or name + "_lag1" in df:
-        return df
-    
-    f1 = df.groupby(['date_block_num', feature1]).agg({'item_cnt_month': [ 'mean' ]})
-    f1.columns = [ name ]
-    df = df.merge(f1, on=['date_block_num', feature1], how='left')
-    df.fillna(0, inplace = True)
-    df[name] = df[name].astype(np.float16)
+def setup_lags(df, post, name):
     
     if post == 1:      
         df = lag_feature(df, [1], [ name ])
@@ -62,37 +51,38 @@ def add_one_lag_feature(df, feature1, post):
         df = lag_feature(df, [3], [ name ])
         df.drop( [ name ], axis = 1, inplace = True )
     if post == 4:
-        df = lag_feature(df, [1], [ name ])
-    if post == 5:
-        df = lag_feature(df, [2], [ name ]) 
-    if post == 6:
-        df = lag_feature(df, [3], [ name ])
-    if post == 7:
         df = lag_feature(df, [1, 2], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 5:
+        df = lag_feature(df, [1, 3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 6:
+        df = lag_feature(df, [2, 3], [ name ])
+        df.drop( [ name ], axis = 1, inplace = True )
+    if post == 7:
+        df = lag_feature(df, [1, 2, 3], [ name ])
         df.drop( [ name ], axis = 1, inplace = True )
     if post == 8:
-        df = lag_feature(df, [1, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 9:
-        df = lag_feature(df, [2, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 10:
-        df = lag_feature(df, [1, 2], [ name ])
-    if post == 11:
-        df = lag_feature(df, [1, 3], [ name ])
-    if post == 12:
-        df = lag_feature(df, [2, 3], [ name ])
-    if post == 13:
-        df = lag_feature(df, [1, 2, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 14:
-        df = lag_feature(df, [1, 2, 3], [ name ])
-    if post == 15:
         df.drop( [ name ], axis = 1, inplace = True )
         
+    return df
+        
+        
+def add_one_lag_feature(df, feature1, post):
+    
+    name = feature1 + '_cnt'
+    
+    if name in df or name + "_lag1" in df:
+        return df
+    
+    f1 = df.groupby(['date_block_num', feature1]).agg({'item_cnt_month': [ 'mean' ]})
+    f1.columns = [ name ]
+    df = df.merge(f1, on=['date_block_num', feature1], how='left')
+    df.fillna(0, inplace = True)
+    df[name] = df[name].astype(np.float16)    
     del f1
     
-    return df
+    return setup_lags(df, post, name)
 
 def add_two_lag_feature(df, feature1, feature2, post):
     
@@ -106,48 +96,9 @@ def add_two_lag_feature(df, feature1, feature2, post):
     df = df.merge(f1, on=['date_block_num', feature1, feature2], how='left')
     df.fillna(0, inplace = True)
     df[name] = df[name].astype(np.float16)
-    
-    if post == 1:      
-        df = lag_feature(df, [1], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 2:
-        df = lag_feature(df, [2], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 3:
-        df = lag_feature(df, [3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 4:
-        df = lag_feature(df, [1], [ name ])
-    if post == 5:
-        df = lag_feature(df, [2], [ name ]) 
-    if post == 6:
-        df = lag_feature(df, [3], [ name ])
-    if post == 7:
-        df = lag_feature(df, [1, 2], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 8:
-        df = lag_feature(df, [1, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 9:
-        df = lag_feature(df, [2, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 10:
-        df = lag_feature(df, [1, 2], [ name ])
-    if post == 11:
-        df = lag_feature(df, [1, 3], [ name ])
-    if post == 12:
-        df = lag_feature(df, [2, 3], [ name ])
-    if post == 13:
-        df = lag_feature(df, [1, 2, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 14:
-        df = lag_feature(df, [1, 2, 3], [ name ])
-    if post == 15:
-        df.drop( [ name ], axis = 1, inplace = True )
-        
     del f1
     
-    return df
+    return setup_lags(df, post, name)
     
 def add_three_lag_feature(df, feature1, feature2, feature3, post):
     
@@ -161,34 +112,9 @@ def add_three_lag_feature(df, feature1, feature2, feature3, post):
     df = df.merge(f1, on=['date_block_num', feature1, feature2, feature3], how='left')
     df.fillna(0, inplace = True)
     df[name] = df[name].astype(np.float16)
-      
-    if post == 1:      
-        df = lag_feature(df, [1], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 2:
-        df = lag_feature(df, [2], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 3:
-        df = lag_feature(df, [3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 4:
-        df = lag_feature(df, [1, 2], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 5:
-        df = lag_feature(df, [1, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 6:
-        df = lag_feature(df, [2, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 7:
-        df = lag_feature(df, [1, 2, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 8:
-        df.drop( [ name ], axis = 1, inplace = True )
-        
     del f1
     
-    return df
+    return setup_lags(df, post, name)
 
 
 base_features = [
