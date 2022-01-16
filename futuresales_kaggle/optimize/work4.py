@@ -51,18 +51,9 @@ def setup_lags(df, post, name):
         df = lag_feature(df, [3], [ name ])
         df.drop( [ name ], axis = 1, inplace = True )
     if post == 4:
-        df = lag_feature(df, [1, 2], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 5:
-        df = lag_feature(df, [1, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 6:
-        df = lag_feature(df, [2, 3], [ name ])
-        df.drop( [ name ], axis = 1, inplace = True )
-    if post == 7:
         df = lag_feature(df, [1, 2, 3], [ name ])
         df.drop( [ name ], axis = 1, inplace = True )
-    if post == 8:
+    if post == 5:
         df.drop( [ name ], axis = 1, inplace = True )
         
     return df
@@ -134,7 +125,7 @@ def display(params):
       
     labels = {
         0: "0",  1: "1",  2: "2",  3: "3",
-        4: "12", 5: "13", 6: "23", 7: "123", 8: "R"
+        4: "123", 5: "R"
         }
     
     for i in range(1, 10):
