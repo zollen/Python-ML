@@ -448,8 +448,11 @@ testingX.drop(columns=[label], inplace=True)
 print(trainingX.head())
 print(testingX.head())
 
-# Best 0.9198
-params = {'n_estimators': 283, 'learning_rate': 0.3359848718451165, 'max_depth': 118, 'num_leaves': 53, 'min_data_in_leaf': 100, 'max_bin': 92, 'lambda_l1': 66.22151720509821, 'lambda_l2': 64.30468209920754, 'min_gain_to_split': 3, 'feature_fraction': 0.4665129829891945}
+# 0.89422
+#params = {'n_estimators': 283, 'learning_rate': 0.3359848718451165, 'max_depth': 118, 'num_leaves': 53, 'min_data_in_leaf': 100, 'max_bin': 92, 'lambda_l1': 66.22151720509821, 'lambda_l2': 64.30468209920754, 'min_gain_to_split': 3, 'feature_fraction': 0.4665129829891945}
+# 0.89083
+params = {'n_estimators': 790, 'learning_rate': 0.10668063026514582, 'max_depth': 76, 'num_leaves': 77, 'min_data_in_leaf': 50, 'max_bin': 151, 'lambda_l1': 50.037806778498464, 'lambda_l2': 49.77960732024054, 'min_gain_to_split': 7, 'feature_fraction': 0.4962654651678031}
+
 
 model = LGBMRegressor(**params)
 
