@@ -1,5 +1,5 @@
 '''
-Created on Sep. 24, 2021
+Created on Sep. 19, 2021
 
 @author: zollen
 '''
@@ -11,7 +11,6 @@ import re
 from itertools import product
 from sklearn.preprocessing import LabelEncoder
 from catboost import CatBoostRegressor
-import futuresales_kaggle.lib.future_lib as ft
 import warnings
 
 
@@ -29,7 +28,6 @@ test = pd.read_csv('../data/test.csv')
 items = pd.read_csv('../data/items.csv')
 cats = pd.read_csv('../data/item_categories.csv')
 shops = pd.read_csv('../data/shops.csv')
-
 
 
 '''
@@ -175,9 +173,9 @@ matrix["shop_id"] = matrix["shop_id"].astype(np.int8)
 matrix["item_id"] = matrix["item_id"].astype(np.int16)
 matrix.sort_values( cols, inplace = True )
 
-'''
-summing the monthly counts
-'''
+
+
+
 group = train.groupby( ["date_block_num", "shop_id", "item_id"] ).agg( {"item_cnt_day": ["sum"]} )
 group.columns = ["item_cnt_month"]
 group.reset_index( inplace = True)
@@ -218,103 +216,193 @@ matrix["name3"] = matrix["name3"].astype(np.int16)
 matrix["item_subtype"] = matrix["item_subtype"].astype(np.int16)
 
 
+
+
+
+
 '''
-add new features
+adding lag features
 '''
-LAGS=3
-lag_features = []
-removed_features = []
+def lag_feature( df, lags, cols ):
+    for col in cols:
+        tmp = df[["date_block_num", "shop_id","item_id", col ]]
+        for i in lags:
+            shifted = tmp.copy()
+            shifted.columns = ["date_block_num", "shop_id", "item_id", col + "_lag_"+str(i)]
+            shifted.date_block_num = shifted.date_block_num + i
+            df = pd.merge(df, shifted, on=['date_block_num','shop_id','item_id'], how='left')
+            df.fillna(0, inplace = True)
+    return df
 
 
-f1 = matrix.groupby(['date_block_num']).agg({'item_cnt_month': [ 'mean' ]})
-f1.columns = [ 'date_avg_cnt' ]
-matrix = matrix.merge(f1, on=['date_block_num'], how='left')
-matrix.fillna(0, inplace = True)
-matrix['date_avg_cnt'] = matrix['date_avg_cnt'].astype(np.float16)
-lag_features.append('date_avg_cnt')
-removed_features.append('date_avg_cnt')
-del f1
+matrix = lag_feature( matrix, [1,2,3], ["item_cnt_month"] )
 
-f1 = matrix.groupby(['date_block_num', 'shop_id']).agg({'item_cnt_month': [ 'mean' ]})
-f1.columns = [ 'date_shop_avg_cnt' ]
-matrix = matrix.merge(f1, on=['date_block_num', 'shop_id'], how='left')
-matrix.fillna(0, inplace = True)
-matrix['date_shop_avg_cnt'] = matrix['date_shop_avg_cnt'].astype(np.float16)
-lag_features.append('date_shop_avg_cnt')
-removed_features.append('date_shop_avg_cnt')
-del f1
+'''
+Add the previous month's average item_cnt.
+'''
+group = matrix.groupby( ["date_block_num"] ).agg({"item_cnt_month" : ["mean"]})
+group.columns = ["date_avg_item_cnt"]
+group.reset_index(inplace = True)
 
-f1 = matrix.groupby(['date_block_num', 'item_id']).agg({'item_cnt_month': [ 'mean' ]})
-f1.columns = [ 'date_item_avg_cnt' ]
-matrix = matrix.merge(f1, on=['date_block_num', 'item_id'], how='left')
-matrix.fillna(0, inplace = True)
-matrix['date_item_avg_cnt'] = matrix['date_item_avg_cnt'].astype(np.float16)
-lag_features.append('date_item_avg_cnt')
-removed_features.append('date_item_avg_cnt')
-del f1
+matrix = pd.merge(matrix, group, on = ["date_block_num"], how = "left")
+matrix.date_avg_item_cnt = matrix["date_avg_item_cnt"].astype(np.float16)
+matrix = lag_feature( matrix, [1], ["date_avg_item_cnt"] )
+matrix.drop( ["date_avg_item_cnt"], axis = 1, inplace = True )
 
-f1 = matrix.groupby(['date_block_num', 'shop_id', 'item_id']).agg({'item_cnt_month': [ 'mean' ]})
-f1.columns = [ 'date_shop_item_avg_cnt' ]
-matrix = matrix.merge(f1, on=['date_block_num', 'shop_id','item_id'], how='left')
-matrix.fillna(0, inplace = True)
-matrix['date_shop_item_avg_cnt'] = matrix['date_shop_item_avg_cnt'].astype(np.float16)
-lag_features.append('date_shop_item_avg_cnt')
-removed_features.append('date_shop_item_avg_cnt')
-del f1
 
-f1 = matrix.groupby(['date_block_num', 'shop_city', 'item_subtype']).agg({'item_cnt_month': [ 'mean' ]})
-f1.columns = [ 'date_city_subtype_avg_cnt' ]
-matrix = matrix.merge(f1, on=['date_block_num', 'shop_city','item_subtype'], how='left')
-matrix.fillna(0, inplace = True)
-matrix['date_city_subtype_avg_cnt'] = matrix['date_city_subtype_avg_cnt'].astype(np.float16)
-lag_features.append('date_city_subtype_avg_cnt')
-removed_features.append('date_city_subtype_avg_cnt')
-removed_features.append('date_city_subtype_avg_cnt_lag2')
-removed_features.append('date_city_subtype_avg_cnt_lag3')
-del f1
+'''
+adding lag123(item_id)
+'''
+group = matrix.groupby(['date_block_num', 'item_id']).agg({'item_cnt_month': ['mean']})
+group.columns = [ 'date_item_avg_item_cnt' ]
+group.reset_index(inplace=True)
 
-f1 = matrix.groupby(['date_block_num', 'item_category_id', 'shop_id']).agg({'item_cnt_month': [ 'mean' ]})
-f1.columns = [ 'date_itemcat_shop_avg_cnt' ]
-matrix = matrix.merge(f1, on=['date_block_num', 'item_category_id','shop_id'], how='left')
-matrix.fillna(0, inplace = True)
-matrix['date_itemcat_shop_avg_cnt'] = matrix['date_itemcat_shop_avg_cnt'].astype(np.float16)
-lag_features.append('date_itemcat_shop_avg_cnt')
-removed_features.append('date_itemcat_shop_avg_cnt')
-removed_features.append('date_itemcat_shop_avg_cnt_lag2')
-removed_features.append('date_itemcat_shop_avg_cnt_lag3')
-del f1
+matrix = pd.merge(matrix, group, on=['date_block_num','item_id'], how='left')
+matrix.date_item_avg_item_cnt = matrix['date_item_avg_item_cnt'].astype(np.float16)
+matrix = lag_feature(matrix, [1,2,3], ['date_item_avg_item_cnt'])
+matrix.drop(['date_item_avg_item_cnt'], axis=1, inplace=True)
 
-f1 = matrix.groupby(['date_block_num', 'name3', 'item_category_id']).agg({'item_cnt_month': [ 'mean' ]})
-f1.columns = [ 'date_name3_itemcat_avg_cnt' ]
-matrix = matrix.merge(f1, on=['date_block_num', 'name3','item_category_id'], how='left')
-matrix.fillna(0, inplace = True)
-matrix['date_name3_itemcat_avg_cnt'] = matrix['date_name3_itemcat_avg_cnt'].astype(np.float16)
-lag_features.append('date_name3_itemcat_avg_cnt')
-removed_features.append('date_name3_itemcat_avg_cnt')
-removed_features.append('date_name3_itemcat_avg_cnt_lag1')
-removed_features.append('date_name3_itemcat_avg_cnt_lag3')
-del f1
+'''
+adding lag123(shop_id)
+'''
+group = matrix.groupby( ["date_block_num","shop_id"] ).agg({"item_cnt_month" : ["mean"]})
+group.columns = ["date_shop_avg_item_cnt"]
+group.reset_index(inplace = True)
 
-f1 = matrix.groupby(['date_block_num', 'shop_category', 'name3']).agg({'item_cnt_month': [ 'mean' ]})
-f1.columns = [ 'date_shopcat_name3_avg_cnt' ]
-matrix = matrix.merge(f1, on=['date_block_num', 'shop_category', 'name3'], how='left')
-matrix.fillna(0, inplace = True)
-matrix['date_shopcat_name3_avg_cnt'] = matrix['date_shopcat_name3_avg_cnt'].astype(np.float16)
-lag_features.append('date_shopcat_name3_avg_cnt')
-removed_features.append('date_shopcat_name3_avg_cnt')
-removed_features.append('date_shopcat_name3_avg_cnt_lag3')
-del f1
+matrix = pd.merge(matrix, group, on = ["date_block_num","shop_id"], how = "left")
+matrix.date_avg_item_cnt = matrix["date_shop_avg_item_cnt"].astype(np.float16)
+matrix = lag_feature( matrix, [1,2,3], ["date_shop_avg_item_cnt"] )
+matrix.drop( ["date_shop_avg_item_cnt"], axis = 1, inplace = True )
 
-f1 = matrix.groupby(['date_block_num', 'shop_id', 'item_subtype']).agg({'item_cnt_month': [ 'mean' ]})
-f1.columns = [ 'date_shop_subtype_avg_cnt' ]
-matrix = matrix.merge(f1, on=['date_block_num', 'shop_id', 'item_subtype'], how='left')
-matrix.fillna(0, inplace = True)
-matrix['date_shop_subtype_avg_cnt'] = matrix['date_shop_subtype_avg_cnt'].astype(np.float16)
-lag_features.append('date_shop_subtype_avg_cnt')
-removed_features.append('date_shop_subtype_avg_cnt')
-removed_features.append('date_shop_subtype_avg_cnt_lag2')
-removed_features.append('date_shop_subtype_avg_cnt_lag3')
-del f1
+
+'''
+adding lag123(shop_id, item_id)
+'''
+group = matrix.groupby( ["date_block_num","shop_id","item_id"] ).agg({"item_cnt_month" : ["mean"]})
+group.columns = ["date_shop_item_avg_item_cnt"]
+group.reset_index(inplace = True)
+
+matrix = pd.merge(matrix, group, on = ["date_block_num","shop_id","item_id"], how = "left")
+matrix.date_avg_item_cnt = matrix["date_shop_item_avg_item_cnt"].astype(np.float16)
+matrix = lag_feature( matrix, [1,2,3], ["date_shop_item_avg_item_cnt"] )
+matrix.drop( ["date_shop_item_avg_item_cnt"], axis = 1, inplace = True )
+
+
+
+'''
+adding lag1(shop_id,item_subtype)
+'''
+group = matrix.groupby(['date_block_num', 'shop_id', 'item_subtype']).agg({'item_cnt_month': ['mean']})
+group.columns = ['date_shop_subtype_avg_item_cnt']
+group.reset_index(inplace=True)
+
+matrix = pd.merge(matrix, group, on=['date_block_num', 'shop_id', 'item_subtype'], how='left')
+matrix.date_shop_subtype_avg_item_cnt = matrix['date_shop_subtype_avg_item_cnt'].astype(np.float16)
+matrix = lag_feature(matrix, [1], ['date_shop_subtype_avg_item_cnt'])
+matrix.drop(['date_shop_subtype_avg_item_cnt'], axis=1, inplace=True)
+
+
+
+'''
+adding lag1(shop_city)
+'''
+group = matrix.groupby(['date_block_num', 'shop_city']).agg({'item_cnt_month': ['mean']})
+group.columns = ['date_city_avg_item_cnt']
+group.reset_index(inplace=True)
+
+matrix = pd.merge(matrix, group, on=['date_block_num', "shop_city"], how='left')
+matrix.date_city_avg_item_cnt = matrix['date_city_avg_item_cnt'].astype(np.float16)
+matrix = lag_feature(matrix, [1], ['date_city_avg_item_cnt'])
+matrix.drop(['date_city_avg_item_cnt'], axis=1, inplace=True)
+
+
+
+'''
+adding lag1(item_id, shop_city)
+'''
+group = matrix.groupby(['date_block_num', 'item_id', 'shop_city']).agg({'item_cnt_month': ['mean']})
+group.columns = [ 'date_item_city_avg_item_cnt' ]
+group.reset_index(inplace=True)
+
+matrix = pd.merge(matrix, group, on=['date_block_num', 'item_id', 'shop_city'], how='left')
+matrix.date_item_city_avg_item_cnt = matrix['date_item_city_avg_item_cnt'].astype(np.float16)
+matrix = lag_feature(matrix, [1], ['date_item_city_avg_item_cnt'])
+matrix.drop(['date_item_city_avg_item_cnt'], axis=1, inplace=True)
+
+
+'''
+adding average item price 
+adding lag values of item price per month
+add delta price values - how current month average price related to global average
+'''
+if True:
+    group = train.groupby( ["item_id"] ).agg({"item_price": ["mean"]})
+    group.columns = ["item_avg_item_price"]
+    group.reset_index(inplace = True)
+    
+    matrix = matrix.merge( group, on = ["item_id"], how = "left" )
+    matrix["item_avg_item_price"] = matrix.item_avg_item_price.astype(np.float16)
+    
+    
+    group = train.groupby( ["date_block_num","item_id"] ).agg( {"item_price": ["mean"]} )
+    group.columns = ["date_item_avg_item_price"]
+    group.reset_index(inplace = True)
+    
+    matrix = matrix.merge(group, on = ["date_block_num","item_id"], how = "left")
+    matrix["date_item_avg_item_price"] = matrix.date_item_avg_item_price.astype(np.float16)
+    
+    
+    lags = [1, 2, 3]
+    matrix = lag_feature( matrix, lags, ["date_item_avg_item_price"] )
+    for i in lags:
+        matrix["delta_price_lag_" + str(i) ] = (matrix["date_item_avg_item_price_lag_" + str(i)]- matrix["item_avg_item_price"] )/ matrix["item_avg_item_price"]
+    
+    def select_trends(row) :
+        for i in lags:
+            if row["delta_price_lag_" + str(i)]:
+                return row["delta_price_lag_" + str(i)]
+        return 0
+    
+    matrix["delta_price_lag"] = matrix.apply(select_trends, axis = 1)
+    matrix["delta_price_lag"] = matrix.delta_price_lag.astype( np.float16 )
+    matrix["delta_price_lag"].fillna( 0 ,inplace = True)
+    
+    features_to_drop = ["item_avg_item_price", "date_item_avg_item_price"]
+    for i in lags:
+        features_to_drop.append("date_item_avg_item_price_lag_" + str(i) )
+        features_to_drop.append("delta_price_lag_" + str(i) )
+    matrix.drop(features_to_drop, axis = 1, inplace = True)
+
+
+
+'''
+add total shop revenue per month to matrix
+add lag values of revenus per month
+add delta revenus values - how current month revene related to global average
+'''
+if True:
+    train["revenue"] = train["item_cnt_day"] * train["item_price"]
+    
+    group = train.groupby( ["date_block_num","shop_id"] ).agg({"revenue": ["sum"] })
+    group.columns = ["date_shop_revenue"]
+    group.reset_index(inplace = True)
+    
+    matrix = matrix.merge( group , on = ["date_block_num", "shop_id"], how = "left" )
+    matrix['date_shop_revenue'] = matrix['date_shop_revenue'].astype(np.float32)
+    
+    group = group.groupby(["shop_id"]).agg({ "date_block_num":["mean"] })
+    group.columns = ["shop_avg_revenue"]
+    group.reset_index(inplace = True )
+    
+    matrix = matrix.merge( group, on = ["shop_id"], how = "left" )
+    
+    matrix["shop_avg_revenue"] = matrix.shop_avg_revenue.astype(np.float32)
+    matrix["delta_revenue"] = (matrix['date_shop_revenue'] - matrix['shop_avg_revenue']) / matrix['shop_avg_revenue']
+    matrix["delta_revenue"] = matrix["delta_revenue"]. astype(np.float32)
+    
+    matrix = lag_feature(matrix, [1], ["delta_revenue"])
+    matrix["delta_revenue_lag_1"] = matrix["delta_revenue_lag_1"].astype(np.float32)
+    matrix.drop( ["date_shop_revenue", "shop_avg_revenue", "delta_revenue"] ,axis = 1, inplace = True)
 
 
 
@@ -339,11 +427,6 @@ matrix["item_first_sale"] = matrix["date_block_num"] - matrix.groupby(["item_id"
 
 
 
-
-
-matrix = ft.add_lag_features(matrix, LAGS, ['shop_id', 'item_id'], lag_features)
-
-matrix.drop(columns=lag_features + removed_features, inplace = True)
 
 
 
@@ -378,7 +461,6 @@ testingX[label] = model.predict(testingX)
 test = pd.merge(test, testingX[['shop_id', 'item_id', label]], on = ['shop_id', 'item_id'], how = "left")
 test[label].fillna(0, inplace=True)
 test[label] = test[label].clip(0, 20)
-test[label] = test[label].astype('int16')
 
 test[['ID', label]].to_csv('../data/prediction.csv', index = False)
 
@@ -386,87 +468,3 @@ print("TIME: ", time.time() - ts)
 
 
 print("DONE")
-
-'''
-model = XGBRegressor(
-    max_depth=10,
-    n_estimators=1000,
-    min_child_weight=0.5, 
-    colsample_bytree=0.8, 
-    subsample=0.8, 
-    eta=0.1,
-#     tree_method='gpu_hist',
-    seed=42)
-'''
-'''
-Collinearity
-                          variables         VIF
-0                    date_block_num    5.946952
-1                           shop_id  170.171539
-2                           item_id    5.001425
-3                     shop_category    5.063728
-4                         shop_city  181.471562
-5                  item_category_id  172.425908
-6                             name2    2.206011
-7                             name3    1.899919
-8                         item_type  172.434132
-9                      item_subtype    3.276374
-10                            month    3.606924
-11                             days   41.721868
-12             item_shop_first_sale   26.250171
-13                  item_first_sale   26.773111
-14                date_avg_cnt_lag1   22.382493
-15           date_shop_avg_cnt_lag1   15.033166
-16           date_item_avg_cnt_lag1    5.032364
-17      date_shop_item_avg_cnt_lag1    4.221334
-18   date_city_subtype_avg_cnt_lag1    5.276569
-19   date_itemcat_shop_avg_cnt_lag1  184.895777
-20  date_shopcat_name3_avg_cnt_lag1    7.892881
-21   date_shop_subtype_avg_cnt_lag1  186.310781
-22                date_avg_cnt_lag2   28.074756
-23           date_shop_avg_cnt_lag2   24.111312
-24           date_item_avg_cnt_lag2    6.286725
-25      date_shop_item_avg_cnt_lag2    3.987554
-26  date_name3_itemcat_avg_cnt_lag2   13.256601
-27  date_shopcat_name3_avg_cnt_lag2   12.965292
-28                date_avg_cnt_lag3   18.541992
-29           date_shop_avg_cnt_lag3   15.998211
-30           date_item_avg_cnt_lag3    4.310151
-31      date_shop_item_avg_cnt_lag3    3.291685
-
----------------------
-Skew Test
-
-'date_avg_cnt_lag1': 'COXBOX',
-'date_avg_cnt_lag2': 'COXBOX',
-'date_avg_cnt_lag3': 'COXBOX',
-'date_block_num': 'COXBOX',
-'date_city_subtype_avg_cnt_lag1': 'COXBOX',
-'date_item_avg_cnt_lag1': 'COXBOX',
-'date_item_avg_cnt_lag2': 'COXBOX',
-'date_item_avg_cnt_lag3': 'COXBOX',
-'date_itemcat_shop_avg_cnt_lag1': 'COXBOX',
-'date_name3_itemcat_avg_cnt_lag2': 'COXBOX',
-'date_shop_avg_cnt_lag1': 'COXBOX',
-'date_shop_avg_cnt_lag2': 'COXBOX',
-'date_shop_avg_cnt_lag3': 'COXBOX',
-'date_shop_item_avg_cnt_lag1': 'COXBOX',
-'date_shop_item_avg_cnt_lag2': 'COXBOX',
-'date_shop_item_avg_cnt_lag3': 'COXBOX',
-'date_shop_subtype_avg_cnt_lag1': 'COXBOX',
-'date_shopcat_name3_avg_cnt_lag1': 'COXBOX',
-'date_shopcat_name3_avg_cnt_lag2': 'COXBOX',
-'days': 'COXBOX',
-'item_category_id': 'NORM',
-'item_first_sale': 'COXBOX',
-'item_id': 'NORM',
-'item_shop_first_sale': 'COXBOX',
-'item_subtype': 'COXBOX',
-'item_type': 'COXBOX',
-'month': 'COXBOX',
-'name2': 'LOG1P',
-'name3': 'LOG1P',
-'shop_category': 'COXBOX',
-'shop_city': 'NORM',
-'shop_id': 'NORM'
-'''
