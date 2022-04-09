@@ -104,3 +104,58 @@ else:
 3. We can deduce that the horsemen are the best unit and the bowmen are the worst one because they 
     haven’t been chosen at all.
 '''
+
+'''
+But the expected answer should be integer, why not?
+
+GLOP is a pure linear programming solver. This means that it cannot understand concepts like integers. 
+It is limited to continuous parameters with a linear relationship.
+
+This is the difference between linear programming (LP) and integer linear programming (ILP). 
+In summary, LP solvers can only use real numbers and not integers as variables. So why did we 
+declare our variables as integers if it doesn’t take it into account?
+
+GLOP cannot solve ILP problems, but other solvers can. Actually, a lot of them are mixed 
+integer linear programming (MILP, commonly called MIP) solvers. This means that they can 
+consider both continuous (real numbers) and discrete (integers) variables. A particular case 
+of discrete values is Boolean variables to represent decisions with 0–1 values.
+'''
+    
+# Create the linear solver using the CBC backend
+solver = pywraplp.Solver('Maximize army power', pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
+
+# 1. Create the variables we want to optimize
+swordsmen = solver.IntVar(0, solver.infinity(), 'swordsmen')
+bowmen = solver.IntVar(0, solver.infinity(), 'bowmen')
+horsemen = solver.IntVar(0, solver.infinity(), 'horsemen')
+
+# 2. Add constraints for each resource
+solver.Add(swordsmen*60 + bowmen*80 + horsemen*140 <= 1200)
+solver.Add(swordsmen*20 + bowmen*10 <= 800)
+solver.Add(bowmen*40 + horsemen*100 <= 600)
+
+# 3. Maximize the objective function
+solver.Maximize(swordsmen*70 + bowmen*95 + horsemen*230)
+
+# Solve problem
+status = solver.Solve()
+
+# If an optimal solution has been found, print results
+if status == pywraplp.Solver.OPTIMAL:
+  print('================= Solution =================')
+  print(f'Solved in {solver.wall_time():.2f} milliseconds in {solver.iterations()} iterations')
+  print()
+  print(f'Optimal value = {solver.Objective().Value()} 💪power')
+  print('Army:')
+  print(f' - 🗡️Swordsmen = {swordsmen.solution_value()}')
+  print(f' - 🏹Bowmen = {bowmen.solution_value()}')
+  print(f' - 🐎Horsemen = {horsemen.solution_value()}')
+else:
+  print('The solver could not find an optimal solution.')
+  
+  
+'''
+In general, we just round up these values since the error is insignificant, but it is important 
+to remember to choose the appropriate solver according to the studied problem: LP (continuous variables);
+MIP/MILP (combination of continuous and discrete variables).
+'''
