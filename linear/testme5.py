@@ -317,10 +317,13 @@ for var in [x,Z,T,A,H,G]:
     variable_optimal = []
     for i in var.values():
         variable_optimal.append(i.solution_value())
-        var_result=list(zip(var.values(),variable_optimal))
-        df=pd.DataFrame(var_result,columns=['Name','Value'])
-        result_list.append(df)
+    
+    var_result=list(zip(var.values(),variable_optimal))
+    df=pd.DataFrame(var_result,columns=['Name','Value'])
+    print(len(df))
+    result_list.append(df)
         
+
         
 # Concatenate the tables and extract the variable names
 results=pd.concat(result_list)
