@@ -320,7 +320,6 @@ for var in [x,Z,T,A,H,G]:
     
     var_result=list(zip(var.values(),variable_optimal))
     df=pd.DataFrame(var_result,columns=['Name','Value'])
-    print(len(df))
     result_list.append(df)
         
 
