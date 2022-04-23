@@ -307,7 +307,7 @@ else:
     print('A solution could not be found, check the problem specification')
     
 print()
-    
+print()    
     
 # extract the optimal values for each variable
 # preprocess and rearrange the data into a table   
@@ -349,6 +349,7 @@ results=results[['Variable','Indices','Name','Value']].copy()
 # The below result shows vans 1, 2 and 3 will be used
 print("Usable Vans: ", np.unique(list(results[(results['Variable']=='T')&(results['Value']==1)].Name)))
 print()
+print()
 
 # For the next part, we’ll just search for the variables related to van 1, starting with answering which 
 # trips are going to be made using this vehicle. Here it is important to remember that van v=1 corresponds 
@@ -367,6 +368,7 @@ trips_df=results[(results['Variable']=='Z')&(results['Value']>0)]
 print("Trips are made by using vans 1")
 print(trips_df[trips_df['Name'].isin(trips_van_1)].drop_duplicates())
 print()
+print()
 
 
 # Next, we need to find the employees that are going to be in charge of the delivery operations of van 1
@@ -382,6 +384,7 @@ employees_df=results[(results['Variable']=='A')&(results['Value']>0)]
 # Employee 5 and 8 are both assgiend to van 1
 print("Employee 5 and 8 are both assgiend to van 1")
 print(employees_df[employees_df['Name'].isin(employees_van_1)].drop_duplicates())
+print()
 print()
 
 
@@ -399,6 +402,12 @@ for p in range(P_products):
 
 # Total number of 4 of product 2 would be transported by van 1, from warehouse 2 to store 2
 # Total number of 1 of prdouct 3 would be transported by van 1, from warehouse 2 to store 2
-print("4 boxes of product 2, 1 box of product 3 would be transported by van 1, from warehouse 2 to store 2")
+print("(5 max) 4 boxes of product 2, 1 box of product 3 would be transported by van 1, from warehouse 2 to store 2")
 print(transport_df[transport_df['Name'].isin(transport_trip_2_2)].drop_duplicates())
 print()
+print()
+
+# conflicting pair of employees
+print("Conflicting paris of employees")
+print(results[(results['Variable']=='G')&(results['Value']!=0)].drop_duplicates(), " => ", (1, 4))
+print(results[(results['Variable']=='A')&(results['Value']!=0)].drop_duplicates())
