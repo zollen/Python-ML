@@ -408,5 +408,5 @@ print()
 
 # conflicting pair of employees
 print("Conflicting paris of employees")
-print(results[(results['Variable']=='G')&(results['Value']!=0)].drop_duplicates(), " => ", (1, 4))
+print(results[(results['Variable']=='G')&(results['Value']!=0)], " => ", (1, 4))
 print(results[(results['Variable']=='A')&(results['Value']!=0)])
