@@ -314,10 +314,7 @@ print()
 result_list = []
 # Extract the solution details and save them in a list of tables
 for var in [x,Z,T,A,H,G]:
-    variable_optimal = []
-    for i in var.values():
-        variable_optimal.append(i.solution_value())
-    
+    variable_optimal = [ i.solution_value() for i in var.values() ]   
     var_result=list(zip(var.values(),variable_optimal))
     df=pd.DataFrame(var_result,columns=['Name','Value'])
     result_list.append(df)
