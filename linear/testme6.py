@@ -60,6 +60,10 @@ from collections import defaultdict
 import itertools
 from ortools.linear_solver import pywraplp
 
+pd.set_option('max_columns', None)
+pd.set_option('max_rows', None)
+pd.set_option('display.width', 1000)
+
 W_HELLFIRE = 1
 W_HARPOON = 2
 W_ARTILLARY = 3
@@ -86,6 +90,7 @@ def def_value():
 TARGETS = defaultdict(def_value)
 TARGETS[S_KYIV, T_INFANTRY] = 1   
 TARGETS[S_ODESSA, T_TANK  ] = 1
+TARGETS[S_MARIUPOL, T_APC] = 1
 
 
 C1 = {}
