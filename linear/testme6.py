@@ -50,7 +50,7 @@ Vechile Trip Limits
     Σ(s) ( T(vs) ) <= VT(v)  for all instance of v
     
 Must Kill All Targets
-    Σ(st) ( len(TARGET[s]) - Σ(tw) ( F(vwst) ) == 0 ) for all instance of st
+    Σ(st) ( Σ(tw) ( F(vwst) ) == 1 ) for all instance of st
 '''
 
 import pandas as pd
@@ -94,8 +94,9 @@ def multiple():
 
 
 
-for i in range(1, 4):
+for i in range(1, 10):
     TARGETS[random.choice(SITES)].append(i)
+
 
 for idx in SITES:
     print(idx, ' => ', TARGETS[idx])
@@ -184,15 +185,13 @@ for v in VECHILES:
     
 '''
 Must Kill All Targets
-    Σ(st) ( len(TARGET[s]) - Σ(tw) ( F(vwst) ) == 0 ) for all instance of st
-'''
-for s in SITES:
+    Σ(st) ( Σ(tw) ( F(vwst) ) == 1 ) for all instance of st
+''' 
+for s in SITES:                
     for t in TARGETS[s]:
-            solver.Add( len(TARGETS[s]) - 
-                       solver.Sum([ F[r[0], r[1], s, t] for r in itertools.product(VECHILES, WEAPONS) ]) == 0,
-                       name = f'KillAllTargets({v},{w},{s},{t})')
-             
-    
+        solver.Add( solver.Sum( [ F[r[0], r[1], s, t] for r in itertools.product(VECHILES, WEAPONS) ] ) == 1,
+                    name = f'KillAllTargets({v},{w},{s},{t})')
+        
     
 if False:    
     print(solver.ExportModelAsLpFormat(obfuscated=False))
@@ -278,6 +277,7 @@ def processF(rec):
 
 result_t = result_t[result_t['Value'] == 1.0].drop(columns=['Value']).apply(processT, axis = 1)
 result_f = result_f[result_f['Value'] == 1.0].drop(columns=['Value']).apply(processF, axis = 1)
+
 
 k = result_t.merge(result_f, how='left', on=['VECHILE', 'SITE'])[['Name_x', 'Name_y', 'VECHILE', 'SITE', 'TARGET', 'WEAPON']]
 print(k)
