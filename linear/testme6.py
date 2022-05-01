@@ -240,7 +240,7 @@ for var in [ T, F ]:
 result_t = result_list[0]
 result_f = result_list[1]
 
-def reformat(rec):
+def process(rec):
     
     m = re.split('[A-Z\,()]+', rec['Name'].name())
     idx = 0
@@ -264,10 +264,10 @@ def reformat(rec):
     return rec
   
 
-result_t = result_t[result_t['Value'] == 1.0].apply(reformat, axis = 1)
-result_f = result_f[result_f['Value'] == 1.0].apply(reformat, axis = 1)
+result_t = result_t[result_t['Value'] == 1.0].drop(columns=['Value']).apply(process, axis = 1)
+result_f = result_f[result_f['Value'] == 1.0].drop(columns=['Value']).apply(process, axis = 1)
 
-k = result_t.merge(result_f, how='left', on=['VECHILE', 'SITE']).drop(columns=['Value_x', 'Value_y'])
+k = result_t.merge(result_f, how='left', on=['VECHILE', 'SITE'])[['Name_x', 'Name_y', 'VECHILE', 'SITE', 'TARGET', 'WEAPON']]
 print(k)
 
 
