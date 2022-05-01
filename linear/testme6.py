@@ -41,7 +41,7 @@ Min ( Σ(vs) ( T(vs) * C1(vs)  +  Σ(tw) ( F(vstw) * C2(w) )  )  )
 
 Constaints
 ----------
-TripFireSolutionLimit
+TripFireSolutionCheck
     Σ(tw) ( 1000 * T(vs) - Σ(tw) F(vstw) ) >= 0 for all instances of vs
     
 Inventory Limits
@@ -154,7 +154,7 @@ for v in VECHILES:
 # constraints
 
 '''
-TripFireSolutionLimit
+TripFireSolutionCheck
     Σ(tw) ( 1000 * T(vs) - Σ(tw) F(vstw) ) >= 0 for all instances of vs
 '''
 for v in VECHILES:
@@ -216,12 +216,11 @@ solver.Minimize(solver.Sum(objective_function))
 status = solver.Solve()
 
 if status == pywraplp.Solver.OPTIMAL:
-    print(f'Solution: \n Total cost = ${solver.Objective().Value()}')
+    print(f'Solution: Total cost = ${solver.Objective().Value()}')
 else:
     print('A solution could not be found, check the problem specification')
     
-print()
-print()    
+print()  
 
 result_list = []
 for var in [ T, F ]:
@@ -236,3 +235,4 @@ result_f = result_list[1]
 
 print(result_t[result_t['Value'] == 1.0]['Name'])    
 print(result_f[result_f['Value'] == 1.0]['Name'])
+
