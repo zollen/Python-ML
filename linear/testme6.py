@@ -8,7 +8,6 @@ attributes: costs, range, maintenance,
 1. Predator Drone
 2. F15 Eagle
 3. Precision Self-Propelled Howitzer (M109)
-4. Mobile Missiles Launcher
 
 1. Hellfire Missiles
 2. Harpoon Missiles
@@ -55,7 +54,7 @@ Must Kill All Targets
 '''
 
 import pandas as pd
-import numpy as np
+import re
 from collections import defaultdict
 import itertools
 from ortools.linear_solver import pywraplp
@@ -68,21 +67,30 @@ W_HELLFIRE = 1
 W_HARPOON = 2
 W_ARTILLARY = 3
 WEAPONS = [ W_HELLFIRE, W_HARPOON, W_ARTILLARY ]
+WEAPONS_DICT = { 1: 'W_HELLFIRE', 2: 'W_HARPOON', 3: 'W_ARTILLARY' }
 
 V_PREDATOR_DRONE = 4
 V_F15_JET = 5
 V_M109_HOWITZER = 6
 VECHILES = [ V_PREDATOR_DRONE, V_F15_JET, V_M109_HOWITZER ]
+VECHILES_DICT = { 4: 'V_PREDATOR_DRONE', 5: 'V_F15_JET', 6: 'V_M109_HOWITZER' }
 
 S_ODESSA = 7
 S_KYIV = 8
 S_MARIUPOL = 9
 SITES =  [ S_ODESSA, S_KYIV, S_MARIUPOL ]
+SITES_DICT = { 7: 'S_ODESSA', 8: 'S_KYIV', 9: 'S_MARIUPOL' }
 
 T_INFANTRY = 10
 T_TANK = 11
 T_APC = 12
 ENEMIES = [ T_INFANTRY, T_TANK, T_APC ]
+ENEMIES_DICT = { 10: 'T_INFANTRY', 11: 'T_TANK', 12: 'T_APC' }
+
+
+
+
+
 
 def def_value():
     return 0
@@ -232,7 +240,34 @@ for var in [ T, F ]:
 result_t = result_list[0]
 result_f = result_list[1]
 
+def reformat(rec):
+    
+    m = re.split('[A-Z\,()]+', rec['Name'].name())
+    idx = 0
+    
+    for token in m:
 
-print(result_t[result_t['Value'] == 1.0]['Name'])    
-print(result_f[result_f['Value'] == 1.0]['Name'])
+        if len(token) <= 0:
+            continue
+        
+        if idx == 0:
+            rec['VECHILE'] = VECHILES_DICT[int(token)]
+        elif idx == 1:
+            rec['SITE'] = SITES_DICT[int(token)]
+        elif idx == 2:
+            rec['TARGET'] = ENEMIES_DICT[int(token)]
+        else:
+            rec['WEAPON'] = WEAPONS_DICT[int(token)]
+            
+        idx = idx + 1
+                    
+    return rec
+  
+
+result_t = result_t[result_t['Value'] == 1.0].apply(reformat, axis = 1)
+result_f = result_f[result_f['Value'] == 1.0].apply(reformat, axis = 1)
+
+k = result_t.merge(result_f, how='left', on=['VECHILE', 'SITE']).drop(columns=['Value_x', 'Value_y'])
+print(k)
+
 
