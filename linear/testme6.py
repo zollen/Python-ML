@@ -28,7 +28,7 @@ C2(w)  - Armament Cost                C2(w)  ∈ (0, +∞)
 Optimization
 ------------
 T(vs)     - boolean variable of trip                       T(vs)  ∈ {0, 1}
-F(vstw)   - boolean variable of firing solution            F(vst) ∈ {0, 1}
+F(vwst)   - boolean variable of firing solution           F(vwst) ∈ {0, 1}
 
 
 
@@ -63,41 +63,66 @@ pd.set_option('max_columns', None)
 pd.set_option('max_rows', None)
 pd.set_option('display.width', 1000)
 
+NUM_TARGETS = 5
+NUM_DRONE = 3
+NUM_JET = 1
+NUM_HOWIZER = 2 
 
-W_HELLFIRE = 1
-W_HARPOON = 2
-W_ARTILLARY = 3
+
+W_HELLFIRE = 'F'
+W_HARPOON = 'H'
+W_ARTILLARY = 'A'
 WEAPONS = [ W_HELLFIRE, W_HARPOON, W_ARTILLARY ]
-WEAPONS_DICT = { 1: 'W_HELLFIRE', 2: 'W_HARPOON', 3: 'W_ARTILLARY' }
+WEAPONS_DICT = { 'F': 'W_HELLFIRE', 'H': 'W_HARPOON', 'A': 'W_ARTILLARY' }
 
-V_PREDATOR_DRONE = 4
-V_F15_JET = 5
-V_M109_HOWITZER = 6
-VECHILES = [ V_PREDATOR_DRONE, V_F15_JET, V_M109_HOWITZER ]
-VECHILES_DICT = { 4: 'V_PREDATOR_DRONE', 5: 'V_F15_JET', 6: 'V_M109_HOWITZER' }
+V_PREDATOR_DRONE = 'D'
+V_F15_JET = 'J'
+V_M109_HOWITZER = 'H'
+VECHILES = { 'D': [], 'J': [], 'H': [] }
+VECHILES_DICT = { 'D': 'V_PREDATOR_DRONE', 'J': 'V_F15_JET', 'H': 'V_M109_HOWITZER' }
 
 TARGETS = { 'A': [], 'B': [], 'C': [], 'D': [], 'E': [], 'F': [], 'G': [], 'H': [], 'I': [], 'J': [], 'K': [],
               'L': [], 'M': [], 'N': [], 'O': [], 'P': [], 'Q': [], 'R': [], 'S': [], 'T': [], 'U': [] }
 SITES = list(TARGETS.keys())
 
 
+
+
 def vechiles_sites_targets():
     
     targets = []
     
-    for v in VECHILES:
-        for s in SITES:
-            for t in TARGETS[s]:
-                targets.append([v, s, t])
+    for v1 in VECHILES.keys():
+        for v2 in VECHILES[v1]:
+            for s in SITES:
+                for t in TARGETS[s]:
+                    targets.append([v1, v2, s, t])
                 
     return targets
 
+def vechiles_weapons():
+    
+    weapons = []
+    
+    for v1 in VECHILES.keys():
+        for v2 in VECHILES[v1]:
+            for w in WEAPONS:
+                weapons.append([v1, v2, w])
+                
+    return weapons
 
 
-
-for i in range(1, 10):
+for i in range(1, NUM_TARGETS + 1):
     TARGETS[random.choice(SITES)].append(i)
-
+    
+for i in range(1, NUM_DRONE + 1):
+    VECHILES[V_PREDATOR_DRONE].append(i)
+    
+for i in range(NUM_DRONE + 1, NUM_DRONE + NUM_JET + 1):
+    VECHILES[V_F15_JET].append(i)
+    
+for i in range(NUM_DRONE + NUM_JET + 1, NUM_DRONE + NUM_JET + NUM_HOWIZER + 1):
+    VECHILES[V_M109_HOWITZER].append(i)
 
 for idx in SITES:
     print(idx, ' => ', TARGETS[idx])
@@ -129,8 +154,8 @@ H[V_F15_JET] = 4
 H[V_M109_HOWITZER] = 5
 
 VT[V_PREDATOR_DRONE] = 2
-VT[V_F15_JET] = 20
-VT[V_M109_HOWITZER] = 100
+VT[V_F15_JET] = 10
+VT[V_M109_HOWITZER] = 20
 
 T = {}
 F = {}
@@ -142,15 +167,17 @@ F = {}
 solver = pywraplp.Solver.CreateSolver('SCIP')
 
 # initialization
-for v in VECHILES:
-    for s in TARGETS.keys():
-        T[v, s] = solver.BoolVar(name=f"T({v},{s})")
+for v1 in VECHILES.keys():
+    for v2 in VECHILES[v1]:
+        for s in TARGETS.keys():
+            T[v2, s] = solver.BoolVar(name=f"T({v1}{v2},{s})")
         
-for v in VECHILES:
-    for w in WEAPONS:
-        for s in SITES:
-            for t in TARGETS[s]:
-                F[v, w, s, t] = solver.BoolVar(name=f"F({v},{w},{s},{t})")
+for v1 in VECHILES.keys():
+    for v2 in VECHILES[v1]:
+        for w in WEAPONS:
+            for s in SITES:
+                for t in TARGETS[s]:
+                    F[v2, w, s, t] = solver.BoolVar(name=f"F({v1}{v2},{w},{s},{t})")
 
 
 # constraints
@@ -159,12 +186,13 @@ for v in VECHILES:
 TripFireSolutionCheck
     Σ(tw) ( 1000 * T(vs) - Σ(tw) F(vwst) ) >= 0 for all instances of vs
 '''
-for v in VECHILES:
-    for s in SITES:
-        solver.Add(1000 * T[v, s] + 
+for v1 in VECHILES.keys():
+    for v2 in VECHILES[v1]:
+        for s in SITES:
+            solver.Add(1000 * T[v2, s] + 
                    solver.Sum(
-                       [-1 * F[v, r[0], s, r[1]] for r in itertools.product(WEAPONS, TARGETS[s]) ]) >= 0, 
-                       name =f'TripFireSolution({v},{w},{s},{t})')     
+                       [-1 * F[v2, r[0], s, r[1]] for r in itertools.product(WEAPONS, TARGETS[s]) ]) >= 0, 
+                       name =f'TripFireSolution({v1}{v2},{s})')     
         
 '''
 InventoryLimits
@@ -172,17 +200,18 @@ InventoryLimits
 '''
 for w in WEAPONS: 
     solver.Add(solver.Sum( 
-            [ F[r[0], w, r[1], r[2]] for r in vechiles_sites_targets() ]) <= I[w],
-            name = f'InventoryLimit({v},{w},{s},{t})' )
+            [ F[r[1], w, r[2], r[3]] for r in vechiles_sites_targets() ]) <= I[w],
+            name = f'InventoryLimit({w})' )
 
 '''
 Vechile Trip Limits
     Σ(s) ( T(vs) ) <= VT(v)  for all instance of v
 '''         
-for v in VECHILES:
-    solver.Add(solver.Sum(
-            [ T[v, s] for s in TARGETS.keys() ]) <= VT[v],
-            name = f'VechileTripLimit({v},{s})')
+for v1 in VECHILES.keys():
+    for v2 in VECHILES[v1]:
+        solver.Add(solver.Sum(
+                [ T[v2, s] for s in TARGETS.keys() ]) <= VT[v1],
+                name = f'VechileTripLimit({v1}{v2})')
     
 '''
 Must Kill All Targets
@@ -190,13 +219,13 @@ Must Kill All Targets
 ''' 
 for s in SITES:                
     for t in TARGETS[s]:
-        solver.Add( solver.Sum( [ F[r[0], r[1], s, t] for r in itertools.product(VECHILES, WEAPONS) ] ) == 1,
-                    name = f'KillAllTargets({v},{w},{s},{t})')
+        solver.Add( solver.Sum( [ F[r[1], r[2], s, t] for r in vechiles_weapons() ] ) == 1,
+                    name = f'KillAllTargets({s},{t})')
         
     
 if False:    
     print(solver.ExportModelAsLpFormat(obfuscated=False))
-           
+         
            
 '''
 Objective
@@ -204,12 +233,13 @@ Min ( Σ(vs) ( T(vs) * C1(vs)  +  Σ(tw) ( F(vwst) * C2(w) )  )  )
 '''           
 objective_function = []
 
-for v in VECHILES:
-    for s in SITES:
-        objective_function.append(T[v, s] * C1[v, s])
-        for t in TARGETS[s]:
-            for w in WEAPONS:
-                objective_function.append(F[v, w, s, t] * C2[w])
+for v1 in VECHILES.keys():
+    for v2 in VECHILES[v1]:
+        for s in SITES:
+            objective_function.append(T[v2, s] * C1[v1, s])
+            for t in TARGETS[s]:
+                for w in WEAPONS:
+                    objective_function.append(F[v2, w, s, t] * C2[w])
                 
 solver.Minimize(solver.Sum(objective_function))
 
@@ -233,6 +263,7 @@ result_t = result_list[0]
 result_f = result_list[1]
 
 
+
 def processT(rec):
     
     m = re.split('[\,()]+', rec['Name'].name()[1:])
@@ -244,7 +275,8 @@ def processT(rec):
             continue
         
         if idx == 0:
-            rec['VECHILE'] = VECHILES_DICT[int(token)]
+            rec['VECHILE_TYPE'] = VECHILES_DICT[token[0]]
+            rec['VECHILE_ID'] = token[1:]
         else:
             rec['SITE'] = token
             
@@ -263,9 +295,10 @@ def processF(rec):
             continue
         
         if idx == 0:
-            rec['VECHILE'] = VECHILES_DICT[int(token)]
+            rec['VECHILE_TYPE'] = VECHILES_DICT[token[0]]
+            rec['VECHILE_ID'] = token[1:]
         elif idx == 1:
-            rec['WEAPON'] = WEAPONS_DICT[int(token)]
+            rec['WEAPON'] = WEAPONS_DICT[token]
         elif idx == 2:
             rec['SITE'] = token
         else:
@@ -280,7 +313,7 @@ result_t = result_t[result_t['Value'] == 1.0].drop(columns=['Value']).apply(proc
 result_f = result_f[result_f['Value'] == 1.0].drop(columns=['Value']).apply(processF, axis = 1)
 
 
-k = result_t.merge(result_f, how='left', on=['VECHILE', 'SITE'])[['Name_x', 'Name_y', 'VECHILE', 'SITE', 'TARGET', 'WEAPON']]
+k = result_t.drop(columns=['Name', 'VECHILE_TYPE']).merge(result_f, how='left', on=['VECHILE_ID', 'SITE'])[['Name', 'VECHILE_TYPE', 'VECHILE_ID', 'WEAPON', 'SITE', 'TARGET']]
 print(k)
 
 
