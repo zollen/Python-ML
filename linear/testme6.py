@@ -81,7 +81,7 @@ TARGETS = { 'A': [], 'B': [], 'C': [], 'D': [], 'E': [], 'F': [], 'G': [], 'H': 
 SITES = list(TARGETS.keys())
 
 
-def multiple():
+def vechiles_sites_targets():
     
     targets = []
     
@@ -172,7 +172,7 @@ InventoryLimits
 '''
 for w in WEAPONS: 
     solver.Add(solver.Sum( 
-            [ F[r[0], w, r[1], r[2]] for r in multiple() ]) <= I[w],
+            [ F[r[0], w, r[1], r[2]] for r in vechiles_sites_targets() ]) <= I[w],
             name = f'InventoryLimit({v},{w},{s},{t})' )
 
 '''
