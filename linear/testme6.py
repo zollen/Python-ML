@@ -76,9 +76,10 @@ V_M109_HOWITZER = 6
 VECHILES = [ V_PREDATOR_DRONE, V_F15_JET, V_M109_HOWITZER ]
 VECHILES_DICT = { 4: 'V_PREDATOR_DRONE', 5: 'V_F15_JET', 6: 'V_M109_HOWITZER' }
 
-SITES =  [ 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U'  ]
 TARGETS = { 'A': [], 'B': [], 'C': [], 'D': [], 'E': [], 'F': [], 'G': [], 'H': [], 'I': [], 'J': [], 'K': [],
               'L': [], 'M': [], 'N': [], 'O': [], 'P': [], 'Q': [], 'R': [], 'S': [], 'T': [], 'U': [] }
+SITES = list(TARGETS.keys())
+
 
 def multiple():
     
