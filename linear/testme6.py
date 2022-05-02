@@ -124,8 +124,8 @@ for i in range(NUM_DRONE + 1, NUM_DRONE + NUM_JET + 1):
 for i in range(NUM_DRONE + NUM_JET + 1, NUM_DRONE + NUM_JET + NUM_HOWIZER + 1):
     VECHILES[V_M109_HOWITZER].append(i)
 
-for idx in SITES:
-    print(idx, ' => ', TARGETS[idx])
+
+print(TARGETS)
     
 
 
