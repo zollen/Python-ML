@@ -204,6 +204,16 @@ for w in WEAPONS:
             name = f'InventoryLimit({w})' )
 
 '''
+Vechile Payload Limits
+'''
+for v1 in VECHILES.keys():
+    for v2 in VECHILES[v1]:
+        for s in SITES:
+            solver.Add(solver.Sum(
+                [ F[v2, r[0], s, r[1]] for r in itertools.product(WEAPONS, TARGETS[s]) ]) <= H[v1],
+                name = f'VechilePayloadLimit({v1}{v2},{s})')
+            
+'''
 Vechile Trip Limits
     Σ(s) ( T(vs) ) <= VT(v)  for all instance of v
 '''         
