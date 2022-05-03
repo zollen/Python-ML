@@ -2,6 +2,8 @@
 Created on May 3, 2022
 
 @author: zollen
+@url: https://towardsdatascience.com/multi-seasonal-time-series-decomposition-using-mstl-in-python-136630e67530
+@desc: Multi-Seasonal Time Series Decomposition Using MSTL in Python
 '''
 
 import matplotlib.pyplot as plt
