@@ -2,7 +2,6 @@
 Created on Jun. 5, 2022
 
 @author: zollen
-@author: zollen
 @url: https://pymoo.org/problems/definition.html#nb-problem-definition-elementwise
 @url: https://towardsdatascience.com/pymoode-differential-evolution-in-python-78e4221e5cbe
 @desc: Differential evolution (DE) (Storn & Price, 1997) was originally designed for scalar objective 
