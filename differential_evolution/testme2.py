@@ -48,6 +48,8 @@ class ProblemF2(Problem):
         super().__init__(n_var=2, n_obj=2, n_constr=2, xl=xl, xu=xu)
         
     def _evaluate(self, x, out, *args, **kwargs):
+        # x is an array corresponding to the decision variables in a Population with shape (N, m) 
+        # N - population size, m - number of decision variables 
         F1 = (x[:, 0] - 0.5) ** 2 + 0.7 * x[:, 0] * x[:, 1] + 1.2 * (x[:, 1] + 0.7) ** 2
         F2 = 1.1 * (x[:, 0] + 1.5) ** 2 + 0.8 * x[:, 0] * x[:, 1] + 1.3 * (x[:, 1] - 1.7) ** 2
         out["F"] = np.column_stack([F1, F2])
