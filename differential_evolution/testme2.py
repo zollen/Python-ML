@@ -35,7 +35,7 @@ In this example, I will introduce two conflicting convex objectives with additio
     both bounded by -5.0 and 5.0.
 
 f1(x) = (x1 - 0.5)^2 + 0.7 * x1 * x2 + 1.2(x2 + 0.7)^2
-f2(x) = (x1 + 1.5)^2 + 0.8 * x1 * x2 + 1.3(x2 - 1.7)^2
+f2(x) = 1.1 * (x1 + 1.5)^2 + 0.8 * x1 * x2 + 1.3(x2 - 1.7)^2
 
 g1(x) = x1^2 + (x2 - 1)^2 - 9 <= 0
 g2(x) = (x1 + 0.5)^2 + (x2 - 1)^2 + 2 <= 0
