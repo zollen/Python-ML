@@ -26,6 +26,7 @@ from pymoode.gde3 import GDE3
 from pymoode.nsde import NSDE
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.optimize import minimize
+from pymoo.factory import get_performance_indicator
 #Termination
 from pymoo.util.termination.default import MultiObjectiveDefaultTermination
 
@@ -72,13 +73,49 @@ gde3 = GDE3(pop_size=50, variant="DE/rand/1/bin", F=(0.0, 1.0), CR=0.7)
 nsde = NSDE(pop_size=50, variant="DE/rand/1/bin", F=(0.0, 1.0), CR=0.7)
 nsga2 = NSGA2(pop_size=30)
 
-res = minimize(
+res_dge3 = minimize(
     ProblemF2(),
     gde3,
     termination_multi,
     seed=12,
     save_history=True,
-    verbose=True)
+    verbose=False)
 
-print("============== BEST ============== ")
-print(res.X)
+print("============== GDE3 ============== ")
+print(res_dge3.X)
+
+res_nsde = minimize(
+    ProblemF2(),
+    nsde,
+    termination_multi,
+    seed=12,
+    save_history=True,
+    verbose=False)
+
+print("============== NSDE ============== ")
+print(res_nsde.X)
+
+
+res_nsga2 = minimize(
+    ProblemF2(),
+    nsga2,
+    termination_multi,
+    seed=12,
+    save_history=True,
+    verbose=False)
+
+print("============== NSDE ============== ")
+print(res_nsga2.X)
+
+
+objs_p2 = np.row_stack([res_dge3.F, res_nsde.F, res_nsga2.F])
+nadir_p2 = objs_p2.max(axis=0)
+reference_p2 = nadir_p2 + 1e-6
+ideal_p2 =  objs_p2.min(axis=0)
+hv_p2 = get_performance_indicator("hv", ref_point=reference_p2, zero_to_one=True,
+                                  nadir=nadir_p2, ideal=ideal_p2)
+
+print("============== PERFORMANCE ==============")
+print("hv GDE3", hv_p2.do(res_dge3.F))
+print("hv NSDE", hv_p2.do(res_nsde.F))
+print("hv NSGA-II", hv_p2.do(res_nsga2.F))
