@@ -74,7 +74,7 @@ class WaterFlowProblem(Problem):
         xl = np.full(9, 0)
         xu = np.full(9, 20)
         super().__init__(
-            n_var=9, n_obj=1, n_constr=2,  xl=xl, xu=xu)
+            n_var=9, n_obj=1, n_constr=3,  xl=xl, xu=xu)
         
     def _evaluate(self, x, out, *args, **kwargs):
         out["F"] = x[:, 0] * 50 + x[:, 1] * 85 + x[:, 2] * 120 + x[:, 3] * 40 + x[:, 4] * 60 + x[:, 5] * 65 + \
