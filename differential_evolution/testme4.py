@@ -103,3 +103,24 @@ res = minimize(
 
 print("BEST: ", res.X)
 print("VAL: ", res.F)
+
+'''
+Conclusion
+==========
+
+InPipe#A: 3
+InPipe#B: 0
+InPipe#C: 13
+
+Hub#A: 0
+Hub#B: 1
+Hub#C: 4
+
+OutPipe#A: 0
+OutPipe#B: 2
+OutPipe#C: 15
+
+Total Inflow: 500
+Total Outflow: 500
+Total Cost: 3525
+'''
