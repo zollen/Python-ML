@@ -9,6 +9,7 @@ import sys
 import numpy as np
 from pymoo.core.problem import Problem
 from pymoode.gde3 import GDE3
+from pymoode.survivors import RankSurvival
 from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.optimize import minimize
 from pymoo.factory import get_reference_directions
@@ -57,7 +58,8 @@ class DTLZXProblem(Problem):
         
         
 
-gde3 = GDE3(pop_size=500, variant="DE/rand/1/bin", F=(0.0, 1.0), CR=0.7)
+gde3 = GDE3(pop_size=500, variant="DE/rand/1/bin", F=(0.0, 1.0), CR=0.5, 
+            survival=RankSurvival(crowding_func="cd"))
 
 ref_dirs = get_reference_directions("das-dennis", 2, n_partitions=15)
 popsize = ref_dirs.shape[0] + ref_dirs.shape[0] % 4
