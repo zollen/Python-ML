@@ -29,9 +29,9 @@ def objective1(x):
 
 def objective2(x):
     if x.ndim > 1:
-        return (x[:, 0] + 1.5) ** 2 + 0.8 * (x[:, 0] * x[:, 1]) + 1.3 * (x[:, 1] - 1.7) ** 2 + 0.5 * (x[:, 0] * x[:, 2])
+        return 1/3 * (x[:, 0] * x[:, 1]) + 1/3 * (x[:, 0] * x[:, 2]) + 1/3 * (x[:, 1] * x[:, 2])
     else:
-        return (x[0] + 1.5) ** 2 + 0.8 * (x[0] * x[1]) + 1.3 * (x[1] - 1.7) ** 2 + 0.5 * (x[0] * x[2])
+        return 1/3 * (x[0] * x[1]) + 1/3 * (x[0] * x[2]) + 1/3 * (x[1] * x[2])
 
 def constaint1(x):
     return x[:, 0] ** 2 + (x[:, 1] - 1) ** 2 + x[:, 2] ** 2 - 5
@@ -41,8 +41,8 @@ def constaint2(x):
      
 class DTLZXProblem(Problem):
     def __init__(self):
-        xl = np.full(3, 0.01)
-        xu = np.full(3, 5)
+        xl = np.full(3, -5.0)
+        xu = np.full(3, 5.0)
         super().__init__(
             n_var=3, n_obj=2, n_constr=2,  xl=xl, xu=xu)
         
