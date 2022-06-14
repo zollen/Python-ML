@@ -19,7 +19,7 @@ np.set_printoptions(threshold=sys.maxsize)
 
 
 def printme(x):
-    print(x, " {0:.4f}, {0:.4f}".format(objective1(x), objective2(x)))
+    print(x, " {:.4f}, {:.4f}".format(objective1(x), objective2(x)))
 
 def objective1(x):
     if x.ndim > 1:
