@@ -61,7 +61,7 @@ class DTLZXProblem(Problem):
 gde3 = GDE3(pop_size=500, variant="DE/rand/1/bin", F=(0.0, 1.0), CR=0.5, 
             survival=RankSurvival(crowding_func="cd"))
 
-ref_dirs = get_reference_directions("das-dennis", 2, n_partitions=15)
+ref_dirs = get_reference_directions("das-dennis", 2, n_partitions=30)
 popsize = ref_dirs.shape[0] + ref_dirs.shape[0] % 4
 nsga3 = NSGA3(ref_dirs, pop_size=popsize)
 
