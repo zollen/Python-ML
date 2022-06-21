@@ -23,8 +23,7 @@ cat1 = pd.read_csv('cat1.csv.data')
 
 df = pd.DataFrame()
 df['ID'] = xgb1['ID']
-df['item_cnt_month'] = (xgb1['item_cnt_month'] + xgb2['item_cnt_month'] + 
-                        xgb3['item_cnt_month'] + lgbm1['item_cnt_month']) / 4
+df['item_cnt_month'] = 0.4 * xgb1['item_cnt_month'] + 0.2 * xgb2['item_cnt_month'] + 0.1 * xgb3['item_cnt_month'] + 0.3 * lgbm1['item_cnt_month']
 
 
 
