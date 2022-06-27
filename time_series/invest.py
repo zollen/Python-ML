@@ -154,6 +154,8 @@ series_tickers = [
         ["XEQT.TO", "iShares All-Equity ETF Portfolio"],
         ["XDIV.TO", "iShares Core MSCI Canadian Quality Dividend Index ETF"],
         
+        ["CHPS.TO", "Horizons Global Semiconductor Index ETF"],
+        
         ["VCN.TO", "FTSE Canada All Cap Index ETF"],
         ["VCE.TO", "FTSE Canada Index ETF"],
         ["VRE.TO", "FTSE Canadian Capped REIT Index ETF"],
