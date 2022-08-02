@@ -16,8 +16,9 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-pd.set_option('max_columns', None)
-pd.set_option('max_rows', None)
+pd.options.display.max_rows = 100
+pd.options.display.max_columns = 100
+
 pd.set_option('display.width', 1000)
 
 np.random.seed(0)
@@ -444,6 +445,27 @@ trainingY = matrix.loc[matrix['date_block_num'] < 34, label]
 
 testingX = matrix[matrix['date_block_num'] == 34]
 testingX.drop(columns=[label], inplace=True)
+
+'''
+https://towardsdatascience.com/three-approaches-to-feature-engineering-for-time-series-2123069567be
+using sin and cos to encode the cyclic nature of months or days to preserve the cyclic property
+'''
+from sklearn.preprocessing import FunctionTransformer
+def sin_transformer(period):
+    return FunctionTransformer(lambda x: np.sin(x / period * 2 * np.pi))
+
+def cos_transformer(period):
+    return FunctionTransformer(lambda x: np.cos(x / period * 2 * np.pi))
+
+trainingX["month_sin"] = sin_transformer(12).fit_transform(trainingX)["month"]
+trainingX["month_cos"] = cos_transformer(12).fit_transform(trainingX)["month"]
+testingX["month_sin"] = sin_transformer(12).fit_transform(testingX)["month"]
+testingX["month_cos"] = cos_transformer(12).fit_transform(testingX)["month"]
+trainingX.drop(columns=['month'], inplace=True)
+testingX.drop(columns=['month'], inplace=True)
+
+
+    
 
 print(trainingX.head())
 print(testingX.head())
