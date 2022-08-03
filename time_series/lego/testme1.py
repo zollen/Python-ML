@@ -3,6 +3,7 @@ Created on Aug. 1, 2022
 
 @author: STEPHEN
 @url: https://towardsdatascience.com/three-approaches-to-feature-engineering-for-time-series-2123069567be
+@api: https://scikit-lego.netlify.app/api/preprocessing.html#sklego.preprocessing.RepeatingBasisFunction
 '''
 
 import numpy as np
