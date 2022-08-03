@@ -4,6 +4,25 @@ Created on Aug. 1, 2022
 @author: STEPHEN
 @url: https://towardsdatascience.com/three-approaches-to-feature-engineering-for-time-series-2123069567be
 @api: https://scikit-lego.netlify.app/api/preprocessing.html#sklego.preprocessing.RepeatingBasisFunction
+
+RepeatingBasisFunction
+Parameters:
+column (int or list, default=0) – Indexes the data on its second axis. Integers are interpreted as 
+    positional columns, while strings can reference DataFrame columns by name.
+
+remainder ({'drop', 'passthrough'}, default="drop") – By default, only the specified column is 
+    transformed, and the non-specified columns are dropped. (default of 'drop'). By specifying 
+    remainder='passthrough', all remaining columns will be automatically passed through. This 
+    subset of columns is concatenated with the output of the transformer.
+
+n_periods (int, default=12) – number of basis functions to create, i.e., the number of columns 
+    that will exit the transformer.
+
+input_range (tuple or None, default=None) – the values at which the data repeats itself. For 
+    example, for days of the week this is (1,7). If input_range=None it is inferred from the 
+    training data.
+
+width (float, default=1.) – determines the width of the radial basis functions.
 '''
 
 import numpy as np
