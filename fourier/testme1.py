@@ -27,7 +27,7 @@ f = np.linspace(0, (N-1) * fstep, N)  # frequency step
 
 y = 1 * np.sin(2 * np.pi * f0 * t)
 
-X = fft(y)
+X = fft.fft(y)
 print(X)
 X_mag = np.abs(X) / N
 print(X_mag)
