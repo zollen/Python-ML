@@ -18,8 +18,8 @@ class ACO_Optimization:
         self.pheromone_matrix = np.zeros(shape=cost_matrix.shape, dtype=float)
         self.pheromone_matrix[np.where(self.cost_matrix > 0)] = 1.0
         
-    def start(self, rounds = 5):
-        for _ in range(rounds):
+    def start(self, round = 5):
+        for _ in range(round):
             ants_matrix = self.generateAntsSolutions()  
             self.daemonActions(ants_matrix)          
             self.pheromoneUpdate(ants_matrix)   
