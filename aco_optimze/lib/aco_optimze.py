@@ -7,7 +7,7 @@ import numpy as np
 
 class ACO_Optimization:
     
-    def __init__(self, cost_matrix, start_locs, end_locs, numOfAnts, evaporation = 0.5, alpha_value = 1, beta_value = 1):
+    def __init__(self, cost_matrix, start_locs, end_locs, numOfAnts, evaporation = 0.5, alpha_value = 1, beta_value = 0.1):
         self.cost_matrix = cost_matrix
         self.start_locs = start_locs
         self.end_locs = end_locs
