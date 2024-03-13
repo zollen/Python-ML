@@ -47,7 +47,7 @@ class ACO_Optimization:
                 try:
                     j = np.random.choice(index, 1, p=probabilities_matrix[i])[0]
                 except:
-                    j = np.random.choice(index)
+                    j = np.random.choice(np.nonzero(self.cost_matrix[i]))
                 ant[i, j] = self.cost_matrix[i, j]
                 i = j
             l = 1 / np.sum(ant)
