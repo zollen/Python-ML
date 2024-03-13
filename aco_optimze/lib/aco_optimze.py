@@ -44,7 +44,10 @@ class ACO_Optimization:
             i = np.random.choice(self.start_locs)
             j = -1
             while j not in self.end_locs:
-                j = np.random.choice(index, 1, p=probabilities_matrix[i])[0]
+                try:
+                    j = np.random.choice(index, 1, p=probabilities_matrix[i])[0]
+                except:
+                    j = np.random.choice(index)
                 ant[i, j] = self.cost_matrix[i, j]
                 i = j
             l = 1 / np.sum(ant)
