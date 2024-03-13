@@ -30,8 +30,7 @@ class ACO_Optimization:
     
     def generate_probabilities(self):
         neta = np.divide(1, self.cost_matrix, where=self.cost_matrix!=0)
-        if np.any(np.isnan(neta)):
-            np.nan_to_num(neta, copy=False)
+        np.nan_to_num(neta, copy=False)
         nominator = np.multiply(np.power(self.pheromone_matrix, self.alpha_value), 
                                 np.power(neta, self.beta_value))
         denominator = np.sum(nominator, axis=1, keepdims=True)
