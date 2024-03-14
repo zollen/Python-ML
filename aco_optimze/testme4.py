@@ -51,4 +51,4 @@ print(worker.pheromone_matrix)
 print(worker.print_best_path(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 
                               'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
                               'S', 'T', 'Z']))
-print("Total Score: ", worker.print_best_scores())
+print("Total Score: ", worker.best_scores())

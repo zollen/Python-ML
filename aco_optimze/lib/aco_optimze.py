@@ -81,7 +81,7 @@ class ACO_Optimization:
                 
         return shortest
     
-    def print_best_scores(self):
+    def best_scores(self):
         i = self.start_locs[0]
         j = -1
         total = 0
