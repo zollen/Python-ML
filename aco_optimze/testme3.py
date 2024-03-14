@@ -31,3 +31,4 @@ worker.start(40)
 
 np.set_printoptions(precision=4)
 print(worker.pheromone_matrix)
+print(worker.print_best_path())

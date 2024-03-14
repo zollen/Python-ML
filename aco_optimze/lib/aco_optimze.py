@@ -7,7 +7,7 @@ import numpy as np
 
 class ACO_Optimization:
     
-    def __init__(self, cost_matrix, start_locs, end_locs, numOfAnts, evaporation = 0.2, alpha_value = 1, beta_value = 0.1):
+    def __init__(self, cost_matrix, start_locs, end_locs, numOfAnts, evaporation = 0.3, alpha_value = 1, beta_value = 0.1):
         self.cost_matrix = cost_matrix
         self.start_locs = start_locs
         self.end_locs = end_locs
@@ -69,7 +69,17 @@ class ACO_Optimization:
     
     def update_pheromone(self, delta_pheromone_matrix):
         self.pheromone_matrix = (1 - self.evaporation) * self.pheromone_matrix + delta_pheromone_matrix
-
+        
+    def print_best_path(self):
+        i = self.start_locs[0]
+        j = -1
+        shortest = "[" + str(i) + "]"
+        while j not in self.end_locs:
+            j = np.argmax(self.pheromone_matrix[i])
+            shortest += " => [" + str(j) + "]"
+            i = j
+            
+        print(shortest)
 
     
 
