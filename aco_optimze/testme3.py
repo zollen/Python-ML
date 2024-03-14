@@ -27,7 +27,7 @@ cost_matrix = np.array([[0, 1, 4, 0, 0, 0, 0],  #A
 A=0
 G=6
 worker = ACO_Optimization(cost_matrix, [A], [G], 1000)
-worker.start(30)
+worker.start(40)
 
 np.set_printoptions(precision=4)
 print(worker.pheromone_matrix)
