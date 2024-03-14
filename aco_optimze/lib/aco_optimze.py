@@ -76,10 +76,22 @@ class ACO_Optimization:
         shortest = "[" + labels[i] + "]"
         while j not in self.end_locs:
             j = np.argmax(self.pheromone_matrix[i])
-            shortest += " => [" + labels[j] + "]"
+            shortest += " = " + str(self.cost_matrix[i, j]) + " => [" + labels[j] + "]"
             i = j
-            
+                
         return shortest
+    
+    def print_best_scores(self):
+        i = self.start_locs[0]
+        j = -1
+        total = 0
+        while j not in self.end_locs:
+            j = np.argmax(self.pheromone_matrix[i])
+            total += self.cost_matrix[i, j]
+            i = j
+                
+        return total
+        
 
     
 
