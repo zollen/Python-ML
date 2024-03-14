@@ -44,8 +44,10 @@ cost_matrix = np.array([[0, 2, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 A=0
 Z=20
 worker = ACO_Optimization(cost_matrix, [A], [Z], 1000)
-worker.start(20)
+worker.start(30)
 
 np.set_printoptions(precision=4)
 print(worker.pheromone_matrix)
-print(worker.print_best_path())
+print(worker.print_best_path(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 
+                              'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                              'S', 'T', 'Z']))
