@@ -44,9 +44,11 @@ class ACO_Optimization:
             i = np.random.choice(self.start_locs)
             j = -1
             while j not in self.end_locs: 
+                deadend = False
                 if not np.any(probabilities_matrix[i]):
                     if not np.any(self.cost_matrix[i]):
                         j = self.end_locs[0]
+                        deadend = True
                     else:
                         j = np.random.choice(np.nonzero(self.cost_matrix[i])[0])
                 else:
@@ -56,7 +58,7 @@ class ACO_Optimization:
                 i = j
                 
             total = np.sum(ant)
-            if total == 0:
+            if total == 0 or deadend == True:
                 total = 999999999
             l = 1 / total
             ant[np.where(ant != 0)] = l
