@@ -79,9 +79,16 @@ class ACO_Optimization:
     
     def update_pheromone(self, delta_pheromone_matrix):
         self.pheromone_matrix = (1 - self.evaporation) * self.pheromone_matrix + delta_pheromone_matrix
-        
+    
+    def best_start(self):
+        cloned = np.array(self.pheromone_matrix)
+        ind = np.array(range(self.pheromone_matrix.shape[0]))
+        ind = np.delete(ind, self.start_locs)
+        cloned[ind] = 0
+        return int(np.argmax(cloned) / cloned.shape[1])
+            
     def best_path(self, labels):    
-        i = self.start_locs[0]
+        i = self.best_start()
         j = -1
         shortest = "[" + labels[i] + "]"
         while j not in self.end_locs:
