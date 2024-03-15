@@ -15,6 +15,9 @@ A -> C -> F -> I -> M -> P -> S -> Z
 
   1    5    2    2    2    2    2      = 16
 A -> D -> F -> I -> M -> P -> S -> Z
+
+  2    1    3     1   3    2    2    2
+A -> B -> E -> H -> L -> M -> P -> S -> Z = 16
 '''
  
 #                        A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  Z           
@@ -44,7 +47,7 @@ cost_matrix = np.array([[0, 2, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 A=0
 Z=20
 worker = ACO_Optimization(cost_matrix, [A], [Z], 1000)
-worker.start(30)
+worker.start(40)
 
 np.set_printoptions(precision=4)
 print(worker.pheromone_matrix)
