@@ -21,5 +21,5 @@ worker.start()
 
 np.set_printoptions(precision=8)
 print(worker.pheromone_matrix)
-print(worker.print_best_path(['0', '1', '2', '3']))
+print(worker.best_path(['0', '1', '2', '3']))
 print("Total Score: ", worker.best_scores())

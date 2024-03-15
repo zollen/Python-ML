@@ -70,7 +70,7 @@ class ACO_Optimization:
     def update_pheromone(self, delta_pheromone_matrix):
         self.pheromone_matrix = (1 - self.evaporation) * self.pheromone_matrix + delta_pheromone_matrix
         
-    def print_best_path(self, labels):    
+    def best_path(self, labels):    
         i = self.start_locs[0]
         j = -1
         shortest = "[" + labels[i] + "]"
