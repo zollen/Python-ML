@@ -148,7 +148,7 @@ class ACO_Optimization:
         return np.nan_to_num(np.divide(nominator, denominator, out=np.zeros_like(nominator), where=denominator!=0, dtype=float), copy=False)
     
     def generate_next_moves(self, probabilities_matrix):
-        possible_moves = np.zeros((self.cost_matrix[0].size, self.numOfAnts))
+        possible_moves = np.zeros((self.cost_matrix[0].size, self.numOfAnts), dtype='int64')
         states = np.arange(self.cost_matrix[0].size)
             
         for i in range(self.cost_matrix[0].size):
@@ -160,10 +160,9 @@ class ACO_Optimization:
             else:
                 possible_moves[i] = np.random.choice(states, self.numOfAnts, p=probabilities_matrix[i])
                         
-        return possible_moves.astype(int)
+        return possible_moves
         
     def generate_ants_solution(self, probabilities_matrix):
-         
         ants_matrix = np.zeros(tuple(np.insert(list(self.cost_matrix.shape), 0, self.numOfAnts, axis=0)))
         possible_moves = self.generate_next_moves(probabilities_matrix)
         current_moves = np.random.choice(self.start_locs, self.numOfAnts)

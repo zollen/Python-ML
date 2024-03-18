@@ -8,7 +8,7 @@ Created on Mar 12, 2024
 '''
 
 import numpy as np
-from aco_optimze.lib.aco_optimze import ACO_Optimization
+from aco_optimze.lib.aco_optimze_fast import ACO_Optimization
  
  
 cost_matrix = np.array([[0, 3, 1, 0],
@@ -16,8 +16,8 @@ cost_matrix = np.array([[0, 3, 1, 0],
                         [0, 0, 0, 1],
                         [0, 0, 0, 0]], dtype=float)
 
-worker = ACO_Optimization(cost_matrix, [0], [3], 3)
-worker.start(1)
+worker = ACO_Optimization(cost_matrix, [0], [3], 10)
+worker.start(4)
 
 np.set_printoptions(precision=8)
 print(worker.pheromone_matrix)
