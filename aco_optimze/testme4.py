@@ -7,7 +7,7 @@ Created on Mar 12, 2024
 '''
 
 import numpy as np
-from aco_optimze.lib.aco_optimze import ACO_Optimization
+from aco_optimze.lib.aco_optimze_fast import ACO_Optimization
 ''' 
 Shortest path
   4    2    2    2    2    2    2      = 16

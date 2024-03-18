@@ -115,7 +115,6 @@ DaemonActions
         pheromone_matrix = (1 - p) * pheromone_matrix + delta_pheromone_matrix
  '''
 import numpy as np
-import threading
 
 class ACO_Optimization:
     
@@ -148,43 +147,43 @@ class ACO_Optimization:
         denominator = np.sum(nominator, axis=1, keepdims=True)
         return np.nan_to_num(np.divide(nominator, denominator, out=np.zeros_like(nominator), where=denominator!=0, dtype=float), copy=False)
     
-    def generate_ants_solution(self, probabilities_matrix):
-        
-        ants_matrix = np.zeros(tuple(np.insert(list(self.cost_matrix.shape), 0, self.numOfAnts, axis=0)))
-        index = range(len(probabilities_matrix[0]))
-        threads = []
-        
-        def thread_handler(k):
-            t = threading.Thread(target=generate_ant_solution, args=(k,))
-            threads.append(t)
-            t.start()
-        
-        def generate_ant_solution(k):
-            i = np.random.choice(self.start_locs)
-            j = -1
-            while j not in self.end_locs: 
-                deadend = False
-                if not np.any(probabilities_matrix[i]):
-                    if not np.any(self.cost_matrix[i]):
-                        j = self.end_locs[0]
-                        deadend = True
-                    else:
-                        j = np.random.choice(np.nonzero(self.cost_matrix[i])[0])
+    def generate_next_moves(self, probabilities_matrix):
+        possible_moves = np.zeros((self.cost_matrix[0].size, self.numOfAnts))
+        states = np.arange(self.cost_matrix[0].size)
+            
+        for i in range(self.cost_matrix[0].size):
+            if not np.any(probabilities_matrix[i]):
+                if not np.any(self.cost_matrix[i]):
+                    possible_moves[i] = np.full((self.numOfAnts), -1)
                 else:
-                    j = np.random.choice(index, 1, p=probabilities_matrix[i])[0]
-               
-                ants_matrix[k][i, j] = self.cost_matrix[i, j]
-                i = j
-                
-            total = np.sum(ants_matrix[k])
-            if total == 0 or deadend == True:
-                total = 999999999
-            l = 1 / total
-            ants_matrix[k][np.where(ants_matrix[k] != 0)] = l
-    
-        [ thread_handler(k) for k in index ]
-        [ t.join() for t in threads ]
+                    possible_moves[i] = np.random.choice(np.nonzero(self.cost_matrix[i])[0], self.numOfAnts)
+            else:
+                possible_moves[i] = np.random.choice(states, self.numOfAnts, p=probabilities_matrix[i])
+                        
+        return possible_moves.astype(int)
         
+    def generate_ants_solution(self, probabilities_matrix):
+         
+        ants_matrix = np.zeros(tuple(np.insert(list(self.cost_matrix.shape), 0, self.numOfAnts, axis=0)))
+        possible_moves = self.generate_next_moves(probabilities_matrix)
+        current_moves = np.random.choice(self.start_locs, self.numOfAnts)
+        next_moves = np.zeros((self.numOfAnts), dtype='int64')
+        k = np.array(range(self.numOfAnts))
+        current = 0
+      
+        while k.size > 0 and current < self.cost_matrix[0].size:
+            
+            next_moves[k] = possible_moves[current_moves[k], k]
+            next_moves[next_moves == -1] = current_moves[next_moves == -1]
+            ants_matrix[k, current_moves[k], next_moves[k]] = self.cost_matrix[current_moves[k], next_moves[k]]  
+            current_moves[k] = next_moves[k]
+            k = np.delete(k, np.in1d(next_moves[k], self.end_locs))
+            current += 1
+        
+        ants_matrix[k, self.start_locs[0], 0] = 999999999
+        L = 1 / np.sum(ants_matrix[:,np.delete(np.array(range(self.cost_matrix[0].size)), self.end_locs)], axis=(1,2))
+        ants_matrix[np.where(ants_matrix != 0)] = L[np.where(ants_matrix != 0)[0]]
+                
         return ants_matrix
       
     def daemonActions(self, ants_matrix):
