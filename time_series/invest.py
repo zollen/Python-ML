@@ -5,6 +5,7 @@ Created on May 10, 2021
 '''
 
 import pandas_datareader.data as web
+import yfinance as yfin
 from pandas_datareader.nasdaq_trader import get_nasdaq_symbols
 from pandas_datareader._utils import RemoteDataError
 from datetime import datetime, timedelta
@@ -18,10 +19,12 @@ warnings.filterwarnings('ignore')
 
 sb.set_style('whitegrid')
 
+yfin.pdr_override()
+
 def plot_stock_trend_and_returns(ticker, titles, start_date, end_date, all_returns):
     
     #get the data for this ticker
-    prices = web.DataReader(ticker, 'yahoo', start=start_date, end=end_date).Close
+    prices = web.get_data_yahoo(ticker, start=start_date, end=end_date).Close
     prices.index = [d.date() for d in prices.index]
     
     plt.figure(figsize=(10,6))
@@ -58,7 +61,7 @@ def perform_analysis_for_stock(ticker, start_date, end_date, return_period_weeks
     
     #get the data for this ticker
     try:
-        prices = web.DataReader(ticker, 'yahoo', start=start_date, end=end_date).Close
+        prices = web.get_data_yahoo(ticker, start=start_date, end=end_date).Close
     #could not find data on this ticker
     except (RemoteDataError, KeyError):
         #return default values
