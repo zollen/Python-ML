@@ -26,6 +26,7 @@ The fluctuation of A is also decreased by a. In other word A is a random value i
 C < 1 deemphasize the attack
 C > 1 emphasize the attack
 
+a = 2 - t (2 / Max_t)     % a decrease linearly from 2 to 0,  t <- round
 A = 2 * a * r1 - a
 C = 2 * r2
 
@@ -66,3 +67,7 @@ while t < max_number_of_iteration do
 return X_alpha
 
 '''
+
+for i in range(10):
+    print(2 - i * 2 / 10)
+
