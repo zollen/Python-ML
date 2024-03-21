@@ -1,0 +1,64 @@
+'''
+Created on Mar 21, 2024
+
+@author: STEPHEN
+@url: https://www.baeldung.com/cs/grey-wolf-optimization
+@description:
+
+t = current iteration
+X_prey = presumed prey position
+X = position of a wolf 
+r1 and r2 are random vectors with values between [0,1]
+A vector controls the trade off between exploration and exploitation. For divergence, set A with random 
+values > 1 or < -1 to oblige the search agent to diverge from the prey.
+C vector always add some degree of randomness between [0, 2] because our agents can get stuck at a 
+local optima (Exploration)
+C is *not* linearly decreased in contrast to A. C must be random values at all time in order to 
+emphasize exploration.
+
+D = | C * X_prey(t) - X(t) |
+X(t+1) = X_prey(t) - A * D
+
+The fluctuation of A is also decreased by a. In other word A is a random value in the interval between 
+[-2a, 2a] where a is linearly decreased from 2 to 0 over the course of the iterations.
+
+A = 2 * a * r1 - a
+C = 2 * r2
+
+
+We don't know the real position of the prey, so we use the best 3 solutions for updating each agent(wolf)
+X is the current position of an agent
+
+D_alpha = | C1 * X_alpha - X |
+D_beta =  | C2 * X_beta - X |
+D_gamma = | C3 * X_gamma - X |
+X1 = X_alpha - A1 * D_alpha
+X2 = X_beta - A2 * D_beta
+X3 = X_gamma - A3 * D_gamma
+
+X_prey(t+1) = (X1 + X2 + X3) / 3
+
+ 
+
+
+
+=================================================================
+Initialize the grey wolf population X(i), i = 1...n
+Initialize a, A and C
+Calculate the fitness of each search agent
+X_alpha = the best search agent
+X_beta = the second best search agent
+X_gamma = the third best search agent
+
+while t < max_number_of_iteration do
+    for each search agent do
+        Randomly initialize r1 and r2
+        Update the position of the current search agent by the equation above.
+    Update a, A and C
+    Calculate the fitness of all search agents
+    Update X_alpha, X_beta and X_gamma
+    t = t + 1
+    
+return X_alpha
+
+'''
