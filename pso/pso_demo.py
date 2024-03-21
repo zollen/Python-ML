@@ -3,6 +3,7 @@ Created on Mar 21, 2024
 
 @author: STEPHEN
 @url: https://machinelearningmastery.com/a-gentle-introduction-to-particle-swarm-optimization/
+PSO is best used to find the maximum or minimum of a function defined on a multidimensional vector space.
 '''
 
 import numpy as np
