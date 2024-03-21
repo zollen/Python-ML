@@ -9,14 +9,23 @@ Created on Sep. 14, 2020
 Initalize the hyper params (N, c1, c2, Wmin, Wmax, Vmax, and MaxIter)
 
 Initialize the population of N particles
-initial values of position and velocity of each particle is randomized with (r1, r2_
+initial values of position and velocity of each particle is randomized with (r1, r2)
 
 PBest - personal best
 GBest - Team best
 
 r1, r2 are randomizer arrays between 0 and 1, i.e. each particle has a different random value 
+Constants w, c1, c2 are parameters to the PSO algorithm. 
+w is the inertia weight constant It is between 0 and 1
+V{d} is the original velocity
+c1 and c2 are called the cognitive (personal) and the social (team) coefficients. They control how much 
+weight should be given between refining the search result of the particle itself and recognizing the 
+search result of the swarm.
+
 X{d+1} = X{d} + V{d+1}
-V{d+1} = w * V{d} + c1 * r1 (PBest{d} - X{d}) + c2 * r2 (GBest{d} - X{d})
+
+          Interia       Cognitive component              Social component 
+V{d+1} = w * V{d} +   c1 * r1 (PBest{d} - X{d})   +   c2 * r2 (GBest{d} - X{d})
 
 do
     for each particle
