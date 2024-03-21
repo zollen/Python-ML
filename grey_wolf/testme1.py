@@ -21,6 +21,10 @@ X(t+1) = X_prey(t) - A * D
 
 The fluctuation of A is also decreased by a. In other word A is a random value in the interval between 
 [-2a, 2a] where a is linearly decreased from 2 to 0 over the course of the iterations.
+|A| < 1 force the wolves to attack the prey (exploitation)
+|A| > 1 force the wolves to diverge from the prey in the hope of finding a better prey
+C < 1 deemphasize the attack
+C > 1 emphasize the attack
 
 A = 2 * a * r1 - a
 C = 2 * r2
