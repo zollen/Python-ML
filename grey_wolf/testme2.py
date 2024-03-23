@@ -24,9 +24,9 @@ def fitness(X):
     score = result - sc1 - sc2
     
     ialpha = np.argmax(score)
-    score[ialpha] = sys.maxsize
+    score[ialpha] = sys.maxsize * -1
     ibeta = np.argmax(score)
-    score[ibeta] = sys.maxsize
+    score[ibeta] = sys.maxsize * -1
     igamma = np.argmax(score)
  
     return X[ialpha], X[ibeta], X[igamma]
@@ -35,8 +35,8 @@ def data(n):
     return np.random.rand(n, 3)
     
     
-pack = WolfPack(fitness, data, 10000)    
-alpha, beta, gamma = pack.hunt(1000)
+pack = WolfPack(fitness, data, 1000)    
+alpha, beta, gamma = pack.hunt(100)
 print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
 
 '''
