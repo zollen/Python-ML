@@ -67,34 +67,46 @@ return X_alpha
 
 '''
 import numpy as np
-import sys
-from grey_wolf.lib.grey_wolf import WolfPack
-
-def myequation(X):
-    "Objective function"
-    return (X[:,0]-3.14)**2 + (X[:,1]-2.72)**2 + np.sin(3*X[:,0]+1.41) + np.sin(4*X[:,1]-1.73)
-
-def fitness(X):
-    DD = myequation(X)
-    ialpha = np.argmin(DD)
-    DD[ialpha] = sys.maxsize
-    ibeta = np.argmin(DD)
-    DD[ibeta] = sys.maxsize
-    igamma = np.argmin(DD)
     
-    return X[ialpha], X[ibeta], X[igamma]
-
-def data(n):
-    return np.random.rand(n, 2) * 5
+class WolfPack:
     
+    def __init__(self, fitness, data_func, numOfWolves):
+        self.numOfWolves = numOfWolves 
+        self.fitness = fitness
+        self.data_func = data_func
+        self.X = self.data_func(self.numOfWolves)
+        self.debug = None
+         
+    def cofficients(self, a, n):
+        r1 = np.random.rand(n, self.X[0].size)
+        r2 = np.random.rand(1)
+        A = 2 * a * r1 - a
+        C = 2 * r2
+        return A, C
     
-pack = WolfPack(fitness, data, 100)    
-alpha, beta, gamma = pack.hunt(50)
-print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
-
-'''
-PSO Global optimal at f([3.1818181818181817, 3.131313131313131])=-1.8082706615747688
-
-'''
-
+    def best(self):
+        return self.fitness(self.X)
+        
+    def chase(self, a, alpha, beta, gamma):
+        A1, C1 = self.cofficients(a, self.numOfWolves)
+        A2, C2 = self.cofficients(a, self.numOfWolves)
+        A3, C3 = self.cofficients(a, self.numOfWolves)
+        
+        D1 = np.abs( C1 * alpha - self.X )
+        X1 = alpha - A1 * D1
+        D2 = np.abs( C2 * beta - self.X )
+        X2 = beta - A2 * D2
+        D3 = np.abs( C3 * gamma - self.X )
+        X3 = gamma - A3 * D3
+        return (X1 + X2 + X3) / 3
+   
+    def hunt(self, rounds = 30):
+        a = np.linspace(2, 0, rounds)
+      
+        for rnd in range(rounds):
+            alpha, beta, gamma = self.best()
+            self.X = self.chase(a[rnd], alpha, beta, gamma) 
+            
+        return alpha, beta, gamma
+           
 
