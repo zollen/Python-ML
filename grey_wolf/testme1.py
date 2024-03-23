@@ -97,7 +97,7 @@ class WolfPack:
         self.X = self.data_func(self.numOfWolves)
          
     def cofficients(self, a, n):
-        r1 = np.random.rand(n, 2)
+        r1 = np.random.rand(n, self.X[0].size)
         r2 = np.random.rand(1)
         A = 2 * a * r1 - a
         C = 2 * r2
