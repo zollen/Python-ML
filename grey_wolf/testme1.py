@@ -67,7 +67,7 @@ return X_alpha
 
 '''
 import numpy as np
-
+import sys
 
 def myequation(X):
     "Objective function"
@@ -76,9 +76,9 @@ def myequation(X):
 def fitness(X):
     DD = myequation(X)
     ialpha = np.argmin(DD)
-    DD[ialpha] = 99999999
+    DD[ialpha] = sys.maxsize
     ibeta = np.argmin(DD)
-    DD[ibeta] = 99999999
+    DD[ibeta] = sys.maxsize
     igamma = np.argmin(DD)
     
     return X[ialpha], X[ibeta], X[igamma]
