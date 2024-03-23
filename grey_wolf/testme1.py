@@ -34,14 +34,14 @@ C = 2 * r2
 We don't know the real position of the prey, so we use the best 3 solutions for updating each agent(wolf)
 X is the current position of an agent
 
-D_alpha = | C1 * X_alpha - X |
-D_beta =  | C2 * X_beta - X |
-D_gamma = | C3 * X_gamma - X |
-X1 = X_alpha - A1 * D_alpha
-X2 = X_beta - A2 * D_beta
-X3 = X_gamma - A3 * D_gamma
+D_alpha = | C1 * X_alpha - X(t) |  # distance between all wolves and alpha
+D_beta =  | C2 * X_beta - X(t)  |  # distance between all wolves and beta
+D_gamma = | C3 * X_gamma - X(t) |  # distance between all wolves and gamma
+X1 = X_alpha - A1 * D_alpha        # all wolves following the alpha
+X2 = X_beta - A2 * D_beta          # all wolves following the beta
+X3 = X_gamma - A3 * D_gamma        # all wolves following the gamma
 
-X_prey(t+1) = (X1 + X2 + X3) / 3
+X(t+1) = (X1 + X2 + X3) / 3        # average out
 
  
 
@@ -57,7 +57,6 @@ X_gamma = the third best search agent
 
 while t < max_number_of_iteration do
     for each search agent do
-        Randomly initialize r1 and r2
         Update the position of the current search agent by the equation above.
     Update a, A and C
     Calculate the fitness of all search agents
@@ -67,7 +66,80 @@ while t < max_number_of_iteration do
 return X_alpha
 
 '''
+import numpy as np
 
-for i in range(10):
-    print(2 - i * 2 / 10)
+
+def myequation(X):
+    "Objective function"
+    return (X[:,0]-3.14)**2 + (X[:,1]-2.72)**2 + np.sin(3*X[:,0]+1.41) + np.sin(4*X[:,1]-1.73)
+
+def fitness(X):
+    DD = myequation(X)
+    ialpha = np.argmin(DD)
+    DD[ialpha] = 99999999
+    ibeta = np.argmin(DD)
+    DD[ibeta] = 99999999
+    igamma = np.argmin(DD)
+    
+    return X[ialpha], X[ibeta], X[igamma]
+
+def data(n):
+    return np.random.rand(n, 2) * 5
+    
+    
+    
+class WolfPack:
+    
+    def __init__(self, fitness, data_func, numOfWolves):
+        self.numOfWolves = numOfWolves 
+        self.fitness = fitness
+        self.data_func = data_func
+        self.X = self.data_func(self.numOfWolves)
+         
+    def cofficients(self, a, n):
+        r1 = np.random.rand(n, 2)
+        r2 = np.random.rand(1)
+        A = 2 * a * r1 - a
+        C = 2 * r2
+        return A, C
+    
+    def best(self):
+        return self.fitness(self.X)
+        
+    def chase(self, a, alpha, beta, gamma):
+        A1, C1 = self.cofficients(a, self.numOfWolves)
+        A2, C2 = self.cofficients(a, self.numOfWolves)
+        A3, C3 = self.cofficients(a, self.numOfWolves)
+        
+        D1 = np.abs( C1 * alpha - self.X )
+        X1 = alpha - A1 * D1
+        D2 = np.abs( C2 * beta - self.X )
+        X2 = beta - A2 * D2
+        D3 = np.abs( C3 * gamma - self.X )
+        X3 = gamma - A3 * D3
+        return (X1 + X2 + X3) / 3
+   
+    def hunt(self, rounds = 30):
+        a = np.linspace(2, 0, rounds)
+      
+        for rnd in range(rounds):
+            alpha, beta, gamma = self.best()
+            self.X = self.chase(a[rnd], alpha, beta, gamma)
+            print("Round: {} at f({}) ==> {}".format(rnd + 1, 
+                                alpha, myequation(np.expand_dims(alpha, axis=0))))
+            
+        return alpha, beta, gamma
+           
+
+    
+pack = WolfPack(fitness, data, 100)    
+alpha, beta, gamma = pack.hunt(50)
+np.printoptions(precision=4)
+print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
+
+'''
+Global optimal at f([3.1818181818181817, 3.131313131313131])=-1.8082706615747688
+
+'''
+
 
