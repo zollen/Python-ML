@@ -113,7 +113,7 @@ class WolfPack:
 
 class ImprovedWolfPack(WolfPack):
     
-    def __init__(self, obj_func, fitness, data_func, numOfWolves, Fmax, Fmin = 0):
+    def __init__(self, obj_func, fitness, data_func, numOfWolves, Fmax = 0.05, Fmin = 0):
         self.Fmin = Fmin
         self.Fmax = Fmax
         self.obj_func = obj_func
@@ -124,14 +124,14 @@ class ImprovedWolfPack(WolfPack):
     
     def crossover(self, V):
         r1 = np.random.rand(self.numOfWolves, self.X[0].size)
-        return self.X + r1 * (self.X - V)
+        return V + r1 * (V - self.X)
     
     def selection(self, U):
         result1 = self.obj_func(self.X)
         result2 = self.obj_func(U)
         result3 = np.repeat(np.expand_dims(result1 > result2, axis=1), self.X[0].size, axis=1)
         result4 = 1 - result3
-        return self.X * result3 + U * result4
+        return self.X * result3 + U * result4     
 
     def hunt(self, rounds):
         a = np.linspace(2, 0, rounds)
