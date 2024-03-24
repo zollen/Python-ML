@@ -3,6 +3,7 @@ Created on Mar 21, 2024
 
 @author: STEPHEN
 @url: https://www.baeldung.com/cs/grey-wolf-optimization
+@url: https://www.nature.com/articles/s41598-019-43546-3   (improved grey wolf)
 @description:
 
 t = current iteration
@@ -107,6 +108,43 @@ class WolfPack:
             alpha, beta, gamma = self.best()
             self.X = self.chase(a[rnd], alpha, beta, gamma) 
             
-        return alpha, beta, gamma
+        return alpha
            
 
+class ImprovedWolfPack(WolfPack):
+    
+    def __init__(self, obj_func, fitness, data_func, numOfWolves, Fmax, Fmin = 0):
+        self.Fmin = Fmin
+        self.Fmax = Fmax
+        self.obj_func = obj_func
+        super().__init__(fitness, data_func, numOfWolves)
+    
+    def mutation(self, F, alpha, beta, gamma):
+        return alpha + F * (beta - gamma)
+    
+    def crossover(self, V):
+        r1 = np.random.rand(self.numOfWolves, self.X[0].size)
+        return self.X + r1 * (self.X - V)
+    
+    def selection(self, U):
+        result1 = self.obj_func(self.X)
+        result2 = self.obj_func(U)
+        result3 = np.repeat(np.expand_dims(result1 > result2, axis=1), self.X[0].size, axis=1)
+        result4 = 1 - result3
+        return self.X * result3 + U * result4
+
+    def hunt(self, rounds):
+        a = np.linspace(2, 0, rounds)
+        F = np.linspace(self.Fmin, self.Fmax, rounds)
+      
+        for rnd in range(rounds):
+            alpha, beta, gamma = self.best()
+            V = self.mutation(F[rnd], alpha, beta, gamma)
+            U = self.crossover(V)
+            self.X = self.selection(U)
+            self.X = self.chase(a[rnd], alpha, beta, gamma) 
+            
+        return alpha
+    
+    
+    

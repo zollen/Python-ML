@@ -7,7 +7,7 @@ Created on Mar 21, 2024
 '''
 import numpy as np
 import sys
-from grey_wolf.lib.grey_wolf import WolfPack
+from grey_wolf.lib.grey_wolf import WolfPack, ImprovedWolfPack
 
 # f(a, b, c) = 3 * cos(a)^4 + 4 * cos(b)^3 + 2 sin(c)^2 * cos(c)^2 + 5
 # constraint1: a + b + c = 1
@@ -36,12 +36,14 @@ def data(n):
     
     
 pack = WolfPack(fitness, data, 1000)    
-alpha, beta, gamma = pack.hunt(100)
+alpha = pack.hunt(100)
 print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
+
+pack = ImprovedWolfPack(myequation, fitness, data, 100, 0.08)
+alpha = pack.hunt(20)
+print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
+
 
 '''
 PSO Global optimal at f([a: 0.1003, b: 0.0997, c: 0.8000]) ==> score: 12.3804 
-
 '''
-
-
