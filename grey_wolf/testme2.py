@@ -39,8 +39,8 @@ pack = WolfPack(fitness, data, 1000)
 alpha = pack.hunt(100)
 print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
 
-pack = ImprovedWolfPack(myequation, fitness, data, 100)
-alpha = pack.hunt(20)
+pack = ImprovedWolfPack(myequation, fitness, data, 1000)
+alpha = pack.hunt(100)
 print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
 
 
