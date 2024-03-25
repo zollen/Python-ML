@@ -113,11 +113,12 @@ class WolfPack:
 
 class ImprovedWolfPack(WolfPack):
     
-    def __init__(self, obj_func, fitness, data_func, numOfWolves, Fmax = 0.05, Fmin = 0):
+    def __init__(self, obj_func, fitness, data_func, direction, numOfWolves, Fmax = 0.05, Fmin = 0):
         self.Fmin = Fmin
         self.Fmax = Fmax
         self.obj_func = obj_func
         super().__init__(fitness, data_func, numOfWolves)
+        self.direction = direction
     
     def mutation(self, F, alpha, beta, gamma):
         return alpha + F * (beta - gamma)
@@ -131,7 +132,10 @@ class ImprovedWolfPack(WolfPack):
         result2 = self.obj_func(U)
         result3 = np.repeat(np.expand_dims(result1 > result2, axis=1), self.X[0].size, axis=1)
         result4 = 1 - result3
-        return self.X * result3 + U * result4     
+        if self.direction == 'max':
+            return self.X * result3 + U * result4     
+        else:
+            return self.X * result4 + U * result3
 
     def hunt(self, rounds):
         a = np.linspace(2, 0, rounds)
