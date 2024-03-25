@@ -124,7 +124,7 @@ class ImprovedWolfPack(WolfPack):
         return alpha + F * (beta - gamma)
     
     def crossover(self, V):
-        r1 = np.random.rand(self.numOfWolves, self.X[0].size)
+        r1 = np.random.rand(self.numOfWolves, self.X[0].size) * 0.2
         return V + r1 * (V - self.X)
     
     def selection(self, U):
