@@ -139,7 +139,7 @@ class ImprovedWolfPack(WolfPack):
 
     def hunt(self, rounds):
         a = np.linspace(2, 0, rounds)
-        F = np.linspace(self.Fmin, self.Fmax, rounds)
+        F = np.linspace(self.Fmax, self.Fmin, rounds)
       
         for rnd in range(rounds):
             alpha, beta, gamma = self.best()
