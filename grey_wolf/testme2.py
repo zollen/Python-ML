@@ -35,23 +35,17 @@ def data(n):
     return np.random.rand(n, 3)
 
 
-res1 = []
-for _ in range(50):    
-    pack = WolfPack(fitness, data, 1000)    
-    alpha = pack.hunt(100)
-    print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
-    res1.append(myequation(np.expand_dims(alpha, axis=0)))
-    
-res2 = []
-for _ in range(50):       
-    pack = ImprovedWolfPack(myequation, fitness, data, 'max', 1000)
-    alpha = pack.hunt(100)
-    print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
-    res2.append(myequation(np.expand_dims(alpha, axis=0)))
-   
-print("Grey Wolf Avg: ", np.mean(res1))
-print("Improved Grey Wolf Avg: ", np.mean(res2))
+  
+pack = WolfPack(fitness, data, 1000)    
+alpha = pack.hunt(100)
+print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
 
+  
+pack = ImprovedWolfPack(myequation, fitness, data, 'max', 1000)
+alpha = pack.hunt(100)
+print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
+
+   
 
 '''
 PSO Global optimal at f([a: 0.1003, b: 0.0997, c: 0.8000]) ==> score: 12.3804 
