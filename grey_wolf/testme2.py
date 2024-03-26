@@ -18,8 +18,8 @@ def myequation(X):
 
 def fitness(X):
     result = myequation(X)
-    sc1 = np.abs(1 - (X[:,0] + X[:,1] + X[:,2])) * 10
-    sc2 = np.abs(X[:,2] - 0.8) * 10
+    sc1 = np.abs(1 - (X[:,0] + X[:,1] + X[:,2])) * 10 + 100
+    sc2 = np.abs(X[:,2] - 0.8) * 10 + 100
     
     score = result - sc1 - sc2
     
