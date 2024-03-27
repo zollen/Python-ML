@@ -13,20 +13,13 @@ def myequation(X):
     return (X[:,0]-3.14)**2 + (X[:,1]-2.72)**2 + np.sin(3*X[:,0]+1.41) + np.sin(4*X[:,1]-1.73)
 
 def fitness(X):
-    result = myequation(X)
-    ialpha = np.argmin(result)
-    result[ialpha] = sys.maxsize
-    ibeta = np.argmin(result)
-    result[ibeta] = sys.maxsize
-    igamma = np.argmin(result)
-    
-    return X[ialpha], X[ibeta], X[igamma]
+    return myequation(X)
 
 def data(n):
     return np.random.rand(n, 2) * 5
     
 
-pack = WolfPack(fitness, data, 100)    
+pack = WolfPack(fitness, data, 'min', 100)    
 alpha = pack.hunt(50)
 print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
 

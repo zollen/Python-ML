@@ -68,11 +68,14 @@ return X_alpha
 
 '''
 import numpy as np
+import sys
+
     
 class WolfPack:
     
-    def __init__(self, fitness, data_func, numOfWolves):
+    def __init__(self, fitness, data_func, direction, numOfWolves):
         self.numOfWolves = numOfWolves 
+        self.direction = direction
         self.fitness = fitness
         self.data_func = data_func
         self.X = self.data_func(self.numOfWolves)
@@ -86,7 +89,20 @@ class WolfPack:
         return A, C
     
     def best(self):
-        return self.fitness(self.X)
+        score = self.fitness(self.X)
+        if self.direction == 'max':
+            ialpha = np.argmax(score)
+            score[ialpha] = sys.maxsize * -1
+            ibeta = np.argmax(score)
+            score[ibeta] = sys.maxsize * -1
+            igamma = np.argmax(score)
+        else:
+            ialpha = np.argmin(score)
+            score[ialpha] = sys.maxsize
+            ibeta = np.argmin(score)
+            score[ibeta] = sys.maxsize
+            igamma = np.argmin(score)
+        return ialpha, ibeta, igamma
         
     def chase(self, a, alpha, beta, gamma):
         A1, C1 = self.cofficients(a, self.numOfWolves)
@@ -106,9 +122,8 @@ class WolfPack:
       
         for rnd in range(rounds):
             alpha, beta, gamma = self.best()
-            self.X = self.chase(a[rnd], alpha, beta, gamma) 
-            
-        return alpha
+            self.X = self.chase(a[rnd], self.X[alpha], self.X[beta], self.X[gamma])     
+        return self.X[alpha]
            
 
 class ImprovedWolfPack(WolfPack):
@@ -117,8 +132,7 @@ class ImprovedWolfPack(WolfPack):
         self.Fmin = Fmin
         self.Fmax = Fmax
         self.obj_func = obj_func
-        super().__init__(fitness, data_func, numOfWolves)
-        self.direction = direction
+        super().__init__(fitness, data_func, direction, numOfWolves)
     
     def mutation(self, F, alpha, beta, gamma):
         return alpha + F * (beta - gamma)
@@ -143,12 +157,61 @@ class ImprovedWolfPack(WolfPack):
       
         for rnd in range(rounds):
             alpha, beta, gamma = self.best()
-            V = self.mutation(F[rnd], alpha, beta, gamma)
+            V = self.mutation(F[rnd], self.X[alpha], self.X[beta], self.X[gamma])
             U = self.crossover(V)
             self.X = self.selection(U)
-            self.X = self.chase(a[rnd], alpha, beta, gamma) 
+            self.X = self.chase(a[rnd], self.X[alpha], self.X[beta], self.X[gamma]) 
             
-        return alpha
+        return self.X[alpha]
     
     
+class SuperWolfPack(WolfPack):
     
+    def __init__(self, obj_func, fitness, data_func, direction, numOfWolves):
+        self.obj_func = obj_func
+        self.direction = direction
+        super().__init__(fitness, data_func, direction, numOfWolves)
+        
+    def best(self):
+        score = self.fitness(self.X)
+        if self.direction == 'max':
+            ialpha = np.argmax(score)
+            score[ialpha] = sys.maxsize * -1
+            ibeta = np.argmax(score)
+            score[ibeta] = sys.maxsize * -1
+            igamma = np.argmax(score)
+            score[igamma] = sys.maxsize * -1
+            idelta = np.argmax(score)
+        else:
+            ialpha = np.argmin(score)
+            score[ialpha] = sys.maxsize
+            ibeta = np.argmin(score)
+            score[ibeta] = sys.maxsize
+            igamma = np.argmin(score)
+            score[igamma] = sys.maxsize
+            idelta = np.argmin(score)
+        return ialpha, ibeta, igamma, idelta
+        
+    def chase(self, a, alpha, beta, gamma, delta):
+        A1, C1 = self.cofficients(a, self.numOfWolves)
+        A2, C2 = self.cofficients(a, self.numOfWolves)
+        A3, C3 = self.cofficients(a, self.numOfWolves)
+        A4, C4 = self.cofficients(a, self.numOfWolves)
+        
+        D1 = np.abs( C1 * alpha - self.X )
+        X1 = alpha - A1 * D1
+        D2 = np.abs( C2 * beta - self.X )
+        X2 = beta - A2 * D2
+        D3 = np.abs( C3 * gamma - self.X )
+        X3 = gamma - A3 * D3
+        D4 = np.abs( C4 * delta - self.X )
+        X4 = delta - A4 * D4
+        return (X1 + X2 + X3 + X4) / 4
+   
+    def hunt(self, rounds = 30):
+        a = np.linspace(2, 0, rounds)
+      
+        for rnd in range(rounds):
+            alpha, beta, gamma, delta = self.best()
+            self.X = self.chase(a[rnd], self.X[alpha], self.X[beta], self.X[gamma], self.X[delta])           
+        return self.X[alpha]
