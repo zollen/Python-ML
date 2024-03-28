@@ -6,7 +6,6 @@ Created on Mar 21, 2024
 
 '''
 import numpy as np
-import sys
 from grey_wolf.lib.grey_wolf import WolfPack, ImprovedWolfPack, SuperWolfPack
 
 # f(a, b, c) = 3 * cos(a)^4 + 4 * cos(b)^3 + 2 sin(c)^2 * cos(c)^2 + 5
