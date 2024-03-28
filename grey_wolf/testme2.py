@@ -42,8 +42,6 @@ pack = SuperWolfPack(myequation, fitness, data, 'max', 1000)
 alpha = pack.hunt(100)
 print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
 
-   
 
-'''
-PSO Global optimal at f([a: 0.1003, b: 0.0997, c: 0.8000]) ==> score: 12.3804 
-'''
+
+

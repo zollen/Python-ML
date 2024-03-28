@@ -172,8 +172,27 @@ class SuperWolfPack(WolfPack):
         self.direction = direction
         super().__init__(fitness, data_func, direction, numOfWolves)
         
-    def best(self):
-        score = self.fitness(self.X)
+    def seperate(self, rounds, rnd):
+        numOfGrps = int((rounds - rnd)  / rounds * 4) + 1
+        numOfMem = int(np.ceil(self.numOfWolves / numOfGrps))
+        grps = []
+        
+        i = 0
+        j = -1
+        g = 0
+        while j < self.numOfWolves and g < numOfGrps:
+            j = i + numOfMem
+            if j >= self.numOfWolves:
+                j = self.numOfWolves
+            if g == numOfGrps - 1 and j < self.numOfWolves - 1:
+                j = self.numOfWolves
+            grps.append(list(range(i, j)))  
+            i = j   
+            g += 1
+        return grps
+                
+    def best(self, X):
+        score = self.fitness(X)
         if self.direction == 'max':
             ialpha = np.argmax(score)
             score[ialpha] = sys.maxsize * -1
@@ -192,19 +211,20 @@ class SuperWolfPack(WolfPack):
             idelta = np.argmin(score)
         return ialpha, ibeta, igamma, idelta
         
-    def chase(self, a, alpha, beta, gamma, delta):
-        A1, C1 = self.cofficients(a, self.numOfWolves)
-        A2, C2 = self.cofficients(a, self.numOfWolves)
-        A3, C3 = self.cofficients(a, self.numOfWolves)
-        A4, C4 = self.cofficients(a, self.numOfWolves)
+    def chase(self, a, X, alpha, beta, gamma, delta):
+        numWolfs = X[:,0].size
+        A1, C1 = self.cofficients(a, numWolfs)
+        A2, C2 = self.cofficients(a, numWolfs)
+        A3, C3 = self.cofficients(a, numWolfs)
+        A4, C4 = self.cofficients(a, numWolfs)
         
-        D1 = np.abs( C1 * alpha - self.X )
+        D1 = np.abs( C1 * alpha - X )
         X1 = alpha - A1 * D1
-        D2 = np.abs( C2 * beta - self.X )
+        D2 = np.abs( C2 * beta - X )
         X2 = beta - A2 * D2
-        D3 = np.abs( C3 * gamma - self.X )
+        D3 = np.abs( C3 * gamma - X )
         X3 = gamma - A3 * D3
-        D4 = np.abs( C4 * delta - self.X )
+        D4 = np.abs( C4 * delta - X )
         X4 = delta - A4 * D4
         return (X1 + X2 + X3 + X4) / 4
    
@@ -212,6 +232,11 @@ class SuperWolfPack(WolfPack):
         a = np.linspace(2, 0, rounds)
       
         for rnd in range(rounds):
-            alpha, beta, gamma, delta = self.best()
-            self.X = self.chase(a[rnd], self.X[alpha], self.X[beta], self.X[gamma], self.X[delta])           
+            groups = self.seperate(rounds, rnd)
+            for gidx in groups:
+                X = self.X[gidx]
+                ialpha, ibeta, igamma, idelta = self.best(X)
+                self.X[gidx] = self.chase(a[rnd], X, X[ialpha], X[ibeta], X[igamma], X[idelta])           
+        
+        alpha, _, _, _ = self.best(self.X)
         return self.X[alpha]
