@@ -126,7 +126,7 @@ class WolfPack:
         return self.X[alpha]
            
 
-class ImprovedWolfPack(WolfPack):
+class MutatedWolfPack(WolfPack):
     
     def __init__(self, obj_func, fitness, data_func, direction, numOfWolves, Fmax = 0.05, Fmin = 0):
         self.Fmin = Fmin

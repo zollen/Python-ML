@@ -6,7 +6,7 @@ Created on Mar 21, 2024
 
 '''
 import numpy as np
-from grey_wolf.lib.grey_wolf import WolfPack, ImprovedWolfPack, SuperWolfPack
+from grey_wolf.lib.grey_wolf import WolfPack, MutatedWolfPack, SuperWolfPack
 
 # f(a, b, c) = 3 * cos(a)^4 + 4 * cos(b)^3 + 2 sin(c)^2 * cos(c)^2 + 5
 # constraint1: a + b + c = 1
@@ -25,21 +25,30 @@ def fitness(X):
 def data(n):
     return np.random.rand(n, 3)
 
+res1 = []
+for _ in range(1000):  
+    pack = WolfPack(fitness, data, 'max', 1000)    
+    alpha = pack.hunt(50)
+    res1.append(myequation(np.expand_dims(alpha, axis=0)))
+    
+print("Global optimal ==> {}".format(np.mean(res1)))
 
-  
-pack = WolfPack(fitness, data, 'max', 1000)    
-alpha = pack.hunt(100)
-print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
-
-  
-pack = ImprovedWolfPack(myequation, fitness, data, 'max', 1000)
-alpha = pack.hunt(100)
-print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
+res2 = []
+for _ in range(1000):    
+    pack = MutatedWolfPack(myequation, fitness, data, 'max', 1000)
+    alpha = pack.hunt(50)
+    res2.append(myequation(np.expand_dims(alpha, axis=0)))
+    
+print("Global optimal ==> {}".format(np.mean(res2)))
 
 
-pack = SuperWolfPack(myequation, fitness, data, 'max', 1000)
-alpha = pack.hunt(100)
-print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
+res3 = []
+for _ in range(1000):
+    pack = SuperWolfPack(myequation, fitness, data, 'max', 1000)
+    alpha = pack.hunt(50)
+    res3.append(myequation(np.expand_dims(alpha, axis=0)))
+
+print("Global optimal ==> {}".format(np.mean(res3)))
 
 
 
