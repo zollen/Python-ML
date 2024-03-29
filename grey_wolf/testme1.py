@@ -28,7 +28,7 @@ pack = MutatedWolfPack(myequation, fitness, data, 'min', 100)
 alpha = pack.hunt(50)
 print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
 
-pack = SuperWolfPack(myequation, fitness, data, 'min', 1000)
+pack = SuperWolfPack(myequation, fitness, data, 'min', 100)
 alpha = pack.hunt(50)
 print("Global optimal at f({}) ==> {}".format(alpha, myequation(np.expand_dims(alpha, axis=0))))
 
