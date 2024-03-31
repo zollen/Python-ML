@@ -10,10 +10,10 @@ Created on Jun. 11, 2022
 '''
 
 from pymoo.algorithms.soo.nonconvex.pso import PSO
-from pymoo.factory import Ackley
+from pymoo.problems import get_problem
 from pymoo.optimize import minimize
 
-problem = Ackley()
+problem = get_problem("ackley", n_var=10)
 
 algorithm = PSO(max_velocity_rate=0.025)
 
