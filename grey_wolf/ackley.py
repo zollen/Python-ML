@@ -33,13 +33,13 @@ def data(n):
 
 
 pack = WolfPack(ackley10d, data, 'min', 1000)  
-alpha = pack.hunt(50)
+alpha = pack.hunt(70)
 print("Global optimal {} ==> {}".format(alpha, ackley10d(alpha)))
 
 pack = MutatedWolfPack(ackley10d, fitness, data, 'min', 1000)  
-alpha = pack.hunt(50)
+alpha = pack.hunt(70)
 print("Global optimal {} ==> {}".format(alpha, ackley10d(alpha)))
   
 pack = SuperWolfPack(ackley10d, fitness, data, 'min', 1000)  
-alpha = pack.hunt(50)
+alpha = pack.hunt(70)
 print("Global optimal {} ==> {}".format(alpha, ackley10d(alpha)))
