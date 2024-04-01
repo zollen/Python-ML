@@ -21,13 +21,14 @@ NSDE-R: Non-dominated Sorting Differential Evolution based on Reference directio
 
 import numpy as np
 from pymoo.core.problem import Problem
-from pymoode.gde3 import GDE3
-from pymoode.nsde import NSDE
-from pymoo.algorithms.moo.nsga2 import NSGA2
+from pymoo.util.ref_dirs import get_reference_directions
+from pymoo.algorithms.moo.nsga3 import NSGA3
+from pymoo.algorithms.moo.unsga3 import UNSGA3
+from pymoo.algorithms.moo.age import AGEMOEA
+from pymoo.algorithms.moo.sms import SMSEMOA
 from pymoo.optimize import minimize
-from pymoo.factory import get_performance_indicator
 #Termination
-from pymoo.util.termination.default import MultiObjectiveDefaultTermination
+from pymoo.termination.default import DefaultMultiObjectiveTermination
 
 '''
 In this example, I will introduce two conflicting convex objectives with additional difficulty 
@@ -59,62 +60,71 @@ class ProblemF2(Problem):
         
 
 
-termination_multi = MultiObjectiveDefaultTermination(
-    x_tol=1e-8,
-    cv_tol=1e-8,
-    f_tol=1e-8,
-    nth_gen=5,
-    n_last=50,
-    n_max_gen=200)
+termination_multi = DefaultMultiObjectiveTermination(
+    xtol=1e-8,
+    cvtol=1e-8,
+    ftol=1e-8,
+    period=50,
+    n_max_gen=1000,
+    n_max_evals=100000)
 
+ref_dirs = get_reference_directions(
+    "das-dennis", 2, n_partitions=15)
+#Suggestion for NSGA-III
+popsize = ref_dirs.shape[0] + ref_dirs.shape[0] % 4
+nsga3 = NSGA3(ref_dirs=ref_dirs, pop_size=popsize)
+unaga3 = UNSGA3(ref_dirs=ref_dirs, pop_size=popsize)
+agemoea = AGEMOEA(pop_size=popsize)
+smsmoea = SMSEMOA(pop_size=popsize)
 
-gde3 = GDE3(pop_size=50, variant="DE/rand/1/bin", F=(0.0, 1.0), CR=0.7)
-nsde = NSDE(pop_size=50, variant="DE/rand/1/bin", F=(0.0, 1.0), CR=0.7)
-nsga2 = NSGA2(pop_size=30)
-
-res_dge3 = minimize(
+res = minimize(
     ProblemF2(),
-    gde3,
+    nsga3,
     termination_multi,
     seed=12,
     save_history=True,
     verbose=False)
 
-print("============== GDE3 ============== ")
-print(res_dge3.X)
+print("============== NSGA3 ============== ")
+print(res.X)
+print(res.F)
 
-res_nsde = minimize(
+res = minimize(
     ProblemF2(),
-    nsde,
+    unaga3,
     termination_multi,
     seed=12,
     save_history=True,
     verbose=False)
 
-print("============== NSDE ============== ")
-print(res_nsde.X)
+print("============== UNSGA3 ============== ")
+print(res.X)
+print(res.F)
 
 
 res_nsga2 = minimize(
     ProblemF2(),
-    nsga2,
+    agemoea,
     termination_multi,
     seed=12,
     save_history=True,
     verbose=False)
 
-print("============== NSDE ============== ")
-print(res_nsga2.X)
+print("============== AGEMOEA ============== ")
+print(res.X)
+print(res.F)
 
 
-objs_p2 = np.row_stack([res_dge3.F, res_nsde.F, res_nsga2.F])
-nadir_p2 = objs_p2.max(axis=0)
-reference_p2 = nadir_p2 + 1e-6
-ideal_p2 =  objs_p2.min(axis=0)
-hv_p2 = get_performance_indicator("hv", ref_point=reference_p2, zero_to_one=True,
-                                  nadir=nadir_p2, ideal=ideal_p2)
+res = minimize(
+    ProblemF2(),
+    smsmoea,
+    termination_multi,
+    seed=12,
+    save_history=True,
+    verbose=False)
 
-print("============== PERFORMANCE ==============")
-print("hv GDE3", hv_p2.do(res_dge3.F))
-print("hv NSDE", hv_p2.do(res_nsde.F))
-print("hv NSGA-II", hv_p2.do(res_nsga2.F))
+print("============== SMSMOEA ============== ")
+print(res.X)
+print(res.F)
+
+
