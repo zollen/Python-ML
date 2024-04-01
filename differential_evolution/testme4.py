@@ -65,7 +65,7 @@ Min( $50 * x1 + $85 * x2 + $120 * x3 + $40 * x4 + $60 * x5 +  $65 * x6 + $60 * x
 '''
 
 import numpy as np
-from pymoo.factory import get_algorithm, get_crossover, get_mutation, get_sampling
+from pymoo.algorithms.soo.nonconvex.ga import GA
 from pymoo.core.problem import Problem
 from pymoo.optimize import minimize
 
@@ -85,13 +85,9 @@ class WaterFlowProblem(Problem):
         out["G"] = np.column_stack([G1, G2, G3])
 
 # standard generic algorithm
-ga = get_algorithm("ga",
-                       pop_size=100,
-                       sampling=get_sampling("int_random"),
-                       crossover=get_crossover("int_sbx", prob=1.0, eta=3.0),
-                       mutation=get_mutation("int_pm", eta=3.0),
-                       eliminate_duplicates=True,
-                       )
+ga = GA(
+    pop_size=100,
+    eliminate_duplicates=True)
 
 res = minimize(
     WaterFlowProblem(),
