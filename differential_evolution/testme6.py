@@ -8,11 +8,12 @@ Created on Jun. 14, 2022
 import sys
 import numpy as np
 from pymoo.core.problem import Problem
-from pymoode.gde3 import GDE3
-from pymoode.survivors import RankSurvival
+from pymoo.algorithms.moo.unsga3 import UNSGA3
+from pymoo.algorithms.moo.age import AGEMOEA
+from pymoo.algorithms.moo.sms import SMSEMOA
 from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.optimize import minimize
-from pymoo.factory import get_reference_directions
+from pymoo.util.ref_dirs import get_reference_directions
 
 np.set_printoptions(precision=4)
 np.set_printoptions(threshold=sys.maxsize)
@@ -56,35 +57,59 @@ class DTLZXProblem(Problem):
         
       
         
-        
-
-gde3 = GDE3(pop_size=500, variant="DE/rand/1/bin", F=(0.0, 1.0), CR=0.5, 
-            survival=RankSurvival(crowding_func="cd"))
-
 ref_dirs = get_reference_directions("das-dennis", 2, n_partitions=30)
-popsize = ref_dirs.shape[0] + ref_dirs.shape[0] % 4
-nsga3 = NSGA3(ref_dirs, pop_size=popsize)
-
-
-res = minimize(
-    DTLZXProblem(),
-    gde3,
-    ('n_gen', 250),
-    seed=1,
-    save_history=True,
-    verbose=False)
-
-print("========== GDE3 ======= Obj#1 = Obj#2 ===")
-np.apply_along_axis(printme, 1, res.X)
+nsga3 = NSGA3(ref_dirs, pop_size=500)
+unaga3 = UNSGA3(ref_dirs=ref_dirs, pop_size=500)
+agemoea = AGEMOEA(pop_size=500)
+smsmoea = SMSEMOA(pop_size=500)
 
 
 res = minimize(
     DTLZXProblem(),
     nsga3,
-    ('n_gen', 250),
+    ('n_gen', 500),
     seed=1,
     save_history=True,
     verbose=False)
 
-print("========== NAGA3 ====== Obj#1 = Obj#2 ===")
+print("========== NSGA3 =========")
 np.apply_along_axis(printme, 1, res.X)
+
+
+res = minimize(
+    DTLZXProblem(),
+    unaga3,
+    ('n_gen', 500),
+    seed=1,
+    save_history=True,
+    verbose=False)
+
+print("========== UNAGA3 =========")
+np.apply_along_axis(printme, 1, res.X)
+
+
+
+res = minimize(
+    DTLZXProblem(),
+    agemoea,
+    ('n_gen', 500),
+    seed=1,
+    save_history=True,
+    verbose=False)
+
+print("========== AGEMOEA =========")
+np.apply_along_axis(printme, 1, res.X)
+
+
+
+res = minimize(
+    DTLZXProblem(),
+    smsmoea,
+    ('n_gen', 500),
+    seed=1,
+    save_history=True,
+    verbose=False)
+
+print("========== SMSMOEA =========")
+np.apply_along_axis(printme, 1, res.X)
+
