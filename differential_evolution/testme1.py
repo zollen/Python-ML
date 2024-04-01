@@ -15,9 +15,11 @@ DE: Differential Evolution for single-objective problems proposed by Storn & Pri
 
 import numpy as np
 from pymoo.core.problem import Problem, ElementwiseProblem
-from pymoode.de import DE
+from pymoo.algorithms.soo.nonconvex.de import DE
+from pymoo.problems import get_problem
 from pymoo.optimize import minimize
-from pymoo.util.termination.default import SingleObjectiveDefaultTermination
+from pymoo.operators.sampling.lhs import LHS
+from pymoo.termination.default import DefaultSingleObjectiveTermination
 
 #Defining the objective function
 def rastrigin(x):
@@ -31,27 +33,13 @@ f(x) = A * n + Σ ( x(i) - A * cos(2 * π * x(i) )
     we will use two decision variables. Both will be bounded by -5.12 and 5.12.
 '''
 
-# Object-oriented definition which implements a method evaluating a set of solutions.
-class ProblemF1(Problem):
-    def __init__(self):
-        xl = np.full(2, -5.12)
-        xu = np.full(2, 5.12)
-        super().__init__(
-            n_var=2, n_obj=1, n_constr=0,
-            xl=xl, xu=xu)
-    def _evaluate(self, x, out, *args, **kwargs):
-        # x is an array corresponding to the decision variables in a Population with shape (N, m) 
-        # N - population size, m - number of decision variables 
-        out["F"] = np.sum(x * x - 10 * np.cos(2 * np.pi * x), axis=1) + 10 * x.shape[1]
-        
-        
 # Object-oriented definition which implements a function evaluating a single solution at a time.        
 class ElementwiseF1(ElementwiseProblem):
     def __init__(self):
-        xl = np.full(2, -5.12)
-        xu = np.full(2, 5.12)
+        xl = np.full(5, -5.12)
+        xu = np.full(5, 5.12)
         super().__init__(
-            n_var=2, n_obj=1, n_constr=0,
+            n_var=5, n_obj=1, n_constr=0,
             xl=xl, xu=xu)
     def _evaluate(self, x, out, *args, **kwargs):
         # x is a single solution
@@ -77,15 +65,15 @@ class ElementwiseF1(ElementwiseProblem):
     The strategies adopted are based on Price et al. (2005). Defaults to “bounce-back”.
 * survival (Survival, optional): Pymoo’s survival strategy. Should be considered in multi-objective algorithms.
 '''
-de = DE(pop_size=30, variant="DE/rand/1/bin", F=(0.3, 1.0), CR=0.5)
+de = DE(pop_size=100, sampling=LHS(), variant="DE/rand/1/bin", CR=0.5)
 
-termination_1 = SingleObjectiveDefaultTermination(
-    x_tol=1e-6,
-    cv_tol=0.0,
-    f_tol=1e-6,
-    nth_gen=5,
-    n_last=20,
-    n_max_gen=100)
+termination_1 = DefaultSingleObjectiveTermination(
+    xtol=1e-6,
+    cvtol=0.0,
+    ftol=1e-6,
+    period=20,
+    n_max_gen=100,
+    n_max_evals=100000)
 
 
 res = minimize(
