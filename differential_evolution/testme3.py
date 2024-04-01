@@ -14,15 +14,14 @@ NSDE-R: It combines the survival operator of NSGA-III with the reproduction oper
     M-Nearest Neighbors based crowding metric with recursive elimination and re-calculation. 
     It has improved a lot the performance of GDE3 in many-objective problems.
 '''
-
 import numpy as np
-from pymoode.nsder import NSDER
 from pymoo.algorithms.moo.nsga3 import NSGA3
-from pymoode.gde3 import GDE3
+from pymoo.algorithms.moo.unsga3 import UNSGA3
+from pymoo.algorithms.moo.age import AGEMOEA
+from pymoo.algorithms.moo.sms import SMSEMOA
+from pymoo.util.ref_dirs import get_reference_directions
 from pymoo.optimize import minimize
-from pymoode.survivors import RankSurvival
-from pymoo.factory import get_reference_directions, get_problem
-from pymoo.factory import get_performance_indicator
+from pymoo.problems  import get_problem
 
 '''
 DTLZ2 sample problem
@@ -52,9 +51,11 @@ ref_dirs = get_reference_directions(
     "das-dennis", 3, n_partitions=15)
 #Suggestion for NSGA-III
 popsize = ref_dirs.shape[0] + ref_dirs.shape[0] % 4
-nsder = NSDER(ref_dirs, pop_size=popsize, variant="DE/rand/1/bin", F=(0.0, 1.0), CR=0.5)
-gde3 = GDE3(pop_size=50, variant="DE/rand/1/bin", F=(0.0, 1.0), CR=0.7)
-nsga3 = NSGA3(ref_dirs, pop_size=popsize)
+nsga3 = NSGA3(ref_dirs=ref_dirs, pop_size=popsize)
+unaga3 = UNSGA3(ref_dirs=ref_dirs, pop_size=popsize)
+agemoea = AGEMOEA(pop_size=100)
+smsmoea = SMSEMOA()
+
 
 '''
 I will adopt a simplified termination criterion (‘n_gen’, 250), based only on the number 
@@ -63,47 +64,47 @@ I will adopt a simplified termination criterion (‘n_gen’, 250), based only o
 NSGA-III has outperformed the DE algorithms in this problem, although the performances of DE 
     algorithms were great as well, especially NSDE-R.
 '''
-res_nsder = minimize(
+
+res = minimize(
     get_problem("dtlz2"),
-    nsder,
-    ('n_gen', 250),
+    algorithm=nsga3,
+    termination=('n_gen', 600),
     seed=SEED,
     save_history=True,
     verbose=False)
 
-print("============== NSDE-R ============== ")
-print(res_nsder.X)
+print("============== NSGA3-MNN ============== ")
+print("NSGA3: Best solution found: \nX = %s\nF = %s" % (res.X, res.F))
 
-res_dge3 = minimize(
+res = minimize(
     get_problem("dtlz2"),
-    gde3,
-    ('n_gen', 250),
+    algorithm=unaga3,
+    termination=('n_gen', 600),
     seed=SEED,
     save_history=True,
     verbose=False)
 
-print("============== GDE3 ============== ")
-print(res_dge3.X)
+print("============== UNSGA3 ============== ")
+print("UNSGA3: Best solution found: \nX = %s\nF = %s" % (res.X, res.F))
 
-res_nsga3 = minimize(
+res = minimize(
     get_problem("dtlz2"),
-    nsga3,
-    ('n_gen', 250),
+    algorithm=agemoea,
+    termination=('n_gen', 600),
     seed=SEED,
     save_history=True,
     verbose=False)
 
-print("============== GDE3-MNN ============== ")
-print(res_nsga3.X)
+print("============== AGEMOEA ============== ")
+print("AGEMOEA: Best solution found: \nX = %s\nF = %s" % (res.X, res.F))
 
-objs_p2 = np.row_stack([res_nsder.F, res_dge3.F, res_nsga3.F])
-nadir_p2 = objs_p2.max(axis=0)
-reference_p2 = nadir_p2 + 1e-6
-ideal_p2 =  objs_p2.min(axis=0)
-hv_p2 = get_performance_indicator("hv", ref_point=reference_p2, zero_to_one=True,
-                                  nadir=nadir_p2, ideal=ideal_p2)
+res = minimize(
+    get_problem("dtlz2"),
+    algorithm=smsmoea,
+    termination=('n_gen', 600),
+    seed=SEED,
+    save_history=True,
+    verbose=False)
 
-print("============== PERFORMANCE ==============")
-print("hv NSDE-R", hv_p2.do(res_nsder.F))
-print("hv GDE3-MNN", hv_p2.do(res_dge3.F))
-print("hv NSGA-III", hv_p2.do(res_nsga3.F))
+print("============== SMSMOEA ============== ")
+print("SMSMOEA: Best solution found: \nX = %s\nF = %s" % (res.X, res.F))
