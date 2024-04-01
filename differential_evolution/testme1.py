@@ -14,9 +14,8 @@ DE: Differential Evolution for single-objective problems proposed by Storn & Pri
 '''
 
 import numpy as np
-from pymoo.core.problem import Problem, ElementwiseProblem
+from pymoo.core.problem import ElementwiseProblem
 from pymoo.algorithms.soo.nonconvex.de import DE
-from pymoo.problems import get_problem
 from pymoo.optimize import minimize
 from pymoo.operators.sampling.lhs import LHS
 from pymoo.termination.default import DefaultSingleObjectiveTermination
