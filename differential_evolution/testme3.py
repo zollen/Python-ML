@@ -51,10 +51,11 @@ ref_dirs = get_reference_directions(
     "das-dennis", 3, n_partitions=15)
 #Suggestion for NSGA-III
 popsize = ref_dirs.shape[0] + ref_dirs.shape[0] % 4
+print("POPULATION SIZE: ", popsize)
 nsga3 = NSGA3(ref_dirs=ref_dirs, pop_size=popsize)
 unaga3 = UNSGA3(ref_dirs=ref_dirs, pop_size=popsize)
-agemoea = AGEMOEA(pop_size=100)
-smsmoea = SMSEMOA()
+agemoea = AGEMOEA(pop_size=popsize)
+smsmoea = SMSEMOA(pop_size=popsize)
 
 
 '''
@@ -68,7 +69,7 @@ NSGA-III has outperformed the DE algorithms in this problem, although the perfor
 res = minimize(
     get_problem("dtlz2"),
     algorithm=nsga3,
-    termination=('n_gen', 600),
+    termination=('n_gen', 200),
     seed=SEED,
     save_history=True,
     verbose=False)
@@ -79,7 +80,7 @@ print("NSGA3: Best solution found: \nX = %s\nF = %s" % (res.X, res.F))
 res = minimize(
     get_problem("dtlz2"),
     algorithm=unaga3,
-    termination=('n_gen', 600),
+    termination=('n_gen', 200),
     seed=SEED,
     save_history=True,
     verbose=False)
@@ -90,7 +91,7 @@ print("UNSGA3: Best solution found: \nX = %s\nF = %s" % (res.X, res.F))
 res = minimize(
     get_problem("dtlz2"),
     algorithm=agemoea,
-    termination=('n_gen', 600),
+    termination=('n_gen', 200),
     seed=SEED,
     save_history=True,
     verbose=False)
@@ -101,7 +102,7 @@ print("AGEMOEA: Best solution found: \nX = %s\nF = %s" % (res.X, res.F))
 res = minimize(
     get_problem("dtlz2"),
     algorithm=smsmoea,
-    termination=('n_gen', 600),
+    termination=('n_gen', 200),
     seed=SEED,
     save_history=True,
     verbose=False)
