@@ -20,25 +20,20 @@ np.set_printoptions(threshold=sys.maxsize)
 
 
 def printme(x):
-    print(x, " {:.4f}, {:.4f}".format(objective1(x), objective2(x)))
+    print(x, " {:.4f}, {:.4f}".format(objective1(x[0], x[1], x[2]), 
+                                      objective2(x[0], x[1], x[2])))
 
-def objective1(x):
-    if x.ndim > 1:
-        return (x[:, 0] - 0.5) ** 2 + 0.7 * (x[:, 0] * x[:, 1]) + 1.2 * (x[:, 1] ) ** 2 + 0.5 * (x[:, 1] * x[:, 2])
-    else:
-        return (x[0] - 0.5) ** 2 + 0.7 * (x[0] * x[1]) + 1.2 * (x[1] ) ** 2 + 0.5 * (x[1] * x[2])
+def objective1(x, y, z):
+    return (x - 0.5) ** 2 + 0.7 * (x * y) + 1.2 * (y ) ** 2 + 0.5 * (y * z)
 
-def objective2(x):
-    if x.ndim > 1:
-        return 1/3 * (x[:, 0] * x[:, 1]) + 1/3 * (x[:, 0] * x[:, 2]) + 1/3 * (x[:, 1] * x[:, 2])
-    else:
-        return 1/3 * (x[0] * x[1]) + 1/3 * (x[0] * x[2]) + 1/3 * (x[1] * x[2])
+def objective2(x, y, z):
+    return 1/3 * (x * y) + 1/3 * (x * z) + 1/3 * (y * z)
 
-def constaint1(x):
-    return x[:, 0] ** 2 + (x[:, 1] - 1) ** 2 + x[:, 2] ** 2 - 5
+def constaint1(x, y, z):
+    return x ** 2 + (y - 1) ** 2 + z ** 2 - 5
 
-def constaint2(x):
-    return -1 * (x[:, 0] + 0.5) ** 2 - (x[:, 1] - 1) ** 2 - (x[:, 2] - 0.5) ** 2 + 2 
+def constaint2(x, y, z):
+    return -1 * (x + 0.5) ** 2 - (y - 1) ** 2 - (z - 0.5) ** 2 + 2 
      
 class DTLZXProblem(Problem):
     def __init__(self):
@@ -48,11 +43,11 @@ class DTLZXProblem(Problem):
             n_var=3, n_obj=2, n_constr=2,  xl=xl, xu=xu)
         
     def _evaluate(self, x, out, *args, **kwargs):
-        F1 = objective1(x)
-        F2 = objective2(x)
+        F1 = objective1(x[:,0], x[:,1], x[:,2])
+        F2 = objective2(x[:,0], x[:,1], x[:,2])
         out["F"] = np.column_stack([F1, F2])
-        G1 = constaint1(x)
-        G2 = constaint2(x)
+        G1 = constaint1(x[:,0], x[:,1], x[:,2])
+        G2 = constaint2(x[:,0], x[:,1], x[:,2])
         out["G"] = np.column_stack([G1, G2])
         
       
