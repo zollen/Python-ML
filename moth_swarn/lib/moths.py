@@ -14,7 +14,8 @@ Spiral function: S(M(i), F(j)) = D(i) * e^(b * t) * cos(2 * pi * t) + F(j)
 Flame = best moth position
 D(i) = | F(j) - M(i) |           <-- distance between flame and moth
 b is a constant for defining shape of logarithmic sprial
-t is a random number between -1 and 1
+r is the absolute value between 0 and 1, it decreases linearly as iteration approach last
+t is a random number between -r and r
 
 
 Number of flames during each iteration is defined as:
@@ -38,16 +39,20 @@ Initialize moths positions randomly in the search place
 
 while iteration < max_iteration:
 
-    Calculate fitness values for each moths
-    Calculate the number of flames and update flames
-    
+    if iteration == 1 then
+        Flames = sorted(Moths)
+        Fitness_Flames = sorted(Fitness_moths)
+    else
+        Flames = sorted(Flames, Moths)
+        Fitness_Flames = sorted(Fitness_flames, fitness_Moths)
+    endif
+
     For i in {1..max_moths}
-        for j in {1..max_flames}
-            Update r and t
-            Calculate distance for corresponding moths - D(i)
-            Update moths position                      - S(M(i), F(j))
-        End
+        Update r and t
+        Calculate distance for corresponding moths - D(i)
+        Update moths(i) position                   - S(M(i), F(j))
     End
+Moths = sorted(Flames, Moths)
 Display best solution
 
 
