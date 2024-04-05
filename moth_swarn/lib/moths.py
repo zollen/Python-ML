@@ -37,11 +37,11 @@ Initialize moths positions randomly in the search place
 
 while iteration < max_iteration:
 
-    Calculate the number of flames
     Calculate fitness values for each moths
+    Calculate the number of flames and update flames
     
-    For all moths
-        for all parameters
+    For i in {1..max_moths}
+        for j in {1..max_flames}
             Update r and t
             Calculate distance for corresponding moths - D(i)
             Update moths position                      - S(M(i), F(j))
@@ -91,7 +91,7 @@ class MothsFlame:
     
     def start(self, rounds):
         for rnd in range(rounds):
-            t = np.random.rand(self.numOfMoths, self.moths[0].size)
+            t = np.random.uniform(-1, 1, (self.numOfMoths, self.moths[0].size))
             flames = self.calculateFlames(rounds, rnd)
             self.updatePositions(t, flames)
 
