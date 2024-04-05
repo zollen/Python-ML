@@ -63,14 +63,14 @@ import numpy as np
 
 class MothsFlame:
     
-    def __init__(self, fitness, data_func, direction, numOfMoths, spiral = 1):
+    def __init__(self, fitness, data_func, direction, numOfMoths, maxFlames = 0.4, spiral = 1):
         self.fitness = fitness
         self.data_func = data_func
         self.numOfMoths = numOfMoths
         self.direction = direction
         self.spiral = spiral
         self.numOfFlames = 0
-        self.maxFlames = int(self.numOfMoths * 0.4)
+        self.maxFlames = int(self.numOfMoths * maxFlames)
         self.moths = self.data_func(self.numOfMoths)
      
     def updatePositions(self, t, flames):
