@@ -91,7 +91,8 @@ class MothsFlame:
     
     def start(self, rounds):
         for rnd in range(rounds):
-            t = np.random.uniform(-1, 1, (self.numOfMoths, self.moths[0].size))
+            r = 1 - rnd * (0.99) / rounds 
+            t = np.random.uniform(-r, r, (self.numOfMoths, self.moths[0].size))
             flames = self.calculateFlames(rounds, rnd)
             self.updatePositions(t, flames)
 
