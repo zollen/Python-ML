@@ -3,6 +3,7 @@ Created on Apr 2, 2024
 
 @author: STEPHEN
 @url: https://www.youtube.com/watch?v=2by9CN8QIpw
+@url: https://www.baeldung.com/cs/moth-flame-optimization
 @title: Moth Flame Optimization 
 
 M(i): ith Moth
