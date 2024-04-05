@@ -80,7 +80,10 @@ class MothsFlame:
     
     def calculateFlames(self, rounds, rnd):
         self.numOfFlames = int(np.round(self.maxFlames - rnd * (self.maxFlames - 1) / rounds))
-        ind = np.argpartition(self.fitness(self.moths), -self.numOfFlames)[-self.numOfFlames:]
+        if self.direction == 'max':
+            ind = np.argpartition(self.fitness(self.moths), -self.numOfFlames)[-self.numOfFlames:]
+        else:
+            ind = np.argpartition(self.fitness(self.moths), self.numOfFlames)[:self.numOfFlames]
         flames = np.tile(self.moths[ind], 
                  (int(np.ceil(self.numOfMoths / self.numOfFlames)), 1))[0:self.numOfMoths]
         flames[ind] = self.moths[ind]
