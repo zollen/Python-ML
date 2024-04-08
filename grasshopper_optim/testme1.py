@@ -26,7 +26,7 @@ def data(n):
 
 
 grasshoppers = Grasshoppers(fitness, data, 'max', 1000)    
-best = grasshoppers.start(20)
+best = grasshoppers.start(50)
 print("Global optimal at f({}) ==> {}".format(best, equation(best[0], best[1], best[2])))
 
 

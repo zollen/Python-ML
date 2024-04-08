@@ -176,8 +176,12 @@ class Grasshoppers:
         return np.abs(gh - gb)
     
     def move(self, c, best, X):
-        result = c * ((self.UB - self.LB) / 2) * np.expand_dims(self.social_factor(self.unit_length(X)), axis=2) * self.unit_vector(X)       
-        return c * np.sum(result, axis=1) + self.gravity_factor() + self.wind_factor() + best
+        '''
+        # It performs worse than random!
+        result = c * ((self.UB - self.LB) / 2) * np.expand_dims(self.social_factor(self.unit_length(X)), axis=2) * self.unit_vector(X) 
+        return np.random.rand(1000, 3) * 0.01 * c * np.sum(result, axis=1) + self.gravity_factor() + self.wind_factor() + best
+        '''
+        return c * np.random.rand(1000, 3) * 0.01 + best
     
     def regulate(self):
         vals = np.random.rand(self.grasshoppers.shape[0], self.grasshoppers.shape[1])
