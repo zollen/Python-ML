@@ -25,7 +25,7 @@ def data(n):
     return np.random.rand(n, 3)
 
 
-grasshoppers = Grasshoppers(fitness, data, 'min', 1000)    
+grasshoppers = Grasshoppers(fitness, data, 'max', 1000)    
 best = grasshoppers.start(50)
 print("Global optimal at f({}) ==> {}".format(best, equation(best[0], best[1], best[2])))
 
