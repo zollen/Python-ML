@@ -26,10 +26,12 @@ def data(n):
 
 
 grasshoppers = Grasshoppers(fitness, data, 'max', 1000)    
-best = grasshoppers.start(50)
+best = grasshoppers.start(20)
 print("Global optimal at f({}) ==> {}".format(best, equation(best[0], best[1], best[2])))
 
+
+
 '''
-PSO Global optimal at f([3.1818181818181817, 3.131313131313131])=-1.8082706615747688
+Global optimal [0.09808264 0.10205518 0.79989535] ==> 12.380206250271453
 
 '''

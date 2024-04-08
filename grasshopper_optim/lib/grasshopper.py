@@ -179,12 +179,20 @@ class Grasshoppers:
         result = c * ((self.UB - self.LB) / 2) * np.expand_dims(self.social_factor(self.unit_length(X)), axis=2) * self.unit_vector(X)       
         return c * np.sum(result, axis=1) + self.gravity_factor() + self.wind_factor() + best
     
+    def regulate(self):
+        vals = np.random.rand(self.grasshoppers.shape[0], self.grasshoppers.shape[1])
+        self.grasshoppers = np.where(self.grasshoppers < self.UB, self.grasshoppers, 
+                                     vals)
+        self.grasshoppers = np.where(self.grasshoppers > self.LB, self.grasshoppers,
+                                     vals)
+    
     def start(self, rounds):
         for rnd in range(rounds):
             best = self.best_solution()
             c = self.coefficient(rnd, rounds)
             N = self.normalize(self.differences())
             self.grasshoppers = self.move(c, best, N)
+            self.regulate()
             
         return self.best_solution()
     
