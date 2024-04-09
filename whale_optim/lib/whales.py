@@ -75,7 +75,7 @@ class Whales:
         p = np.expand_dims(np.random.rand(self.whales.shape[0]), axis=1)
         l = np.random.uniform(-1, 1, size=(self.whales.shape[0], self.whales.shape[1]))
         k = np.random.randint(0, self.numOfWhales, size=self.whales.shape[0])
-        g = np.expand_dims(np.random.uniform(0, 2, size=self.whales.shape[0]), axis=1)
+        g = np.expand_dims(A[:,0], axis=1)
         return A, C, p, l, k, g
     
     def best(self):
