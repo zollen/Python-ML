@@ -75,8 +75,7 @@ class Whales:
         p = np.expand_dims(np.random.rand(self.whales.shape[0]), axis=1)
         l = np.random.uniform(-1, 1, size=(self.whales.shape[0], self.whales.shape[1]))
         k = np.random.randint(0, self.numOfWhales, size=self.whales.shape[0])
-        g = np.expand_dims(np.abs(A[:,0]) * 10, axis=1)
-        return A, C, p, l, k, g
+        return A, C, p, l, k
     
     def best(self):
         score = self.fitness(self.whales)
@@ -94,11 +93,11 @@ class Whales:
     
     def start(self, rounds):
         for rnd in range(rounds):
-            A, C, p, l, k, g = self.cofficients(rnd, rounds)
+            A, C, p, l, k = self.cofficients(rnd, rounds)
             best = self.best()
             D = np.abs(C * best - self.whales) 
             X1, X2, X3 = self.hunt(A, D, l, k, best)
-            self.whales = np.where(p < 0.5, np.where(g < 1, X1, X2), X3)
+            self.whales = np.where(p < 0.5, np.where(np.abs(A) < 1, X1, X2), X3)
                 
         return self.best()        
                 
