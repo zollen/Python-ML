@@ -54,16 +54,21 @@ class Fireflies:
     
     def moveforward(self, target):
         distance = np.linalg.norm(self.fireflies - target)
-        return self.fireflies + self.beta * np.exp(-self.gamma*(distance**2)) * (target - self.fireflies) + self.alpha * (np.random.uniform(0, 1) - 0.5)
+        moves =  self.fireflies + self.beta * np.exp(-self.gamma*(distance**2)) * (target - self.fireflies) + self.alpha * (np.random.uniform(0, 1) - 0.5)
+        moves = np.where(moves > self.LB, self.fireflies, self.LB)
+        moves = np.where(moves < self.UB, self.fireflies, self.UB)
+        return moves
     
     def start(self, rounds):
         for _ in range(rounds):
             for i in range(self.numOfFireFlies):
                 scores = np.expand_dims(self.fitness(self.fireflies), axis=1)
+                target = self.fireflies[i]
                 X1 = self.moveforward(self.fireflies[i])
                 X2 = self.randomwalk()
                 self.fireflies = np.where(scores < scores[i], X1, self.fireflies)
+                self.fireflies = np.where(scores != scores[i], self.fireflies, X2)
+                self.fireflies[i] = target
                 
         return self.fireflies[self.best()]        
         
-    

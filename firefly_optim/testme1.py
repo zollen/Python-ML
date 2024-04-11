@@ -2,6 +2,8 @@
 Created on Apr 4, 2024
 
 @author: STEPHEN
+
+Global optimal [0.10157155 0.08136708 0.78142821] ==> 12.39902700730964
 '''
 
 import numpy as np
