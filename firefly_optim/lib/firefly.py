@@ -50,7 +50,7 @@ class Fireflies:
             return np.argmin(scores)
         
     def randomwalk(self):
-        return np.random.uniform(self.LB, self.UB, size=(self.numOfFireFlies, self.fireflies.shape[1]))
+        return self.data_func(self.numOfFireFlies)
     
     def moveforward(self, target):
         distance = np.linalg.norm(self.fireflies - target)
