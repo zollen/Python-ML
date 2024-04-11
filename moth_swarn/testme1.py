@@ -2,6 +2,8 @@
 Created on Apr 4, 2024
 
 @author: STEPHEN
+
+Global optimal [0.03937731 0.1612441  0.7991728 ] ==> 12.336679368657787
 '''
 
 from moth_swarn.lib.moths import *
@@ -15,8 +17,8 @@ def equation(x, y, z):
 
 def fitness(X):
     result = equation(X[:, 0], X[:, 1], X[:, 2])
-    sc1 = np.abs(1 - (X[:,0] + X[:,1] + X[:,2])) * 10 + 100
-    sc2 = np.abs(X[:,2] - 0.8) * 10 + 100
+    sc1 = np.abs(1 - (X[:,0] + X[:,1] + X[:,2])) * 1000
+    sc2 = np.abs(X[:,2] - 0.8) * 1000
 
     return result - sc1 - sc2
 

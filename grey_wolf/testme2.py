@@ -4,6 +4,9 @@ Created on Mar 21, 2024
 @author: STEPHEN
 @url: https://www.baeldung.com/cs/grey-wolf-optimization
 
+Global optimal ==> 12.204834735118398
+Global optimal ==> 12.37104908902174
+
 '''
 import numpy as np
 from grey_wolf.lib.grey_wolf import WolfPack, MutatedWolfPack, SuperWolfPack
@@ -17,8 +20,8 @@ def myequation(X):
 
 def fitness(X):
     result = myequation(X)
-    sc1 = np.abs(1 - (X[:,0] + X[:,1] + X[:,2])) * 10 + 100
-    sc2 = np.abs(X[:,2] - 0.8) * 10 + 100
+    sc1 = np.abs(1 - (X[:,0] + X[:,1] + X[:,2])) * 1000
+    sc2 = np.abs(X[:,2] - 0.8) * 1000
     
     return result - sc1 - sc2
 
