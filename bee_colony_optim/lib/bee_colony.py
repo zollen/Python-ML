@@ -139,7 +139,7 @@ class Bees:
         theta = np.random.uniform(-1, 1, size=(X.shape[0], 2))
         j = np.random.choice(range(X.shape[1]))
         X_new = np.array(X) 
-        X_new[:,j] = self.bound(X[:,j] + theta[:,0] * (X[:,j] - P[:,j])) + theta[:,1] * 0.1
+        X_new[:,j] = self.bound(X[:,j] + theta[:,0] * (X[:,j] - P[:,j]) + theta[:,1] * 0.1)
         return X_new
     
     def shuffle(self, X):
