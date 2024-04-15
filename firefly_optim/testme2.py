@@ -19,7 +19,7 @@ def data(n):
     return np.random.rand(n, 2) * 5
     
 
-firefiles = Fireflies(fitness, data, 'min', 100)    
+firefiles = Fireflies(fitness, data, 'min', 1000)    
 best = firefiles.start(50)
 print("Global optimal at f({}) ==> {}".format(best, equation(best[0], best[1])))
 
