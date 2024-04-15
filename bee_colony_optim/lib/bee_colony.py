@@ -104,6 +104,7 @@ Scout Bees Phase (This phase occur if there is at least one failed solution)
 
 import numpy as np
 
+
 class Bees:
     
     def __init__(self, fitness, data_func, direction, numOfBees, LB = -5, UB = 5):
@@ -114,6 +115,8 @@ class Bees:
         self.LB = LB
         self.UB = UB
         self.bees = self.data_func(self.numOfBees)
+        self.best_score = None
+        self.best_bee = None
         
         ind = np.array(range(self.numOfBees))
         np.random.shuffle(ind)
@@ -124,11 +127,11 @@ class Bees:
         self.scores = np.expand_dims(np.zeros((self.numOfBees)), axis=1)
         
     def bfitness(self, x):
-        scores = self.fitness(x)
+        scores = self.fitness(x)   
         if self.direction == 'max':
-            return np.expand_dims((1 + np.abs(scores)), axis=1)
+            return np.expand_dims(scores, axis=1)
         else:
-            return np.expand_dims((1 + np.abs(scores)) * -1, axis=1)
+            return np.expand_dims(scores * -1, axis=1)
         
     def bound(self, X):
         X = np.where(X > self.LB, X, self.LB)
@@ -148,8 +151,13 @@ class Bees:
         return P
     
     def probabilities(self, X):
-        return X / np.sum(X)
-    
+        smallest = np.min(X)
+        extra = 0
+        if smallest < 0:
+            extra = smallest + 1
+        Xp = X + extra
+        return Xp / np.sum(Xp)
+         
     def update(self, fit_new, fit_now, idx, eb_now, eb_new):
         self.bees[idx] = np.where(fit_now >= fit_new, eb_now, eb_new)
         self.trails[idx] = np.where(fit_now >= fit_new, self.trails[idx] + 1, 0)
@@ -165,7 +173,6 @@ class Bees:
     def onlookerBee(self):
         p = np.random.choice(self.eb_idx, self.ob_idx.shape[0], 
                              p=self.probabilities(self.scores[self.eb_idx].squeeze()))
-        print(">> ", p)
         eb_now = self.bees[p]
         ob_now = self.bees[self.ob_idx]
         ob_new = self.new_solution(ob_now, eb_now)
@@ -183,8 +190,25 @@ class Bees:
             ob_new = np.delete(ob_new, res[1], axis=0)
        
     def scoutBee(self):
-        pass
+        self.bees[self.ob_idx] = self.data_func(self.ob_idx.size)
+        self.trails[:] = 0
+        
+    def best(self):
+        idx = np.argmax(self.scores)
+        score = self.scores[idx].squeeze()
+        if self.best_score == None:
+            self.best_score = score
+            self.best_bee = self.bees[idx]
+        else:
+            if self.best_score < score:
+                self.best_score = score
+                self.best_bee = self.bees[idx]
     
     def start(self, rounds):
-        pass
+        for _ in range(rounds):
+            self.employedBee()
+            self.onlookerBee()
+            self.best()
+            self.scoutBee()
 
+        return self.best_bee

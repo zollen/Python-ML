@@ -27,29 +27,11 @@ def data(n):
     return np.random.rand(n, 3)
 
 
-bees = Bees(fitness, data, 'max', 6)
-bees.employedBee()
-bees.onlookerBee()
+bees = Bees(fitness, data, 'max', 1000)
+best = bees.start(50)
+
+print("Global optimal {} ==> {}".format(best, equation(best[0], best[1], best[2])))
 
 '''
-p = np.array([5,5,7,1,7,5,5])
-eb = np.array([[0.5,0.4,0.2], 
-               [0.3,0.1,0.6], 
-               [0.8, 0.2, 0.3], 
-               [0.2, 0.2, 0.3],
-               [0.3, 0.2, 0.1],
-               [0.1, 0.7, 0.1],
-               [0.8, 0.9, 0.8]])
-
-eb = np.hstack((np.expand_dims(range(eb.shape[0]), axis=1), eb))
-while p.size > 0:
-    res = np.unique(p, return_index=True) 
-    p_tmp = res[0]
-    eb_tmp = eb[res[1]]
-    print(p_tmp)  
-    print(eb_tmp) 
-    p = np.delete(p, res[1])
-    eb = np.delete(eb, res[1], axis=0)
-
+Global optimal [0.03937731 0.1612441  0.7991728 ] ==> 12.336679368657787
 '''
-
