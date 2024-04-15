@@ -36,5 +36,6 @@ print("MantaRays optimal {} ==> {}".format(best, equation(best[0], best[1], best
 MantaRays optimal [0.11115204 0.08884795 0.79999999] ==> 12.37905783534991
 MantaRays optimal [0.08186577 0.11813422 0.8       ] ==> 12.376530304953913
 MantaRays optimal [0.05822034 0.14177964 0.79999998] ==> 12.36009061893249
+MantaRays optimal [0.15889575 0.04110426 0.79999999] ==> 12.341110207786151
 '''
 
