@@ -172,7 +172,7 @@ class Bees:
         fit_now = self.scores
         fit_new = self.bfitness(ob_new)
         
-        eb_now = np.hstack((np.expand_dims(range(eb_now.shape[0]), axis=1), eb_now))
+        eb_now = np.hstack((np.expand_dims(p, axis=1), eb_now))
         while p.size > 0:
             res = np.unique(p, return_index=True) 
             self.update(fit_new[res[1]], fit_now[res[1]], 
