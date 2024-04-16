@@ -69,8 +69,8 @@ import numpy as np
 
 class MothsFlame:
     
-    def __init__(self, fitness, data_func, direction, numOfMoths, maxFlames = 0.4, spiral = 1):
-        self.fitness = fitness
+    def __init__(self, obj_func, data_func, direction, numOfMoths, maxFlames = 0.4, spiral = 1):
+        self.obj_func = obj_func
         self.data_func = data_func
         self.numOfMoths = numOfMoths
         self.direction = direction
@@ -78,6 +78,21 @@ class MothsFlame:
         self.numOfFlames = 0
         self.maxFlames = int(self.numOfMoths * maxFlames)
         self.moths = self.data_func(self.numOfMoths)
+        self.best_moth = None
+        self.best_score = None
+        
+    def fitness(self, X):
+        if self.direction == 'max':
+            return self.obj_func(X)
+        else:
+            return self.obj_func(X) * -1
+        
+    def best(self):
+        scores = self.fitness(self.moths)
+        ind = np.argmax(scores)
+        if self.best_score == None or self.best_score < scores[ind]:
+            self.best_moth = self.moths[ind]
+            self.best_score = scores[ind]
      
     def updatePositions(self, t, flames):
         self.moths = np.abs(flames - self.moths) * \
@@ -86,10 +101,7 @@ class MothsFlame:
     
     def calculateFlames(self, rounds, rnd):
         self.numOfFlames = int(np.round(self.maxFlames - rnd * (self.maxFlames - 1) / rounds))
-        if self.direction == 'max':
-            ind = np.argpartition(self.fitness(self.moths), -self.numOfFlames)[-self.numOfFlames:]
-        else:
-            ind = np.argpartition(self.fitness(self.moths), self.numOfFlames)[:self.numOfFlames]
+        ind = np.argpartition(self.fitness(self.moths), -self.numOfFlames)[-self.numOfFlames:]
         flames = np.tile(self.moths[ind], 
                  (int(np.ceil(self.numOfMoths / self.numOfFlames)), 1))[0:self.numOfMoths]
         flames[ind] = self.moths[ind]
@@ -101,8 +113,10 @@ class MothsFlame:
             t = np.random.uniform(-r, r, (self.numOfMoths, self.moths[0].size))
             flames = self.calculateFlames(rounds, rnd)
             self.updatePositions(t, flames)
+            
+        self.best()
 
-        return self.moths[np.argmax(self.fitness(self.moths))]
+        return self.best_moth
             
 
 
