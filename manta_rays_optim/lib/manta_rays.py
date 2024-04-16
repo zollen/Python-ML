@@ -126,8 +126,8 @@ class MantaRays:
         return mantaRays
     
     def somersault(self):
-        r1 = np.random.rand(self.numOfMantaRays, 3)
-        r2 = np.random.rand(self.numOfMantaRays, 3)
+        r1 = np.random.rand(self.numOfMantaRays, self.mantaRays.shape[1])
+        r2 = np.random.rand(self.numOfMantaRays, self.mantaRays.shape[1])
         self.mantaRays = self.mantaRays + self.SF * (r1 * 
                             self.best_ray - r2 * self.mantaRays)        
     
