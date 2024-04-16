@@ -5,7 +5,7 @@ Created on Apr 16, 2024
 @url: https://www.youtube.com/watch?v=USD2IzkIb2M
 @url: https://www.codeproject.com/Articles/5369245/Cheetah-Optimizer-Python-Implementation
 
-Cheetahs behave one of the three ways
+Cheetahs behave one of the four ways
 
 1. Attack
     Rushing: When the cheetah decides to attack, they rush toward the prey with maximum speed.
