@@ -96,12 +96,31 @@ class MantaRays:
         r0 = np.expand_dims(rn[self.ind_curr, 0], axis=1)
         beta = np.expand_dims(beta, axis=1)
         
-        mantaRays[0] = mantaRays[0] + rn[0, 0] * (self.best_ray - mantaRays[0]) + \
+        mantaRays[0] = self.best_ray + rn[0, 0] * (self.best_ray - mantaRays[0]) + \
                 beta[0] * (self.best_ray - mantaRays[0])
                 
-        mantaRays[self.ind_curr] = mantaRays[self.ind_curr] + r0 * \
+        mantaRays[self.ind_curr] = self.best_ray + r0 * \
                 (mantaRays[self.ind_prev] - mantaRays[self.ind_curr]) + \
                 beta[self.ind_curr] * (self.best_ray - mantaRays[self.ind_curr])
+                
+        return mantaRays
+    
+    def randomSearch(self, rounds, rnd):
+        rn = np.random.rand(self.numOfMantaRays, 3)
+        randRays = self.data_func(self.numOfMantaRays)
+        beta = 2 * np.e**(rn[:, 1] * (rounds - rnd + 1) / rounds) * np.sin(2 * np.pi, rn[:, 2])
+        
+        mantaRays = np.array(self.mantaRays)
+        
+        r0 = np.expand_dims(rn[self.ind_curr, 0], axis=1)
+        beta = np.expand_dims(beta, axis=1)
+        
+        mantaRays[0] = randRays[0] + rn[0, 0] * (self.best_ray - mantaRays[0]) + \
+                beta[0] * (randRays[0] - mantaRays[0])
+                
+        mantaRays[self.ind_curr] = randRays[self.ind_curr] + r0 * \
+                (mantaRays[self.ind_prev] - mantaRays[self.ind_curr]) + \
+                beta[self.ind_curr] * (randRays[self.ind_curr] - mantaRays[self.ind_curr])
                 
         return mantaRays
     
@@ -116,7 +135,10 @@ class MantaRays:
         for rnd in range(rounds):
             chain_m = self.chainSearch()
             cycln_m = self.cycloneSearch(rounds, rnd)
-            self.mantaRays = np.where(tatic < 0.5, cycln_m, chain_m)
+            randn_m = self.randomSearch(rounds, rnd)
+            self.mantaRays = np.where(tatic < 0.5, 
+                                      chain_m,
+                                      np.where(rnd / rounds < tatic, cycln_m, randn_m))
             self.best(self.mantaRays)
         
         return self.best_ray
