@@ -20,7 +20,6 @@ ant colony fast
 '''
 
 import numpy as np
-from pymoo.operators.sampling.lhs import LHS
 from pymoo.problems import get_problem
 
 from grey_wolf.lib.grey_wolf import WolfPack
@@ -30,7 +29,6 @@ from moth_swarn.lib.moths import MothsFlame
 from cheetah_optim.lib.cheetahs import Cheetahs
 
 problem = get_problem("rastrigin", n_var=4)
-sampling = LHS()
 
 
 def rastrigin4d(X):
