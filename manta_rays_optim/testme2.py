@@ -25,6 +25,7 @@ print("MantaRays optimal at f({}) ==> {}".format(best, equation(best[0], best[1]
 
 '''
 PSO Global optimal at f([3.1818181818181817, 3.131313131313131])=-1.8082706615747688
+MantaRays optimal at f([3.18553944 3.12888118]) ==> -1.8083437259850186
 
 '''
 
