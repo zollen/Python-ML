@@ -62,11 +62,11 @@ class MantaRays:
         else:
             return self.obj_func(X) * -1
         
-    def best(self, X):
-        scores = self.fitness(X)
+    def best(self):
+        scores = self.fitness(self.mantaRays)
         ind = np.argmax(scores)
         if self.best_score == None or self.best_score < scores[ind]:
-            self.best_ray = X[ind]
+            self.best_ray = self.mantaRays[ind]
             self.best_score = scores[ind]            
     
     def chainSearch(self):
@@ -126,12 +126,13 @@ class MantaRays:
         return mantaRays
     
     def somersault(self):
-        rn = np.expand_dims(np.random.rand(self.numOfMantaRays, 2), axis=1)
-        self.mantaRays = self.mantaRays + self.SF * (rn[:,0] * 
-                            self.best_ray - rn[:, 1] * self.mantaRays)
+        r1 = np.random.rand(self.numOfMantaRays, 3)
+        r2 = np.random.rand(self.numOfMantaRays, 3)
+        self.mantaRays = self.mantaRays + self.SF * (r1 * 
+                            self.best_ray - r2 * self.mantaRays)        
     
     def start(self, rounds):
-        self.best(self.mantaRays)
+        self.best()
         tatic = np.expand_dims(np.random.rand(self.numOfMantaRays), axis=1)
         for rnd in range(rounds):
             chain_m = self.chainSearch()
@@ -140,7 +141,9 @@ class MantaRays:
             self.mantaRays = np.where(tatic < 0.5, 
                                       chain_m,
                                       np.where(rnd / rounds < tatic, cycln_m, randn_m))
-            self.best(self.mantaRays)
+            self.best()
+            self.somersault()
+            self.best()
         
         return self.best_ray
     
