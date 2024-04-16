@@ -42,7 +42,7 @@ def data(n):
 
 
 pack = WolfPack(fitness, data, 'min', 100)    
-best = pack.hunt(50)
+best = pack.hunt(70)
 print("WolfPack optimal at f({}) ==> {}".format(best, rastrigin4d(best)))
 
 whales = Whales(fitness, data, 'min', 1000)    
@@ -51,7 +51,7 @@ best = whales.start(50)
 print("Whales optimal f({}) ==> {}".format(best, rastrigin4d(best)))
 
 moths = MothsFlame(fitness, data, 'min', 1000)    
-best = moths.start(50)
+best = moths.start(100)
     
 print("MothsFlame optimal f({}) ==> {}".format(best, rastrigin4d(best)))
 
@@ -61,6 +61,6 @@ best = rays.start(50)
 print("MantaRays optimal f({}) ==> {}".format(best, rastrigin4d(best)))
 
 cheetahs = Cheetahs(fitness, data, 'min', 1000) 
-best = cheetahs.start(50)
+best = cheetahs.start(70)
     
 print("Cheetahs optimal f({}) ==> {}".format(best, rastrigin4d(best)))
