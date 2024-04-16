@@ -51,7 +51,7 @@ best = whales.start(50)
 print("Whales optimal f({}) ==> {}".format(best, rastrigin4d(best)))
 
 moths = MothsFlame(fitness, data, 'min', 1000)    
-best = moths.start(100)
+best = moths.start(200)
     
 print("MothsFlame optimal f({}) ==> {}".format(best, rastrigin4d(best)))
 
