@@ -108,6 +108,7 @@ class MantaRays:
     def randomSearch(self, rounds, rnd):
         rn = np.random.rand(self.numOfMantaRays, 3)
         randRays = self.data_func(self.numOfMantaRays)
+        randray = self.data_func(1)
         beta = 2 * np.e**(rn[:, 1] * (rounds - rnd + 1) / rounds) * np.sin(2 * np.pi, rn[:, 2])
         
         mantaRays = np.array(self.mantaRays)
@@ -115,10 +116,10 @@ class MantaRays:
         r0 = np.expand_dims(rn[self.ind_curr, 0], axis=1)
         beta = np.expand_dims(beta, axis=1)
         
-        mantaRays[0] = randRays[0] + rn[0, 0] * (self.best_ray - mantaRays[0]) + \
+        mantaRays[0] = randray + rn[0, 0] * (randRays[0] - randray) + \
                 beta[0] * (randRays[0] - mantaRays[0])
                 
-        mantaRays[self.ind_curr] = randRays[self.ind_curr] + r0 * \
+        mantaRays[self.ind_curr] = randray + r0 * \
                 (mantaRays[self.ind_prev] - mantaRays[self.ind_curr]) + \
                 beta[self.ind_curr] * (randRays[self.ind_curr] - mantaRays[self.ind_curr])
                 
