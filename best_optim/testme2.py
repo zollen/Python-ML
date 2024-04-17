@@ -25,13 +25,13 @@ from moth_swarn.lib.moths import MothsFlame
 from cheetah_optim.lib.cheetahs import Cheetahs
 
 def eq1(x, y, z):
-    return  4 * np.ceil(x) + 5 * np.ceil(y) + 6 * np.ceil(z)
+    return  4 * np.floor(x) + 5 * np.floor(y) + 6 * np.floor(z)
 
 def fitness(X):
     res = eq1(X[:,0], X[:,1], X[:,2])
-    c1 = (900 - (2 * np.ceil(X[:,0]) + 3 * np.ceil(X[:,1]) + np.ceil(X[:,2]))) 
-    c2 = (350 - (3 * np.ceil(X[:,0]) +     np.ceil(X[:,1]) + np.ceil(X[:,2]))) 
-    c3 = (400 - (4 * np.ceil(X[:,0]) + 2 * np.ceil(X[:,1]) + np.ceil(X[:,2]))) 
+    c1 = (900 - (2 * np.floor(X[:,0]) + 3 * np.floor(X[:,1]) + np.floor(X[:,2]))) 
+    c2 = (350 - (3 * np.floor(X[:,0]) +     np.floor(X[:,1]) + np.floor(X[:,2]))) 
+    c3 = (400 - (4 * np.floor(X[:,0]) + 2 * np.floor(X[:,1]) + np.floor(X[:,2]))) 
     penalty1 = np.where(X < 0, -5000000, 0)
     penalty2 = np.where(X > 500, -5000000, 0)
     penalty3 = np.where(c1 < 0, -5000000, 0)
@@ -67,3 +67,5 @@ cheetahs = Cheetahs(fitness, data, 'max', 10000)
 best = cheetahs.start(100)
     
 print("Cheetahs optimal f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
+
+print("FITNESS: ", fitness(np.array([[0, 0, 350]])))
