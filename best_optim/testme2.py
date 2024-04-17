@@ -23,43 +23,45 @@ from moth_swarn.lib.moths import MothsFlame
 from cheetah_optim.lib.cheetahs import Cheetahs
 
 def eq1(x, y, z):
-    r = 4 * np.ceil(x) + 5 * np.ceil(y) + 6 * np.ceil(z)
-    c1 = (900 - 2 * np.ceil(x) + 3 * np.ceil(y) + np.ceil(z)) * 5
-    c2 = (350 - 3 * np.ceil(x) +     np.ceil(y) + np.ceil(z)) * 5
-    c3 = (400 - 4 * np.ceil(x) + 2 * np.ceil(y) + np.ceil(z)) * 5
-    return r + c1 + c2 + c3 
+    return  4 * np.ceil(x) + 5 * np.ceil(y) + 6 * np.ceil(z)
 
-def equation(X):
+def fitness(X):
     res = eq1(X[:,0], X[:,1], X[:,2])
+    c1 = (900 - (2 * np.ceil(X[:,0]) + 3 * np.ceil(X[:,1]) + np.ceil(X[:,2]))) 
+    c2 = (350 - (3 * np.ceil(X[:,0]) +     np.ceil(X[:,1]) + np.ceil(X[:,2]))) 
+    c3 = (400 - (4 * np.ceil(X[:,0]) + 2 * np.ceil(X[:,1]) + np.ceil(X[:,2]))) 
     penalty1 = np.where(X < 0, -5000000, 0)
     penalty2 = np.where(X > 500, -5000000, 0)
+    penalty3 = np.where(c1 < 0, -5000000, 0)
+    penalty4 = np.where(c2 < 0, -5000000, 0)
+    penalty5 = np.where(c3 < 0, -5000000, 0)
     return res + penalty1[:,0] + penalty1[:,1] + penalty1[:,2] + penalty2[:, 0] + \
-            penalty2[:, 1] + penalty2[:, 2]
+            penalty2[:, 1] + penalty2[:, 2] + penalty3 + penalty4 + penalty5
 
 def data(n):
     return np.random.randint(0, 500, size=(n, 3))
 
 
-pack = WolfPack(equation, data, 'max', 1000)    
-best = pack.hunt(70)
+pack = WolfPack(fitness, data, 'max', 1000)    
+best = pack.hunt(100)
 print("WolfPack optimal at f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
 
-whales = Whales(equation, data, 'max', 1000)    
-best = whales.start(50)
+whales = Whales(fitness, data, 'max', 1000)    
+best = whales.start(100)
     
 print("Whales optimal f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
 
-moths = MothsFlame(equation, data, 'max', 1000)    
+moths = MothsFlame(fitness, data, 'max', 1000)    
 best = moths.start(100)
     
 print("MothsFlame optimal f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
 
-rays = MantaRays(equation, data, 'max', 1000)    
-best = rays.start(50)
+rays = MantaRays(fitness, data, 'max', 1000)    
+best = rays.start(100)
     
 print("MantaRays optimal f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
 
-cheetahs = Cheetahs(equation, data, 'max', 1000) 
-best = cheetahs.start(70)
+cheetahs = Cheetahs(fitness, data, 'max', 1000) 
+best = cheetahs.start(100)
     
 print("Cheetahs optimal f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
