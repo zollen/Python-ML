@@ -67,7 +67,7 @@ class Crows:
             self.best_crow = self.crows[ind]
             self.best_score = scores[ind]
     
-    def move(self, rounds, rnd):
+    def move(self):
         r = np.random.rand(self.crows.shape[0], self.crows.shape[1])
         d = np.expand_dims(np.random.rand(self.crows.shape[0]), axis=1)
         j = np.array(range(self.numOfCrows))
@@ -83,7 +83,7 @@ class Crows:
     
     def start(self, rounds):
         for rnd in range(rounds):
-            self.move(rounds, rnd)
+            self.move()
             self.update()
             self.best()
             

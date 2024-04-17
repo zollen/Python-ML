@@ -33,6 +33,7 @@ best = crows.start(50)
 print("Crows optimal {} ==> {}".format(best, equation(best[0], best[1], best[2])))
 
 '''
-
+Crows optimal [0.04397914 0.1555252  0.79965682] ==> 12.344912052322103
+Crows optimal [0.10049555 0.09880521 0.79967978] ==> 12.381261523895574
 '''
 
