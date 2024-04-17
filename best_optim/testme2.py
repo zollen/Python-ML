@@ -23,10 +23,10 @@ from moth_swarn.lib.moths import MothsFlame
 from cheetah_optim.lib.cheetahs import Cheetahs
 
 def eq1(x, y, z):
-    r = 4 * x + 5 * y + 6 * z
-    c1 = (900 - 2 * x + 3 * y + z) * 5
-    c2 = (350 - 3 * x +     y + z) * 5
-    c3 = (400 - 4 * x + 2 * y + z) * 5
+    r = 4 * np.ceil(x) + 5 * np.ceil(y) + 6 * np.ceil(z)
+    c1 = (900 - 2 * np.ceil(x) + 3 * np.ceil(y) + np.ceil(z)) * 5
+    c2 = (350 - 3 * np.ceil(x) +     np.ceil(y) + np.ceil(z)) * 5
+    c3 = (400 - 4 * np.ceil(x) + 2 * np.ceil(y) + np.ceil(z)) * 5
     return r + c1 + c2 + c3 
 
 def equation(X):
@@ -42,24 +42,24 @@ def data(n):
 
 pack = WolfPack(equation, data, 'max', 1000)    
 best = pack.hunt(70)
-print("WolfPack optimal at f({}) ==> {}".format(best, eq1(best[0], best[1], best[2])))
+print("WolfPack optimal at f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
 
 whales = Whales(equation, data, 'max', 1000)    
 best = whales.start(50)
     
-print("Whales optimal f({}) ==> {}".format(best, eq1(best[0], best[1], best[2])))
+print("Whales optimal f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
 
 moths = MothsFlame(equation, data, 'max', 1000)    
 best = moths.start(100)
     
-print("MothsFlame optimal f({}) ==> {}".format(best, eq1(best[0], best[1], best[2])))
+print("MothsFlame optimal f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
 
 rays = MantaRays(equation, data, 'max', 1000)    
 best = rays.start(50)
     
-print("MantaRays optimal f({}) ==> {}".format(best, eq1(best[0], best[1], best[2])))
+print("MantaRays optimal f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
 
 cheetahs = Cheetahs(equation, data, 'max', 1000) 
 best = cheetahs.start(70)
     
-print("Cheetahs optimal f({}) ==> {}".format(best, eq1(best[0], best[1], best[2])))
+print("Cheetahs optimal f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
