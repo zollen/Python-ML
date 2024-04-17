@@ -12,6 +12,8 @@ Constrants: 2x + 3y + z <= 900
             x >= 0, y >= 0, z >= 0
             
 The maximum optimal value is 2100 and found at (0,0, 350) of the objective function.
+
+It is possible to perform integer base optimization with constraints.
                          
 '''
 
