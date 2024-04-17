@@ -10,6 +10,8 @@ Constrants: 2x + 3y + z <= 900
             3x + y + z <= 350
             4x + 2y + z <= 400
             x >= 0, y >= 0, z >= 0
+            
+The maximum optimal value is 2100 and found at (0,0, 350) of the objective function.
                          
 '''
 
