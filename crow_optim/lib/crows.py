@@ -42,13 +42,15 @@ import numpy as np
 
 class Crows:
     
-    def __init__(self, obj_func, data_func, direction, numOfCrows, AP = 0.5):
+    def __init__(self, obj_func, data_func, direction, numOfCrows, AP = 0.3, FL = 2):
         self.obj_func = obj_func
         self.data_func = data_func
         self.direction = direction
         self.numOfCrows = numOfCrows
         self.AP = AP
+        self.FL = FL
         self.crows = self.data_func(self.numOfCrows)
+        self.memory = np.array(self.crows)
         self.best_crow = None
         self.best_score = None
     
@@ -60,16 +62,30 @@ class Crows:
     
     def best(self):
         scores = self.fitness(self.crows)
-        id = np.argmax(scores)
-        if self.best_score == None or self.best_score < scores[id]:
-            self.best_crow = self.crows[id]
-            self.best_score = scores[id]
+        ind = np.argmax(scores)
+        if self.best_score == None or self.best_score < scores[ind]:
+            self.best_crow = self.crows[ind]
+            self.best_score = scores[ind]
     
-    def move(self):
-        pass
+    def move(self, rounds, rnd):
+        r = np.random.rand(self.crows.shape[0], self.crows.shape[1])
+        d = np.expand_dims(np.random.rand(self.crows.shape[0]), axis=1)
+        j = np.array(range(self.numOfCrows))
+        np.random.shuffle(j)
+        fl = self.FL * (rounds - (rnd  / rounds))
+        move1 = self.crows + r * fl * (self.memory[j] - self.crows)
+        move2 = self.data_func(self.numOfCrows)
+        self.crows = np.where(d > self.AP, move1, move2)
     
     def update(self):
-        pass
+        fit1 = np.expand_dims(self.fitness(self.crows), axis=1)
+        fit2 = np.expand_dims(self.fitness(self.memory), axis=1)
+        self.memory = np.where(fit1 > fit2, self.crows, self.memory)
     
     def start(self, rounds):
-        pass
+        for rnd in range(rounds):
+            self.move(rounds, rnd)
+            self.update()
+            self.best()
+            
+        return self.best_crow
