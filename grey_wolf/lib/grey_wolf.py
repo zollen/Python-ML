@@ -79,7 +79,6 @@ class WolfPack:
         self.obj_func = obj_func
         self.data_func = data_func
         self.X = self.data_func(self.numOfWolves)
-        self.debug = None
          
     def cofficients(self, a, n):
         r1 = np.random.rand(n, self.X[0].size)
