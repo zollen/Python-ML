@@ -73,10 +73,10 @@ import sys
     
 class WolfPack:
     
-    def __init__(self, fitness, data_func, direction, numOfWolves):
+    def __init__(self, obj_func, data_func, direction, numOfWolves):
         self.numOfWolves = numOfWolves 
         self.direction = direction
-        self.fitness = fitness
+        self.obj_func = obj_func
         self.data_func = data_func
         self.X = self.data_func(self.numOfWolves)
         self.debug = None
@@ -88,20 +88,25 @@ class WolfPack:
         C = 2 * r2
         return A, C
     
-    def best(self):
-        score = self.fitness(self.X)
+    def fitness(self, X):
         if self.direction == 'max':
-            ialpha = np.argmax(score)
-            score[ialpha] = sys.maxsize * -1
-            ibeta = np.argmax(score)
-            score[ibeta] = sys.maxsize * -1
-            igamma = np.argmax(score)
+            return self.obj_func(X)
         else:
-            ialpha = np.argmin(score)
-            score[ialpha] = sys.maxsize
-            ibeta = np.argmin(score)
-            score[ibeta] = sys.maxsize
-            igamma = np.argmin(score)
+            return self.obj_func(X) * -1
+    
+    def best(self):
+        scores = self.fitness(self.X)
+        ind = np.argpartition(scores, -3)[-3:] 
+        tt = [ scores[ind[0]], scores[ind[1]], scores[ind[2]] ]
+        ii = np.argmax(tt)
+        ialpha = ind[ii]
+        tt = np.delete(tt, ii)
+        ind = np.delete(ind, ii)
+        ii = np.argmax(tt)
+        ibeta = ind[ii]
+        tt = np.delete(tt, ii)
+        ind = np.delete(ind, ii)
+        igamma = ind[0]
         return ialpha, ibeta, igamma
         
     def chase(self, a, alpha, beta, gamma):
