@@ -26,6 +26,7 @@ print("Crows optimal at f({}) ==> {}".format(best, equation(best[0], best[1])))
 '''
 PSO Global optimal at f([3.1818181818181817, 3.131313131313131])=-1.8082706615747688
 Crows optimal at f([3.18264642 3.12869166]) ==> -1.8083065294451597
+Crows optimal at f([3.18516362 3.1297968 ]) ==> -1.8083520352292988
 
 '''
 
