@@ -58,8 +58,8 @@ import numpy as np
 
 class Whales:
     
-    def __init__(self, fitness, data_func, direction, numOfWhales, spiral = 1):
-        self.fitness = fitness
+    def __init__(self, obj_func, data_func, direction, numOfWhales, spiral = 1):
+        self.obj_func = obj_func
         self.data_func = data_func
         self.direction = direction
         self.numOfWhales = numOfWhales
@@ -77,12 +77,15 @@ class Whales:
         k = np.random.randint(0, self.numOfWhales, size=self.whales.shape[0])
         return A, C, p, l, k
     
+    def fitness(self, X):
+        if self.direction == 'max':
+            return self.obj_func(X)
+        else:
+            return self.obj_func(X) * -1
+    
     def best(self):
         score = self.fitness(self.whales)
-        if self.direction == 'max':
-            ibest = np.argmax(score)
-        else:
-            ibest = np.argmin(score)
+        ibest = np.argmax(score)
         return self.whales[ibest]
     
     def hunt(self, A, D, l, k, best):
