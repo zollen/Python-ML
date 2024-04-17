@@ -30,7 +30,11 @@ def eq1(x, y, z):
     return r + c1 + c2 + c3 
 
 def equation(X):
-    return eq1(X[:,0], X[:,1], X[:,2])
+    res = eq1(X[:,0], X[:,1], X[:,2])
+    penalty1 = np.where(X < 0, -5000000, 0)
+    penalty2 = np.where(X > 500, -5000000, 0)
+    return res + penalty1[:,0] + penalty1[:,1] + penalty1[:,2] + penalty2[:, 0] + \
+            penalty2[:, 1] + penalty2[:, 2]
 
 def data(n):
     return np.random.randint(0, 500, size=(n, 3))
