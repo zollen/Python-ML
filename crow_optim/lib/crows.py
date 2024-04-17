@@ -72,8 +72,7 @@ class Crows:
         d = np.expand_dims(np.random.rand(self.crows.shape[0]), axis=1)
         j = np.array(range(self.numOfCrows))
         np.random.shuffle(j)
-        fl = self.FL * (rounds - (rnd  / rounds))
-        move1 = self.crows + r * fl * (self.memory[j] - self.crows)
+        move1 = self.crows + r * self.FL * (self.memory[j] - self.crows)
         move2 = self.data_func(self.numOfCrows)
         self.crows = np.where(d > self.AP, move1, move2)
     
