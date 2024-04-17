@@ -82,7 +82,7 @@ class Crows:
         self.memory = np.where(fit1 > fit2, self.crows, self.memory)
     
     def start(self, rounds):
-        for rnd in range(rounds):
+        for _ in range(rounds):
             self.move()
             self.update()
             self.best()
