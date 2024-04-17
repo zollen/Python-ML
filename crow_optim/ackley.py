@@ -31,6 +31,6 @@ def data(n):
 
 
 
-crows = Crows(fitness, data, 'min', 1000, AP=0.1, FL=1)    
+crows = Crows(fitness, data, 'min', 10000, AP=0.1, FL=1)    
 best = crows.start(100)
 print("Crows optimal at f({}) ==> {}".format(best, ackley10d(best)))
