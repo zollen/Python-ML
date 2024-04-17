@@ -46,26 +46,25 @@ def data(n):
 
 pack = WolfPack(fitness, data, 'max', 10000)    
 best = pack.hunt(100)
-print("WolfPack optimal at f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
+print("WolfPack optimal at f({}) ==> {}".format(np.floor(best), eq1(best[0], best[1], best[2])))
 
 whales = Whales(fitness, data, 'max', 10000)    
 best = whales.start(100)
     
-print("Whales optimal f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
+print("Whales optimal f({}) ==> {}".format(np.floor(best), eq1(best[0], best[1], best[2])))
 
 moths = MothsFlame(fitness, data, 'max', 10000)    
 best = moths.start(100)
     
-print("MothsFlame optimal f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
+print("MothsFlame optimal f({}) ==> {}".format(np.floor(best), eq1(best[0], best[1], best[2])))
 
 rays = MantaRays(fitness, data, 'max', 10000)    
 best = rays.start(100)
     
-print("MantaRays optimal f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
+print("MantaRays optimal f({}) ==> {}".format(np.floor(best), eq1(best[0], best[1], best[2])))
 
 cheetahs = Cheetahs(fitness, data, 'max', 10000) 
 best = cheetahs.start(100)
     
-print("Cheetahs optimal f({}) ==> {}".format(np.ceil(best), eq1(best[0], best[1], best[2])))
+print("Cheetahs optimal f({}) ==> {}".format(np.floor(best), eq1(best[0], best[1], best[2])))
 
-print("FITNESS: ", fitness(np.array([[0, 0, 350]])))
