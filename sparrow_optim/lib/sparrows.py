@@ -65,7 +65,7 @@ import numpy as np
 
 class Sparrows:
     
-    def __init__(self, obj_func, data_func, direction, numOfSparrows, numOfProducers = 0.75, numOfScouters = 0.1, L=1, ST = 0.5):
+    def __init__(self, obj_func, data_func, direction, numOfSparrows, numOfProducers = 0.75, numOfScouters = 0.1, L=1, ST = 0.5, LB=-5, UB=5):
         self.obj_func = obj_func
         self.data_func = data_func
         self.direction = direction
@@ -74,6 +74,8 @@ class Sparrows:
         self.numOfScouters = int(self.numOfSparrows * numOfScouters)
         self.ST = ST
         self.L = L
+        self.LB = LB
+        self.UB = UB
         self.sparrows = self.data_func(self.numOfSparrows)
         self.producers = []
         self.scroungers = []
@@ -88,6 +90,11 @@ class Sparrows:
             return self.obj_func(X)
         else:
             return self.obj_func(X) * -1
+        
+    def bound(self, X):
+        X = np.where(X > self.LB, X, self.LB)
+        X = np.where(X < self.UB, X, self.UB)
+        return X
         
     def selection(self):
         scores = self.fitness(self.sparrows)
@@ -118,7 +125,7 @@ class Sparrows:
         Q = np.random.uniform(-1, 1, (producers.shape[0], producers.shape[1]))
         moves1 = producers * np.e**(-r / (alpha * rounds))
         moves2 = producers + Q * self.L
-        return np.where(r < self.ST, moves1, moves2)
+        return self.bound(np.where(r < self.ST, moves1, moves2))
 
     def update_scroungers(self):
         scroungers = self.sparrows[self.scroungers]
@@ -132,7 +139,7 @@ class Sparrows:
         Ap = np.expand_dims(At * np.sqrt(A * At), axis=1)
         moves1 = Q * np.e**((self.worst_sparrow - scroungers) / (r**2))
         moves2 = self.best_sparrow - np.abs(scroungers - self.best_sparrow) * Ap * self.L
-        return np.where(scores > avg, moves1, moves2)
+        return self.bound(np.where(scores > avg, moves1, moves2))
     
     def update_scouters(self, rounds, rnd):
         scouters = self.sparrows[self.scouters]
@@ -143,11 +150,11 @@ class Sparrows:
         K = np.random.uniform(-1, 1, (scouters.shape[0], scouters.shape[1]))
         moves1 = self.best_sparrow + beta * np.abs(scouters - self.best_sparrow)
         moves2 = scouters + K * ((scouters - self.worst_sparrow)/(scores - worst + 1))
-        return np.where(scores > best, 
+        return self.bound(np.where(scores > best, 
                                 moves1,
                                 np.where(scores == best,
                                         moves2,
-                                        scouters))
+                                        scouters)))
     
     def update(self, producers, scroungers, scouters):
         scores = np.expand_dims(self.fitness(self.sparrows), axis=1)
