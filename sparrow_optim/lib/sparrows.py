@@ -137,9 +137,9 @@ class Sparrows:
         A = np.random.uniform(-1, 1, scroungers.shape[0])
         At = np.transpose(A)
         Ap = np.expand_dims(At * np.sqrt(A * At), axis=1)
-        moves1 = Q * np.e**((self.worst_sparrow - scroungers) / (r**2))
+        moves1 = self.best_sparrow + Q * np.power(np.e, r) * np.cos(2 * np.pi * r)
         moves2 = self.best_sparrow - np.abs(scroungers - self.best_sparrow) * Ap * self.L
-        return self.bound(np.where(scores > avg, moves1, moves2))
+        return self.bound(np.where(scores < avg, moves1, moves2))
     
     def update_scouters(self, rounds, rnd):
         scouters = self.sparrows[self.scouters]
@@ -149,7 +149,7 @@ class Sparrows:
         beta =  rounds - ((rnd + 1) / (rounds + 2))
         K = np.random.uniform(-1, 1, (scouters.shape[0], scouters.shape[1]))
         moves1 = self.best_sparrow + beta * np.abs(scouters - self.best_sparrow)
-        moves2 = scouters + K * ((scouters - self.worst_sparrow)/(scores - worst + 1))
+        moves2 = self.best_sparrow + K * (scouters - self.worst_sparrow)
         return self.bound(np.where(scores > best, 
                                 moves1,
                                 np.where(scores == best,
