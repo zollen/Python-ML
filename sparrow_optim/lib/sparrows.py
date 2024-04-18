@@ -125,12 +125,12 @@ class Sparrows:
         scores = self.fitness(scroungers)
         avg = (np.max(scores) - np.min(scores)) / 2
         scores = np.expand_dims(scores, axis=1)
+        r = np.expand_dims(np.random.rand(scroungers.shape[0]), axis=1)
         Q = np.random.uniform(-1, 1, (scroungers.shape[0], scroungers.shape[1]))
-        ind = np.expand_dims(np.array(range(scroungers.shape[0])), axis=1)
         A = np.random.uniform(-1, 1, scroungers.shape[0])
         At = np.transpose(A)
         Ap = np.expand_dims(At * np.sqrt(A * At), axis=1)
-        moves1 = Q * np.e**((self.worst_sparrow - scroungers) / (ind**2))
+        moves1 = Q * np.e**((self.worst_sparrow - scroungers) / ((r+0.01)**2))
         moves2 = self.best_sparrow - np.abs(scroungers - self.best_sparrow) * Ap * self.L
         return np.where(scores > avg, moves1, moves2)
     
