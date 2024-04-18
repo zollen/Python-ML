@@ -25,6 +25,7 @@ from whale_optim.lib.whales import Whales
 from manta_rays_optim.lib.manta_rays import MantaRays
 from moth_swarn.lib.moths import MothsFlame
 from cheetah_optim.lib.cheetahs import Cheetahs
+from crow_optim.lib.crows import Crows
 
 def eq1(x, y, z):
     return  4 * np.floor(x) + 5 * np.floor(y) + 6 * np.floor(z)
@@ -70,3 +71,7 @@ best = cheetahs.start(100)
     
 print("Cheetahs optimal f({}) ==> {}".format(np.floor(best), eq1(best[0], best[1], best[2])))
 
+crows = Crows(fitness, data, 'max', 10000) 
+best = crows.start(100)
+    
+print("Crows optimal f({}) ==> {}".format(np.floor(best), eq1(best[0], best[1], best[2])))

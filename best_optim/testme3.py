@@ -28,6 +28,7 @@ from whale_optim.lib.whales import Whales
 from manta_rays_optim.lib.manta_rays import MantaRays
 from moth_swarn.lib.moths import MothsFlame
 from cheetah_optim.lib.cheetahs import Cheetahs
+from crow_optim.lib.crows import Crows
 
 problem = get_problem("zakharov", n_var=4)
 
@@ -67,3 +68,7 @@ best = cheetahs.start(50)
     
 print("Cheetahs optimal f({}) ==> {}".format(best, zakharov4d(best)))
 
+crows = Crows(fitness, data, 'min', 1000) 
+best = crows.start(50)
+    
+print("Crows optimal f({}) ==> {}".format(best, zakharov4d(best)))

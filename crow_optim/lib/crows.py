@@ -73,7 +73,7 @@ class Crows:
         j = np.array(range(self.numOfCrows))
         np.random.shuffle(j)
         move1 = self.crows + np.abs(np.cos(r)) * (self.memory[j] - self.crows)
-        move2 = 0.5 * self.FL * r + self.memory[j]
+        move2 = self.crows + np.abs(np.tan(r)) * (self.best_crow - self.crows)
         self.crows = np.where(d > self.AP, move1, move2)
     
     def update(self):
@@ -82,6 +82,7 @@ class Crows:
         self.memory = np.where(fit1 > fit2, self.crows, self.memory)
     
     def start(self, rounds):
+        self.best()
         for _ in range(rounds):
             self.move()
             self.update()
