@@ -62,11 +62,11 @@ best = rays.start(50)
 print("MantaRays optimal f({}) ==> {}".format(best, rastrigin4d(best)))
 
 cheetahs = Cheetahs(fitness, data, 'min', 1000) 
-best = cheetahs.start(70)
-    
+best = cheetahs.start(100)
+
 print("Cheetahs optimal f({}) ==> {}".format(best, rastrigin4d(best)))
 
 crows = Crows(fitness, data, 'min', 1000)    
-best = crows.start(50)
+best = crows.start(100)
     
 print("Crows optimal f({}) ==> {}".format(best, rastrigin4d(best)))
