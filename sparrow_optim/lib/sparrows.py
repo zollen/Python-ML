@@ -117,7 +117,7 @@ class Sparrows:
         ind = np.expand_dims(np.array(range(self.numOfProducers)), axis=1)
         alpha = np.random.rand(producers.shape[0], producers.shape[1])
         Q = np.random.uniform(-1, 1, (producers.shape[0], producers.shape[1]))
-        moves1 = producers * np.e**(ind / (alpha * rounds))
+        moves1 = producers * np.e**(-r / (alpha * rounds))
         moves2 = producers + Q * self.L
         return np.where(r < self.ST, moves1, moves2)
 
