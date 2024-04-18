@@ -34,5 +34,11 @@ def data(n):
 sparrows = Sparrows(fitness, data, 'max', 1000)
 best = sparrows.start(50)
 
-print("Global optimal {} ==> {}".format(best, equation(best[0], best[1], best[2])))
+print("Sparrows optimal {} ==> {}".format(best, equation(best[0], best[1], best[2])))
+
+'''
+Sparrows optimal [0.12377352 0.07626112 0.79996227] ==> 12.374045598611254
+Sparrows optimal [0.13016192 0.0699785  0.79985958] ==> 12.370055179772438
+
+'''
 
