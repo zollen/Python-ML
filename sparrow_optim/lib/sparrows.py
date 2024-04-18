@@ -145,7 +145,6 @@ class Sparrows:
         scouters = self.sparrows[self.scouters]
         scores = np.expand_dims(self.fitness(scouters), axis=1)
         best = self.fitness(np.expand_dims(self.best_sparrow, axis=0))
-        worst = self.fitness(np.expand_dims(self.worst_sparrow, axis=0))
         beta =  rounds - ((rnd + 1) / (rounds + 2))
         K = np.random.uniform(-1, 1, (scouters.shape[0], scouters.shape[1]))
         moves1 = self.best_sparrow + beta * np.abs(scouters - self.best_sparrow)
