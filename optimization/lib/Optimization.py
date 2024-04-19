@@ -19,7 +19,8 @@ class Optimization:
         self.UB = UB
         self.population = self.data_func(self.population_size)
         self.best_candidates = np.array([])
-        self.best_scores = np.array([[]])
+        self.best_scores = np.array([])
+        self.best_positions = np.array([])
         if self.obj_type == 'single':
             self.candidate_size = 1
         else:
@@ -34,14 +35,18 @@ class Optimization:
     def best(self, X):
         scores = self.fitness(X)
         if self.best_scores.size > 0:
-            all_scores =  np.concatenate((scores, self.best_scores))
-            all_pop = np.vstack((self.population, self.best_candidates))
+            all_scores =  np.where(scores[self.best_positions] < self.best_scores, 
+                                self.best_scores, scores[self.best_positions])
+            all_pop = np.where(np.expand_dims(scores[self.best_positions], axis=1) < 
+                               np.expand_dims(self.best_scores, axis=1),
+                                self.best_candidates, self.population[self.best_positions])
         else:
             all_scores = scores
             all_pop = self.population
         ind = np.argpartition(all_scores, -self.candidate_size)[-self.candidate_size:]
         self.best_scores = all_scores[ind]
         self.best_candidates = all_pop[ind]
+        self.best_positions = ind
         return self.best_candidates
         
     def bound(self, X):
