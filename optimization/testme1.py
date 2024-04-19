@@ -25,6 +25,7 @@ for i in range(optimzer.population.shape[0]):
     print(optimzer.population[i], " ==> ", scores[i])
 print("=============================================")
 best = optimzer.best(optimzer.population)
+best = optimzer.best(optimzer.population)
 scores = fitness(best)
 for i in range(best.shape[0]):
     print(best[i], " ==> ", scores[i])

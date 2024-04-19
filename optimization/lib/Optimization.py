@@ -33,23 +33,16 @@ class Optimization:
     
     def best(self, X):
         scores = self.fitness(X)
-        if self.obj_type == 'single':
-            ind = np.argmax(scores) 
-            if self.best_scores.size <= 0 or self.best_scores[0] < scores[ind]:
-                self.best_scores = scores[ind]
-                self.best_candidates = X[ind] 
-            return self.best_candidates
+        if self.best_scores.size > 0:
+            all_scores =  np.concatenate((scores, self.best_scores))
+            all_pop = np.vstack((self.population, self.best_candidates))
         else:
-            if self.best_scores.size > 0:
-                all_scores =  np.concatenate((scores, self.best_scores))
-                all_pop = np.vstack((self.population, self.best_candidates))
-            else:
-                all_scores = scores
-                all_pop = self.population
-            ind = np.argpartition(all_scores, -self.candidate_size)[-self.candidate_size:]
-            self.best_scores = all_scores[ind]
-            self.best_candidates = all_pop[ind]
-            return self.best_candidates
+            all_scores = scores
+            all_pop = self.population
+        ind = np.argpartition(all_scores, -self.candidate_size)[-self.candidate_size:]
+        self.best_scores = all_scores[ind]
+        self.best_candidates = all_pop[ind]
+        return self.best_candidates
         
     def bound(self, X):
         X = np.where(X > self.LB, X, self.LB)
