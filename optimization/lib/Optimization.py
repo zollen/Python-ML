@@ -19,11 +19,11 @@ class Optimization:
         self.UB = UB
         self.population = self.data_func(self.population_size)
         self.best_candidates = np.array([])
-        self.best_scores = np.array([])
+        self.best_scores = np.array([[]])
         if self.obj_type == 'single':
             self.candidate_size = 1
         else:
-            self.candidate_size = int(self.population_size * candidate_size)
+            self.candidate_size = int(self.population_size * candidate_size) + 1
     
     def fitness(self, X):
         if self.direction == 'max':
@@ -40,8 +40,12 @@ class Optimization:
                 self.best_candidates = X[ind] 
             return self.best_candidates
         else:
-            all_scores = np.concatenate((scores, self.best_scores))
-            all_pop = np.vstack((self.population, self.best_candidates))
+            if self.best_scores.size > 0:
+                all_scores =  np.concatenate((scores, self.best_scores))
+                all_pop = np.vstack((self.population, self.best_candidates))
+            else:
+                all_scores = scores
+                all_pop = self.population
             ind = np.argpartition(all_scores, -self.candidate_size)[-self.candidate_size:]
             self.best_scores = all_scores[ind]
             self.best_candidates = all_pop[ind]

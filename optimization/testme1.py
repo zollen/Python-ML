@@ -19,10 +19,12 @@ def data(n):
     return np.random.randint(0, 10, size=(n,3))
 
 
-optimzer = Optimization(fitness, data, 'max', 10)
+optimzer = Optimization(fitness, data, 'max', 10, obj_type = 'multiple', candidate_size=0.3)
 scores = fitness(optimzer.population)
 for i in range(optimzer.population.shape[0]):
     print(optimzer.population[i], " ==> ", scores[i])
 print("=============================================")
 best = optimzer.best(optimzer.population)
-print("{} => {}".format(best, equation(best[0], best[1], best[2])))
+scores = fitness(best)
+for i in range(best.shape[0]):
+    print(best[i], " ==> ", scores[i])
