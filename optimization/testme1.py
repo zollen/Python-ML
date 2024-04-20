@@ -20,12 +20,32 @@ def data(n):
 
 
 optimzer = Optimization(fitness, data, 'max', 10, obj_type = 'multiple', candidate_size=0.3)
+
+
 scores = fitness(optimzer.population)
 for i in range(optimzer.population.shape[0]):
     print(optimzer.population[i], " ==> ", scores[i])
-print("=============================================")
-best = optimzer.best(optimzer.population)
+print("=========")
 best = optimzer.best(optimzer.population)
 scores = fitness(best)
 for i in range(best.shape[0]):
-    print(best[i], " ==> ", scores[i])
+    print(optimzer.best_positions[i], best[i], " ==> ", scores[i])
+    
+    
+print("=============================================")
+indx = np.array(range(10))
+kk = np.delete(indx, optimzer.best_positions)
+optimzer.population[kk] = optimzer.data_func(6)
+
+
+
+
+scores = fitness(optimzer.population)
+for i in range(optimzer.population.shape[0]):
+    print(optimzer.population[i], " ==> ", scores[i])
+print("=========")
+best = optimzer.best(optimzer.population)
+scores = fitness(best)
+for i in range(best.shape[0]):
+    print(optimzer.best_positions[i], best[i], " ==> ", scores[i])
+

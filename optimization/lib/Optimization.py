@@ -33,11 +33,12 @@ class Optimization:
             return self.obj_func(X) * -1
     
     def best(self, X):
-        scores = self.fitness(X)
+        all_pop = np.array(X)
+        scores = self.fitness(all_pop)
         if self.best_scores.size > 0:
             all_scores =  np.where(scores[self.best_positions] < self.best_scores, 
                                 self.best_scores, scores[self.best_positions])
-            all_pop = np.where(np.expand_dims(scores[self.best_positions], axis=1) < 
+            all_pop[self.best_positions] = np.where(np.expand_dims(scores[self.best_positions], axis=1) < 
                                np.expand_dims(self.best_scores, axis=1),
                                 self.best_candidates, self.population[self.best_positions])
         else:
