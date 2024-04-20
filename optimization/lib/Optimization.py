@@ -59,6 +59,12 @@ class Optimization:
             self.best_candidates = all_pop[ind]
             self.best_positions = ind
         return self.best_candidates
+    
+    def final(self, pool_size = 1):
+        scores = np.concatenate((self.fitness(self.population), self.best_scores))
+        pop = np.vstack((self.population, self.best_candidates))
+        ind = np.argpartition(scores, -pool_size)[-pool_size:]
+        return pop[ind]
         
     def bound(self, X):
         X = np.where(X > self.LB, X, self.LB)

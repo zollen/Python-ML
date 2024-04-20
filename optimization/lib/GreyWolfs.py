@@ -87,12 +87,6 @@ class WolfPack(Optimization):
         C = 2 * r2
         return A, C
     
-    def bestOne(self):
-        scores = np.concatenate((self.fitness(self.population), self.best_scores))
-        pop = np.vstack((self.population, self.best_candidates))
-        ind = np.argmax(scores)
-        return pop[ind]
-    
     def chase(self, a, alpha, beta, gamma):
         A1, C1 = self.cofficients(a)
         A2, C2 = self.cofficients(a)
@@ -106,10 +100,10 @@ class WolfPack(Optimization):
         X3 = self.bound( gamma - A3 * D3 )
         return (X1 + X2 + X3) / 3
    
-    def start(self, rounds = 30):
+    def start(self, rounds):
         a = np.linspace(2, 0, rounds)
       
         for rnd in range(rounds):
             best = self.best(self.population)
             self.population = self.chase(a[rnd], best[0], best[1], best[2])         
-        return self.bestOne()
+        return self.final()
