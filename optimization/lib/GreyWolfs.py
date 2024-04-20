@@ -75,10 +75,11 @@ from optimization.lib.Optimization import Optimization
 class WolfPack(Optimization):
     
     def __init__(self, obj_func, data_func, direction, num_wolves, obj_type = 'single',
-                 LB = -50, UB = 50, candidate_size = 0.05):
+                 LB = -50, UB = 50, best_wolves = 3, candidate_size = 0.05):
+        self.best_wolves = best_wolves
         super().__init__(obj_func, data_func, direction, num_wolves, obj_type, LB, UB, candidate_size)
         if self.obj_type == 'single':
-            self.candidate_size = 3
+            self.candidate_size = 1
          
     def cofficients(self, a):
         r1 = np.random.rand(self.population_size, self.population[0].size)
@@ -104,6 +105,6 @@ class WolfPack(Optimization):
         a = np.linspace(2, 0, rounds)
       
         for rnd in range(rounds):
-            best = self.best(self.population)
+            best = self.best(self.population, self.best_wolves)
             self.population = self.chase(a[rnd], best[0], best[1], best[2])         
         return self.final()
