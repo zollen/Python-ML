@@ -32,12 +32,10 @@ class Optimization:
         else:
             return self.obj_func(X) * -1
     
-    def best(self, X, pool_size = None):
-        if pool_size == None:
-            pool_size = self.candidate_size
+    def best(self, X):
         all_pop = np.array(X)
         scores = self.fitness(all_pop)
-        if pool_size == 1:
+        if self.candidate_size == 1:
             ind = np.argmax(scores)
             if self.best_scores.size <= 0 or self.best_scores[0] < scores[ind]:
                 self.best_scores = np.array([scores[ind]])
@@ -56,7 +54,7 @@ class Optimization:
             else:
                 all_scores = scores
                 all_pop = X
-            ind = np.argpartition(all_scores, -pool_size)[-pool_size:]
+            ind = np.argpartition(all_scores, -self.candidate_size)[-self.candidate_size:]
             self.best_scores = all_scores[ind]
             self.best_candidates = all_pop[ind]
             self.best_positions = ind
