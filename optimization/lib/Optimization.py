@@ -17,7 +17,7 @@ class Optimization:
         self.obj_type = obj_type
         self.LB = LB
         self.UB = UB
-        self.population = self.data_func(self.population_size)
+        self.population = self.bound(self.data_func(self.population_size))
         self.best_candidates = np.array([])
         self.best_scores = np.array([])
         self.best_positions = np.array([])

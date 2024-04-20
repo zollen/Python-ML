@@ -105,5 +105,5 @@ class WolfPack(Optimization):
       
         for rnd in range(rounds):
             best = self.best(self.population)
-            self.population = self.chase(a[rnd], best[0], best[1], best[2])     
+            self.population = self.chase(a[rnd], best[0], best[1], best[2])
         return self.best(self.population, 1)

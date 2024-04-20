@@ -20,7 +20,7 @@ def data(n):
 
 
 wolves = WolfPack(fitness, data, 'max', 100, obj_type = 'single')
-best = wolves.start(10)
+best = wolves.start(30)
 print("WolfPack optimal {} ==> {}".format(best, equation(best[:,0], best[:,1], best[:,2])))
 
 
