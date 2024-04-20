@@ -20,7 +20,6 @@ class Optimization:
         self.population = self.bound(self.data_func(self.population_size))
         self.best_candidates = np.array([])
         self.best_scores = np.array([])
-        self.best_positions = np.array([])
         if self.obj_type == 'single':
             self.candidate_size = 1
         else:
@@ -32,32 +31,12 @@ class Optimization:
         else:
             return self.obj_func(X) * -1
     
-    def best(self, X, candidate_size):
-        all_pop = np.array(X)
-        scores = self.fitness(all_pop)
-        if candidate_size == 1:
-            ind = np.argmax(scores)
-            if self.best_scores.size <= 0 or self.best_scores[0] < scores[ind]:
-                self.best_scores = np.array([scores[ind]])
-                self.best_candidates = np.array([X[ind]])
-                self.best_positions = np.array([ind])
-        else:
-            if self.best_scores.size > 0:
-                all_scores = np.array(scores)
-                all_scores[self.best_positions] =  np.where(
-                                    scores[self.best_positions] < self.best_scores, 
-                                    self.best_scores, scores[self.best_positions])
-                all_pop[self.best_positions] = np.where(
-                                    np.expand_dims(scores[self.best_positions], axis=1) <  
-                                    np.expand_dims(self.best_scores, axis=1),
-                                    self.best_candidates, X[self.best_positions])
-            else:
-                all_scores = scores
-                all_pop = X
-            ind = np.argpartition(all_scores, -candidate_size)[-candidate_size:]
-            self.best_scores = all_scores[ind]
-            self.best_candidates = all_pop[ind]
-            self.best_positions = ind
+    def best(self, X):
+        scores = self.fitness(X)
+        ind = np.argmax(scores)
+        if self.best_scores.size == 0 or self.best_scores[0] < scores[ind]:
+            self.best_scores = scores[ind]
+            self.best_candidates = self.population[ind]
         return self.best_candidates
     
     def final(self, pool_size = 1):
