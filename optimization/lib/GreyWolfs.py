@@ -90,20 +90,11 @@ class WolfPack(Optimization):
     
     def best(self):
         scores = self.fitness(self.population)
-        ind = np.argpartition(scores, -3)[-3:] 
-        tt = [ scores[ind[0]], scores[ind[1]], scores[ind[2]] ]
-        ii = np.argmax(tt)
-        ialpha = ind[ii]
-        tt = np.delete(tt, ii)
-        ind = np.delete(ind, ii)
-        ii = np.argmax(tt)
-        ibeta = ind[ii]
-        tt = np.delete(tt, ii)
-        ind = np.delete(ind, ii)
-        igamma = ind[0]
-        self.best_scores = np.array(scores[ind])
-        self.best_candidates = np.array(self.population[ialpha])
-        return ialpha, ibeta, igamma
+        indx = np.argmax(scores)
+        ind3 = np.argpartition(scores, -3)[-3:] 
+        self.best_scores = np.array([scores[indx]])
+        self.best_candidates = np.array([self.population[indx]])
+        return self.population[ind3[0]], self.population[ind3[1]], self.population[ind3[2]]
     
     def chase(self, a, alpha, beta, gamma):
         A1, C1 = self.cofficients(a)
@@ -122,9 +113,8 @@ class WolfPack(Optimization):
         a = np.linspace(2, 0, rounds)
       
         for rnd in range(rounds):
-            ialpha, ibeta, igamma = self.best()
-            self.population = self.chase(a[rnd], self.population[ialpha], 
-                                         self.population[ibeta], self.population[igamma])         
+            alpha, beta, gamma = self.best()
+            self.population = self.chase(a[rnd], alpha, beta, gamma)         
         return self.final(self.candidate_size)
     
 
@@ -141,18 +131,19 @@ class MutatedWolfPack(WolfPack):
         return alpha + F * (beta - gamma)
     
     def crossover(self, V):
-        r1 = np.random.rand(self.numOfWolves, self.X[0].size) * 0.2
+        r1 = np.random.rand(self.numOfWolves, self.population.shape[1]) * 0.2
         return V + r1 * (V - self.X)
     
     def selection(self, U):
-        result1 = self.obj_func(self.X)
+        result1 = self.obj_func(self.population)
         result2 = self.obj_func(U)
-        result3 = np.repeat(np.expand_dims(result1 > result2, axis=1), self.X[0].size, axis=1)
+        result3 = np.repeat(np.expand_dims(result1 > result2, axis=1), 
+                            self.population.shape[1], axis=1)
         result4 = 1 - result3
         if self.direction == 'max':
-            return self.X * result3 + U * result4     
+            return self.population * result3 + U * result4     
         else:
-            return self.X * result4 + U * result3
+            return self.population * result4 + U * result3
 
     def hunt(self, rounds):
         a = np.linspace(2, 0, rounds)
