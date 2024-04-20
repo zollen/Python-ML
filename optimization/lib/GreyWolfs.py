@@ -80,17 +80,17 @@ class WolfPack(Optimization):
         if self.obj_type == 'single':
             self.candidate_size = 3
          
-    def cofficients(self, a, n):
-        r1 = np.random.rand(n, self.population[0].size)
+    def cofficients(self, a):
+        r1 = np.random.rand(self.population_size, self.population[0].size)
         r2 = np.random.rand(1)
         A = 2 * a * r1 - a
         C = 2 * r2
         return A, C
     
     def chase(self, a, alpha, beta, gamma):
-        A1, C1 = self.cofficients(a, self.population_size)
-        A2, C2 = self.cofficients(a, self.population_size)
-        A3, C3 = self.cofficients(a, self.population_size)
+        A1, C1 = self.cofficients(a)
+        A2, C2 = self.cofficients(a)
+        A3, C3 = self.cofficients(a)
         
         D1 = np.abs( C1 * alpha - self.population )
         X1 = self.bound( alpha - A1 * D1 )
@@ -105,5 +105,5 @@ class WolfPack(Optimization):
       
         for rnd in range(rounds):
             best = self.best(self.population)
-            self.X = self.chase(a[rnd], best[0], best[1], best[2])     
+            self.population = self.chase(a[rnd], best[0], best[1], best[2])     
         return self.best(self.population, 1)

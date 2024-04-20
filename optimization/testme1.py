@@ -19,9 +19,8 @@ def data(n):
     return np.random.randint(0, 10, size=(n,3))
 
 
-wolves = WolfPack(fitness, data, 'max', 10, obj_type = 'single')
-best = wolves.start(5)
-print(best)
+wolves = WolfPack(fitness, data, 'max', 100, obj_type = 'single')
+best = wolves.start(10)
 print("WolfPack optimal {} ==> {}".format(best, equation(best[:,0], best[:,1], best[:,2])))
 
 
