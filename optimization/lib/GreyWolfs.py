@@ -125,7 +125,7 @@ class MutatedWolfPack(WolfPack):
         self.Fmin = Fmin
         self.Fmax = Fmax
         super().__init__(obj_func, data_func, direction, num_wolves, obj_type, LB, UB, 
-                         best_wolves, candidate_size = 0.05)
+                         best_wolves, candidate_size)
     
     def mutation(self, F, alpha, beta, gamma):
         return alpha + F * (beta - gamma)
