@@ -9,7 +9,7 @@ import numpy as np
 class Optimization:
     
     def __init__(self, obj_func, data_func, direction, population_size, 
-                 obj_type = 'single', LB = -5, UB = 5, candidate_size = 0.05):
+                 obj_type = 'single', LB = -50, UB = 50, candidate_size = 0.05):
         self.obj_func = obj_func
         self.data_func = data_func
         self.direction = direction
