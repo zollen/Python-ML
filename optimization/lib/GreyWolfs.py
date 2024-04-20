@@ -75,7 +75,7 @@ from optimization.lib.Optimization import Optimization
 class WolfPack(Optimization):
     
     def __init__(self, obj_func, data_func, direction, num_wolves, obj_type = 'single',
-                 LB = -15, UB = 15, candidate_size = 0.05):
+                 LB = -50, UB = 50, candidate_size = 0.05):
         super().__init__(obj_func, data_func, direction, num_wolves, obj_type, LB, UB, candidate_size)
         if self.obj_type == 'single':
             self.candidate_size = 3
