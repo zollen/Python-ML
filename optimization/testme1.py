@@ -5,7 +5,7 @@ Created on Apr 19, 2024
 '''
 
 import numpy as np
-from optimization.lib.Optimization import Optimization
+from optimization.lib.GreyWolfs import WolfPack
 
 
 def equation(x, y, z):
@@ -19,33 +19,9 @@ def data(n):
     return np.random.randint(0, 10, size=(n,3))
 
 
-optimzer = Optimization(fitness, data, 'max', 10, obj_type = 'multiple', candidate_size=0.3)
+wolves = WolfPack(fitness, data, 'max', 10, obj_type = 'single')
+best = wolves.start(5)
+print(best)
+print("WolfPack optimal {} ==> {}".format(best, equation(best[:,0], best[:,1], best[:,2])))
 
-
-scores = fitness(optimzer.population)
-for i in range(optimzer.population.shape[0]):
-    print(optimzer.population[i], " ==> ", scores[i])
-print("=========")
-best = optimzer.best(optimzer.population)
-scores = fitness(best)
-for i in range(best.shape[0]):
-    print(optimzer.best_positions[i], best[i], " ==> ", scores[i])
-    
-    
-print("=============================================")
-indx = np.array(range(10))
-kk = np.delete(indx, optimzer.best_positions)
-optimzer.population[kk] = optimzer.data_func(6)
-
-
-
-
-scores = fitness(optimzer.population)
-for i in range(optimzer.population.shape[0]):
-    print(optimzer.population[i], " ==> ", scores[i])
-print("=========")
-best = optimzer.best(optimzer.population)
-scores = fitness(best)
-for i in range(best.shape[0]):
-    print(optimzer.best_positions[i], best[i], " ==> ", scores[i])
 

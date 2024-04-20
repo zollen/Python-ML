@@ -69,62 +69,41 @@ return X_alpha
 
 
 import numpy as np
+from optimization.lib.Optimization import Optimization
 
     
-class WolfPack:
+class WolfPack(Optimization):
     
-    def __init__(self, obj_func, data_func, direction, numOfWolves):
-        self.numOfWolves = numOfWolves 
-        self.direction = direction
-        self.obj_func = obj_func
-        self.data_func = data_func
-        self.X = self.data_func(self.numOfWolves)
+    def __init__(self, obj_func, data_func, direction, num_wolves, obj_type = 'single',
+                 LB = -5, UB = 5, candidate_size = 0.05):
+        super().__init__(obj_func, data_func, direction, num_wolves, obj_type, LB, UB, candidate_size)
+        if self.obj_type == 'single':
+            self.candidate_size = 3
          
     def cofficients(self, a, n):
-        r1 = np.random.rand(n, self.X[0].size)
+        r1 = np.random.rand(n, self.population[0].size)
         r2 = np.random.rand(1)
         A = 2 * a * r1 - a
         C = 2 * r2
         return A, C
     
-    def fitness(self, X):
-        if self.direction == 'max':
-            return self.obj_func(X)
-        else:
-            return self.obj_func(X) * -1
-    
-    def best(self):
-        scores = self.fitness(self.X)
-        ind = np.argpartition(scores, -3)[-3:] 
-        tt = [ scores[ind[0]], scores[ind[1]], scores[ind[2]] ]
-        ii = np.argmax(tt)
-        ialpha = ind[ii]
-        tt = np.delete(tt, ii)
-        ind = np.delete(ind, ii)
-        ii = np.argmax(tt)
-        ibeta = ind[ii]
-        tt = np.delete(tt, ii)
-        ind = np.delete(ind, ii)
-        igamma = ind[0]
-        return ialpha, ibeta, igamma
-        
     def chase(self, a, alpha, beta, gamma):
-        A1, C1 = self.cofficients(a, self.numOfWolves)
-        A2, C2 = self.cofficients(a, self.numOfWolves)
-        A3, C3 = self.cofficients(a, self.numOfWolves)
+        A1, C1 = self.cofficients(a, self.population_size)
+        A2, C2 = self.cofficients(a, self.population_size)
+        A3, C3 = self.cofficients(a, self.population_size)
         
-        D1 = np.abs( C1 * alpha - self.X )
-        X1 = alpha - A1 * D1
-        D2 = np.abs( C2 * beta - self.X )
-        X2 = beta - A2 * D2
-        D3 = np.abs( C3 * gamma - self.X )
-        X3 = gamma - A3 * D3
+        D1 = np.abs( C1 * alpha - self.population )
+        X1 = self.bound( alpha - A1 * D1 )
+        D2 = np.abs( C2 * beta - self.population )
+        X2 = self.bound( beta - A2 * D2 )
+        D3 = np.abs( C3 * gamma - self.population )
+        X3 = self.bound( gamma - A3 * D3 )
         return (X1 + X2 + X3) / 3
    
-    def hunt(self, rounds = 30):
+    def start(self, rounds = 30):
         a = np.linspace(2, 0, rounds)
       
         for rnd in range(rounds):
-            alpha, beta, gamma = self.best()
-            self.X = self.chase(a[rnd], self.X[alpha], self.X[beta], self.X[gamma])     
-        return self.X[alpha]
+            best = self.best(self.population)
+            self.X = self.chase(a[rnd], best[0], best[1], best[2])     
+        return self.best(self.population, 1)
