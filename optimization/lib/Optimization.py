@@ -36,7 +36,8 @@ class Optimization:
         all_pop = np.array(X)
         scores = self.fitness(all_pop)
         if self.best_scores.size > 0:
-            all_scores =  np.where(scores[self.best_positions] < self.best_scores, 
+            all_scores = np.array(scores)
+            all_scores[self.best_positions] =  np.where(scores[self.best_positions] < self.best_scores, 
                                 self.best_scores, scores[self.best_positions])
             all_pop[self.best_positions] = np.where(np.expand_dims(scores[self.best_positions], axis=1) < 
                                np.expand_dims(self.best_scores, axis=1),
