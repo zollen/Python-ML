@@ -151,9 +151,9 @@ class MutatedWolfPack(WolfPack):
       
         for rnd in range(rounds):
             alpha, beta, gamma = self.best()
-            V = self.mutation(F[rnd], self.X[alpha], self.X[beta], self.X[gamma])
+            V = self.mutation(F[rnd], alpha, beta, gamma)
             U = self.crossover(V)
             self.X = self.selection(U)
-            self.X = self.chase(a[rnd], self.X[alpha], self.X[beta], self.X[gamma]) 
+            self.X = self.chase(a[rnd], alpha, beta, gamma) 
             
         return self.final(self.candidate_size)
