@@ -75,7 +75,7 @@ from optimization.lib.Optimization import Optimization
 class WolfPack(Optimization):
     
     def __init__(self, obj_func, data_func, direction, num_wolves, obj_type = 'single',
-                 LB = -50, UB = 50, best_wolves = 3, candidate_size = 0.05):
+                 LB = -50, UB = 50, best_wolves = 3, candidate_size = 0.01):
         self.best_wolves = best_wolves
         super().__init__(obj_func, data_func, direction, num_wolves, obj_type, LB, UB, candidate_size)
         if self.obj_type == 'single':
@@ -111,10 +111,11 @@ class WolfPack(Optimization):
    
     def start(self, rounds):
         a = np.linspace(2, 0, rounds)
-      
-        for rnd in range(rounds):
+        rnd = 0
+        while rnd < rounds and self.gini(self.population) > self.stop_criteria:
             alpha, beta, gamma = self.best()
-            self.population = self.chase(a[rnd], alpha, beta, gamma)         
+            self.population = self.chase(a[rnd], alpha, beta, gamma)
+            rnd += 1 
         return self.final(self.candidate_size)
     
 

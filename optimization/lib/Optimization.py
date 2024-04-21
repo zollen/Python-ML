@@ -5,11 +5,12 @@ Created on Apr 19, 2024
 '''
 
 import numpy as np
+from pygini import gini
 
 class Optimization:
     
     def __init__(self, obj_func, data_func, direction, population_size, 
-                 obj_type = 'single', LB = -50, UB = 50, candidate_size = 0.05):
+                 obj_type = 'single', LB = -50, UB = 50, candidate_size = 0.05, stop_criteria=0.03):
         self.obj_func = obj_func
         self.data_func = data_func
         self.direction = direction
@@ -17,6 +18,7 @@ class Optimization:
         self.obj_type = obj_type
         self.LB = LB
         self.UB = UB
+        self.stop_criteria = stop_criteria
         self.population = self.bound(self.data_func(self.population_size))
         self.best_candidates = np.array([])
         self.best_scores = np.array([])
@@ -49,6 +51,9 @@ class Optimization:
         X = np.where(X > self.LB, X, self.LB)
         X = np.where(X < self.UB, X, self.UB)
         return X
+    
+    def gini(self, X):
+        return np.mean(gini(X, axis=0))
     
     def start(self, rounds):
         pass

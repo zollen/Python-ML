@@ -26,36 +26,41 @@ that are active in each region.
 
           x1            x2                 x3     x5     Constraints
    ------------------------------------------------------------------------
-           5            1             (1...5)    5      2,4,6
-           5            1             (1...5)    1      2,4,6
- (4.056,...5)  (best(x1) - 2)/3            1     1      4,5,6
-           0            2         (1...3.732)    1      1,3,6
-    (0,...,1)      2 - best(x1)            1     1      1,5,6     
+           5            1             (1...5)      5      2,4,6
+           5            1             (1...5)      1      2,4,6
+ (4.056,...5)  (best(x1) - 2)/3            1       1      4,5,6
+           0            2         (1...3.732)      1      1,3,6
+    (0,...,1)      2 - best(x1)            1       1      1,5,6     
 '''
 
 
 import numpy as np
 from pymoo.problems import get_problem
+from pygini import gini
 from optimization.lib.GreyWolfs import WolfPack
 
 
 problem = get_problem("osy")
 
-
 def osy6d(X):
-    return problem.evaluate(X).squeeze()
+    res = problem.evaluate(X)
+    return res[0]
 
 def fitness(X):
-    return osy6d(X)
+    res = osy6d(X)
+    return res[:,0] * 0.5 + res[:,1] * 0.5
 
 def data(n):
-    return np.random.rand(n, 6) * np.array([[10], [10], [4], [6], [4], [10]]) + \
-            np.array([[0], [0], [1], [0], [1], [0]])
+    return np.random.rand(n, 6) * np.array([[10, 10, 4, 6, 4, 10]]) + \
+            np.array([[0, 0, 1, 0, 1, 0]])
 
 
+wolves = WolfPack(fitness, data, 'min', 10000, 
+                  obj_type = 'multiple', LB = [[0, 0, 1, 0, 1, 0]], 
+                                         UB = [[10, 10, 5, 6, 5, 10]] )
+best = wolves.start(80)
+vals = osy6d(best)
+for i in range(best.shape[0]):
+    print("WolfPack optimal {} ==> {}".format(best[i], vals[i]))
+ 
 
-wolves = WolfPack(fitness, data, 'max', 1000, 
-                  obj_type = 'multiple', LB = [0, 0, 1, 0, 1, 0], 
-                                         UB = [10, 10, 5, 6, 5, 10] )
-best = wolves.start(30)
-print("WolfPack optimal {} ==> {}".format(best, osy6d(best[:,0], best[:,1], best[:,2])))
