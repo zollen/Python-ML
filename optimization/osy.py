@@ -35,6 +35,9 @@ that are active in each region.
 
 
 import numpy as np
+from pymoo.algorithms.moo.nsga3 import NSGA3
+from pymoo.optimize import minimize
+from pymoo.util.ref_dirs import get_reference_directions
 from pymoo.problems import get_problem
 from pygini import gini
 from optimization.lib.GreyWolfs import WolfPack
@@ -54,7 +57,7 @@ def data(n):
     return np.random.rand(n, 6) * np.array([[10, 10, 4, 6, 4, 10]]) + \
             np.array([[0, 0, 1, 0, 1, 0]])
 
-
+'''
 wolves = WolfPack(fitness, data, 'min', 10000, 
                   obj_type = 'multiple', LB = [[0, 0, 1, 0, 1, 0]], 
                                          UB = [[10, 10, 5, 6, 5, 10]] )
@@ -62,5 +65,41 @@ best = wolves.start(80)
 vals = osy6d(best)
 for i in range(best.shape[0]):
     print("WolfPack optimal {} ==> {}".format(best[i], vals[i]))
+'''
+    
  
+# create the reference directions to be used for the optimization
+ref_dirs = get_reference_directions("das-dennis", 2, n_partitions=12)
 
+# create the algorithm object
+algorithm = NSGA3(pop_size=2000,
+                  ref_dirs=ref_dirs)
+
+# execute the optimization
+res = minimize(problem,
+               algorithm,
+               seed=1,
+               termination=('n_gen', 600))
+
+np.printoptions(precision=4)
+for i in range(res.X.shape[0]):
+    print("NAGA3 optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ]".format(
+        res.X[i, 0], res.X[i, 1], res.X[i, 2], 
+        res.X[i, 3], res.X[i, 4], res.X[i, 5], 
+        res.F[i, 0], res.F[i, 1]))
+'''
+NAGA3 
+NAGA3 optimal f(5.0000, 1.0000, 2.0173, 0.0000, 5.0000, 0.0002) ==> [ -259.0301, 55.0689 ]
+NAGA3 optimal f(4.3802, 0.7941, 1.0001, 0.0000, 1.0000, 0.0000) ==> [ -159.0848, 21.8167 ]
+NAGA3 optimal f(5.0000, 1.0000, 5.0000, 0.0000, 5.0000, 0.0002) ==> [ -273.9965, 75.9994 ]
+NAGA3 optimal f(4.8631, 0.9545, 1.0000, 0.0000, 1.0000, 0.0000) ==> [ -222.0311, 26.5612 ]
+NAGA3 optimal f(0.0000, 2.0000, 1.8533, 0.0000, 1.0000, 0.0001) ==> [ -116.7280, 8.4347 ]
+NAGA3 optimal f(4.0894, 0.6984, 1.0000, 0.0000, 1.0000, 0.0001) ==> [ -126.8323, 19.2108 ]
+NAGA3 optimal f(1.0039, 0.9968, 1.0000, 0.0000, 1.0000, 0.0000) ==> [ -41.8120, 4.0014 ]
+NAGA3 optimal f(4.5874, 0.8625, 1.0002, 0.0000, 1.0000, 0.0002) ==> [ -184.6598, 23.7886 ]
+NAGA3 optimal f(4.7426, 0.9147, 1.0000, 0.0000, 1.0000, 0.0001) ==> [ -205.2241, 25.3289 ]
+NAGA3 optimal f(5.0000, 1.0000, 2.2868, 0.0000, 1.0000, 0.0007) ==> [ -243.6527, 32.2292 ]
+NAGA3 optimal f(4.9595, 0.9870, 1.0015, 0.0000, 1.0000, 0.0000) ==> [ -235.9869, 27.5735 ]
+NAGA3 optimal f(0.0000, 2.0000, 2.9274, 0.0000, 1.0000, 0.0000) ==> [ -119.7149, 13.5697 ]
+NAGA3 optimal f(5.0000, 1.0000, 3.8014, 0.0000, 1.0000, 0.0009) ==> [ -249.8431, 41.4506 ]
+'''
