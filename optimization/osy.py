@@ -39,7 +39,6 @@ from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.optimize import minimize
 from pymoo.util.ref_dirs import get_reference_directions
 from pymoo.problems import get_problem
-from pygini import gini
 from optimization.lib.GreyWolfs import WolfPack
 
 
@@ -57,6 +56,7 @@ def data(n):
     return np.random.rand(n, 6) * np.array([[10, 10, 4, 6, 4, 10]]) + \
             np.array([[0, 0, 1, 0, 1, 0]])
 
+
 '''
 wolves = WolfPack(fitness, data, 'min', 10000, 
                   obj_type = 'multiple', LB = [[0, 0, 1, 0, 1, 0]], 
@@ -64,8 +64,11 @@ wolves = WolfPack(fitness, data, 'min', 10000,
 best = wolves.start(80)
 vals = osy6d(best)
 for i in range(best.shape[0]):
-    print("WolfPack optimal {} ==> {}".format(best[i], vals[i]))
-'''
+    print("WolfPack optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ]".format(
+        best[i, 0], best[i, 1], best[i, 2], best[i, 3], best[i, 4], best[i, 5],
+        vals[i, 0], vals[i, 1]))
+'''    
+
     
  
 # create the reference directions to be used for the optimization
@@ -87,6 +90,7 @@ for i in range(res.X.shape[0]):
         res.X[i, 0], res.X[i, 1], res.X[i, 2], 
         res.X[i, 3], res.X[i, 4], res.X[i, 5], 
         res.F[i, 0], res.F[i, 1]))
+
 '''
 NAGA3 
 NAGA3 optimal f(5.0000, 1.0000, 2.0173, 0.0000, 5.0000, 0.0002) ==> [ -259.0301, 55.0689 ]
