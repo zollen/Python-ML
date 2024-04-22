@@ -48,9 +48,27 @@ def osy6d(X):
     res = problem.evaluate(X)
     return res[0]
 
+def normalize(X):
+    minn = np.min(X, axis=0)
+    maxx = np.max(X, axis=0)
+    return (X - minn) / (maxx - minn)
+
 def fitness(X):
     res = osy6d(X)
-    return res[:,0] * 0.5 + res[:,1] * 0.5
+    score =  normalize(res[:,0]) * 0.5 + (res[:,1]) * 0.5
+    c1 = (X[:,0] + X[:,1] - 2) / 2
+    c2 = (6 - X[:,0] - X[:,1]) / 6
+    c3 = (2 - X[:,1] + X[:,0]) / 2
+    c4 = (2 - X[:,0]  + 3 * X[:,1]) / 2
+    c5 = (4 - (X[:,2] - 3)**2 - X[:,3]) / 4
+    c6 = ((X[:,4] - 3)**2 + X[:,5] - 4) / 4
+    c1_score = np.where(c1 >= 0, 0, -500000)
+    c2_score = np.where(c2 >= 0, 0, -500000)
+    c3_score = np.where(c3 >= 0, 0, -500000)
+    c4_score = np.where(c4 >= 0, 0, -500000)
+    c5_score = np.where(c5 >= 0, 0, -500000)
+    c6_score = np.where(c6 >= 0, 0, -500000)
+    return score + c1_score + c2_score + c3_score + c4_score + c5_score + c6_score
 
 def data(n):
     return np.random.rand(n, 6) * np.array([[10, 10, 4, 6, 4, 10]]) + \
@@ -61,15 +79,15 @@ def data(n):
 wolves = WolfPack(fitness, data, 'min', 10000, 
                   obj_type = 'multiple', LB = [[0, 0, 1, 0, 1, 0]], 
                                          UB = [[10, 10, 5, 6, 5, 10]] )
-best = wolves.start(80)
+best = wolves.start(200)
 vals = osy6d(best)
 for i in range(best.shape[0]):
     print("WolfPack optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ]".format(
         best[i, 0], best[i, 1], best[i, 2], best[i, 3], best[i, 4], best[i, 5],
         vals[i, 0], vals[i, 1]))
-'''    
-
-    
+   
+'''
+   
  
 # create the reference directions to be used for the optimization
 ref_dirs = get_reference_directions("das-dennis", 2, n_partitions=12)
