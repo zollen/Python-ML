@@ -63,12 +63,12 @@ def fitness(X):
     c4 = (2 - X[:,0]  + 3 * X[:,1]) / 2
     c5 = (4 - (X[:,2] - 3)**2 - X[:,3]) / 4
     c6 = ((X[:,4] - 3)**2 + X[:,5] - 4) / 4
-    c1_score = np.where(c1 >= 0, 0, 500000)
-    c2_score = np.where(c2 >= 0, 0, 500000)
-    c3_score = np.where(c3 >= 0, 0, 500000)
-    c4_score = np.where(c4 >= 0, 0, 500000)
-    c5_score = np.where(c5 >= 0, 0, 500000)
-    c6_score = np.where(c6 >= 0, 0, 500000)
+    c1_score = np.where(c1 >= 0, 0, 5000000)
+    c2_score = np.where(c2 >= 0, 0, 5000000)
+    c3_score = np.where(c3 >= 0, 0, 5000000)
+    c4_score = np.where(c4 >= 0, 0, 5000000)
+    c5_score = np.where(c5 >= 0, 0, 5000000)
+    c6_score = np.where(c6 >= 0, 0, 5000000)
     return score + c1_score + c2_score + c3_score + c4_score + c5_score + c6_score
 
 def data(n):
@@ -76,7 +76,36 @@ def data(n):
             np.array([[0, 0, 1, 0, 1, 0]])
 
 
-
+def validate(x1, x2, x3, x4, x5, x6):
+    if (x1 + x2 - 2) / 2 >= 0:
+        print("C1 passed")
+    else:
+        print("C1 failed")
+        
+    if (6 - x1 - x2) / 6 >= 0:
+        print("C2 passed")
+    else:
+        print("C2 failed")
+        
+    if (2 - x2 + x1) / 2 >= 0:
+        print("C3 passed")
+    else:
+        print("C3 failed")
+        
+    if (2 - x1  + 3 * x2) / 2 >= 0:
+        print("C4 passed")
+    else:
+        print("C4 failed")
+        
+    if (4 - (x3 - 3)**2 - x4) / 4 >= 0:
+        print("C5 passed")
+    else:
+        print("C5 failed")
+        
+    if ((x5 - 3)**2 + x6 - 4) / 4 >= 0:
+        print("C6 passed")
+    else:
+        print("C6 failed")
 
 
 
@@ -91,7 +120,7 @@ for i in range(best.shape[0]):
         vals[i, 0], vals[i, 1]))
 
    
-''' 
+'''
 # create the reference directions to be used for the optimization
 ref_dirs = get_reference_directions("das-dennis", 2, n_partitions=12)
 
