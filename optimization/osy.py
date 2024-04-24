@@ -108,7 +108,6 @@ def validate(x1, x2, x3, x4, x5, x6):
         print("C6 failed")
 
 
-
 wolves = WolfPack(osy6d, fitness, data, 'min', 10000, 
                   obj_type = 'multiple', LB = [[0, 0, 1, 0, 1, 0]], 
                                          UB = [[10, 10, 5, 6, 5, 10]] )

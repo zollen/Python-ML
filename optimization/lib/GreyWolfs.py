@@ -95,7 +95,7 @@ class WolfPack(Optimization):
         self.best_scores = np.array([scores[indx]])
         self.best_candidates = np.array([self.population[indx]])
         pop = np.vstack((self.population, self.best_candidates, self.pareto_front))
-        scores = self.my_func(pop)
+        scores = self.my_func(pop) * -1
         self.pareto_front = pop[self.is_pareto_efficient(scores, 'max', False)]
         return self.population[ind3[0]], self.population[ind3[1]], self.population[ind3[2]]
     
