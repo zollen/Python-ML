@@ -56,13 +56,13 @@ def normalize(X):
 
 def fitness(X):
     res = osy6d(X)
-    score =  normalize(res[:,0]) * 0.5 + (res[:,1]) * 0.5
-    c1 = (X[:,0] + X[:,1] - 2) / 2
-    c2 = (6 - X[:,0] - X[:,1]) / 6
-    c3 = (2 - X[:,1] + X[:,0]) / 2
-    c4 = (2 - X[:,0]  + 3 * X[:,1]) / 2
-    c5 = (4 - (X[:,2] - 3)**2 - X[:,3]) / 4
-    c6 = ((X[:,4] - 3)**2 + X[:,5] - 4) / 4
+    score =  normalize(res[:,0]) * 0.5 + (res[:,1]) * 0.5            
+    c1 = (X[:,0] + X[:,1] - 2) / 2          # x1 + x2 > 2             2 < 2 * x1 + +1.95 < 6
+    c2 = (6 - X[:,0] - X[:,1]) / 6          # x1 + x2 < 6             2 < x1 + x2 < 6
+    c3 = (2 - X[:,1] + X[:,0]) / 2          # 2 + x1 > x2              x2 < x1 + 2
+    c4 = (2 - X[:,0]  + 3 * X[:,1]) / 2     # 2 + 3 * x2 > x1         3 * x2 > x1 - 2
+    c5 = (4 - (X[:,2] - 3)**2 - X[:,3]) / 4 # (x3 - 3)^2 + x4 < 4    
+    c6 = ((X[:,4] - 3)**2 + X[:,5] - 4) / 4 # (x5 - 3)^2 + x6 > 4     
     c1_score = np.where(c1 >= 0, 0, 5000000)
     c2_score = np.where(c2 >= 0, 0, 5000000)
     c3_score = np.where(c3 >= 0, 0, 5000000)
@@ -75,48 +75,124 @@ def data(n):
     return np.random.rand(n, 6) * np.array([[10, 10, 4, 6, 4, 10]]) + \
             np.array([[0, 0, 1, 0, 1, 0]])
 
+def constriants(X):
+    '''
+    C1(x): (x1 + x2 - 2) >= 0
+    C2(x): (6 - x1 - x2) >= 0
+    C3(x): (2 - x2 + x1) >= 0
+    C4(x): (2 - x1 + 3x2) >= 0
+    C5(x): (4 - (x3 - 3)^2 - x4) >= 0
+    C6(x): ((x5 - 3)^2 + x6 - 4) >= 0
+    
+    C3: x2 is too big
+    C4: x1 is too big, remove some in x1 and move it to x2
+    x1 - 3x2 - 2 = delta
+    new_x1 = x1 - delta
+    new_x2 = x2 + delta
+        
+    '''
+    a = np.random.rand(X.shape[0])
+    b = np.random.rand(X.shape[0]) * 4
+    NEW_0 = b + 2
+    NEW_1 = 6 - NEW_0
+    F1_01 = np.hstack((NEW_0, NEW_1))
+    F2_01 = np.hstack((X[:,1], X[:,0]))
+    ss = X[:, 0] + X[:, 1]
+    X[:,[0,1]] = np.where(ss >= 2 and ss <= 6, X[:,[0,1]], F1_01)
+    X[:,[0,1]] = np.where(2 - X[:, 1] + X[:, 0] >= 0, X[:,[0,1]], F2_01)
+    delta = X[:, 0] - 3 * X[:, 1] - 2
+    F4_01 = X[:, 0] - delta
+    F4_10 = X[:, 1] + delta
+    F4_11 = np.hstack((F4_01, F4_10))
+    X[:,[0,1]] = np.where(2 - X[:, 0] + 3 * X[:, 1] >= 0, X[:,[0,1]], F4_11)
+ 
+     
+    return X
 
-def validate(x1, x2, x3, x4, x5, x6):
+def vvalidate(x1, x2, x3, x4, x5, x6):
     if (x1 + x2 - 2) / 2 >= 0:
-        print("C1 passed")
+        print("Rule 1 passed")
     else:
-        print("C1 failed")
+        print("Rule 1 failed")
         
     if (6 - x1 - x2) / 6 >= 0:
-        print("C2 passed")
+        print("Rule 2 passed")
     else:
-        print("C2 failed")
+        print("Rule 2 failed")
         
     if (2 - x2 + x1) / 2 >= 0:
-        print("C3 passed")
+        print("Rule 3 passed")
     else:
-        print("C3 failed")
+        print("Rule 3 failed")
         
     if (2 - x1  + 3 * x2) / 2 >= 0:
-        print("C4 passed")
+        print("Rule 4 passed")
     else:
-        print("C4 failed")
+        print("Rule 4 failed")
         
     if (4 - (x3 - 3)**2 - x4) / 4 >= 0:
-        print("C5 passed")
+        print("Rule 5 passed")
     else:
-        print("C5 failed")
+        print("Rule 5 failed")
         
     if ((x5 - 3)**2 + x6 - 4) / 4 >= 0:
-        print("C6 passed")
+        print("Rule 6 passed")
     else:
-        print("C6 failed")
+        print("Rule 6 failed")
+    
+    
+def validate(x1, x2, x3, x4, x5, x6):
+    if (x1 + x2 - 2) / 2 >= 0:
+        r1 = 1
+    else:
+        r1 = 0
+        
+    if (6 - x1 - x2) / 6 >= 0:
+        r2 = 1
+    else:
+        r2 = 0
+        
+    if (2 - x2 + x1) / 2 >= 0:
+        r3 = 1
+    else:
+        r3 = 0
+        
+    if (2 - x1  + 3 * x2) / 2 >= 0:
+        r4 = 1
+    else:
+        r4 = 0
+        
+    if (4 - (x3 - 3)**2 - x4) / 4 >= 0:
+        r5 = 1
+    else:
+        r5 = 0
+        
+    if ((x5 - 3)**2 + x6 - 4) / 4 >= 0:
+        r6 = 1
+    else:
+        r6 = 0
+    return r1 and r2 and r3 and r4 and r5 and r6 
 
 
-wolves = WolfPack(osy6d, fitness, data, 'min', 10000, 
+
+arr = constriants(data(1)).squeeze()
+print(arr)
+print("WolfPack optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f})".format(
+        arr[0], arr[1], arr[2], arr[3], arr[4], arr[5]))
+vvalidate(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
+
+exit()
+
+
+wolves = WolfPack(osy6d, fitness, constriants, data, 'min', 10000, 
                   obj_type = 'multiple', LB = [[0, 0, 1, 0, 1, 0]], 
                                          UB = [[10, 10, 5, 6, 5, 10]] )
 best = wolves.start(200)
 vals = osy6d(best)
 for i in range(best.shape[0]):
-    print("WolfPack optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ]".format(
+    print("WolfPack optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ], [{8:}]".format(
         best[i, 0], best[i, 1], best[i, 2], best[i, 3], best[i, 4], best[i, 5],
-        vals[i, 0], vals[i, 1]))
+        vals[i, 0], vals[i, 1], validate(best[i, 0], best[i, 1], best[i, 2], best[i, 3], best[i, 4], best[i, 5])))
 
    
 '''

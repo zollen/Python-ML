@@ -74,10 +74,10 @@ from optimization.lib.Optimization import Optimization
     
 class WolfPack(Optimization):
     
-    def __init__(self, myfunc, obj_func, data_func, direction, num_wolves, obj_type = 'single',
+    def __init__(self, myfunc, obj_func, constriants, data_func, direction, num_wolves, obj_type = 'single',
                  LB = -50, UB = 50, best_wolves = 3, candidate_size = 0.01):
         self.best_wolves = best_wolves
-        super().__init__(myfunc, obj_func, data_func, direction, num_wolves, obj_type, LB, UB, candidate_size)
+        super().__init__(myfunc, obj_func, constriants, data_func, direction, num_wolves, obj_type, LB, UB, candidate_size)
         if self.obj_type == 'single':
             self.candidate_size = 1
          
@@ -105,11 +105,11 @@ class WolfPack(Optimization):
         A3, C3 = self.cofficients(a)
         
         D1 = np.abs( C1 * alpha - self.population )
-        X1 = self.bound( alpha - A1 * D1 )
+        X1 = self.bound(self.constraints( alpha - A1 * D1 ))
         D2 = np.abs( C2 * beta - self.population )
-        X2 = self.bound( beta - A2 * D2 )
+        X2 = self.bound(self.constraints( beta - A2 * D2 ))
         D3 = np.abs( C3 * gamma - self.population )
-        X3 = self.bound( gamma - A3 * D3 )
+        X3 = self.bound(self.constraints( gamma - A3 * D3 ))
         return (X1 + X2 + X3) / 3
    
     def start(self, rounds):
