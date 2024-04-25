@@ -80,52 +80,26 @@ def constriants(X):
     b = np.random.rand(X.shape[0]) * 4
     NEW_0 = b + 2
     NEW_1 = 6 - NEW_0
-    F1_01 = np.hstack((NEW_0, NEW_1))
-    F2_01 = np.hstack((X[:,1], X[:,0]))
     ss = X[:, 0] + X[:, 1]
-    X[:,[0,1]] = np.where(ss >= 2 and ss <= 6, X[:,[0,1]], F1_01)
-    X[:,[0,1]] = np.where(2 - X[:, 1] + X[:, 0] >= 0, X[:,[0,1]], F2_01)
+    X[:,0] = np.where(ss >= 2, X[:,0], NEW_0)
+    X[:,1] = np.where(ss >= 2, X[:,1], NEW_1)
+    X[:,0] = np.where(ss <= 6, X[:,0], NEW_0)
+    X[:,1] = np.where(ss <= 6, X[:,1], NEW_1)
+    
+    ss = np.array(X[:,[0,1]])
+    X[:,0] = np.where(2 - ss[:, 1] + ss[:, 0] >= 0, ss[:,0], ss[:,1])
+    X[:,1] = np.where(2 - ss[:, 1] + ss[:, 0] >= 0, ss[:,1], ss[:,0])
+    
+    ss = np.array(X[:,[0,1]])
     delta = X[:, 0] - 3 * X[:, 1] - 2
-    F4_01 = X[:, 0] - delta
-    F4_10 = X[:, 1] + delta
-    F4_11 = np.hstack((F4_01, F4_10))
-    X[:,[0,1]] = np.where(2 - X[:, 0] + 3 * X[:, 1] >= 0, X[:,[0,1]], F4_11)
+    X[:,0] = np.where(2 - ss[:, 0] + 3 * ss[:, 1] >= 0, ss[:,0], ss[:, 0] - delta)
+    X[:,1] = np.where(2 - ss[:, 0] + 3 * ss[:, 1] >= 0, ss[:,1], ss[:, 1] + delta)
+    
     F5_03 = 4 - (X[:,2] - 3)**2 - a
     X[:,3] = np.where(4 - (X[:,2] - 3)**2 - X[:,3] >= 0, X[:,3], F5_03)
     F6_05 = 4 - (X[:,4] - 3)**2 + a
     X[:,5] = np.where((X[:,4] - 3)**2 + X[:,5] - 4 >= 0, X[:,5], F6_05)    
-    return X
-
-def vvalidate(x1, x2, x3, x4, x5, x6):
-    if (x1 + x2 - 2) / 2 >= 0:
-        print("Rule 1 passed")
-    else:
-        print("Rule 1 failed")
-        
-    if (6 - x1 - x2) / 6 >= 0:
-        print("Rule 2 passed")
-    else:
-        print("Rule 2 failed")
-        
-    if (2 - x2 + x1) / 2 >= 0:
-        print("Rule 3 passed")
-    else:
-        print("Rule 3 failed")
-        
-    if (2 - x1  + 3 * x2) / 2 >= 0:
-        print("Rule 4 passed")
-    else:
-        print("Rule 4 failed")
-        
-    if (4 - (x3 - 3)**2 - x4) / 4 >= 0:
-        print("Rule 5 passed")
-    else:
-        print("Rule 5 failed")
-        
-    if ((x5 - 3)**2 + x6 - 4) / 4 >= 0:
-        print("Rule 6 passed")
-    else:
-        print("Rule 6 failed")
+    return X    
     
     
 def validate(x1, x2, x3, x4, x5, x6):
@@ -162,26 +136,18 @@ def validate(x1, x2, x3, x4, x5, x6):
 
 
 
-arr = constriants(data(1)).squeeze()
-print(arr)
-print("WolfPack optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f})".format(
-        arr[0], arr[1], arr[2], arr[3], arr[4], arr[5]))
-vvalidate(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
-
-exit()
-
 
 wolves = WolfPack(osy6d, fitness, constriants, data, 'min', 10000, 
                   obj_type = 'multiple', LB = [[0, 0, 1, 0, 1, 0]], 
                                          UB = [[10, 10, 5, 6, 5, 10]] )
-best = wolves.start(200)
+best = wolves.start(100)
 vals = osy6d(best)
 for i in range(best.shape[0]):
     print("WolfPack optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ], [{8:}]".format(
         best[i, 0], best[i, 1], best[i, 2], best[i, 3], best[i, 4], best[i, 5],
         vals[i, 0], vals[i, 1], validate(best[i, 0], best[i, 1], best[i, 2], best[i, 3], best[i, 4], best[i, 5])))
 
-   
+
 '''
 # create the reference directions to be used for the optimization
 ref_dirs = get_reference_directions("das-dennis", 2, n_partitions=12)

@@ -105,11 +105,11 @@ class WolfPack(Optimization):
         A3, C3 = self.cofficients(a)
         
         D1 = np.abs( C1 * alpha - self.population )
-        X1 = self.bound(self.constraints( alpha - A1 * D1 ))
+        X1 = self.constraints( self.bound( alpha - A1 * D1 ))
         D2 = np.abs( C2 * beta - self.population )
-        X2 = self.bound(self.constraints( beta - A2 * D2 ))
+        X2 = self.constraints( self.bound( beta - A2 * D2 ))
         D3 = np.abs( C3 * gamma - self.population )
-        X3 = self.bound(self.constraints( gamma - A3 * D3 ))
+        X3 = self.constraints( self.bound( gamma - A3 * D3 ))
         return (X1 + X2 + X3) / 3
    
     def start(self, rounds):

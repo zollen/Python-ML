@@ -21,7 +21,7 @@ class Optimization:
         self.LB = LB
         self.UB = UB
         self.stop_criteria = stop_criteria
-        self.population = self.bound(self.constraints(self.data_func(self.population_size)))
+        self.population = self.constraints(self.bound(self.data_func(self.population_size)))
         self.pareto_front = [ self.population[0] ]
         self.best_candidates = np.array([])
         self.best_scores = np.array([])
