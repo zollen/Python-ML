@@ -76,21 +76,6 @@ def data(n):
             np.array([[0, 0, 1, 0, 1, 0]])
 
 def constriants(X):
-    '''
-    C1(x): (x1 + x2 - 2) >= 0
-    C2(x): (6 - x1 - x2) >= 0
-    C3(x): (2 - x2 + x1) >= 0
-    C4(x): (2 - x1 + 3x2) >= 0
-    C5(x): (4 - (x3 - 3)^2 - x4) >= 0
-    C6(x): ((x5 - 3)^2 + x6 - 4) >= 0
-    
-    C3: x2 is too big
-    C4: x1 is too big, remove some in x1 and move it to x2
-    x1 - 3x2 - 2 = delta
-    new_x1 = x1 - delta
-    new_x2 = x2 + delta
-        
-    '''
     a = np.random.rand(X.shape[0])
     b = np.random.rand(X.shape[0]) * 4
     NEW_0 = b + 2
@@ -105,8 +90,10 @@ def constriants(X):
     F4_10 = X[:, 1] + delta
     F4_11 = np.hstack((F4_01, F4_10))
     X[:,[0,1]] = np.where(2 - X[:, 0] + 3 * X[:, 1] >= 0, X[:,[0,1]], F4_11)
- 
-     
+    F5_03 = 4 - (X[:,2] - 3)**2 - a
+    X[:,3] = np.where(4 - (X[:,2] - 3)**2 - X[:,3] >= 0, X[:,3], F5_03)
+    F6_05 = 4 - (X[:,4] - 3)**2 + a
+    X[:,5] = np.where((X[:,4] - 3)**2 + X[:,5] - 4 >= 0, X[:,5], F6_05)    
     return X
 
 def vvalidate(x1, x2, x3, x4, x5, x6):
