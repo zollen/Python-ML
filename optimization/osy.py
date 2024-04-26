@@ -143,7 +143,7 @@ for i in range(best.shape[0]):
         best[i, 0], best[i, 1], best[i, 2], best[i, 3], best[i, 4], best[i, 5],
         vals[i, 0], vals[i, 1], validate(best[i, 0], best[i, 1], best[i, 2], best[i, 3], best[i, 4], best[i, 5])))
 
-
+print("Total: ", best.shape[0])
 '''
 from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.optimize import minimize
