@@ -119,7 +119,7 @@ class WolfPack(Optimization):
             alpha, beta, gamma = self.best()
             self.population = self.chase(a[rnd], alpha, beta, gamma)
             rnd += 1 
-        return self.final(self.candidate_size)
+        return self.final()
     
 
 class MutatedWolfPack(WolfPack):
