@@ -35,10 +35,6 @@ that are active in each region.
 
 
 import numpy as np
-from paretoset import paretoset
-from pymoo.algorithms.moo.nsga3 import NSGA3
-from pymoo.optimize import minimize
-from pymoo.util.ref_dirs import get_reference_directions
 from pymoo.problems import get_problem
 from optimization.lib.ParetoFront import ParetoFront
 
@@ -149,6 +145,10 @@ for i in range(best.shape[0]):
 
 
 '''
+from pymoo.algorithms.moo.nsga3 import NSGA3
+from pymoo.optimize import minimize
+from pymoo.util.ref_dirs import get_reference_directions
+
 # create the reference directions to be used for the optimization
 ref_dirs = get_reference_directions("das-dennis", 2, n_partitions=12)
 
