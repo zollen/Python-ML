@@ -9,14 +9,13 @@ from pygini import gini
 
 class Optimization:
     
-    def __init__(self, obj_func, enforcer_func, data_func, direction, population_size, 
-                 obj_type = 'single', LB = -50, UB = 50, stop_criteria=0.03):
+    def __init__(self, obj_func, data_func, enforcer_func, direction, population_size, 
+                 LB = -50, UB = 50, stop_criteria=0.03):
         self.obj_func = obj_func
         self.enforcer_func = enforcer_func
         self.data_func = data_func
         self.direction = direction
         self.population_size = population_size
-        self.obj_type = obj_type
         self.LB = LB
         self.UB = UB
         self.stop_criteria = stop_criteria
