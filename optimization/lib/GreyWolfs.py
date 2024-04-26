@@ -110,7 +110,7 @@ class WolfPack(Optimization):
         X2 = self.constraints( self.bound( beta - A2 * D2 ))
         D3 = np.abs( C3 * gamma - self.population )
         X3 = self.constraints( self.bound( gamma - A3 * D3 ))
-        return (X1 + X2 + X3) / 3
+        return self.constraints((X1 + X2 + X3) / 3)
    
     def start(self, rounds):
         a = np.linspace(2, 0, rounds)
