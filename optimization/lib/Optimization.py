@@ -10,15 +10,16 @@ from pygini import gini
 class Optimization:
     
     def __init__(self, obj_func, data_func, enforcer_func, direction, population_size, 
-                 LB = -50, UB = 50, stop_criteria=0.03):
+                 LB, UB, candidate_size, fitness_ratios):
         self.obj_func = obj_func
         self.enforcer_func = enforcer_func
         self.data_func = data_func
         self.direction = direction
         self.population_size = population_size
+        self.fitness_ratios = fitness_ratios
         self.LB = LB
         self.UB = UB
-        self.stop_criteria = stop_criteria
+        self.candidate_size = int(np.ceil(population_size * candidate_size))
         self.population = self.enforcer_func(self.bound(self.data_func(self.population_size)))
         self.pareto_front = [ self.population[0] ]
         self.best_candidates = np.array([])
