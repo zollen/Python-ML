@@ -19,8 +19,8 @@ class ParetoFront(Optimization):
         targets = np.tile(self.pareto_front, 
                         (int(np.ceil(self.population.shape[0] / self.pareto_front.shape[0])), 1))
         np.random.shuffle(targets)
-        if self.population.shape[0] > targets.shape[0]:
-            targets = targets[:-(self.population.shape[0] - targets.shape[0]),]
+        if self.population.shape[0] < targets.shape[0]:
+            targets = targets[:-(targets.shape[0] - self.population.shape[0]),]
         self.population = self.enforce_func(self.bound(self.bound(targets + 
                         np.abs(self.population - targets) * np.power(np.e, r) * 
                         np.cos(2 * np.pi * r))))

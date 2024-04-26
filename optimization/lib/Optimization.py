@@ -64,7 +64,7 @@ class Optimization:
             pop = self.population
         else:
             pop = np.vstack((self.population, self.best_candidates, self.pareto_front))
-        scores = np.expand_dims(self.fitness(pop), axis=1)
+        scores = self.fitness(pop)
         self.pareto_front = pop[self.is_pareto_efficient(scores, 'max', False)]
         return self.pareto_front
         
