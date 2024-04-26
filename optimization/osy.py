@@ -140,6 +140,7 @@ def validate(x1, x2, x3, x4, x5, x6):
 wolves = ParetoFront(fitness, enforce, data, 'min', 10000, 
                   obj_type = 'multiple', LB = [[0, 0, 1, 0, 1, 0]], 
                                          UB = [[10, 10, 5, 6, 5, 10]] )
+    
 best = wolves.start(100)
 vals = osy6d(best)
 for i in range(best.shape[0]):

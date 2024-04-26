@@ -10,7 +10,7 @@ from pygini import gini
 class Optimization:
     
     def __init__(self, obj_func, enforce_func, data_func, direction, population_size, 
-                 obj_type = 'single', LB = -50, UB = 50, candidate_size = 0.05, stop_criteria=0.03):
+                 obj_type = 'single', LB = -50, UB = 50, stop_criteria=0.03):
         self.obj_func = obj_func
         self.enforce_func = enforce_func
         self.data_func = data_func
@@ -24,10 +24,6 @@ class Optimization:
         self.pareto_front = [ self.population[0] ]
         self.best_candidates = np.array([])
         self.best_scores = np.array([])
-        if self.obj_type == 'single':
-            self.candidate_size = 1
-        else:
-            self.candidate_size = int(self.population_size * candidate_size) + 1
     
     def fitness(self, X):
         if self.direction == 'max':
@@ -64,8 +60,11 @@ class Optimization:
             return is_efficient
     
     def best(self):
-        pop = np.vstack((self.population, self.best_candidates, self.pareto_front))
-        scores = self.fitness(pop)
+        if self.best_candidates.size == 0:
+            pop = self.population
+        else:
+            pop = np.vstack((self.population, self.best_candidates, self.pareto_front))
+        scores = np.expand_dims(self.fitness(pop), axis=1)
         self.pareto_front = pop[self.is_pareto_efficient(scores, 'max', False)]
         return self.pareto_front
         
