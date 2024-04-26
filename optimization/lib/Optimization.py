@@ -34,15 +34,7 @@ class Optimization:
             return self.obj_func(X)
         else:
             return self.obj_func(X) * -1
-    
-    def best(self, X):
-        scores = self.fitness(X)
-        ind = np.argmax(scores)
-        if self.best_scores.size == 0 or self.best_scores[0] < scores[ind]:
-            self.best_scores = scores[ind]
-            self.best_candidates = self.population[ind]
-        return self.best_candidates
-    
+       
     def is_pareto_efficient(self, costs, direction = 'max', return_mask = True):
         """
         Find the pareto-efficient points
@@ -71,7 +63,7 @@ class Optimization:
         else:
             return is_efficient
     
-    def final(self):
+    def best(self):
         pop = np.vstack((self.population, self.best_candidates, self.pareto_front))
         scores = self.fitness(pop)
         self.pareto_front = pop[self.is_pareto_efficient(scores, 'max', False)]
