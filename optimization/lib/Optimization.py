@@ -84,7 +84,7 @@ class Optimization:
         return X
     
     def gini(self, X):
-        return np.mean(gini(X, axis=0))
+        return np.mean(gini(np.array(X), axis=0))
     
     def start(self, rounds):
         pass
