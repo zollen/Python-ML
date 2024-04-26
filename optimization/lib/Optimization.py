@@ -72,7 +72,7 @@ class Optimization:
         else:
             return is_efficient
     
-    def final(self, pool_size = 1):
+    def final(self):
         pop = np.vstack((self.population, self.best_candidates, self.pareto_front))
         scores = self.my_func(pop) * -1
         self.pareto_front = pop[self.is_pareto_efficient(scores, 'max', False)]
