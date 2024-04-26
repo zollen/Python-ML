@@ -5,4 +5,4 @@ Created on Sep. 7, 2020
 '''
 
 from optimization.lib.Optimization import *
-from optimization.lib.GreyWolfs import *
+from optimization.lib.ParetoFront import *

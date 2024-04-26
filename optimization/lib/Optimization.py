@@ -9,10 +9,10 @@ from pygini import gini
 
 class Optimization:
     
-    def __init__(self, obj_func, constriants, data_func, direction, population_size, 
+    def __init__(self, obj_func, enforce_func, data_func, direction, population_size, 
                  obj_type = 'single', LB = -50, UB = 50, candidate_size = 0.05, stop_criteria=0.03):
         self.obj_func = obj_func
-        self.constraints = constriants
+        self.enforce_func = enforce_func
         self.data_func = data_func
         self.direction = direction
         self.population_size = population_size
@@ -20,7 +20,7 @@ class Optimization:
         self.LB = LB
         self.UB = UB
         self.stop_criteria = stop_criteria
-        self.population = self.constraints(self.bound(self.data_func(self.population_size)))
+        self.population = self.enforce_func(self.bound(self.data_func(self.population_size)))
         self.pareto_front = [ self.population[0] ]
         self.best_candidates = np.array([])
         self.best_scores = np.array([])
