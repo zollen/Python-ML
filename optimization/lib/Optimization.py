@@ -58,13 +58,24 @@ class Optimization:
             return is_efficient_mask
         else:
             return is_efficient
-    
+        
+    def consolidate(self, X):
+        if self.fitness_ratios == None:
+            self.fitness_ratios = 1 / X.shape[1]           
+        points = 0
+        for col in range(X.shape[1]):
+            points += X[:,col] * self.fitness_ratios[col]
+        return points
+          
     def best(self):
         if self.best_candidates.size == 0:
             pop = self.population
         else:
             pop = np.vstack((self.best_candidates, self.pareto_front, self.population))
         scores = self.fitness(pop)
+        points = self.consolidate(scores)
+        ind = np.argpartition(points, -self.candidate_size)[-self.candidate_size:]
+        self.best_candidates = pop[ind]
         self.pareto_front = pop[self.is_pareto_efficient(scores, 'max', False)]
         return self.pareto_front
         

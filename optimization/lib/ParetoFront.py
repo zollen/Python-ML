@@ -16,6 +16,7 @@ class ParetoFront(Optimization):
              
     def move(self):
         r = np.random.rand(self.population.shape[0], self.population.shape[1])
+        d = np.random.choice([-1, 1], size=(self.population.shape[0], self.population.shape[1]))
         targets = np.tile(self.pareto_front, 
                         (int(np.ceil(self.population.shape[0] / self.pareto_front.shape[0])), 1))
         np.random.shuffle(targets)
@@ -23,7 +24,7 @@ class ParetoFront(Optimization):
             targets = targets[:-(targets.shape[0] - self.population.shape[0]),]
         self.population = self.enforcer_func(self.bound(self.bound(targets + 
                         np.abs(self.population - targets) * np.power(np.e, r) * 
-                        np.cos(2 * np.pi * r))))
+                        np.cos(2 * np.pi * r) * d)))
     
     def start(self, rounds):
         for _ in range(rounds):
