@@ -70,7 +70,7 @@ def data(n):
     return np.random.rand(n, 6) * np.array([[10, 10, 4, 6, 4, 10]]) + \
             np.array([[0, 0, 1, 0, 1, 0]])
 
-def enforce(X):
+def enforcer(X):
     a = np.random.rand(X.shape[0])
     b = np.random.rand(X.shape[0]) * 4
     NEW_0 = b + 2
@@ -132,7 +132,7 @@ def validate(x1, x2, x3, x4, x5, x6):
 
 
 
-wolves = ParetoFront(fitness, enforce, data, 'min', 10000, 
+wolves = ParetoFront(fitness, enforcer, data, 'min', 10000, 
                   obj_type = 'multiple', LB = [[0, 0, 1, 0, 1, 0]], 
                                          UB = [[10, 10, 5, 6, 5, 10]] )
     

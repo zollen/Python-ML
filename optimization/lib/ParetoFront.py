@@ -9,9 +9,9 @@ from optimization.lib.Optimization import Optimization
 
 class ParetoFront(Optimization):
     
-    def __init__(self, obj_func, enforce_func, data_func, direction, population_size, 
+    def __init__(self, obj_func, enforcer_func, data_func, direction, population_size, 
                  obj_type = 'single', LB = -50, UB = 50):
-        super().__init__(obj_func, enforce_func, data_func, direction, 
+        super().__init__(obj_func, enforcer_func, data_func, direction, 
                          population_size, obj_type, LB, UB)
              
     def move(self):
