@@ -73,6 +73,8 @@ def data(n):
 def enforcer(X):
     a = np.random.rand(X.shape[0])
     b = np.random.rand(X.shape[0]) * 4
+    c = np.random.rand(X.shape[0]) * 4
+    d = np.random.rand(X.shape[0]) * 4
     NEW_0 = b + 2
     NEW_1 = 6 - NEW_0
     ss = X[:, 0] + X[:, 1]
@@ -90,10 +92,17 @@ def enforcer(X):
     X[:,0] = np.where(2 - ss[:, 0] + 3 * ss[:, 1] >= 0, ss[:,0], ss[:, 0] - delta)
     X[:,1] = np.where(2 - ss[:, 0] + 3 * ss[:, 1] >= 0, ss[:,1], ss[:, 1] + delta)
     
-    F5_03 = 4 - (X[:,2] - 3)**2 - a
-    X[:,3] = np.where(4 - (X[:,2] - 3)**2 - X[:,3] >= 0, X[:,3], F5_03)
-    F6_05 = 4 - (X[:,4] - 3)**2 + a
-    X[:,5] = np.where((X[:,4] - 3)**2 + X[:,5] - 4 >= 0, X[:,5], F6_05)    
+    ss = np.array(X[:,[2,3]])
+    F5_02 = c + 1
+    F5_03 = 4 - (c + 1 - 3)**2 
+    X[:,2] = np.where(4 - (ss[:,0] - 3)**2 - ss[:,1] >= 0, ss[:,0], F5_02)
+    X[:,3] = np.where(4 - (ss[:,0] - 3)**2 - ss[:,1] >= 0, ss[:,1], F5_03)
+   
+    ss = np.array(X[:,[4,5]])
+    F6_04 = d + 1
+    F6_05 = (F6_04 - 3)**2 + F6_04 + 2
+    X[:,4] = np.where((ss[:,0] - 3)**2 + ss[:,1] - 4 >= 0, ss[:,0], F6_04)    
+    X[:,5] = np.where((ss[:,0] - 3)**2 + ss[:,1] - 4 >= 0, ss[:,1], F6_05)   
     return X    
     
     
@@ -136,7 +145,8 @@ wolves = ParetoFront(fitness, data, enforcer, 'min', 10000,
                    LB = [[0, 0, 1, 0, 1, 0]], 
                    UB = [[10, 10, 5, 6, 5, 10]],
                    fitness_ratios = [ 0.5, 0.5 ] )
-best = wolves.start(200)
+
+best = wolves.start(20)
 vals = osy6d(best)
 for i in range(best.shape[0]):
     print("WolfPack optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ], [{8:}]".format(
@@ -144,6 +154,7 @@ for i in range(best.shape[0]):
         vals[i, 0], vals[i, 1], validate(best[i, 0], best[i, 1], best[i, 2], best[i, 3], best[i, 4], best[i, 5])))
 
 print("Total: ", best.shape[0])
+
 '''
 from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.optimize import minimize
@@ -164,10 +175,13 @@ res = minimize(problem,
 
 np.printoptions(precision=4)
 for i in range(res.X.shape[0]):
-    print("NAGA3 optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ]".format(
+    print("NAGA3 optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ], {8:}".format(
         res.X[i, 0], res.X[i, 1], res.X[i, 2], 
         res.X[i, 3], res.X[i, 4], res.X[i, 5], 
-        res.F[i, 0], res.F[i, 1]))
+        res.F[i, 0], res.F[i, 1], validate(res.X[i, 0], res.X[i, 1], 
+                                           res.X[i, 2], res.X[i, 3], 
+                                           res.X[i, 4], res.X[i, 5])))
+
 '''
 '''
 NAGA3 
