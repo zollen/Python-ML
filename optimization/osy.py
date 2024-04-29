@@ -36,6 +36,7 @@ that are active in each region.
 
 import numpy as np
 from pymoo.problems import get_problem
+from optimization.lib import ParetoFront
 
 
 
@@ -49,6 +50,16 @@ def normalize(X):
     minn = np.min(X, axis=0)
     maxx = np.max(X, axis=0)
     return (X - minn) / (maxx - minn)
+
+def checker(X):
+    result = 0
+    result = np.where(X[:,0] + X[:,1] - 2 >= 0, result + 1, result - 1)
+    result = np.where(6 - X[:,0] - X[:,1] >= 0, result + 1, result - 1)
+    result = np.where(2 - X[:,1] + X[:,0] >= 0, result + 1, result - 1)
+    result = np.where(2 - X[:,0]  + 3 * X[:,1] >= 0, result + 1, result - 1)
+    result = np.where(4 - (X[:,2] - 3)**2 - X[:,3] >= 0, result + 1, result - 1)
+    result = np.where((X[:,4] - 3)**2 + X[:,5] - 4 >= 0, result + 1, result - 1)
+    return result
 
 def fitness(X):
     scores = osy6d(X)         
@@ -177,7 +188,19 @@ def validate(x1, x2, x3, x4, x5, x6):
 
 
 
+agents = ParetoFront(fitness, data, checker, enforcer, 'min', 10000, fitness_ratios=[0.5,0.5])
+best = agents.start(1)
+res = osy6d(best)
+for i in range(best.shape[0]):
+    print("ParetoFront optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ], {8:}".format(
+        best[i, 0], best[i, 1], best[i, 2], best[i, 3], best[i, 4], best[i, 5], 
+        res[i, 0], res[i, 1], validate(best[i, 0], best[i, 1], 
+                                           best[i, 2], best[i, 3], 
+                                           best[i, 4], best[i, 5])))
 
+
+
+'''
 from pymoo.algorithms.moo.nsga3 import NSGA3
 from pymoo.optimize import minimize
 from pymoo.util.ref_dirs import get_reference_directions
@@ -204,7 +227,7 @@ for i in range(res.X.shape[0]):
                                            res.X[i, 2], res.X[i, 3], 
                                            res.X[i, 4], res.X[i, 5])))
 
-
+'''
 '''
 NAGA3 
 NAGA3 optimal f(5.0000, 1.0000, 2.0173, 0.0000, 5.0000, 0.0002) ==> [ -259.0301, 55.0689 ]
