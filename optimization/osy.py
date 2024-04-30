@@ -82,10 +82,8 @@ def data(n):
             np.array([[0, 0, 1, 0, 1, 0]])
 
 def enforcer(X):
-    return X
-
+  
     b = np.random.rand(X.shape[0]) * 4
-    c = np.random.rand(X.shape[0]) * 4
   
     NEW_0 = b + 2
     NEW_1 = 6 - NEW_0
