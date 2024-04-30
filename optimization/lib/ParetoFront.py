@@ -22,9 +22,9 @@ class ParetoFront(Optimization):
         np.random.shuffle(targets)
         if self.population.shape[0] < targets.shape[0]:
             targets = targets[:-(targets.shape[0] - self.population.shape[0]),]
-        self.population = self.enforcer_func(self.bound(self.bound(targets + 
+        self.population = self.bound(targets + 
                         np.abs(self.population - targets) * np.power(np.e, r) * 
-                        np.cos(2 * np.pi * r) * d)))
+                        np.cos(2 * np.pi * r) * d)
     
     def start(self, rounds):
         for _ in range(rounds):
