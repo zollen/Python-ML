@@ -80,7 +80,7 @@ class Optimization:
         scores = scores[results == 6]
         points = points[results == 6]
         size = int(scores.shape[0] * 0.1)
-        if scores.shape[0] < 5:
+        if size < 5:
             size = 5
         ind = np.argpartition(points, -size)[-size:]
         self.best_candidates = pop[ind]
