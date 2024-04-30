@@ -26,7 +26,9 @@ class ParetoFront(Optimization):
     def move(self, X):
         targets = np.tile(self.pareto_front, 
                         (int(np.ceil(X.shape[0] / self.pareto_front.shape[0])), 1))
-        np.random.shuffle(targets)
+        ind = np.array(range(targets.shape[0]))
+        np.random.shuffle(ind)
+        targets = targets[ind]
         if X.shape[0] < targets.shape[0]:
             targets = targets[:-(targets.shape[0] - X.shape[0]),]
             
