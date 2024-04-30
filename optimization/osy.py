@@ -82,6 +82,8 @@ def data(n):
             np.array([[0, 0, 1, 0, 1, 0]])
 
 def enforcer(X):
+    return X
+
     b = np.random.rand(X.shape[0]) * 4
     c = np.random.rand(X.shape[0]) * 4
   
@@ -188,11 +190,13 @@ def validate(x1, x2, x3, x4, x5, x6):
 
 
 
-agents = ParetoFront(fitness, data, checker, enforcer, 'min', 10000, fitness_ratios=[0.5,0.5])
-best = agents.start(1)
+agents = ParetoFront(fitness, data, checker, enforcer, 
+                     'min', 1000, LB=[0, 0, 1, 0, 1, 0], UB=[6, 6, 5, 6, 5, 6],
+                     fitness_ratios=[0.5,0.5])
+best = agents.start(10)
 res = osy6d(best)
 for i in range(best.shape[0]):
-    print("ParetoFront optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ], {8:}".format(
+    print("ParetoFront optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ], [{8:}]".format(
         best[i, 0], best[i, 1], best[i, 2], best[i, 3], best[i, 4], best[i, 5], 
         res[i, 0], res[i, 1], validate(best[i, 0], best[i, 1], 
                                            best[i, 2], best[i, 3], 

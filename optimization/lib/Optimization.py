@@ -21,7 +21,7 @@ class Optimization:
         self.LB = LB
         self.UB = UB
         self.candidate_size = int(np.ceil(population_size * candidate_size))
-        self.population = self.enforcer_func(self.bound(self.data_func(self.population_size)))
+        self.population = self.bound(self.data_func(self.population_size))
         self.pareto_front = [ self.population[0] ]
         self.best_candidates = np.array([])
         self.best_scores = np.array([])
@@ -79,7 +79,7 @@ class Optimization:
         pop = pop[results == 6]
         scores = scores[results == 6]
         points = points[results == 6]
-        ind = np.argpartition(points, -self.candidate_size)[-self.candidate_size:]
+        ind = np.argpartition(points, -20)[-20:]
         self.best_candidates = pop[ind]
         self.pareto_front = pop[self.is_pareto_efficient(scores, 'max', False)]
         return self.pareto_front
