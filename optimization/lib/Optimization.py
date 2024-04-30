@@ -79,7 +79,10 @@ class Optimization:
         pop = pop[results == 6]
         scores = scores[results == 6]
         points = points[results == 6]
-        ind = np.argpartition(points, -20)[-20:]
+        size = int(scores.shape[0] * 0.1)
+        if scores.shape[0] < 5:
+            size = 5
+        ind = np.argpartition(points, -size)[-size:]
         self.best_candidates = pop[ind]
         self.pareto_front = pop[self.is_pareto_efficient(scores, 'max', False)]
         return self.pareto_front
