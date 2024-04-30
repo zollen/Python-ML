@@ -13,31 +13,34 @@ class ParetoFront(Optimization):
                  LB = -50, UB = 50, candidate_size = 0.05, fitness_ratios = None):
         super().__init__(obj_func, data_func, checker_func, enforcer_func, direction, 
                          population_size, LB, UB, candidate_size, fitness_ratios)
-             
-    def move(self):
-        pop = np.vstack((self.population, self.data_func(self.population_size * 50)))
+        
+    def scale_up(self):
+        return np.vstack((self.population, self.data_func(self.population_size * 50)))
+          
+    def move(self, X):
         targets = np.tile(self.pareto_front, 
-                        (int(np.ceil(pop.shape[0] / self.pareto_front.shape[0])), 1))
+                        (int(np.ceil(X.shape[0] / self.pareto_front.shape[0])), 1))
         np.random.shuffle(targets)
-        if pop.shape[0] < targets.shape[0]:
-            targets = targets[:-(targets.shape[0] - pop.shape[0]),]
+        if X.shape[0] < targets.shape[0]:
+            targets = targets[:-(targets.shape[0] - X.shape[0]),]
             
-        res = self.checker_func(pop)
-        pop = pop[res == 6]
+        res = self.checker_func(X)
+        X = X[res == 6]
         targets = targets[res == 6]
-        r = np.random.rand(self.population_size, pop.shape[1])
-        d = np.random.choice([-1, 1], size=(self.population_size, pop.shape[1]))
-        idx = np.array(range(pop.shape[0]))
+        r = np.random.rand(self.population_size, X.shape[1])
+        d = np.random.choice([-1, 1], size=(self.population_size, X.shape[1]))
+        idx = np.array(range(X.shape[0]))
         np.random.shuffle(idx)
         idx = idx[:self.population_size]
-        pop = pop[idx]
+        X = X[idx]
         targets = targets[idx]
+        
         self.population = self.bound(targets + 
-                        np.abs(pop - targets) * np.power(np.e, r) * 
+                        np.abs(X - targets) * np.power(np.e, r) * 
                         np.cos(2 * np.pi * r) * d)
     
     def start(self, rounds):
         for _ in range(rounds):
             self.best()
-            self.move()     
+            self.move(self.scale_up())     
         return self.best()
