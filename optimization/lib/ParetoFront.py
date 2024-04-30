@@ -30,14 +30,14 @@ class ParetoFront(Optimization):
         if X.shape[0] < targets.shape[0]:
             targets = targets[:-(targets.shape[0] - X.shape[0]),]
             
-        res = self.checker_func(X)
-        X = X[res == 6]
-        targets = targets[res == 6]
-        
         r = np.random.rand(X.shape[0], X.shape[1])
-        return self.bound(targets + 
+        X = self.bound(targets + 
                         np.abs(X - targets) * np.power(np.e, r) * 
                         np.cos(2 * np.pi * r))
+        
+        res = self.checker_func(X)
+        X = X[res == 6]
+        return X
     
     def start(self, rounds):
         for _ in range(rounds):
