@@ -84,7 +84,7 @@ class Optimization:
             size = 5
         ind = np.argpartition(points, -size)[-size:]
         self.best_candidates = pop[ind]
-        self.pareto_front = pop[self.is_pareto_efficient(scores, 'max', False)]
+        self.pareto_front = pop[self.is_pareto_efficient(scores, 'min', False)]
         return self.pareto_front
         
     def bound(self, X):
