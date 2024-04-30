@@ -72,7 +72,7 @@ class Optimization:
         if self.best_candidates.size == 0:
             pop = self.population
         else:
-            pop = np.vstack((self.best_candidates, self.pareto_front, self.population))
+            pop = np.vstack((self.pareto_front, self.best_candidates, self.population))
         results = self.checker_func(pop)
         scores = self.fitness(pop)
         points = self.consolidate(scores)
