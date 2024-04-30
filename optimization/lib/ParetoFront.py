@@ -35,10 +35,9 @@ class ParetoFront(Optimization):
         targets = targets[res == 6]
         
         r = np.random.rand(X.shape[0], X.shape[1])
-        d = np.random.choice([-1, 1], size=(X.shape[0], X.shape[1]))
         return self.bound(targets + 
                         np.abs(X - targets) * np.power(np.e, r) * 
-                        np.cos(2 * np.pi * r) * d)
+                        np.cos(2 * np.pi * r))
     
     def start(self, rounds):
         for _ in range(rounds):
