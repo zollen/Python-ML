@@ -9,11 +9,10 @@ from pygini import gini
 
 class Optimization:
     
-    def __init__(self, obj_func, data_func, checker_func, enforcer_func, direction, population_size, 
+    def __init__(self, obj_func, data_func, checker_func, direction, population_size, 
                  LB, UB, candidate_size, fitness_ratios):
         self.obj_func = obj_func
         self.checker_func = checker_func
-        self.enforcer_func = enforcer_func
         self.data_func = data_func
         self.direction = direction
         self.population_size = population_size

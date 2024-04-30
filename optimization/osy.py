@@ -79,80 +79,7 @@ def fitness(X):
 
 def data(n):
     return np.random.rand(n, 6) * np.array([[10, 10, 4, 6, 4, 10]]) + \
-            np.array([[0, 0, 1, 0, 1, 0]])
-
-def enforcer(X):
-  
-    b = np.random.rand(X.shape[0]) * 4
-  
-    NEW_0 = b + 2
-    NEW_1 = 6 - NEW_0
-    ss = X[:, 0] + X[:, 1]
-    X[:,0] = np.where(ss >= 2, X[:,0], NEW_0)
-    X[:,1] = np.where(ss >= 2, X[:,1], NEW_1)
-    X[:,0] = np.where(ss <= 6, X[:,0], NEW_0)
-    X[:,1] = np.where(ss <= 6, X[:,1], NEW_1)
-    
-    ss = np.array(X[:,[0,1]])
-    X[:,0] = np.where(2 - ss[:, 1] + ss[:, 0] >= 0, ss[:,0], ss[:,1])
-    X[:,1] = np.where(2 - ss[:, 1] + ss[:, 0] >= 0, ss[:,1], ss[:,0])
-    
-    ss = np.array(X[:,[0,1]])
-    delta = X[:, 0] - 3 * X[:, 1] - 2
-    X[:,0] = np.where(2 - ss[:, 0] + 3 * ss[:, 1] >= 0, ss[:,0], ss[:, 0] - delta)
-    X[:,1] = np.where(2 - ss[:, 0] + 3 * ss[:, 1] >= 0, ss[:,1], ss[:, 1] + delta)
-    
-    '''
-    C5(x): (4 - (x3 - 3)^2 - x4) / 4 >= 0
-    '''
-    def autofill4A(X):
-        ss = np.array(X[:,[0,1]])
-        c = np.random.rand(X.shape[0]) * 4
-        F5_02 = c + 1
-        F5_03 = 4 - (c + 1 - 3)**2 
-        X[:,0] = np.where(4 - (ss[:,0] - 3)**2 - ss[:,1] >= 0, ss[:,0], F5_02)
-        X[:,1] = np.where(4 - (ss[:,0] - 3)**2 - ss[:,1] >= 0, ss[:,1], F5_03)
-        return X
-    
-    def autofill4B(X):
-        ss = np.array(X[:,[0,1]])
-        c = np.random.rand(X.shape[0]) * 2
-        F5_03 = c
-        F5_02 = 4 - F5_03
-        X[:,0] = np.where(4 - (ss[:,0] - 3)**2 - ss[:,1] >= 0, ss[:,0], F5_02)
-        X[:,1] = np.where(4 - (ss[:,0] - 3)**2 - ss[:,1] >= 0, ss[:,1], F5_03)
-        return X
-    
-    a = np.expand_dims(np.random.rand(X.shape[0]), axis=1)  
-    X[:,[2,3]] = np.where(a < 0.5, autofill4A(X[:,[2,3]]), autofill4B(X[:,[2,3]]))
-   
-    '''
-    C6(x): ((x5 - 3)^2 + x6 - 4) / 4 >= 0
-    '''
-    def autofill5A(X):
-        ss = np.array(X)
-        d = np.random.rand(X.shape[0]) * 4
-        F6_04 = d + 1
-        F6_05 = (F6_04 - 3)**2 + F6_04 + 2
-        X[:,0] = np.where((ss[:,0] - 3)**2 + ss[:,1] - 4 >= 0, ss[:,0], F6_04)    
-        X[:,1] = np.where((ss[:,0] - 3)**2 + ss[:,1] - 4 >= 0, ss[:,1], F6_05)
-        return X
-        
-    def autofill5B(X):
-        ss = np.array(X)
-        d = np.random.rand(X.shape[0]) * 10
-        a = np.random.rand(X.shape[0])
-        F6_05 = d
-        F6_04 = 10 - d - a
-        X[:,0] = np.where((ss[:,0] - 3)**2 + ss[:,1] - 4 >= 0, ss[:,0], F6_04)    
-        X[:,1] = np.where((ss[:,0] - 3)**2 + ss[:,1] - 4 >= 0, ss[:,1], F6_05)
-        return X
-    
-    a = np.expand_dims(np.random.rand(X.shape[0]), axis=1)
-    X[:,[4,5]] = np.where(a < 0.5, autofill5A(X[:,[4,5]]), autofill5B(X[:,[4,5]]))
-    
-    return X    
-    
+            np.array([[0, 0, 1, 0, 1, 0]])    
     
 def validate(x1, x2, x3, x4, x5, x6):
     if (x1 + x2 - 2) / 2 >= 0:
@@ -188,7 +115,7 @@ def validate(x1, x2, x3, x4, x5, x6):
 
 
 
-agents = ParetoFront(fitness, data, checker, enforcer, 
+agents = ParetoFront(fitness, data, checker,  
                      'min', 1000, LB=[0, 0, 1, 0, 1, 0], UB=[6, 6, 5, 6, 5, 6],
                      fitness_ratios=[0.5,0.5])
 best = agents.start(10)
