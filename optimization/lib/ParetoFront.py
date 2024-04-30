@@ -16,6 +16,12 @@ class ParetoFront(Optimization):
         
     def scale_up(self):
         return np.vstack((self.population, self.data_func(self.population_size * 50)))
+    
+    def scale_down(self, X):
+        idx = np.array(range(X.shape[0]))
+        np.random.shuffle(idx)
+        idx = idx[:self.population_size]
+        return X[idx]
           
     def move(self, X):
         targets = np.tile(self.pareto_front, 
@@ -27,20 +33,15 @@ class ParetoFront(Optimization):
         res = self.checker_func(X)
         X = X[res == 6]
         targets = targets[res == 6]
-        r = np.random.rand(self.population_size, X.shape[1])
-        d = np.random.choice([-1, 1], size=(self.population_size, X.shape[1]))
-        idx = np.array(range(X.shape[0]))
-        np.random.shuffle(idx)
-        idx = idx[:self.population_size]
-        X = X[idx]
-        targets = targets[idx]
         
-        self.population = self.bound(targets + 
+        r = np.random.rand(X.shape[0], X.shape[1])
+        d = np.random.choice([-1, 1], size=(X.shape[0], X.shape[1]))
+        return self.bound(targets + 
                         np.abs(X - targets) * np.power(np.e, r) * 
                         np.cos(2 * np.pi * r) * d)
     
     def start(self, rounds):
         for _ in range(rounds):
             self.best()
-            self.move(self.scale_up())     
+            self.population = self.scale_down(self.move(self.scale_up()))   
         return self.best()
