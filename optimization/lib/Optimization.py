@@ -88,8 +88,8 @@ class Optimization:
         return self.pareto_front
         
     def bound(self, X):
-        X = np.where(X > self.LB, X, self.LB)
-        X = np.where(X < self.UB, X, self.UB)
+        X = np.where(X >= self.LB, X, self.LB)
+        X = np.where(X <= self.UB, X, self.UB)
         return X
     
     def gini(self, X):
