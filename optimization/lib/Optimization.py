@@ -63,8 +63,9 @@ class Optimization:
         if self.fitness_ratios == None:
             self.fitness_ratios = 1 / X.shape[1]           
         points = 0
-        for col in range(X.shape[1]):
-            points += X[:,col] * self.fitness_ratios[col]
+        x = X / np.linalg.norm(X, axis=0)
+        for col in range(x.shape[1]):
+            points += x[:,col] * self.fitness_ratios[col]
         return points
           
     def best(self):
