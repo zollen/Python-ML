@@ -120,6 +120,10 @@ agents = ParetoFront(fitness, data, checker,
                      fitness_ratios=[0.5,0.5])
 best = agents.start(30)
 res = osy6d(best)
+idx = np.argsort(res, axis=0)
+idx = idx[:, 0]
+best = best[idx]
+res = res[idx]
 for i in range(best.shape[0]):
     print("ParetoFront optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ], [{8:}]".format(
         best[i, 0], best[i, 1], best[i, 2], best[i, 3], best[i, 4], best[i, 5], 
