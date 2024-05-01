@@ -24,14 +24,10 @@ class ParetoFront(Optimization):
         return X[idx]
           
     def move(self, X):
-        targets = np.tile(self.pareto_front, 
-                        (int(np.ceil(X.shape[0] / self.pareto_front.shape[0])), 1))
-        ind = np.array(range(targets.shape[0]))
-        np.random.shuffle(ind)
-        targets = targets[ind]
-        if X.shape[0] < targets.shape[0]:
-            targets = targets[:-(targets.shape[0] - X.shape[0]),]
-            
+        res = self.consolidate(self.fitness(self.pareto_front))
+        res += np.abs(np.min(res))
+        ind = np.random.choice(np.array(range(res.size)), size=X.shape[0], p=(res / np.sum(res)))
+        targets = self.pareto_front[ind]
         r = np.random.rand(X.shape[0], X.shape[1])
         X = self.bound(targets + 
                         np.abs(X - targets) * np.power(np.e, r) * 
