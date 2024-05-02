@@ -114,7 +114,7 @@ def validate(x1, x2, x3, x4, x5, x6):
     return r1 and r2 and r3 and r4 and r5 and r6 
 
 
-agents = ParetoFront(fitness, data, checker,  
+agents = ParetoFront(osy6d, data, checker,  
                      'min', 1000, fitness_ratios=[0.5,0.5], 
                      LB=[0, 0, 1, 0, 1, 0], UB=[6, 6, 5, 6, 5, 6])
 best = agents.start(40)
