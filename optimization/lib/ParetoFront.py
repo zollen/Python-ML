@@ -29,9 +29,10 @@ class ParetoFront(Optimization):
         ind = np.random.choice(np.array(range(res.size)), size=X.shape[0], p=(res / np.sum(res)))
         targets = self.pareto_front[ind]
         r = np.random.rand(X.shape[0], X.shape[1])
+        b = np.random.choice([1, -1], size=(X.shape[0], X.shape[1]))
         X = self.bound(targets + 
                         np.abs(X - targets) * np.power(np.e, r) * 
-                        np.cos(2 * np.pi * r))
+                        np.cos(2 * np.pi * r) * b)
         
         res = self.checker_func(X)
         X = X[res == 6]
