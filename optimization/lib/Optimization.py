@@ -10,7 +10,7 @@ from pygini import gini
 class Optimization:
     
     def __init__(self, obj_func, data_func, checker_func, direction, population_size, 
-                 LB, UB, candidate_size, fitness_ratios):
+                 fitness_ratios, LB, UB, candidate_size):
         self.obj_func = obj_func
         self.checker_func = checker_func
         self.data_func = data_func

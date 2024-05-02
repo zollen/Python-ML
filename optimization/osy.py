@@ -115,8 +115,8 @@ def validate(x1, x2, x3, x4, x5, x6):
 
 
 agents = ParetoFront(fitness, data, checker,  
-                     'min', 1000, LB=[0, 0, 1, 0, 1, 0], UB=[6, 6, 5, 6, 5, 6],
-                     fitness_ratios=[0.5,0.5])
+                     'min', 1000, fitness_ratios=[0.5,0.5], 
+                     LB=[0, 0, 1, 0, 1, 0], UB=[6, 6, 5, 6, 5, 6])
 best = agents.start(40)
 res = osy6d(best)
 idx = np.argsort(res, axis=0)
