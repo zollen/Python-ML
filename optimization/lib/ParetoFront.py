@@ -35,7 +35,7 @@ class ParetoFront(Optimization):
                         np.cos(2 * np.pi * r) * b)
         
         res = self.checker_func(X)
-        X = X[res == 6]
+        X = X[res > 0]
         return X
     
     def start(self, rounds):

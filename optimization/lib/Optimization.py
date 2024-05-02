@@ -76,9 +76,9 @@ class Optimization:
         results = self.checker_func(pop)
         scores = self.fitness(pop)
         points = self.consolidate(scores)
-        pop = pop[results == 6]
-        scores = scores[results == 6]
-        points = points[results == 6]
+        pop = pop[results > 0]
+        scores = scores[results > 0]
+        points = points[results > 0]
         size = self.candidate_size
         if scores.shape[0] < self.candidate_size:
             size = scores.shape[0]

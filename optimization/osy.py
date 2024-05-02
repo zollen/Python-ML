@@ -59,7 +59,7 @@ def checker(X):
     result = np.where(2 - X[:,0]  + 3 * X[:,1] >= 0, result + 1, result - 1)
     result = np.where(4 - (X[:,2] - 3)**2 - X[:,3] >= 0, result + 1, result - 1)
     result = np.where((X[:,4] - 3)**2 + X[:,5] - 4 >= 0, result + 1, result - 1)
-    return result
+    return np.where(result == 6, 1, -1)
 
 def fitness(X):
     scores = osy6d(X)         
