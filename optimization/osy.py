@@ -119,14 +119,16 @@ agents = ParetoFront(osy6d, data, checker,
                      LB=[0, 0, 1, 0, 1, 0], UB=[6, 6, 5, 6, 5, 6])
 best = agents.start(40)
 res = osy6d(best)
+pts = agents.consolidate(agents.fitness(best))
 idx = np.argsort(res, axis=0)
 idx = idx[:, 0]
 best = best[idx]
 res = res[idx]
+pts = pts[idx]
 for i in range(best.shape[0]):
-    print("ParetoFront optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ], [{8:}]".format(
+    print("ParetoFront optimal f({0:.4f}, {1:.4f}, {2:.4f}, {3:.4f}, {4:.4f}, {5:.4f}) ==> [ {6:.4f}, {7:.4f} ], [{8:.8f}] [{9:}]".format(
         best[i, 0], best[i, 1], best[i, 2], best[i, 3], best[i, 4], best[i, 5], 
-        res[i, 0], res[i, 1], validate(best[i, 0], best[i, 1], 
+        res[i, 0], res[i, 1], pts[i], validate(best[i, 0], best[i, 1], 
                                            best[i, 2], best[i, 3], 
                                            best[i, 4], best[i, 5])))
 
