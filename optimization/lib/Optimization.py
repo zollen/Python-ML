@@ -63,7 +63,9 @@ class Optimization:
         if self.fitness_ratios == None:
             self.fitness_ratios = 1 / X.shape[1]           
         points = 0
-        x = X / np.linalg.norm(X, axis=0)
+        minn = np.min(X, axis=0)
+        maxx = np.max(X, axis=0)
+        x = (X - minn) / (maxx - minn)
         for col in range(x.shape[1]):
             points += x[:,col] * self.fitness_ratios[col]
         return points
