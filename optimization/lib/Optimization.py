@@ -59,16 +59,52 @@ class Optimization:
         else:
             return is_efficient
         
-    def consolidate(self, X):
-        if self.fitness_ratios == None:
-            self.fitness_ratios = 1 / X.shape[1]           
-        points = 0
+    def vikor(self, X):
+        '''
+        @url(VIKOR): https://www.youtube.com/watch?v=WMX3SVnvRls
+        step1: normalize the matrix 
+            fmax = max(X, axis=0), fmin = min(X, axis=0)
+            x = (fmax - X) / (fmax - fmin)
+        step2: calculating S and R
+            S = sum(x, axis=1)
+            R = max(x, axis=1)
+            Smax = max(S)
+            Smin = min(S)
+            Rmax = max(R)
+            Rmin = min(R)
+        step3: calculating Q
+            Q = 0.5 * ((S - Smin) / (Smax - Smin)) + 0.5 * ((R - Rmin) / (Rmax - Rmin))
+            Q is the ranking
+        step4: Acceptance of Rank choice
+            C1 = acceptable advantages
+                C1 = Q(second_best) - Q(best) >= DQ 
+                however if failed, Then second_best and best are in the compromise group
+                Then we pick the best candidate for above check 
+                    C1 = Q(third_best) - Q(best) >= DQ ,
+            C2 = acceptable stability in decision making
+                DQ = 1 / (j - 1) where j is number of alternatives (size of dataset)
+                alternatives must also be the best ranked by either R value or S values.
+                
+            Condition
+                1. Alternative best and second_best, if condition is A2 not satisifed
+                2. Alternative best, second, third...., if condition c1 is not satifisifed
+                    a(th-best) is determined by the relation Q(a-th)- Q1 < DQ for maximum M 
+                    (the position of these alternaives are in closeness)
+        '''
         minn = np.min(X, axis=0)
         maxx = np.max(X, axis=0)
         x = (X - minn) / (maxx - minn)
-        for col in range(x.shape[1]):
-            points += x[:,col] * self.fitness_ratios[col]
-        return points
+        S = np.sum(x, axis=1)
+        R = np.max(x, axis=1)
+        Smax = np.max(S)
+        Smin = np.min(S)
+        Rmax = np.max(R)
+        Rmin = np.min(R)
+        return self.fitness_ratios[0] * ((S - Smin) / (Smax - Smin)) + \
+                    self.fitness_ratios[1] * ((R - Rmin) / (Rmax - Rmin))
+        
+    def consolidate(self, X):
+        return self.vikor(X)
           
     def best(self):
         if self.best_candidates.size == 0:
