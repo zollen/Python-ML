@@ -82,36 +82,7 @@ def data(n):
             np.array([[0, 0, 1, 0, 1, 0]])    
     
 def validate(x1, x2, x3, x4, x5, x6):
-    if (x1 + x2 - 2) / 2 >= 0:
-        r1 = 1
-    else:
-        r1 = 0
-        
-    if (6 - x1 - x2) / 6 >= 0:
-        r2 = 1
-    else:
-        r2 = 0
-        
-    if (2 - x2 + x1) / 2 >= 0:
-        r3 = 1
-    else:
-        r3 = 0
-        
-    if (2 - x1  + 3 * x2) / 2 >= 0:
-        r4 = 1
-    else:
-        r4 = 0
-        
-    if (4 - (x3 - 3)**2 - x4) / 4 >= 0:
-        r5 = 1
-    else:
-        r5 = 0
-        
-    if ((x5 - 3)**2 + x6 - 4) / 4 >= 0:
-        r6 = 1
-    else:
-        r6 = 0
-    return r1 and r2 and r3 and r4 and r5 and r6 
+    return constraints(np.array([[x1, x2, x3, x4, x5, x6]]))
 
 
 agents = ParetoFront(osy6d, data, constraints,  
@@ -121,8 +92,8 @@ agents = ParetoFront(osy6d, data, constraints,
                      LB=[0, 0, 1, 0, 1, 0], UB=[6, 6, 5, 6, 5, 6])
 best = agents.start(40)
 
-aa = np.array([[5.0000, 1.0000, 2.0173, 0.0000, 5.0000, 0.0002]])
-best = np.vstack([aa, best])
+#aa = np.array([[5.0000, 1.0000, 2.0173, 0.0000, 5.0000, 0.0002]])
+#best = np.vstack([aa, best])
 
 res = osy6d(best)
 pts = agents.vikor(agents.fitness(best))
