@@ -9,9 +9,9 @@ from optimization.lib.Optimization import Optimization
 
 class ParetoFront(Optimization):
     
-    def __init__(self, obj_func, data_func, checker_func, direction, population_size, 
+    def __init__(self, obj_func, data_func, constraints_func, direction, population_size, 
                  ideal_scores, nadir_scores, LB = -50, UB = 50, candidate_size = 0.05):
-        super().__init__(obj_func, data_func, checker_func, direction, 
+        super().__init__(obj_func, data_func, constraints_func, direction, 
                          population_size, ideal_scores, nadir_scores, LB, UB, candidate_size)
         
     def scale_up(self):
@@ -34,7 +34,7 @@ class ParetoFront(Optimization):
                         np.abs(X - targets) * np.power(np.e, r) * 
                         np.cos(2 * np.pi * r) * b)
         
-        res = self.checker_func(X)
+        res = self.constraints_func(X)
         X = X[res > 0]
         return X
     

@@ -9,10 +9,10 @@ from pygini import gini
 
 class Optimization:
     
-    def __init__(self, obj_func, data_func, checker_func, direction, population_size, 
+    def __init__(self, obj_func, data_func, constraints_func, direction, population_size, 
                  ideal_scores, nadir_scores, LB, UB, candidate_size):
         self.obj_func = obj_func
-        self.checker_func = checker_func
+        self.constraints_func = constraints_func
         self.data_func = data_func
         self.direction = direction
         self.population_size = population_size
@@ -106,7 +106,7 @@ class Optimization:
           
     def best(self):
         pop = np.vstack((self.pareto_front, self.population))
-        results = self.checker_func(pop)
+        results = self.constraints_func(pop)
         scores = self.fitness(pop)
         points = self.consolidate(scores)
         pop = pop[results > 0]

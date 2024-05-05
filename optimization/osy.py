@@ -51,7 +51,7 @@ def normalize(X):
     maxx = np.max(X, axis=0)
     return (X - minn) / (maxx - minn)
    
-def checker(X):
+def constraints(X):
     result = 0
     result = np.where(X[:,0] + X[:,1] - 2 >= 0, result + 1, result - 1)
     result = np.where(6 - X[:,0] - X[:,1] >= 0, result + 1, result - 1)
@@ -114,7 +114,7 @@ def validate(x1, x2, x3, x4, x5, x6):
     return r1 and r2 and r3 and r4 and r5 and r6 
 
 
-agents = ParetoFront(osy6d, data, checker,  
+agents = ParetoFront(osy6d, data, constraints,  
                      'min', 1000,  
                      ideal_scores = problem.ideal_point(), 
                      nadir_scores = problem.nadir_point(),
