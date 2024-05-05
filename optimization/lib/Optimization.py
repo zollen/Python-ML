@@ -108,10 +108,8 @@ class Optimization:
         pop = np.vstack((self.pareto_front, self.population))
         results = self.constraints_func(pop)
         scores = self.fitness(pop)
-        points = self.consolidate(scores)
         pop = pop[results > 0]
         scores = scores[results > 0]
-        points = points[results > 0]
         self.pareto_front = pop[self.is_pareto_efficient(scores, self.direction, False)]
         return self.pareto_front
         
