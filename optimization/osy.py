@@ -62,20 +62,7 @@ def constraints(X):
     return np.where(result == 6, 1, -1)
 
 def fitness(X):
-    scores = osy6d(X)         
-    c1 = (X[:,0] + X[:,1] - 2) / 2          # x1 + x2 > 2             2 < 2 * x1 + +1.95 < 6
-    c2 = (6 - X[:,0] - X[:,1]) / 6          # x1 + x2 < 6             2 < x1 + x2 < 6
-    c3 = (2 - X[:,1] + X[:,0]) / 2          # 2 + x1 > x2              x2 < x1 + 2
-    c4 = (2 - X[:,0]  + 3 * X[:,1]) / 2     # 2 + 3 * x2 > x1         3 * x2 > x1 - 2
-    c5 = (4 - (X[:,2] - 3)**2 - X[:,3]) / 4 # (x3 - 3)^2 + x4 < 4    
-    c6 = ((X[:,4] - 3)**2 + X[:,5] - 4) / 4 # (x5 - 3)^2 + x6 > 4     
-    c1_score = np.expand_dims(np.where(c1 >= 0, 0, 5000000), axis=1)
-    c2_score = np.expand_dims(np.where(c2 >= 0, 0, 5000000), axis=1)
-    c3_score = np.expand_dims(np.where(c3 >= 0, 0, 5000000), axis=1)
-    c4_score = np.expand_dims(np.where(c4 >= 0, 0, 5000000), axis=1)
-    c5_score = np.expand_dims(np.where(c5 >= 0, 0, 5000000), axis=1)
-    c6_score = np.expand_dims(np.where(c6 >= 0, 0, 5000000), axis=1)
-    return scores + c1_score + c2_score + c3_score + c4_score + c5_score + c6_score
+    return osy6d(X)          
 
 def data(n):
     return np.random.rand(n, 6) * np.array([[10, 10, 4, 6, 4, 10]]) + \
@@ -90,6 +77,7 @@ agents = ParetoFront(osy6d, data, constraints,
                      ideal_scores = problem.ideal_point(), 
                      nadir_scores = problem.nadir_point(),
                      LB=[0, 0, 1, 0, 1, 0], UB=[6, 6, 5, 6, 5, 6])
+
 best = agents.start(40)
 
 #aa = np.array([[5.0000, 1.0000, 2.0173, 0.0000, 5.0000, 0.0002]])
