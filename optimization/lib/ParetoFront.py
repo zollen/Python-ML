@@ -26,7 +26,8 @@ class ParetoFront(Optimization):
     def move(self, X):
         res = self.consolidate(self.fitness(self.pareto_front))
         res += np.abs(np.min(res))
-        ind = np.random.choice(np.array(range(res.size)), size=X.shape[0], p=(res / np.sum(res)))
+        prob = np.nan_to_num(res / np.sum(res))
+        ind = np.random.choice(np.array(range(res.size)), size=X.shape[0], p=prob)
         targets = self.pareto_front[ind]
         r = np.random.rand(X.shape[0], X.shape[1])
         b = np.random.choice([1, -1], size=(X.shape[0], X.shape[1]))
