@@ -115,7 +115,7 @@ def validate(x1, x2, x3, x4, x5, x6):
 
 
 agents = ParetoFront(osy6d, data, checker,  
-                     'min', 1000, fitness_ratios=[0.5, 0.5], 
+                     'min', 1000,  
                      LB=[0, 0, 1, 0, 1, 0], UB=[6, 6, 5, 6, 5, 6])
 best = agents.start(40)
 
@@ -124,7 +124,7 @@ best = np.vstack([aa, best])
 
 res = osy6d(best)
 pts = agents.vikor(agents.fitness(best))
-idx = np.argsort(pts * -1, axis=0)
+idx = np.argsort(res[:,0], axis=0)
 best = best[idx]
 res = res[idx]
 pts = pts[idx]

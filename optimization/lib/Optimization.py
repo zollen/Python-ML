@@ -10,13 +10,12 @@ from pygini import gini
 class Optimization:
     
     def __init__(self, obj_func, data_func, checker_func, direction, population_size, 
-                 fitness_ratios, LB, UB, candidate_size):
+                 LB, UB, candidate_size):
         self.obj_func = obj_func
         self.checker_func = checker_func
         self.data_func = data_func
         self.direction = direction
         self.population_size = population_size
-        self.fitness_ratios = fitness_ratios
         self.LB = LB
         self.UB = UB
         self.candidate_size = int(np.ceil(population_size * candidate_size))
@@ -100,8 +99,7 @@ class Optimization:
         Smin = np.min(S)
         Rmax = np.max(R)
         Rmin = np.min(R)
-        return self.fitness_ratios[0] * ((S - Smin) / (Smax - Smin)) + \
-                    self.fitness_ratios[1] * ((R - Rmin) / (Rmax - Rmin))
+        return 0.5 * ((S - Smin) / (Smax - Smin)) + 0.5 * ((R - Rmin) / (Rmax - Rmin))
         
     def consolidate(self, X):
         return self.vikor(X)

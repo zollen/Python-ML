@@ -11,6 +11,8 @@ from pymoo.problems import get_problem
 
 problem = get_problem("osy")
 
+print(problem.name())
+print("=========================")
 print(problem.bounds())
 print("=========================")
 print(problem.ideal_point())
@@ -18,3 +20,5 @@ print("=========================")
 print(problem.nadir_point())
 print("=========================")
 print(problem.pareto_front())
+print("=========================")
+print(problem.pareto_set())

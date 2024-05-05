@@ -10,9 +10,9 @@ from optimization.lib.Optimization import Optimization
 class ParetoFront(Optimization):
     
     def __init__(self, obj_func, data_func, checker_func, direction, population_size, 
-                 fitness_ratios, LB = -50, UB = 50, candidate_size = 0.05):
+                 LB = -50, UB = 50, candidate_size = 0.05):
         super().__init__(obj_func, data_func, checker_func, direction, 
-                         population_size, fitness_ratios, LB, UB, candidate_size)
+                         population_size, LB, UB, candidate_size)
         
     def scale_up(self):
         return np.vstack((self.population, self.data_func(self.population_size * 50)))
