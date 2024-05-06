@@ -71,6 +71,33 @@ def data(n):
 def validate(x1, x2, x3, x4, x5, x6):
     return constraints(np.array([[x1, x2, x3, x4, x5, x6]]))
 
+'''
+arr = np.array([[-132, 94],
+                [-259, 56],
+                [-240, 82],
+                [-68, 10],
+                [-83, 5],
+                [-15, 10],
+                [-121, 80],
+                [-279, 85],
+                [-123, 45]])
+
+ideal = np.array([ -273.84271673, 4.47409994 ])
+nadir = np.array([ -71.5030298, 75.81677091 ])
+
+interval = (ideal - nadir) / 4
+print(interval)
+
+worst = np.array( [ arr[np.argmax(arr[:,0])] ] ) 
+for indx in range(arr.shape[1]):
+    arr = np.where(np.expand_dims(arr[:,indx], axis=1) < nadir[indx], arr, worst )
+   # arr = np.where(np.expand_dims(arr[:,indx], axis=1) > nadir[indx] - interval, arr + interval, arr)
+
+print(arr)
+
+exit()
+'''
+
 
 agents = ParetoFront(osy6d, data, constraints,  
                      'min', 1000,  
