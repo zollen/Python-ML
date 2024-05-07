@@ -106,18 +106,19 @@ class Optimization:
         
     def consolidate(self, X):
         return self.vikor(X)
+    
+    def modifier(self, scores):
+        worst = np.array( [ scores[np.argmin(scores[:,0])] ] ) 
+        for indx in range(scores.shape[1]):
+            scores = np.where(np.expand_dims(scores[:,indx], axis=1) > self.nadir_scores[indx], scores, worst)
+        return scores
           
     def best(self):
         pop = np.vstack((self.pareto_front, self.population))
         results = self.constraints_func(pop)
-        scores = self.fitness(pop)
+        scores = self.modifier(self.fitness(pop))
         pop = pop[results > 0]
         scores = scores[results > 0]
-         
-        worst = np.array( [ scores[np.argmin(scores[:,0])] ] ) 
-        for indx in range(scores.shape[1]):
-            scores = np.where(np.expand_dims(scores[:,indx], axis=1) > self.nadir_scores[indx], scores, worst)
-
         self.pareto_front = pop[self.is_pareto_efficient(scores, self.direction, False)]
         return self.pareto_front
         
