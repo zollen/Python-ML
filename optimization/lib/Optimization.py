@@ -19,8 +19,11 @@ class Optimization:
         self.LB = LB
         self.UB = UB
         self.candidate_size = int(np.ceil(population_size * candidate_size))
-        self.ideal_scores = ideal_scores
-        self.nadir_scores = nadir_scores
+        factor = 1
+        if self.direction == 'min':
+            factor = -1
+        self.ideal_scores = np.array(ideal_scores) * factor
+        self.nadir_scores = np.array(nadir_scores) * factor
         self.population = self.bound(self.data_func(self.population_size))
         self.pareto_front = [ self.population[0] ]
     
@@ -110,6 +113,11 @@ class Optimization:
         scores = self.fitness(pop)
         pop = pop[results > 0]
         scores = scores[results > 0]
+         
+        worst = np.array( [ scores[np.argmin(scores[:,0])] ] ) 
+        for indx in range(scores.shape[1]):
+            scores = np.where(np.expand_dims(scores[:,indx], axis=1) > self.nadir_scores[indx], scores, worst)
+
         self.pareto_front = pop[self.is_pareto_efficient(scores, self.direction, False)]
         return self.pareto_front
         
