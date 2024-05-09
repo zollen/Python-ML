@@ -32,10 +32,9 @@ class ParetoFront(Optimization):
         if X.shape[0] < targets.shape[0]: 
             targets = targets[:-(targets.shape[0] - X.shape[0]),] 
         r = np.random.rand(X.shape[0], X.shape[1])
-        b = np.random.choice([1, -1], size=(X.shape[0], X.shape[1]))
         X = self.bound(targets + 
                         np.abs(X - targets) * np.power(np.e, r) * 
-                        np.cos(2 * np.pi * r) * b)
+                        np.cos(2 * np.pi * r))
         
         res = self.constraints_func(X)
         X = X[res > 0]
