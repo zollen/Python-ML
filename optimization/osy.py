@@ -74,20 +74,23 @@ def validate(x1, x2, x3, x4, x5, x6):
 
 
 
+idealp = problem.ideal_point() * -1
+
+
 agents = ParetoFront(osy6d, data, constraints,  
                      'min', 10000,  
                      ideal_scores = problem.ideal_point(), 
                      nadir_scores = problem.nadir_point(),
                      LB=[0, 0, 1, 0, 1, 0], UB=[6, 6, 5, 6, 5, 6])
 
-best = agents.start(30)
+best = agents.start(50)
 
 #aa = np.array([[5.0000, 1.0000, 2.0173, 0.0000, 5.0000, 0.0002]])
 #best = np.vstack([aa, best])
 
-res = osy6d(best)
-pts = agents.vikor(agents.fitness(best))
-idx = np.argsort(res[:,0], axis=0)
+res = agents.modifier(agents.fitness(best))
+pts = agents.consolidate((idealp - res)**2)
+idx = np.argsort(pts * -1, axis=0)
 best = best[idx]
 res = res[idx]
 pts = pts[idx]

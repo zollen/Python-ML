@@ -5,6 +5,7 @@ Created on Apr 19, 2024
 '''
 
 import numpy as np
+from numpy import std
 from pygini import gini
 
 class Optimization:
@@ -105,7 +106,10 @@ class Optimization:
         return 0.5 * ((S - Smin) / (Smax - Smin)) + 0.5 * ((R - Rmin) / (Rmax - Rmin))
         
     def consolidate(self, X):
-        return self.vikor(X)
+        return self.stddev(X)
+    
+    def stddev(self, X):
+        return np.sum(np.abs(np.mean(X, axis=0) - X) / std(X, axis=0), axis=1)
     
     def modifier(self, scores):
         worst = np.array( [ scores[np.argmin(scores[:,0])] ] ) 
@@ -120,6 +124,12 @@ class Optimization:
         pop = pop[results > 0]
         scores = scores[results > 0]
         self.pareto_front = pop[self.is_pareto_efficient(scores, self.direction, False)]
+        
+        pts = self.consolidate(self.fitness(self.pareto_front))
+        if self.pareto_front.shape[0] > 100:
+            ind = np.argpartition(pts, -100)[-100:]
+            self.pareto_front = self.pareto_front[ind]
+        
         return self.pareto_front
         
     def bound(self, X):
