@@ -18,9 +18,8 @@ class ParetoFront(Optimization):
         return np.vstack((self.population, self.data_func(self.population_size * 50)))
     
     def scale_down(self, X):
-        idx = np.array(range(X.shape[0]))
-        np.random.shuffle(idx)
-        idx = idx[:self.population_size]
+        pts = self.consolidate(self.fitness(X))
+        idx = np.argpartition(pts, -self.population_size)[-self.population_size:]
         return X[idx]
           
     def move(self, X):
