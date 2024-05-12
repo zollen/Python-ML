@@ -127,7 +127,7 @@ class Optimization:
         
         pts = self.consolidate(self.fitness(self.pareto_front))
         if self.pareto_front.shape[0] > 100:
-            ind = np.argpartition(pts, -100)[-100:]
+            ind = np.argpartition(pts, -50)[-50:]
             self.pareto_front = self.pareto_front[ind]
         
         return self.pareto_front
