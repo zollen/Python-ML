@@ -126,7 +126,7 @@ class Optimization:
         self.pareto_front = pop[self.is_pareto_efficient(scores, self.direction, False)]
         
         pts = self.consolidate(self.fitness(self.pareto_front))
-        if self.pareto_front.shape[0] > 100:
+        if self.pareto_front.shape[0] > 50:
             ind = np.argpartition(pts, -50)[-50:]
             self.pareto_front = self.pareto_front[ind]
         
