@@ -71,7 +71,7 @@ def data(n):
 def validate(x1, x2, x3, x4, x5, x6):
     return constraints(np.array([[x1, x2, x3, x4, x5, x6]]))
 
-
+# res = np.sum(stddev((idealp - arr)**2) - stddev((worst - arr)**2), axis=1)
 
 
 idealp = problem.ideal_point() * -1
