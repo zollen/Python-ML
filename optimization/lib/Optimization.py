@@ -106,10 +106,10 @@ class Optimization:
         return 0.5 * ((S - Smin) / (Smax - Smin)) + 0.5 * ((R - Rmin) / (Rmax - Rmin))
         
     def consolidate(self, X):
-        return self.stddev(X)
+        return np.sum(self.stddev(X), axis=1)
     
     def stddev(self, X):
-        return np.sum(np.abs(np.mean(X, axis=0) - X) / std(X, axis=0), axis=1)
+        return np.abs(np.mean(X, axis=0) - X) / std(X, axis=0)
     
     def modifier(self, scores):
         worst = np.array( [ scores[np.argmin(scores[:,0])] ] ) 
