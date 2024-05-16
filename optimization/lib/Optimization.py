@@ -62,6 +62,11 @@ class Optimization:
         else:
             return is_efficient
         
+    def normalize(self, X):
+        minn = np.min(X, axis=0)
+        maxx = np.max(X, axis=0)
+        return (X - minn) / (maxx - minn)
+        
     def vikor(self, X):
         '''
         @url(VIKOR): https://www.youtube.com/watch?v=WMX3SVnvRls
@@ -129,7 +134,7 @@ class Optimization:
         if self.pareto_front.shape[0] > 50:
             ind = np.argpartition(pts, -50)[-50:]
             self.pareto_front = self.pareto_front[ind]
-        
+            
         return self.pareto_front
         
     def bound(self, X):
