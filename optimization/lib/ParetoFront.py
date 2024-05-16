@@ -29,18 +29,7 @@ class ParetoFront(Optimization):
         pts = (1 - self.normalize(res))**2
         ind = np.random.choice(range(self.pareto_front.shape[0]), size=X.shape[0], p=pts / np.sum(pts))
         targets = self.pareto_front[ind]
-        
-        
-        ind = np.argsort(res, axis=0)
-        scorces = scorces[ind]
-        res = res[ind]
-        pts = pts[ind]
-        prob = pts / np.sum(pts)
-        print("=================================================================")
-        for idx in range(self.pareto_front.shape[0]):
-            print("[ {0:.4f}, {1:.4f} ] ==> {2:.8f}, {3:.8f}, {4:.8f}".format(
-                scorces[idx,0], scorces[idx,1], res[idx], pts[idx], prob[idx]))
-        
+
         r = np.random.rand(X.shape[0], X.shape[1])
         X = self.bound(targets + 
                         np.abs(X - targets) * np.power(np.e, r) * 
