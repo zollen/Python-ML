@@ -168,7 +168,7 @@ best = agents.start(70)
 
 res = agents.modifier(agents.fitness(best))
 pts = np.sum(agents.stddev(np.abs(idealp - res)**3) - agents.stddev(np.abs(worst - res)**2), axis=1)
-idx = np.argsort(pts, axis=0)
+idx = np.argsort(res[:,0] * -1, axis=0)
 best = best[idx]
 res = res[idx]
 pts = pts[idx]
