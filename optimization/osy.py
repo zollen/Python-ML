@@ -163,6 +163,7 @@ agents = ParetoFront(osy6d, data, constraints,
 
 best = agents.start(70)
 
+# LB=[4.8, 0.8, 2, 0, 4.8, 0], UB=[5.1, 1.2, 2.2, 0.1, 5.1, 0.1])
 #aa = np.array([[5.0000, 1.0000, 2.0173, 0.0000, 5.0000, 0.0002]])
 #best = np.vstack([aa, best])
 
