@@ -26,7 +26,7 @@ class ParetoFront(Optimization):
         scorces = self.modifier(self.fitness(self.pareto_front))
         res = np.sum(self.stddev(np.abs(self.ideal_scores - scorces)**3) - 
                      self.stddev(np.abs(self.nadir_scores - scorces)**2), axis=1)
-        pts = (1 - self.normalize(res))**2
+        pts = 1 - self.normalize(res)
         ind = np.random.choice(range(self.pareto_front.shape[0]), size=X.shape[0], p=pts / np.sum(pts))
         targets = self.pareto_front[ind]
 
