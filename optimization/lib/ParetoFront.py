@@ -23,10 +23,10 @@ class ParetoFront(Optimization):
         return X[idx]
           
     def move(self, X):
-        scorces = self.fitness(self.pareto_front)
-        res = np.sum(self.stddev(np.abs(self.ideal_scores - scorces)**3) - 
-                     self.stddev(np.abs(self.nadir_scores - scorces)**2), axis=1)
-        pts = 1 - self.normalize(res)
+        scores = self.fitness(self.pareto_front)
+        res = np.sum(self.stddev(np.abs(self.ideal_scores - scores)**3) - 
+                     self.stddev(np.abs(self.nadir_scores - scores)**2), axis=1)
+        pts = np.nan_to_num(1 - self.normalize(res))
         ind = np.random.choice(range(self.pareto_front.shape[0]), size=X.shape[0], p=pts / np.sum(pts))
         targets = self.pareto_front[ind]
 
