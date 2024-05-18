@@ -18,7 +18,7 @@ class ParetoFront(Optimization):
         return np.vstack((self.population, self.data_func(self.population_size * 50)))
     
     def scale_down(self, X):
-        pts = self.consolidate(self.fitness(X))
+        pts = self.consolidate((self.ideal_scores - self.fitness(X))**2)
         idx = np.argpartition(pts, -self.population_size)[-self.population_size:]
         return X[idx]
           
@@ -27,7 +27,9 @@ class ParetoFront(Optimization):
         res = np.sum(self.stddev(np.abs(self.ideal_scores - scores)**3) - 
                      self.stddev(np.abs(self.nadir_scores - scores)**2), axis=1)
         pts = np.nan_to_num(1 - self.normalize(res))
-        ind = np.random.choice(range(self.pareto_front.shape[0]), size=X.shape[0], p=pts / np.sum(pts))
+        denom = np.sum(pts)
+        prob = np.divide(pts, denom, out=np.zeros_like(pts), where=denom!=0)
+        ind = np.random.choice(range(self.pareto_front.shape[0]), size=X.shape[0], p=prob)
         targets = self.pareto_front[ind]
 
         r = np.random.rand(X.shape[0], X.shape[1])
