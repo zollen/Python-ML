@@ -136,6 +136,14 @@ class Optimization:
             self.pareto_front = self.pareto_front[ind]
             
         return self.pareto_front
+    
+    def scale_up(self):
+        return np.vstack((self.population, self.data_func(self.population_size * 50)))
+    
+    def scale_down(self, X):
+        pts = self.consolidate((self.ideal_scores - self.fitness(X))**2)
+        idx = np.argpartition(pts, -self.population_size)[-self.population_size:]
+        return X[idx]
         
     def bound(self, X):
         X = np.where(X >= self.LB, X, self.LB)

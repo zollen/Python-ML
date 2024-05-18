@@ -13,15 +13,7 @@ class ParetoFront(Optimization):
                  ideal_scores, nadir_scores, LB = -50, UB = 50, candidate_size = 0.05):
         super().__init__(obj_func, data_func, constraints_func, direction, 
                          population_size, ideal_scores, nadir_scores, LB, UB, candidate_size)
-        
-    def scale_up(self):
-        return np.vstack((self.population, self.data_func(self.population_size * 50)))
-    
-    def scale_down(self, X):
-        pts = self.consolidate((self.ideal_scores - self.fitness(X))**2)
-        idx = np.argpartition(pts, -self.population_size)[-self.population_size:]
-        return X[idx]
-          
+              
     def move(self, X):
         scores = self.fitness(self.pareto_front)
         res = np.sum(self.stddev(np.abs(self.ideal_scores - scores)**3) - 
