@@ -23,7 +23,7 @@ class ParetoFront(Optimization):
         return X[idx]
           
     def move(self, X):
-        scorces = self.modifier(self.fitness(self.pareto_front))
+        scorces = self.fitness(self.pareto_front)
         res = np.sum(self.stddev(np.abs(self.ideal_scores - scorces)**3) - 
                      self.stddev(np.abs(self.nadir_scores - scorces)**2), axis=1)
         pts = 1 - self.normalize(res)
