@@ -156,7 +156,7 @@ exit()
 '''
 
 agents = ParetoFront(osy6d, data, constraints,  
-                     'min', 2000,  
+                     'min', 10000,  
                      ideal_scores = problem.ideal_point(), 
                      nadir_scores = problem.nadir_point(),
                      LB=[0, 0, 1, 0, 1, 0], UB=[6, 6, 5, 6, 5, 6])
