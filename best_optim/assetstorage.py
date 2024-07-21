@@ -37,7 +37,7 @@ class AssortmentProblem(ElementwiseProblem):
     def __init__(self, value):
 
         self.value = value
-        self.MAX_VALUE = 4
+        self.MAX_VALUE = 6
         
         num_params = value.shape[0] * 3
         xl = np.full(num_params, 0.0)
@@ -96,10 +96,10 @@ class AssortmentProblem(ElementwiseProblem):
             
         X = X.astype(int)
             
-        wid = X[self.X_COLS] + self.value[self.X_COLS, 1] * X[self.R_COLS] + \
-            (1 - X[self.R_COLS]) * self.value[self.X_COLS, 2]
-        hig = X[self.Y_COLS] + self.value[self.X_COLS, 2] * X[self.R_COLS] + \
-            (1 - X[self.R_COLS]) * self.value[self.X_COLS, 1]
+        wid = X[self.X_COLS] + (self.value[self.X_COLS, 1] * X[self.R_COLS]) + \
+            ((1 - X[self.R_COLS]) * self.value[self.X_COLS, 2])
+        hig = X[self.Y_COLS] + (self.value[self.X_COLS, 2] * X[self.R_COLS]) + \
+            ((1 - X[self.R_COLS]) * self.value[self.X_COLS, 1])
             
         return X, wid, hig
     
@@ -166,7 +166,8 @@ samples = np.array([[1, 3, 4],
                     [1, 1, 1],
                     [1, 1, 2],
                     [1, 2, 3],
-                    [1, 4, 3]])
+                    [1, 4, 3],
+                    [1, 5, 2]])
 
 
 data = np.zeros((np.sum(samples[:,0]), 3), dtype='int32')
@@ -180,7 +181,7 @@ for q, h, w in samples:
 
 problem = AssortmentProblem(data)
 
-algorithm = GA(pop_size=10000, eliminate_duplicates=True)
+algorithm = GA(pop_size=20000, eliminate_duplicates=True)
 
 res = minimize(problem,
                algorithm,
