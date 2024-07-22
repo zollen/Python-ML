@@ -181,7 +181,7 @@ for q, h, w in samples:
 
 problem = AssortmentProblem(data)
 
-algorithm = GA(pop_size=20000, eliminate_duplicates=True)
+algorithm = GA(pop_size=2000, eliminate_duplicates=True)
 
 res = minimize(problem,
                algorithm,
