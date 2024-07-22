@@ -37,8 +37,14 @@ class AssortmentProblem(ElementwiseProblem):
     def __init__(self, value):
 
         self.value = value
-        self.MAX_VALUE = 6
+        self.MAX_VALUE = 10
         
+        '''
+        MAX: 5    9x6=54
+        MAX: 6    7x7=49
+        MAX: 8    8x6=48
+        MAX: 10   5x9=45
+        '''
         num_params = value.shape[0] * 3
         xl = np.full(num_params, 0.0)
         xu = np.full(num_params, 1.0)
