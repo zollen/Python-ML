@@ -37,13 +37,20 @@ class AssortmentProblem(ElementwiseProblem):
     def __init__(self, value):
 
         self.value = value
-        self.MAX_VALUE = 10
+        self.MAX_VALUE = 11
         
         '''
-        MAX: 5    9x6=54
-        MAX: 6    7x7=49
-        MAX: 8    8x6=48
-        MAX: 10   5x9=45
+        MAX: 10 POP: 2000, EVAL: 100000  5x9=45
+        [[1, 3, 4],[1, 1, 1],[1, 1, 2],[1, 2, 3],[1, 4, 3],[1, 5, 2]]
+        
+        MAX: 7  POP: 1800, EVAL: 100000  9x6=54
+        [[1, 3, 4],[1, 1, 1],[1, 1, 2],[1, 2, 3],[1, 4, 3],[1, 5, 2],[1, 3, 2]
+        
+        MAX: 8  POP: 1800, EVAL: 100000  9x10=90
+        MAX: 9  POP: 1800, EVAL: 100000  10x8=80
+        MAX: 10 POP: 1800, EVAL: 100000   8x9=72
+        MAX: 11 POP: 1800, EVAL: 100000  7x10=70
+        [[1, 3, 4],[1, 1, 1],[1, 1, 2],[1, 2, 3],[1, 4, 3],[1, 5, 2],[1, 3, 2],[1, 3, 4]]
         '''
         num_params = value.shape[0] * 3
         xl = np.full(num_params, 0.0)
@@ -173,7 +180,9 @@ samples = np.array([[1, 3, 4],
                     [1, 1, 2],
                     [1, 2, 3],
                     [1, 4, 3],
-                    [1, 5, 2]])
+                    [1, 5, 2],
+                    [1, 3, 2],
+                    [1, 3, 4]])
 
 
 data = np.zeros((np.sum(samples[:,0]), 3), dtype='int32')
@@ -187,7 +196,7 @@ for q, h, w in samples:
 
 problem = AssortmentProblem(data)
 
-algorithm = GA(pop_size=2000, eliminate_duplicates=True)
+algorithm = GA(pop_size=1800, eliminate_duplicates=True)
 
 res = minimize(problem,
                algorithm,
