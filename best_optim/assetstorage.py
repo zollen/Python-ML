@@ -37,7 +37,7 @@ class AssortmentProblem(ElementwiseProblem):
     def __init__(self, value):
 
         self.value = value
-        self.MAX_VALUE = 13
+        self.MAX_VALUE = 9
         
         '''
         MAX: 10 POP: 2000, EVAL: 100000  5x9=45
@@ -48,8 +48,8 @@ class AssortmentProblem(ElementwiseProblem):
         
         MAX: 11 POP: 1800, EVAL: 100000  7x10=70
         [[1, 3, 4],[1, 1, 1],[1, 1, 2],[1, 2, 3],[1, 4, 3],[1, 5, 2],[1, 3, 2],[1, 3, 4]]
-        
-        MAX: 14 POP: 1800, EVAL: 100000  12x8=96
+         
+        MAX:  9 POP: 1800, EVAL: 100000  10x9=90
         [[1, 3, 4],[1, 1, 1],[1, 1, 2],[1, 2, 3],[1, 4, 3],[1, 5, 2],[1, 3, 2],[1, 3, 4],[1, 2, 5]]
         '''
         num_params = value.shape[0] * 3
