@@ -38,8 +38,6 @@ samples = np.array([[4, 3, 4],
                     [3, 2, 6],
                     [2, 4, 10]])
 
-samples = np.array([[5, 1, 1], 
-                    [1, 2, 1]])
 
 data = np.zeros((np.sum(samples[:,0]), 3), dtype='int32')
 i = 0
