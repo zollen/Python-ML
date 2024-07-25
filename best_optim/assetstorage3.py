@@ -58,7 +58,7 @@ ITEMS_INDEX = list(range(TOTAL_ITEMS))
 ITEMS_COMBO = list(itertools.combinations(ITEMS_INDEX, 2))
 
 # Create the linear solver using the CBC backend
-solver = pywraplp.Solver('Minimize the storage area', pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
+solver = pywraplp.Solver.CreateSolver("SAT")
 
 # 1. Create the variables we want to optimize
 X = solver.IntVar(0, TOTAL_MAX_VALUE, 'X') 
