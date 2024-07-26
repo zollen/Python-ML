@@ -57,7 +57,7 @@ TOTAL_ITEMS = data.shape[0]
 ITEMS_INDEX = list(range(TOTAL_ITEMS))
 ITEMS_COMBO = list(itertools.combinations(ITEMS_INDEX, 2))
 
-# Create the linear solver using the CBC backend
+# Create the linear solver using integer only optimizer. It is the fastest
 solver = pywraplp.Solver.CreateSolver("SAT")
 
 # 1. Create the variables we want to optimize
