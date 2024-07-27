@@ -128,28 +128,28 @@ status = solver.solve(model)
 # If an optimal solution has been found, print results
 if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
     print('================= Solution =================')
-    print(f'Solved in {solver.wall_time():.2f} milliseconds in {solver.iterations()} iterations')
+    print(f'Solved in {solver.wall_time} seconds')
     print()
-    print(f'Optimal value = {solver.Objective().Value():.0f}')
+    print(f'Optimal value = {solver.objective_value}')
     for i in ITEMS_INDEX:
-        print(f'x: {x[i].solution_value():.0f}, y: {y[i].solution_value():.0f}, r: {r[i].solution_value():.0f}')
+        print(f'x: {solver.value(x[i])} y: {solver.value(y[i])}, r: {solver.value(r[i])}')
     print("=================================================")
-    print(f'X: {X.solution_value():.0f} * Y: {Y.solution_value():.0f} = {X.solution_value() * Y.solution_value():.0f}')
+    print(f'X: {solver.value(X)} * Y: {solver.value(Y)} = {solver.value(X) * solver.value(Y)}')
 else:
     print('The solver could not find an optimal solution.')
     exit()
     
 
 
-total_X, total_Y = X.solution_value(), Y.solution_value()
+total_X, total_Y = solver.value(X), solver.value(Y)
 num = TOTAL_ITEMS
 
 _, ax = plt.subplots()
 
 for i in ITEMS_INDEX:
-    coords = (x[i].solution_value(), y[i].solution_value())
+    coords = (solver.value(x[i]), solver.value(y[i]))
 
-    if r[i].solution_value() == 1:
+    if solver.value(r[i]) == 1:
         wid = data[i, 1]    
         hig = data[i, 2]
     else:
