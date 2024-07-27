@@ -30,13 +30,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle     
 
   
-samples = np.array([[4, 3, 4], 
-                    [10, 1, 1],
-                    [8, 1, 2],
-                    [5, 2, 3],
-                    [2, 4, 2],
-                    [3, 2, 6],
-                    [2, 4, 10]])
+samples = np.array([[7, 3, 4]])
 '''
 samples = np.array([[4, 3, 4], 
                     [2, 4, 2],
@@ -121,7 +115,7 @@ model.Minimize(X + Y)
 
 # Solve problem
 solver = cp_model.CpSolver()
-solver.parameters.num_search_workers = 16
+solver.parameters.num_search_workers = 8
 status = solver.solve(model)
 
 
