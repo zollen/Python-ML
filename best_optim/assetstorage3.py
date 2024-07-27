@@ -23,7 +23,7 @@ Quantity      Heights       Widths
 
 '''
 
-from ortools.linear_solver import pywraplp
+from ortools.sat.python import cp_model
 import numpy as np
 import itertools  
 import matplotlib.pyplot as plt
@@ -82,47 +82,51 @@ ITEMS_INDEX = list(range(TOTAL_ITEMS))
 ITEMS_COMBO = list(itertools.combinations(ITEMS_INDEX, 2))
 
 # Create the linear solver using integer only optimizer. It is the fastest
-solver = pywraplp.Solver.CreateSolver("CP-SAT")
+model = cp_model.CpModel()
+
 
 # 1. Create the variables we want to optimize
-X = solver.IntVar(0, TOTAL_MAX_VALUE, 'X') 
-Y = solver.IntVar(0, TOTAL_MAX_VALUE, 'Y')
-x = [ solver.IntVar(0, MAX_VALUE, f'x{i}') for i in ITEMS_INDEX ]
-y = [ solver.IntVar(0, MAX_VALUE, f'y{i}') for i in ITEMS_INDEX ]
-r = [ solver.IntVar(0, 1, f'r{i}') for i in ITEMS_INDEX ]
+X = model.new_int_var(0, TOTAL_MAX_VALUE, 'X') 
+Y = model.new_int_var(0, TOTAL_MAX_VALUE, 'Y')
+x = [ model.new_int_var(0, MAX_VALUE, f'x{i}') for i in ITEMS_INDEX ]
+y = [ model.new_int_var(0, MAX_VALUE, f'y{i}') for i in ITEMS_INDEX ]
+r = [ model.new_int_var(0, 1, f'r{i}') for i in ITEMS_INDEX ]
 
-b0 = [ solver.IntVar(0, 1, f'b{i[0], i[1]} 0') for i in ITEMS_COMBO ]
-b1 = [ solver.IntVar(0, 1, f'b{i[0], i[1]} 1') for i in ITEMS_COMBO ]
-b2 = [ solver.IntVar(0, 1, f'b{i[0], i[1]} 2') for i in ITEMS_COMBO ]
-b3 = [ solver.IntVar(0, 1, f'b{i[0], i[1]} 3') for i in ITEMS_COMBO ]
+b0 = [ model.new_int_var(0, 1, f'b{i[0], i[1]} 0') for i in ITEMS_COMBO ]
+b1 = [ model.new_int_var(0, 1, f'b{i[0], i[1]} 1') for i in ITEMS_COMBO ]
+b2 = [ model.new_int_var(0, 1, f'b{i[0], i[1]} 2') for i in ITEMS_COMBO ]
+b3 = [ model.new_int_var(0, 1, f'b{i[0], i[1]} 3') for i in ITEMS_COMBO ]
 
 
 # 2. Add constraints for each resource
 for i in ITEMS_INDEX:
-    solver.Add(X >= x[i] + (r[i] * data[i, 1]) + ((1 - r[i]) * data[i, 2]))
-    solver.Add(Y >= y[i] + (r[i] * data[i, 2]) + ((1 - r[i]) * data[i, 1]))
+    model.add(X >= x[i] + (r[i] * data[i, 1]) + ((1 - r[i]) * data[i, 2]))
+    model.add(Y >= y[i] + (r[i] * data[i, 2]) + ((1 - r[i]) * data[i, 1]))
 
 k = 0
 for ind in ITEMS_COMBO:
     i = ind[0]
     j = ind[1]
-    solver.Add(x[i] + (r[i] * data[i, 1]) + ((1 - r[i]) * data[i, 2]) <= x[j] + M * (1 - b0[k]))
-    solver.Add(x[j] + (r[j] * data[j, 1]) + ((1 - r[j]) * data[j, 2]) <= x[i] + M * (1 - b1[k]))
-    solver.Add(y[i] + (r[i] * data[i, 2]) + ((1 - r[i]) * data[i, 1]) <= y[j] + M * (1 - b2[k]))
-    solver.Add(y[j] + (r[j] * data[j, 2]) + ((1 - r[j]) * data[j, 1]) <= y[i] + M * (1 - b3[k]))
-    solver.Add(b0[k] + b1[k] + b2[k] + b3[k] >= 1)
+    model.add(x[i] + (r[i] * data[i, 1]) + ((1 - r[i]) * data[i, 2]) <= x[j] + M * (1 - b0[k]))
+    model.add(x[j] + (r[j] * data[j, 1]) + ((1 - r[j]) * data[j, 2]) <= x[i] + M * (1 - b1[k]))
+    model.add(y[i] + (r[i] * data[i, 2]) + ((1 - r[i]) * data[i, 1]) <= y[j] + M * (1 - b2[k]))
+    model.add(y[j] + (r[j] * data[j, 2]) + ((1 - r[j]) * data[j, 1]) <= y[i] + M * (1 - b3[k]))
+    model.add(b0[k] + b1[k] + b2[k] + b3[k] >= 1)
     k += 1
     
 
 # 3. Minimize the objective function  
-solver.Minimize(X + Y)
+model.Minimize(X + Y)
 
 
 # Solve problem
-status = solver.Solve()
+solver = cp_model.CpSolver()
+solver.parameters.num_search_workers = 8
+status = solver.solve(model)
+
 
 # If an optimal solution has been found, print results
-if status == pywraplp.Solver.OPTIMAL:
+if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
     print('================= Solution =================')
     print(f'Solved in {solver.wall_time():.2f} milliseconds in {solver.iterations()} iterations')
     print()
