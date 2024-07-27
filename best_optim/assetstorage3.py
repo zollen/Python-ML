@@ -37,6 +37,30 @@ samples = np.array([[4, 3, 4],
                     [2, 4, 2],
                     [3, 2, 6],
                     [2, 4, 10]])
+'''
+samples = np.array([[4, 3, 4], 
+                    [2, 4, 2],
+                    [3, 2, 6],
+                    [2, 4, 10]])
+                    
+Solved in 533384.00 milliseconds in 0 iterations
+
+Optimal value = 27
+x: 0, y: 0, r: 1
+x: 0, y: 4, r: 1
+x: 0, y: 10, r: 1
+x: 4, y: 6, r: 1
+x: 0, y: 8, r: 1
+x: 3, y: 4, r: 1
+x: 3, y: 0, r: 0
+x: 3, y: 2, r: 0
+x: 7, y: 4, r: 1
+x: 3, y: 10, r: 0
+x: 9, y: 0, r: 1
+=================================================
+X: 13 * Y: 14 = 182                    
+                    
+'''
 
 
 data = np.zeros((np.sum(samples[:,0]), 3), dtype='int32')
