@@ -121,7 +121,7 @@ model.Minimize(X + Y)
 
 # Solve problem
 solver = cp_model.CpSolver()
-solver.parameters.num_search_workers = 8
+solver.parameters.num_search_workers = 16
 status = solver.solve(model)
 
 
