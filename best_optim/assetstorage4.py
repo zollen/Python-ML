@@ -61,7 +61,7 @@ ITEMS_COMBO = list(itertools.combinations(ITEMS_INDEX, 2))
 
 # Create the linear solver using integer only optimizer. It is the fastest
 solver = pywraplp.Solver.CreateSolver("SCIP")
-
+solver.EnableOutput()
 
 # 1. Create the variables we want to optimize
 X = solver.IntVar(0, TOTAL_MAX_VALUE, 'X') 
