@@ -105,6 +105,7 @@ status = solver.Solve()
 # If an optimal solution has been found, print results
 if status == pywraplp.Solver.OPTIMAL or status == pywraplp.Solver.FEASIBLE:
     print('================= Solution =================')
+    print("Number of variables = ", solver.NumVariables())
     print("Number of constraints =", solver.NumConstraints())
     print(f'Solved in {solver.wall_time():0.1f} seconds')
     print()
