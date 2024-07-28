@@ -105,7 +105,7 @@ status = solver.Solve()
 # If an optimal solution has been found, print results
 if status == pywraplp.Solver.OPTIMAL or status == pywraplp.Solver.FEASIBLE:
     print('================= Solution =================')
-    print(f'Solved in {solver.Objective().Value():0.1f} seconds')
+    print(f'Solved in {solver.wall_time():0.1f} seconds')
     print()
     print(f'Optimal value = {solver.Objective().Value():0.1f}')
     for i in ITEMS_INDEX:
