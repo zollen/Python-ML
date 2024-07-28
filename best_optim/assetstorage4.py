@@ -61,7 +61,7 @@ ITEMS_COMBO = list(itertools.combinations(ITEMS_INDEX, 2))
 
 # Create the linear solver using integer only optimizer. It is the fastest
 solver = pywraplp.Solver.CreateSolver("SCIP")
-solver.EnableOutput()
+
 
 # 1. Create the variables we want to optimize
 X = solver.IntVar(0, TOTAL_MAX_VALUE, 'X') 
@@ -98,13 +98,14 @@ solver.Minimize(X + Y)
 
 
 # Solve problem
-print("Number of constraints =", solver.NumConstraints())
+solver.EnableOutput()
 status = solver.Solve()
 
 
 # If an optimal solution has been found, print results
 if status == pywraplp.Solver.OPTIMAL or status == pywraplp.Solver.FEASIBLE:
     print('================= Solution =================')
+    print("Number of constraints =", solver.NumConstraints())
     print(f'Solved in {solver.wall_time():0.1f} seconds')
     print()
     print(f'Optimal value = {solver.Objective().Value():0.1f}')
