@@ -45,7 +45,12 @@ samples = np.array([[4, 3, 4],
                     [2, 4, 10]])
                     
 ================= Solution =================
-Solved in 493.9364454 seconds
+Thread              Time
+   1               493.9364454 seconds 
+   2               518.9222777 seconds
+   4               288.8302647 seconds
+   8               456.6859381 seconds
+  16               858.6485090 seconds 
 
 Optimal value = 27.0
 x: 2 y: 10, r: 0
