@@ -20,9 +20,8 @@ samples = np.array([[4, 3, 4],
                     [3, 2, 6],
                     [2, 4, 10]])
 
-samples = np.array([[1, 3, 4],
-                    [5, 2, 1],
-                    [1, 5, 3]])
+samples = np.array([[2, 3, 4], 
+                    [3, 2, 6]])
 
 data = np.zeros((np.sum(samples[:,0]), 3), dtype='int32')
 i = 0
@@ -45,6 +44,7 @@ ITEMS_COMBO = list(itertools.combinations(ITEMS_INDEX, 2))
 
 
 h = highspy.Highs()
+h.setOptionValue("threads", 4) 
 
 # 1. Create the variables we want to optimize
 X = h.addIntegral(lb = 0, ub = MAX_VALUE, name='X')
@@ -95,7 +95,6 @@ for ind in ITEMS_COMBO:
 h.minimize(X + Y)
 
 
-h.setOptionValue("threads", 16) 
 lp = h.getLp()
 num_nz = h.getNumNz()
 print('LP has ', lp.num_col_, ' columns', lp.num_row_, ' rows and ', num_nz, ' nonzeros')
