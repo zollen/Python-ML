@@ -60,9 +60,9 @@ b3 = []
 k = 0
 for i in ITEMS_COMBO:
     b0.append(h.addIntegral(0, 1, k, f'b{i[0], i[1]} 0'))
-    b1.append(h.addIntegral(0, 1, k, f'b{i[0], i[1]} 0'))
-    b2.append(h.addIntegral(0, 1, k, f'b{i[0], i[1]} 0'))
-    b3.append(h.addIntegral(0, 1, k, f'b{i[0], i[1]} 0'))
+    b1.append(h.addIntegral(0, 1, k, f'b{i[0], i[1]} 1'))
+    b2.append(h.addIntegral(0, 1, k, f'b{i[0], i[1]} 2'))
+    b3.append(h.addIntegral(0, 1, k, f'b{i[0], i[1]} 3'))
     k += 1
     
    
