@@ -34,8 +34,8 @@ for q, h, w in samples:
 
 
 M=999999
-TOTAL_MAX_VALUE=18
-MAX_VALUE = 15
+TOTAL_MAX_VALUE=30
+MAX_VALUE = 18
 TOTAL_ITEMS = data.shape[0]
 ITEMS_INDEX = list(range(TOTAL_ITEMS))
 ITEMS_COMBO = list(itertools.combinations(ITEMS_INDEX, 2))
