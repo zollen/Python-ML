@@ -8,6 +8,7 @@ Created on Jul 29, 2024
 import highspy
 import itertools  
 import numpy as np
+import time
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle    
 
@@ -97,13 +98,17 @@ h.minimize(X + Y)
 lp = h.getLp()
 num_nz = h.getNumNz()
 print('LP has ', lp.num_col_, ' columns', lp.num_row_, ' rows and ', num_nz, ' nonzeros')
+start_time = time.time()
 h.run()
+end_time = time.time()
+execution_time = end_time - start_time
 solution = h.getSolution()
 basis = h.getBasis()
 info = h.getInfo()
 model_status = h.getModelStatus()
 
 print('Model status = ', h.modelStatusToString(model_status))
+print(f'Execution Time = {execution_time:0.2f} seconds')
 print('Optimal objective = ', info.objective_function_value)
 
 best_X = solution.col_value[0]
