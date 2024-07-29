@@ -43,19 +43,15 @@ ITEMS_COMBO = list(itertools.combinations(ITEMS_INDEX, 2))
 h = highspy.Highs()
 
 # 1. Create the variables we want to optimize
-X = h.addIntegral(lb = 0, ub = MAX_VALUE, obj=0, name='X')
-Y = h.addIntegral(lb = 0, ub = MAX_VALUE, obj=1, name='Y')
+X = h.addIntegral(lb = 0, ub = MAX_VALUE, name='X')
+Y = h.addIntegral(lb = 0, ub = MAX_VALUE, name='Y')
 x = []
 y = []
 r = []
-Idx = 2
 for i in ITEMS_INDEX:
-    x.append(h.addIntegral(0, MAX_VALUE, obj=Idx, name=f'x{i}'))
-    Idx += 1
-    y.append(h.addIntegral(0, MAX_VALUE, obj=Idx, name=f'y{i}'))
-    Idx += 1
-    r.append(h.addIntegral(0, MAX_VALUE, obj=Idx, name=f'r{i}'))
-    Idx += 1
+    x.append(h.addIntegral(0, MAX_VALUE, name=f'x{i}'))
+    y.append(h.addIntegral(0, MAX_VALUE, name=f'y{i}'))
+    r.append(h.addIntegral(0, MAX_VALUE, name=f'r{i}'))
 
 b0 = []
 b1 = []
@@ -63,14 +59,11 @@ b2 = []
 b3 = []
 
 for i in ITEMS_COMBO:
-    b0.append(h.addIntegral(0, 1, obj=Idx, name=f'b{i[0], i[1]} 0'))
-    Idx += 1
-    b1.append(h.addIntegral(0, 1, obj=Idx, name=f'b{i[0], i[1]} 1'))
-    Idx += 1
-    b2.append(h.addIntegral(0, 1, obj=Idx, name=f'b{i[0], i[1]} 2'))
-    Idx += 1
-    b3.append(h.addIntegral(0, 1, obj=Idx, name=f'b{i[0], i[1]} 3'))
-    Idx += 1
+    b0.append(h.addIntegral(0, 1, name=f'b{i[0], i[1]} 0'))
+    b1.append(h.addIntegral(0, 1, name=f'b{i[0], i[1]} 1'))
+    b2.append(h.addIntegral(0, 1, name=f'b{i[0], i[1]} 2'))
+    b3.append(h.addIntegral(0, 1, name=f'b{i[0], i[1]} 3'))
+
     
    
     
