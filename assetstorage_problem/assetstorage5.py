@@ -21,7 +21,8 @@ samples = np.array([[4, 3, 4],
                     [2, 4, 10]])
 
 samples = np.array([[1, 3, 4],
-                    [1, 2, 1]])
+                    [5, 2, 1],
+                    [1, 5, 3]])
 
 data = np.zeros((np.sum(samples[:,0]), 3), dtype='int32')
 i = 0
@@ -94,7 +95,7 @@ for ind in ITEMS_COMBO:
 h.minimize(X + Y)
 
 
-
+h.setOptionValue("threads", 16) 
 lp = h.getLp()
 num_nz = h.getNumNz()
 print('LP has ', lp.num_col_, ' columns', lp.num_row_, ' rows and ', num_nz, ' nonzeros')
@@ -109,7 +110,7 @@ model_status = h.getModelStatus()
 
 print('Model status = ', h.modelStatusToString(model_status))
 print(f'Execution Time = {execution_time:0.2f} seconds')
-print('Optimal objective = ', info.objective_function_value)
+print(f'Optimal objective = {info.objective_function_value:0.0f}')
 
 best_X = solution.col_value[0]
 best_Y = solution.col_value[1]
@@ -122,11 +123,10 @@ for i in ITEMS_INDEX:
     best_r.append(solution.col_value[i+TOTAL_ITEMS+TOTAL_ITEMS+2])
 
 
-print(f'Best area: {best_X * best_Y}')
-print("Best params: ", solution.col_value)
+print(f'Best area: {best_X * best_Y:0.0f}')
 print("===============================")
 for i in ITEMS_INDEX:
-    print(f'x: {best_x[i]} y: {best_y[i]}, r: {best_r[i]}')
+    print(f'x: {abs(best_x[i]):0.0f} y: {abs(best_y[i]):0.0f}, r: {abs(best_r[i]):0.0f}')
 
 total_X, total_Y = best_X, best_Y
 num = TOTAL_ITEMS
@@ -156,6 +156,6 @@ ax. set_ylim(0, total_Y )
 ax.set_xticks(range(int(total_X)+1))
 ax.set_yticks(range(int(total_Y)+1))
 ax.grid()
-ax.set_title(f" Total area {total_X} x {total_Y} = {total_X * total_Y}")
+ax.set_title(f" Total area {total_X:0.0f} x {total_Y:0.0f} = {total_X * total_Y:0.0f}")
 
 plt.show()
