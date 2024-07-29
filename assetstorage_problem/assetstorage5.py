@@ -50,7 +50,9 @@ y = []
 r = []
 for i in ITEMS_INDEX:
     x.append(h.addIntegral(0, MAX_VALUE, name=f'x{i}'))
+for i in ITEMS_INDEX:
     y.append(h.addIntegral(0, MAX_VALUE, name=f'y{i}'))
+for i in ITEMS_INDEX:
     r.append(h.addIntegral(0, MAX_VALUE, name=f'r{i}'))
 
 b0 = []
