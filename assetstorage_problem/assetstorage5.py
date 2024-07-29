@@ -20,8 +20,7 @@ samples = np.array([[4, 3, 4],
                     [3, 2, 6],
                     [2, 4, 10]])
 
-samples = np.array([[2, 3, 4], 
-                    [3, 2, 6]])
+samples = np.array([[4, 3, 4]])
 
 data = np.zeros((np.sum(samples[:,0]), 3), dtype='int32')
 i = 0
@@ -111,21 +110,21 @@ print('Model status = ', h.modelStatusToString(model_status))
 print(f'Execution Time = {execution_time:0.2f} seconds')
 print(f'Optimal objective = {info.objective_function_value:0.0f}')
 
-best_X = solution.col_value[0]
-best_Y = solution.col_value[1]
+best_X = round(abs(solution.col_value[0]))
+best_Y = round(abs(solution.col_value[1]))
 best_x = []
 best_y = []
 best_r = []
 for i in ITEMS_INDEX:
-    best_x.append(solution.col_value[i+2])
-    best_y.append(solution.col_value[i+TOTAL_ITEMS+2])
-    best_r.append(solution.col_value[i+TOTAL_ITEMS+TOTAL_ITEMS+2])
+    best_x.append(round(abs(solution.col_value[i+2])))
+    best_y.append(round(abs(solution.col_value[i+TOTAL_ITEMS+2])))
+    best_r.append(round(abs(solution.col_value[i+TOTAL_ITEMS+TOTAL_ITEMS+2])))
 
 
-print(f'Best area: {best_X * best_Y:0.0f}')
+print(f'Best area: {best_X * best_Y}')
 print("===============================")
 for i in ITEMS_INDEX:
-    print(f'x: {abs(best_x[i]):0.0f} y: {abs(best_y[i]):0.0f}, r: {abs(best_r[i]):0.0f}')
+    print(f'x: {best_x[i]} y: {best_y[i]}, r: {best_r[i]}')
 
 total_X, total_Y = best_X, best_Y
 num = TOTAL_ITEMS
@@ -134,7 +133,6 @@ _, ax = plt.subplots()
 
 for i in ITEMS_INDEX:
     coords = (best_x[i], best_y[i])
-
     if best_r[i] == 1:
         wid = data[i, 1]    
         hig = data[i, 2]
