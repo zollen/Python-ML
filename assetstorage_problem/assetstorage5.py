@@ -53,7 +53,7 @@ for i in ITEMS_INDEX:
 for i in ITEMS_INDEX:
     y.append(h.addIntegral(0, MAX_VALUE, name=f'y{i}'))
 for i in ITEMS_INDEX:
-    r.append(h.addIntegral(0, MAX_VALUE, name=f'r{i}'))
+    r.append(h.addIntegral(0, 1, name=f'r{i}'))
 
 b0 = []
 b1 = []
