@@ -8,6 +8,8 @@ Created on Jul 29, 2024
 import highspy
 import itertools  
 import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle    
 
 samples = np.array([[4, 3, 4], 
                     [10, 1, 1],
@@ -120,3 +122,35 @@ print("Best params: ", solution.col_value)
 print("===============================")
 for i in ITEMS_INDEX:
     print(f'x: {best_x[i]} y: {best_y[i]}, r: {best_r[i]}')
+
+total_X, total_Y = best_X, best_Y
+num = TOTAL_ITEMS
+
+_, ax = plt.subplots()
+
+for i in ITEMS_INDEX:
+    coords = (best_x[i], best_y[i])
+
+    if best_r[i] == 1:
+        wid = data[i, 1]    
+        hig = data[i, 2]
+    else:
+        wid = data[i, 2]
+        hig = data[i, 1]
+    
+    ax.add_patch(Rectangle(coords, wid, hig,
+              edgecolor = 'black',
+              facecolor = "Grey",
+              fill = True,
+              alpha = 0.5,
+              lw=2))
+    
+ax. set_xlim(0, total_X )
+ax. set_ylim(0, total_Y )
+
+ax.set_xticks(range(int(total_X)+1))
+ax.set_yticks(range(int(total_Y)+1))
+ax.grid()
+ax.set_title(f" Total area {total_X} x {total_Y} = {total_X * total_Y}")
+
+plt.show()
