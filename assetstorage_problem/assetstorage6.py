@@ -55,9 +55,8 @@ All Solvers: ['GLPK_CMD', 'PYGLPK', 'CPLEX_CMD', 'CPLEX_PY', 'GUROBI', 'GUROBI_C
 model = pulp.LpProblem('Asset Storage Problem', LpMinimize)
 
 # get solver
-#solver = getSolver('GLPK_CMD')
-solver = pulp.PULP_CBC_CMD(msg=True, warmStart=True)
-#solver = pulp.CPLEX_CMD(options=["threads=4"])
+solver = pulp.PULP_CBC_CMD(msg=True, warmStart=True)  #  options=["threads=4"]
+   
 
 
 
