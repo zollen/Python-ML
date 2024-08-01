@@ -112,6 +112,9 @@ b1 = [ model.new_int_var(0, 1, f'b{i[0], i[1]} 1') for i in ITEMS_COMBO ]
 b2 = [ model.new_int_var(0, 1, f'b{i[0], i[1]} 2') for i in ITEMS_COMBO ]
 b3 = [ model.new_int_var(0, 1, f'b{i[0], i[1]} 3') for i in ITEMS_COMBO ]
 
+total_variables = 2 + len(x) + len(y) + len(r) + len(b0) + len(b1) + len(b2) + len(b3)
+
+
 
 # 2. Add constraints for each resource
 for i in ITEMS_INDEX:
@@ -129,6 +132,9 @@ for ind in ITEMS_COMBO:
     model.add(b0[k] + b1[k] + b2[k] + b3[k] >= 1)
     k += 1
     
+total_constraints = TOTAL_ITEMS * 2 + len(ITEMS_COMBO) * 5
+
+
 
 # 3. Minimize the objective function  
 model.Minimize(X + Y)
@@ -144,6 +150,7 @@ status = solver.solve(model)
 # If an optimal solution has been found, print results
 if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
     print('================= Solution =================')
+    print(f'Total Variables: {total_variables},  Total Constraints: {total_constraints}')
     print(f'Solved in {solver.wall_time} seconds')
     print()
     print(f'Optimal value = {solver.objective_value}')
