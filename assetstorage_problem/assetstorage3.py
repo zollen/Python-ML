@@ -142,7 +142,7 @@ model.Minimize(X + Y)
 
 # Solve problem
 solver = cp_model.CpSolver()
-solver.parameters.max_time_in_seconds = 3600.0   # exit 1 hour after stuck
+solver.parameters.max_time_in_seconds = 240.0   # exit 240 seconds after stuck
 solver.parameters.num_search_workers = 4
 solver.parameters.log_search_progress = True
 status = solver.solve(model)
