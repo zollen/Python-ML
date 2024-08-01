@@ -20,6 +20,49 @@ Quantity      Heights       Widths
 3              2              6
 2              4             10
 
+================= Solution =================
+Total Variables: 2348,  Total Constraints: 2873
+Solved in 3500.0457053 seconds
+
+Optimal value = 31.0
+x: 0 y: 11, r: 0
+x: 0 y: 14, r: 0
+x: 0 y: 5, r: 0
+x: 0 y: 8, r: 0
+x: 0 y: 4, r: 0
+x: 0 y: 3, r: 0
+x: 0 y: 2, r: 0
+x: 0 y: 1, r: 0
+x: 0 y: 0, r: 0
+x: 1 y: 4, r: 0
+x: 1 y: 2, r: 0
+x: 1 y: 0, r: 0
+x: 1 y: 3, r: 0
+x: 1 y: 1, r: 0
+x: 2 y: 4, r: 0
+x: 2 y: 1, r: 0
+x: 2 y: 2, r: 0
+x: 2 y: 0, r: 0
+x: 2 y: 3, r: 0
+x: 4 y: 9, r: 0
+x: 4 y: 16, r: 0
+x: 4 y: 8, r: 0
+x: 4 y: 2, r: 1
+x: 6 y: 14, r: 1
+x: 4 y: 5, r: 1
+x: 12 y: 12, r: 1
+x: 8 y: 14, r: 1
+x: 10 y: 15, r: 1
+x: 10 y: 10, r: 1
+x: 4 y: 0, r: 0
+x: 4 y: 10, r: 1
+x: 6 y: 12, r: 0
+x: 6 y: 2, r: 1
+x: 10 y: 0, r: 1
+=================================================
+X: 14 * Y: 17 = 238
+
+
 
 '''
 
