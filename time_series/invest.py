@@ -19,7 +19,7 @@ warnings.filterwarnings('ignore')
 
 sb.set_style('whitegrid')
 
-yfin.pdr_override()
+#yfin.pdr_override()
 
 def plot_stock_trend_and_returns(ticker, titles, start_date, end_date, all_returns):
     
@@ -358,7 +358,10 @@ series_tickers = [
         ["RIE.TO", "RBC Quant EAFE Equity Leaders ETF"],
         ["RIEH.TO", "RBC Quant EAFE Equity Leaders (CAD Hedged) ETF"],
         ["RXD.TO", "RBC Quant Emerging Markets Dividend Leaders ETF"],
-        ["RXE.TO", "RBC Quant Emerging Markets Equity Leaders ETF"]        
+        ["RXE.TO", "RBC Quant Emerging Markets Equity Leaders ETF"],
+        ["HFN.TO", "Hamilton Canadian Financials Index ETF"],
+        ["ZEB.TO", "BMO EQUAL WEIGHT BANKS INDEX Series Units ETF"],
+        ["HEWB.TO", "Global X Equal Weight Can Bks Index Corp Class ETF"]       
     ]
 
 goodETFs = []
