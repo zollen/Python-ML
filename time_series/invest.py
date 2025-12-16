@@ -62,7 +62,7 @@ def perform_analysis_for_stock(ticker, start_date, end_date, return_period_weeks
     #could not find data on this ticker
     except:
         #return default values
-        return -np.inf, np.inf    
+        return -np.inf, np.inf, None    
         
     prices.index = [d.date() for d in prices.index]
 
