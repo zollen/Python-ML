@@ -4,10 +4,7 @@ Created on May 10, 2021
 @author: zollen
 '''
 
-import pandas_datareader.data as web
 import yfinance as yfin
-from pandas_datareader.nasdaq_trader import get_nasdaq_symbols
-from pandas_datareader._utils import RemoteDataError
 from datetime import datetime, timedelta
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -24,7 +21,7 @@ sb.set_style('whitegrid')
 def plot_stock_trend_and_returns(ticker, titles, start_date, end_date, all_returns):
     
     #get the data for this ticker
-    prices = web.get_data_yahoo(ticker, start=start_date, end=end_date).Close
+    prices = yfin.download(ticker, start=start_date, end=end_date)
     prices.index = [d.date() for d in prices.index]
     
     plt.figure(figsize=(10,6))
@@ -61,20 +58,21 @@ def perform_analysis_for_stock(ticker, start_date, end_date, return_period_weeks
     
     #get the data for this ticker
     try:
-        prices = web.get_data_yahoo(ticker, start=start_date, end=end_date).Close
+        prices = yfin.download(ticker, start=start_date, end=end_date).Close
     #could not find data on this ticker
-    except (RemoteDataError, KeyError):
+    except:
         #return default values
-        return -np.inf, np.inf, None
-    
+        return -np.inf, np.inf    
+        
     prices.index = [d.date() for d in prices.index]
+
     
     #this will store all simulated returns
     pct_return_after_period = []
     buy_dates = []
 
     #assume we buy the stock on each day in the range
-    for buy_date, buy_price in prices.iteritems():
+    for buy_date, buy_price in prices.itertuples():
         #get price of the stock after given number of weeks
         sell_date = buy_date + timedelta(weeks=return_period_weeks)
         
