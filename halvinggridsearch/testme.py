@@ -16,7 +16,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-iris = pd.read_csv("../data/iris.csv")
+iris = pd.read_csv("./data/iris.csv")
 iris['variety'] = iris['variety'].map({'Setosa': 0, 'Versicolor': 0, 'Virginica': 1})
 
 print(iris.head())
